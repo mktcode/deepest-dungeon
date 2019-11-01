@@ -6,6 +6,13 @@ import TilemapVisibility from "./tilemap-visibility.js";
 import tileset from "./assets/buch-tileset-48px-extruded.png";
 import characters from "./assets/buch-characters-64px-extruded.png";
 import theme from "./assets/kai-engel-downfall.mp3"
+import emptyRoom from "./assets/empty-room.mp3"
+import oneDoor from "./assets/with-one-door.mp3"
+import twoDoors from "./assets/with-two-doors.mp3"
+import threeDoors from "./assets/with-three-doors.mp3"
+import fourDoors from "./assets/with-four-doors.mp3"
+import fiveDoors from "./assets/with-five-doors.mp3"
+import although from "./assets/although.mp3"
 
 /**
  * Scene that generates a new dungeon
@@ -18,6 +25,13 @@ export default class DungeonScene extends Phaser.Scene {
 
   preload() {
     this.load.audio("ambient", theme)
+    this.load.audio("emptyRoom", emptyRoom)
+    this.load.audio("oneDoor", oneDoor)
+    this.load.audio("twoDoors", twoDoors)
+    this.load.audio("threeDoors", threeDoors)
+    this.load.audio("fourDoors", fourDoors)
+    this.load.audio("fiveDoors", fiveDoors)
+    this.load.audio("although", although)
     this.load.image("tiles", tileset);
     this.load.spritesheet(
       "characters",
@@ -32,8 +46,8 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   create() {
-    this.sound.unlock();
-    this.sound.play("ambient");
+    this.sound.play("ambient", { volume: 0.3 });
+    this.sound.play("emptyRoom", { delay: 2 });
 
     this.hasPlayerReachedStairs = false;
 
@@ -50,6 +64,20 @@ export default class DungeonScene extends Phaser.Scene {
         height: { min: 7, max: 15, onlyOdd: true }
       }
     })
+
+    const doorCount = this.dungeon.rooms[0].getDoorLocations().length;
+    if (doorCount === 1) {
+      this.sound.play("oneDoor", { delay: 5.5 });
+    } else if (doorCount === 2) {
+      this.sound.play("twoDoors", { delay: 5.5 });
+    } else if (doorCount === 3) {
+      this.sound.play("threeDoors", { delay: 5.5 });
+    } else if (doorCount === 4) {
+      this.sound.play("fourDoors", { delay: 5.5 });
+    } else if (doorCount === 5) {
+      this.sound.play("fiveDoors", { delay: 5.5 });
+    }
+    this.sound.play("although", { delay: 8 });
 
     // Creating a blank tilemap with dimensions matching the dungeon
     const map = this.make.tilemap({
