@@ -13,6 +13,7 @@ import threeDoors from "./assets/with-three-doors.mp3"
 import fourDoors from "./assets/with-four-doors.mp3"
 import fiveDoors from "./assets/with-five-doors.mp3"
 import although from "./assets/although.mp3"
+import horribleJourney from "./assets/horrible-journey.mp3"
 
 /**
  * Scene that generates a new dungeon
@@ -32,6 +33,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.load.audio("fourDoors", fourDoors)
     this.load.audio("fiveDoors", fiveDoors)
     this.load.audio("although", although)
+    this.load.audio("horribleJourney", horribleJourney)
     this.load.image("tiles", tileset);
     this.load.spritesheet(
       "characters",
@@ -46,10 +48,11 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   create() {
-    this.sound.play("ambient", { volume: 0.3 });
+    this.sound.play("ambient", { volume: 0.3, loop: true });
     this.sound.play("emptyRoom", { delay: 2 });
 
     this.hasPlayerReachedStairs = false;
+    this.hasPlayerFoundEndRoom = false;
 
     // Generate a random world with a few extra options:
     //  - Rooms should only have odd number dimensions so that they have a center tile.
@@ -136,11 +139,11 @@ export default class DungeonScene extends Phaser.Scene {
     //  - An array of 90% of the remaining rooms, for placing random stuff (leaving 10% empty)
     const rooms = this.dungeon.rooms.slice();
     const startRoom = rooms.shift();
-    const endRoom = Phaser.Utils.Array.RemoveRandomElement(rooms);
+    this.endRoom = Phaser.Utils.Array.RemoveRandomElement(rooms);
     const otherRooms = Phaser.Utils.Array.Shuffle(rooms).slice(0, rooms.length * 0.9);
 
     // Place the stairs
-    this.stuffLayer.putTileAt(TILES.STAIRS, endRoom.centerX, endRoom.centerY);
+    this.stuffLayer.putTileAt(TILES.STAIRS, this.endRoom.centerX, this.endRoom.centerY);
 
     // Not exactly correct for the tileset since there are more possible floor tiles, but this will
     // do for the example.
@@ -165,6 +168,10 @@ export default class DungeonScene extends Phaser.Scene {
     const x = map.tileToWorldX(playerRoom.centerX);
     const y = map.tileToWorldY(playerRoom.centerY);
     this.player = new Player(this, x, y);
+    this.player.freeze();
+    setTimeout(() => {
+      this.player.unfreeze();
+    }, 17000)
 
     // Watch the player and tilemap layers for collisions, for the duration of the scene:
     this.physics.add.collider(this.player.sprite, this.groundLayer);
@@ -198,6 +205,17 @@ export default class DungeonScene extends Phaser.Scene {
     const playerTileX = this.groundLayer.worldToTileX(this.player.sprite.x);
     const playerTileY = this.groundLayer.worldToTileY(this.player.sprite.y);
     const playerRoom = this.dungeon.getRoomAt(playerTileX, playerTileY);
+
+    if (playerRoom === this.endRoom && !this.hasPlayerFoundEndRoom) {
+      this.hasPlayerFoundEndRoom = true;
+      this.sound.play("horribleJourney");
+      setTimeout(() => {
+        this.player.freeze()
+      }, 250)
+      setTimeout(() => {
+        this.player.unfreeze()
+      }, 17000)
+    }
 
     this.tilemapVisibility.setActiveRoom(playerRoom);
   }

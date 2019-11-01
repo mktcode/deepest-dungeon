@@ -35,6 +35,10 @@ export default class Player {
     this.sprite.body.moves = false;
   }
 
+  unfreeze() {
+    this.sprite.body.moves = true;
+  }
+
   update() {
     const keys = this.keys;
     const sprite = this.sprite;
