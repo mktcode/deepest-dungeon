@@ -9,11 +9,15 @@
 
 import Phaser from "phaser";
 import DungeonScene from "./dungeon-scene.js";
+import './assets/style.sass'
 
 const config = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  scale: {
+    mode: Phaser.Scale.RESIZE,
+    width: '100%',
+    height: '100%'
+  },
   backgroundColor: "#000",
   parent: "body",
   pixelArt: true,
@@ -27,3 +31,9 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
+
+window.addEventListener('resize', event => {
+  game.scale.resize(window.innerWidth, window.innerHeight)
+  game.canvas.style.width = window.innerWidth + 'px'
+  game.canvas.style.height = window.innerHeight + 'px'
+})
