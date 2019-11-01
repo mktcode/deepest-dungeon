@@ -5,6 +5,7 @@ import TILES from "./tile-mapping.js";
 import TilemapVisibility from "./tilemap-visibility.js";
 import tileset from "./assets/buch-tileset-48px-extruded.png";
 import characters from "./assets/buch-characters-64px-extruded.png";
+import theme from "./assets/kai-engel-downfall.mp3"
 
 /**
  * Scene that generates a new dungeon
@@ -16,6 +17,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   preload() {
+    this.load.audio("ambient", theme)
     this.load.image("tiles", tileset);
     this.load.spritesheet(
       "characters",
@@ -30,6 +32,9 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   create() {
+    this.sound.unlock();
+    this.sound.play("ambient");
+
     this.hasPlayerReachedStairs = false;
 
     // Generate a random world with a few extra options:

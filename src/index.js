@@ -27,6 +27,9 @@ const config = {
     arcade: {
       gravity: { y: 0 }
     }
+  },
+  audio: {
+    disableWebAudio: true
   }
 };
 
