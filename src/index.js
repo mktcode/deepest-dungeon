@@ -33,8 +33,11 @@ const config = {
   }
 };
 
+let game;
 window.addEventListener("click", event => {
-  const game = new Phaser.Game(config);
+  if (!game) {
+    game = new Phaser.Game(config);
+  }
 })
 
 window.addEventListener('resize', event => {
