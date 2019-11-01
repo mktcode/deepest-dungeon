@@ -3,16 +3,17 @@
  * room is currently active.
  */
 export default class TilemapVisibility {
-  constructor(shadowLayer) {
+  constructor(shadowLayer, level) {
     this.shadowLayer = shadowLayer;
     this.activeRoom = null;
+    this.level = level;
   }
 
-  setActiveRoom(room) {
+  setActiveRoom(room, level) {
     // We only need to update the tiles if the active room has changed
     if (room !== this.activeRoom) {
       this.setRoomAlpha(room, 0); // Make the new room visible
-      if (this.activeRoom) this.setRoomAlpha(this.activeRoom, 0.5); // Dim the old room
+      if (this.activeRoom) this.setRoomAlpha(this.activeRoom, Math.min(1, this.level / 5)); // Dim the old room
       this.activeRoom = room;
     }
   }

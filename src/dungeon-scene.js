@@ -58,7 +58,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.stuffLayer = map.createBlankDynamicLayer("Stuff", tileset);
     const shadowLayer = map.createBlankDynamicLayer("Shadow", tileset).fill(TILES.BLANK);
 
-    this.tilemapVisibility = new TilemapVisibility(shadowLayer);
+    this.tilemapVisibility = new TilemapVisibility(shadowLayer, this.level);
 
     // Use the array of rooms generated to place tiles in the map
     // Note: using an arrow function here so that "this" still refers to our scene
@@ -109,34 +109,9 @@ export default class DungeonScene extends Phaser.Scene {
     // Place the stairs
     this.stuffLayer.putTileAt(TILES.STAIRS, endRoom.centerX, endRoom.centerY);
 
-    // Place stuff in the 90% "otherRooms"
-    otherRooms.forEach(room => {
-      var rand = Math.random();
-      if (rand <= 0.25) {
-        // 25% chance of chest
-        this.stuffLayer.putTileAt(TILES.CHEST, room.centerX, room.centerY);
-      } else if (rand <= 0.5) {
-        // 50% chance of a pot anywhere in the room... except don't block a door!
-        const x = Phaser.Math.Between(room.left + 2, room.right - 2);
-        const y = Phaser.Math.Between(room.top + 2, room.bottom - 2);
-        this.stuffLayer.weightedRandomize(x, y, 1, 1, TILES.POT);
-      } else {
-        // 25% of either 2 or 4 towers, depending on the room size
-        if (room.height >= 9) {
-          this.stuffLayer.putTilesAt(TILES.TOWER, room.centerX - 1, room.centerY + 1);
-          this.stuffLayer.putTilesAt(TILES.TOWER, room.centerX + 1, room.centerY + 1);
-          this.stuffLayer.putTilesAt(TILES.TOWER, room.centerX - 1, room.centerY - 2);
-          this.stuffLayer.putTilesAt(TILES.TOWER, room.centerX + 1, room.centerY - 2);
-        } else {
-          this.stuffLayer.putTilesAt(TILES.TOWER, room.centerX - 1, room.centerY - 1);
-          this.stuffLayer.putTilesAt(TILES.TOWER, room.centerX + 1, room.centerY - 1);
-        }
-      }
-    });
-
     // Not exactly correct for the tileset since there are more possible floor tiles, but this will
     // do for the example.
-    this.groundLayer.setCollisionByExclusion([-1, 6, 7, 8, 26]);
+    this.groundLayer.setCollisionByExclusion([-1, 6, 7, 8, 26, 63, 65]);
     this.stuffLayer.setCollisionByExclusion([-1, 6, 7, 8, 26]);
 
     this.stuffLayer.setTileIndexCallback(TILES.STAIRS, () => {
