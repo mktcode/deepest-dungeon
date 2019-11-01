@@ -24,6 +24,10 @@ module.exports = {
         use: "file-loader"
       },
       {
+        test: /\.(ogg|mp3|wav|mpe?g)$/i,
+        use: 'file-loader'
+      },
+      {
         test: /\.s[ac]ss$/i,
         use: [
           'style-loader',
