@@ -33,6 +33,7 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
-    "phaser": "^3.16.2"
+    "@mikewesthad/dungeon": "^1.2.2",
+    "phaser": "^3.20.1"
   }
 }
