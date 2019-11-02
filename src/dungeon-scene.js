@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Dungeon from "@mikewesthad/dungeon";
 import Player from "./player.js";
+import Enemy from "./enemy.js";
 import TILES from "./tile-mapping.js";
 import TilemapVisibility from "./tilemap-visibility.js";
 import tileset from "./assets/buch-tileset-48px-extruded.png";
@@ -105,14 +106,15 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.hasPlayerReachedStairs = false;
     this.hasPlayerFoundEndRoom = false;
+    this.hasPlayerDied = false;
 
     // Generate a random world with a few extra options:
     //  - Rooms should only have odd number dimensions so that they have a center tile.
     //  - Doors should be at least 2 tiles away from corners, so that we can place a corner tile on
     //    either side of the door location
     this.dungeon = new Dungeon({
-      width: 30,
-      height: 30,
+      width: 50,
+      height: 50,
       doorPadding: 2,
       rooms: {
         width: { min: 7, max: 15, onlyOdd: true },
@@ -130,9 +132,6 @@ export default class DungeonScene extends Phaser.Scene {
     const tileset = map.addTilesetImage("tiles", null, 48, 48, 1, 2); // 1px margin, 2px spacing
     this.groundLayer = map.createBlankDynamicLayer("Ground", tileset).fill(TILES.BLANK);
     this.stuffLayer = map.createBlankDynamicLayer("Stuff", tileset);
-    const shadowLayer = map.createBlankDynamicLayer("Shadow", tileset).fill(TILES.BLANK);
-
-    this.tilemapVisibility = new TilemapVisibility(shadowLayer, this.level);
 
     // Use the array of rooms generated to place tiles in the map
     // Note: using an arrow function here so that "this" still refers to our scene
@@ -207,6 +206,30 @@ export default class DungeonScene extends Phaser.Scene {
     const y = map.tileToWorldY(playerRoom.centerY);
     this.player = new Player(this, x, y);
 
+    // place enemies
+    this.enemies = [];
+    this.enemyGroup = this.add.group();
+    otherRooms.forEach(room => {
+      let enemy = new Enemy(this, map, room)
+      this.enemies.push(enemy);
+      this.enemyGroup.add(enemy.sprite);
+    })
+
+    this.physics.add.collider(this.player.sprite, this.enemyGroup, () => {
+      this.hasPlayerDied = true;
+      this.player.freeze();
+      const cam = this.cameras.main;
+      cam.fade(250, 0, 0, 0);
+      cam.once("camerafadeoutcomplete", () => {
+        this.enemies.forEach(enemy => enemy.destroy());
+        this.player.destroy();
+        this.scene.restart();
+      });
+    });
+
+    const shadowLayer = map.createBlankDynamicLayer("Shadow", tileset).fill(TILES.BLANK);
+    this.tilemapVisibility = new TilemapVisibility(shadowLayer, this.level);
+
     this.playIntro()
 
     // Watch the player and tilemap layers for collisions, for the duration of the scene:
@@ -232,9 +255,10 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   update(time, delta) {
-    if (this.hasPlayerReachedStairs) return;
+    if (this.hasPlayerReachedStairs || this.hasPlayerDied) return;
 
     this.player.update();
+    this.enemies.forEach(enemy => enemy.update());
 
     // Find the player's room using another helper method from the dungeon that converts from
     // dungeon XY (in grid units) to the corresponding room object
@@ -247,16 +271,18 @@ export default class DungeonScene extends Phaser.Scene {
       let delay = 17000;
       if (this.level === 1) {
         this.sound.play("horribleJourney");
-      } else {
+      } else if (this.level === 2) {
         this.sound.play("againStairs");
         delay = 10000;
       }
-      setTimeout(() => {
-        this.player.freeze()
-      }, 250)
-      setTimeout(() => {
-        this.player.unfreeze()
-      }, delay)
+      if (this.level === 1 || this.level === 2) {
+        setTimeout(() => {
+          this.player.freeze()
+        }, 250)
+        setTimeout(() => {
+          this.player.unfreeze()
+        }, delay)
+      }
     }
 
     this.tilemapVisibility.setActiveRoom(playerRoom);
