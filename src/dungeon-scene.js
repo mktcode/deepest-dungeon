@@ -6,18 +6,18 @@ import TILES from "./tile-mapping.js";
 import TilemapVisibility from "./tilemap-visibility.js";
 import tileset from "./assets/buch-tileset-48px-extruded.png";
 import characters from "./assets/buch-characters-64px-extruded.png";
-import theme from "./assets/kai-engel-downfall.mp3"
-import emptyRoom from "./assets/empty-room.mp3"
-import oneDoor from "./assets/with-one-door.mp3"
-import twoDoors from "./assets/with-two-doors.mp3"
-import threeDoors from "./assets/with-three-doors.mp3"
-import fourDoors from "./assets/with-four-doors.mp3"
-import fiveDoors from "./assets/with-five-doors.mp3"
-import although from "./assets/although.mp3"
-import horribleJourney from "./assets/horrible-journey.mp3"
-import furtherDown from "./assets/further-down.mp3"
-import againStairs from "./assets/again-stairs.mp3"
-import theLight from "./assets/the-light.mp3"
+import theme from "./assets/audio/kai-engel-downfall.mp3"
+import emptyRoom from "./assets/audio/empty-room.mp3"
+import oneDoor from "./assets/audio/with-one-door.mp3"
+import twoDoors from "./assets/audio/with-two-doors.mp3"
+import threeDoors from "./assets/audio/with-three-doors.mp3"
+import fourDoors from "./assets/audio/with-four-doors.mp3"
+import fiveDoors from "./assets/audio/with-five-doors.mp3"
+import although from "./assets/audio/although.mp3"
+import horribleJourney from "./assets/audio/horrible-journey.mp3"
+import furtherDown from "./assets/audio/further-down.mp3"
+import againStairs from "./assets/audio/again-stairs.mp3"
+import theLight from "./assets/audio/the-light.mp3"
 
 /**
  * Scene that generates a new dungeon
