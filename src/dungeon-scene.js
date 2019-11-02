@@ -14,6 +14,9 @@ import fourDoors from "./assets/with-four-doors.mp3"
 import fiveDoors from "./assets/with-five-doors.mp3"
 import although from "./assets/although.mp3"
 import horribleJourney from "./assets/horrible-journey.mp3"
+import furtherDown from "./assets/further-down.mp3"
+import againStairs from "./assets/again-stairs.mp3"
+import theLight from "./assets/the-light.mp3"
 
 /**
  * Scene that generates a new dungeon
@@ -34,6 +37,9 @@ export default class DungeonScene extends Phaser.Scene {
     this.load.audio("fiveDoors", fiveDoors)
     this.load.audio("although", although)
     this.load.audio("horribleJourney", horribleJourney)
+    this.load.audio("furtherDown", furtherDown)
+    this.load.audio("againStairs", againStairs)
+    this.load.audio("theLight", theLight)
     this.load.image("tiles", tileset);
     this.load.spritesheet(
       "characters",
@@ -47,9 +53,55 @@ export default class DungeonScene extends Phaser.Scene {
     );
   }
 
+  playIntro() {
+    this.player.freeze();
+    const doorCount = this.dungeon.rooms[0].getDoorLocations().length;
+
+    if (this.level === 1) {
+      setTimeout(() => {
+        this.player.unfreeze();
+      }, 17000)
+      this.sound.play("emptyRoom", { delay: 2 });
+      if (doorCount === 1) {
+        this.sound.play("oneDoor", { delay: 5.5 });
+      } else if (doorCount === 2) {
+        this.sound.play("twoDoors", { delay: 5.5 });
+      } else if (doorCount === 3) {
+        this.sound.play("threeDoors", { delay: 5.5 });
+      } else if (doorCount === 4) {
+        this.sound.play("fourDoors", { delay: 5.5 });
+      } else if (doorCount === 5) {
+        this.sound.play("fiveDoors", { delay: 5.5 });
+      }
+      this.sound.play("although", { delay: 8 });
+    } else if (this.level === 2) {
+      setTimeout(() => {
+        this.player.unfreeze();
+      }, 16500)
+      this.sound.play("furtherDown", { delay: 2 });
+      if (doorCount === 1) {
+        this.sound.play("oneDoor", { delay: 13.5 });
+      } else if (doorCount === 2) {
+        this.sound.play("twoDoors", { delay: 13.5 });
+      } else if (doorCount === 3) {
+        this.sound.play("threeDoors", { delay: 13.5 });
+      } else if (doorCount === 4) {
+        this.sound.play("fourDoors", { delay: 13.5 });
+      } else if (doorCount === 5) {
+        this.sound.play("fiveDoors", { delay: 13.5 });
+      }
+    } else if (this.level === 5) {
+      setTimeout(() => {
+        this.player.unfreeze();
+      }, 10500)
+      this.sound.play("theLight", { delay: 2 });
+    } else {
+      this.player.unfreeze();
+    }
+  }
+
   create() {
     this.sound.play("ambient", { volume: 0.3, loop: true });
-    this.sound.play("emptyRoom", { delay: 2 });
 
     this.hasPlayerReachedStairs = false;
     this.hasPlayerFoundEndRoom = false;
@@ -59,28 +111,14 @@ export default class DungeonScene extends Phaser.Scene {
     //  - Doors should be at least 2 tiles away from corners, so that we can place a corner tile on
     //    either side of the door location
     this.dungeon = new Dungeon({
-      width: 50,
-      height: 50,
+      width: 30,
+      height: 30,
       doorPadding: 2,
       rooms: {
         width: { min: 7, max: 15, onlyOdd: true },
         height: { min: 7, max: 15, onlyOdd: true }
       }
     })
-
-    const doorCount = this.dungeon.rooms[0].getDoorLocations().length;
-    if (doorCount === 1) {
-      this.sound.play("oneDoor", { delay: 5.5 });
-    } else if (doorCount === 2) {
-      this.sound.play("twoDoors", { delay: 5.5 });
-    } else if (doorCount === 3) {
-      this.sound.play("threeDoors", { delay: 5.5 });
-    } else if (doorCount === 4) {
-      this.sound.play("fourDoors", { delay: 5.5 });
-    } else if (doorCount === 5) {
-      this.sound.play("fiveDoors", { delay: 5.5 });
-    }
-    this.sound.play("although", { delay: 8 });
 
     // Creating a blank tilemap with dimensions matching the dungeon
     const map = this.make.tilemap({
@@ -168,10 +206,8 @@ export default class DungeonScene extends Phaser.Scene {
     const x = map.tileToWorldX(playerRoom.centerX);
     const y = map.tileToWorldY(playerRoom.centerY);
     this.player = new Player(this, x, y);
-    this.player.freeze();
-    setTimeout(() => {
-      this.player.unfreeze();
-    }, 17000)
+
+    this.playIntro()
 
     // Watch the player and tilemap layers for collisions, for the duration of the scene:
     this.physics.add.collider(this.player.sprite, this.groundLayer);
@@ -208,13 +244,19 @@ export default class DungeonScene extends Phaser.Scene {
 
     if (playerRoom === this.endRoom && !this.hasPlayerFoundEndRoom) {
       this.hasPlayerFoundEndRoom = true;
-      this.sound.play("horribleJourney");
+      let delay = 17000;
+      if (this.level === 1) {
+        this.sound.play("horribleJourney");
+      } else {
+        this.sound.play("againStairs");
+        delay = 10000;
+      }
       setTimeout(() => {
         this.player.freeze()
       }, 250)
       setTimeout(() => {
         this.player.unfreeze()
-      }, 17000)
+      }, delay)
     }
 
     this.tilemapVisibility.setActiveRoom(playerRoom);
