@@ -208,24 +208,26 @@ export default class DungeonScene extends Phaser.Scene {
 
     // place enemies
     this.enemies = [];
-    this.enemyGroup = this.add.group();
-    otherRooms.forEach(room => {
-      let enemy = new Enemy(this, map, room)
-      this.enemies.push(enemy);
-      this.enemyGroup.add(enemy.sprite);
-    })
+    if (this.level > 1) {
+      this.enemyGroup = this.add.group();
+      otherRooms.forEach(room => {
+        let enemy = new Enemy(this, map, room)
+        this.enemies.push(enemy);
+        this.enemyGroup.add(enemy.sprite);
+      })
 
-    this.physics.add.collider(this.player.sprite, this.enemyGroup, () => {
-      this.hasPlayerDied = true;
-      this.player.freeze();
-      const cam = this.cameras.main;
-      cam.fade(250, 0, 0, 0);
-      cam.once("camerafadeoutcomplete", () => {
-        this.enemies.forEach(enemy => enemy.destroy());
-        this.player.destroy();
-        this.scene.restart();
+      this.physics.add.collider(this.player.sprite, this.enemyGroup, () => {
+        this.hasPlayerDied = true;
+        this.player.freeze();
+        const cam = this.cameras.main;
+        cam.fade(250, 0, 0, 0);
+        cam.once("camerafadeoutcomplete", () => {
+          this.enemies.forEach(enemy => enemy.destroy());
+          this.player.destroy();
+          this.scene.restart();
+        });
       });
-    });
+    }
 
     const shadowLayer = map.createBlankDynamicLayer("Shadow", tileset).fill(TILES.BLANK);
     this.tilemapVisibility = new TilemapVisibility(shadowLayer, this.level);
