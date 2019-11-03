@@ -14,9 +14,7 @@ import orientationLostMp3 from "./assets/audio/orientationLost.mp3"
 
 export default class Narrator {
   constructor() {
-    this.restRoomExplained = false
-    this.playerHasDied = 0
-    this.playedOrientationLost = false
+    this.said = []
   }
 
   preload(scene) {
@@ -60,23 +58,39 @@ export default class Narrator {
     })
   }
 
+  sayOnce(key, delay) {
+    return new Promise((resolve) => {
+      if (!this.said.includes(key)) {
+        this.said.push(key)
+        this.say(key, delay).then(() => resolve(true))
+      } else {
+        resolve(false)
+      }
+    })
+  }
+
   levelIntro(level, doorCount) {
     return new Promise((resolve) => {
-      if (this.playerHasDied && !this.playedOrientationLost) {
-        this.playedOrientationLost = true
-        this.say("orientationLost").then(() => resolve())
-      } else if (level === 1) {
-        this.say('emptyRoom', 2).then(() => {
-          this.say('Door' + doorCount, 0).then(() => {
-            this.say("although", 0).then(() => resolve());
-          })
+      if (level === 1) {
+        this.sayOnce('emptyRoom', 2).then((saidSth) => {
+          if (saidSth) {
+            this.say('Door' + doorCount, 0).then(() => {
+              this.sayOnce("although", 0).then(() => resolve());
+            })
+          } else {
+            resolve()
+          }
         });
       } else if (level === 2) {
-        this.say('furtherDown', 2).then(() => {
-          this.say('Door' + doorCount, 0).then(() => resolve())
+        this.sayOnce('furtherDown', 2).then((saidSth) => {
+          if (saidSth) {
+            this.say('Door' + doorCount, 0).then(() => resolve())
+          } else {
+            resolve()
+          }
         });
       } else if (level === 5) {
-        this.say("theLight", 2).then(() => resolve())
+        this.sayOnce("theLight", 2).then(() => resolve())
       } else {
         resolve()
       }

@@ -185,14 +185,15 @@ export default class DungeonScene extends Phaser.Scene {
       this.physics.add.collider(this.player.sprite, this.enemyGroup, () => {
         this.level = this.minLevel
         this.hasPlayerDied = true;
-        this.narrator.playerHasDied++
         this.player.freeze();
         const cam = this.cameras.main;
         cam.fade(250, 0, 0, 0);
         cam.once("camerafadeoutcomplete", () => {
           this.enemies.forEach(enemy => enemy.destroy());
+          this.player.unfreeze()
           this.player.destroy();
           this.scene.restart();
+          this.narrator.sayOnce("orientationLost")
         });
       });
     }
@@ -254,17 +255,14 @@ export default class DungeonScene extends Phaser.Scene {
       if (say) {
         setTimeout(() => {
           this.player.freeze()
+          this.narrator.sayOnce(say).then(() => this.player.unfreeze())
         }, 300)
-        this.narrator.say(say, 1).then(() => this.player.unfreeze())
       }
     }
 
     if (playerRoom === this.restRoom) {
       this.minLevel = this.level
-      if (!this.narrator.restRoomExplained) {
-        this.narrator.restRoomExplained = true
-        this.narrator.say("restRoom", 1)
-      }
+      this.narrator.sayOnce("restRoom", 1)
     }
   }
 }
