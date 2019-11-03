@@ -4,7 +4,7 @@ import Player from "./player.js";
 import Enemy from "./enemy.js";
 import TILES from "./tile-mapping.js";
 import TilemapVisibility from "./tilemap-visibility.js";
-import tileset from "./assets/buch-tileset-48px-extruded.png";
+import tileset from "./assets/dungeon-extruded.png";
 import characters from "./assets/buch-characters-64px-extruded.png";
 import theme from "./assets/audio/kai-engel-downfall.mp3"
 import emptyRoom from "./assets/audio/empty-room.mp3"
@@ -41,7 +41,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.load.audio("furtherDown", furtherDown)
     this.load.audio("againStairs", againStairs)
     this.load.audio("theLight", theLight)
-    this.load.image("tiles", tileset);
+    this.load.image("tileset", tileset)
     this.load.spritesheet(
       "characters",
       characters,
@@ -113,8 +113,8 @@ export default class DungeonScene extends Phaser.Scene {
     //  - Doors should be at least 2 tiles away from corners, so that we can place a corner tile on
     //    either side of the door location
     this.dungeon = new Dungeon({
-      width: 50,
-      height: 50,
+      width: 25,
+      height: 25,
       doorPadding: 2,
       rooms: {
         width: { min: 7, max: 15, onlyOdd: true },
@@ -123,13 +123,14 @@ export default class DungeonScene extends Phaser.Scene {
     })
 
     // Creating a blank tilemap with dimensions matching the dungeon
+    const tileWidthHeight = 48;
     const map = this.make.tilemap({
-      tileWidth: 48,
-      tileHeight: 48,
+      tileWidth: tileWidthHeight,
+      tileHeight: tileWidthHeight,
       width: this.dungeon.width,
       height: this.dungeon.height
     });
-    const tileset = map.addTilesetImage("tiles", null, 48, 48, 1, 2); // 1px margin, 2px spacing
+    const tileset = map.addTilesetImage("tileset", null, tileWidthHeight, tileWidthHeight, 1, 2); // 1px margin, 2px spacing
     this.groundLayer = map.createBlankDynamicLayer("Ground", tileset).fill(TILES.BLANK);
     this.stuffLayer = map.createBlankDynamicLayer("Stuff", tileset);
 
@@ -138,9 +139,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.dungeon.rooms.forEach(room => {
       const { x, y, width, height, left, right, top, bottom } = room;
 
-      // Fill the floor with mostly clean tiles, but occasionally place a dirty tile
-      // See "Weighted Randomize" example for more information on how to use weightedRandomize.
-      this.groundLayer.weightedRandomize(x + 1, y + 1, width - 2, height - 2, TILES.FLOOR);
+      // Fill the floor
+      this.groundLayer.fill(TILES.FLOOR, left + 1, top + 1, width - 2, height - 2);
 
       // Place the room corners tiles
       this.groundLayer.putTileAt(TILES.WALL.TOP_LEFT, left, top);
@@ -148,11 +148,11 @@ export default class DungeonScene extends Phaser.Scene {
       this.groundLayer.putTileAt(TILES.WALL.BOTTOM_RIGHT, right, bottom);
       this.groundLayer.putTileAt(TILES.WALL.BOTTOM_LEFT, left, bottom);
 
-      // Fill the walls with mostly clean tiles, but occasionally place a dirty tile
-      this.groundLayer.weightedRandomize(left + 1, top, width - 2, 1, TILES.WALL.TOP);
-      this.groundLayer.weightedRandomize(left + 1, bottom, width - 2, 1, TILES.WALL.BOTTOM);
-      this.groundLayer.weightedRandomize(left, top + 1, 1, height - 2, TILES.WALL.LEFT);
-      this.groundLayer.weightedRandomize(right, top + 1, 1, height - 2, TILES.WALL.RIGHT);
+      // Fill the walls
+      this.groundLayer.fill(TILES.WALL.TOP, left + 1, top, width - 2, 1);
+      this.groundLayer.fill(TILES.WALL.BOTTOM, left + 1, bottom, width - 2, 1);
+      this.groundLayer.fill(TILES.WALL.LEFT, left, top + 1, 1, height - 2);
+      this.groundLayer.fill(TILES.WALL.RIGHT, right, top + 1, 1, height - 2);
 
       // Dungeons have rooms that are connected with doors. Each door has an x & y relative to the
       // room's location
@@ -184,8 +184,7 @@ export default class DungeonScene extends Phaser.Scene {
 
     // Not exactly correct for the tileset since there are more possible floor tiles, but this will
     // do for the example.
-    this.groundLayer.setCollisionByExclusion([-1, 6, 7, 8, 26, 63, 65]);
-    this.stuffLayer.setCollisionByExclusion([-1, 6, 7, 8, 26]);
+    this.groundLayer.setCollisionByExclusion([7]);
 
     this.stuffLayer.setTileIndexCallback(TILES.STAIRS, () => {
       this.stuffLayer.setTileIndexCallback(TILES.STAIRS, null);

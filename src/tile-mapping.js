@@ -2,44 +2,33 @@
 // - Single index for putTileAt
 // - Array of weights for weightedRandomize
 // - Array or 2D array for putTilesAt
-const TILE_MAPPING = {
-  BLANK: 20,
+export default {
+  BLANK: 5,
   WALL: {
-    TOP_LEFT: 3,
-    TOP_RIGHT: 4,
-    BOTTOM_RIGHT: 23,
-    BOTTOM_LEFT: 22,
-    TOP: [{ index: 39, weight: 4 }, { index: [57, 58, 59], weight: 1 }],
-    LEFT: [{ index: 21, weight: 4 }, { index: [76, 95, 114], weight: 1 }],
-    RIGHT: [{ index: 19, weight: 4 }, { index: [77, 96, 115], weight: 1 }],
-    BOTTOM: [{ index: 1, weight: 4 }, { index: [78, 79, 80], weight: 1 }]
+    TOP_LEFT: 0,
+    TOP_RIGHT: 2,
+    BOTTOM_RIGHT: 14,
+    BOTTOM_LEFT: 12,
+    TOP: 1,
+    LEFT: 6,
+    RIGHT: 8,
+    BOTTOM: 13
   },
-  FLOOR: [{ index: 6, weight: 9 }, { index: [7, 8, 26, 63, 65], weight: 1 }],
-  POT: [{ index: 13, weight: 1 }, { index: 32, weight: 1 }, { index: 51, weight: 1 }],
+  FLOOR: 7,
   DOOR: {
-    TOP: [40, 6, 38],
-    // prettier-ignore
+    TOP: [3, 7, 4],
     LEFT: [
-      [40],
-      [6],
-      [2]
+      [3],
+      [7],
+      [9]
     ],
-    BOTTOM: [2, 6, 0],
-    // prettier-ignore
+    BOTTOM: [9, 7, 10],
     RIGHT: [
-      [38],
-      [6],
-      [0]
+      [4],
+      [7],
+      [10]
     ]
   },
-  CHEST: 166,
-  STAIRS: 81,
-  TRAP: 167,
-  // prettier-ignore
-  TOWER: [
-    [186],
-    [205]
-  ]
-};
-
-export default TILE_MAPPING;
+  CHEST: 34,
+  STAIRS: 53
+}
