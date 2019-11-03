@@ -2,22 +2,12 @@ import Phaser from "phaser";
 import Dungeon from "@mikewesthad/dungeon";
 import Player from "./player.js";
 import Enemy from "./enemy.js";
+import Narrator from "./narrator.js";
 import TILES from "./tile-mapping.js";
 import TilemapVisibility from "./tilemap-visibility.js";
 import tileset from "./assets/dungeon-extruded.png";
 import characters from "./assets/buch-characters-64px-extruded.png";
-import theme from "./assets/audio/kai-engel-downfall.mp3"
-import emptyRoom from "./assets/audio/empty-room.mp3"
-import oneDoor from "./assets/audio/with-one-door.mp3"
-import twoDoors from "./assets/audio/with-two-doors.mp3"
-import threeDoors from "./assets/audio/with-three-doors.mp3"
-import fourDoors from "./assets/audio/with-four-doors.mp3"
-import fiveDoors from "./assets/audio/with-five-doors.mp3"
-import although from "./assets/audio/although.mp3"
-import horribleJourney from "./assets/audio/horrible-journey.mp3"
-import furtherDown from "./assets/audio/further-down.mp3"
-import againStairs from "./assets/audio/again-stairs.mp3"
-import theLight from "./assets/audio/the-light.mp3"
+import themeMp3 from "./assets/audio/kai-engel-downfall.mp3"
 
 /**
  * Scene that generates a new dungeon
@@ -26,21 +16,13 @@ export default class DungeonScene extends Phaser.Scene {
   constructor() {
     super();
     this.level = 1;
+    this.narrator = new Narrator()
   }
 
   preload() {
-    this.load.audio("ambient", theme)
-    this.load.audio("emptyRoom", emptyRoom)
-    this.load.audio("oneDoor", oneDoor)
-    this.load.audio("twoDoors", twoDoors)
-    this.load.audio("threeDoors", threeDoors)
-    this.load.audio("fourDoors", fourDoors)
-    this.load.audio("fiveDoors", fiveDoors)
-    this.load.audio("although", although)
-    this.load.audio("horribleJourney", horribleJourney)
-    this.load.audio("furtherDown", furtherDown)
-    this.load.audio("againStairs", againStairs)
-    this.load.audio("theLight", theLight)
+    this.narrator.preload(this)
+    this.load.audio("ambient", themeMp3)
+
     this.load.image("tileset", tileset)
     this.load.spritesheet(
       "characters",
@@ -54,54 +36,8 @@ export default class DungeonScene extends Phaser.Scene {
     );
   }
 
-  playIntro() {
-    this.player.freeze();
-    const doorCount = this.dungeon.rooms[0].getDoorLocations().length;
-
-    if (this.level === 1) {
-      setTimeout(() => {
-        this.player.unfreeze();
-      }, 17000)
-      this.sound.play("emptyRoom", { delay: 2 });
-      if (doorCount === 1) {
-        this.sound.play("oneDoor", { delay: 5.5 });
-      } else if (doorCount === 2) {
-        this.sound.play("twoDoors", { delay: 5.5 });
-      } else if (doorCount === 3) {
-        this.sound.play("threeDoors", { delay: 5.5 });
-      } else if (doorCount === 4) {
-        this.sound.play("fourDoors", { delay: 5.5 });
-      } else if (doorCount === 5) {
-        this.sound.play("fiveDoors", { delay: 5.5 });
-      }
-      this.sound.play("although", { delay: 8 });
-    } else if (this.level === 2) {
-      setTimeout(() => {
-        this.player.unfreeze();
-      }, 16500)
-      this.sound.play("furtherDown", { delay: 2 });
-      if (doorCount === 1) {
-        this.sound.play("oneDoor", { delay: 13.5 });
-      } else if (doorCount === 2) {
-        this.sound.play("twoDoors", { delay: 13.5 });
-      } else if (doorCount === 3) {
-        this.sound.play("threeDoors", { delay: 13.5 });
-      } else if (doorCount === 4) {
-        this.sound.play("fourDoors", { delay: 13.5 });
-      } else if (doorCount === 5) {
-        this.sound.play("fiveDoors", { delay: 13.5 });
-      }
-    } else if (this.level === 5) {
-      setTimeout(() => {
-        this.player.unfreeze();
-      }, 10500)
-      this.sound.play("theLight", { delay: 2 });
-    } else {
-      this.player.unfreeze();
-    }
-  }
-
   create() {
+    this.narrator.create(this)
     this.sound.play("ambient", { volume: 0.3, loop: true });
 
     this.hasPlayerReachedStairs = false;
@@ -231,7 +167,11 @@ export default class DungeonScene extends Phaser.Scene {
     const shadowLayer = map.createBlankDynamicLayer("Shadow", tileset).fill(TILES.BLANK);
     this.tilemapVisibility = new TilemapVisibility(shadowLayer, this.level);
 
-    this.playIntro()
+    this.player.freeze()
+    this.narrator.levelIntro(
+      this.level,
+      this.dungeon.rooms[0].getDoorLocations().length
+    ).then(() => this.player.unfreeze())
 
     // Watch the player and tilemap layers for collisions, for the duration of the scene:
     this.physics.add.collider(this.player.sprite, this.groundLayer);
@@ -263,29 +203,27 @@ export default class DungeonScene extends Phaser.Scene {
 
     // Find the player's room using another helper method from the dungeon that converts from
     // dungeon XY (in grid units) to the corresponding room object
-    const playerTileX = this.groundLayer.worldToTileX(this.player.sprite.x);
-    const playerTileY = this.groundLayer.worldToTileY(this.player.sprite.y);
-    const playerRoom = this.dungeon.getRoomAt(playerTileX, playerTileY);
+    const playerRoom = this.dungeon.getRoomAt(
+      this.groundLayer.worldToTileX(this.player.sprite.x),
+      this.groundLayer.worldToTileY(this.player.sprite.y)
+    );
+
+    this.tilemapVisibility.setActiveRoom(playerRoom);
 
     if (playerRoom === this.endRoom && !this.hasPlayerFoundEndRoom) {
       this.hasPlayerFoundEndRoom = true;
-      let delay = 17000;
+      let say;
       if (this.level === 1) {
-        this.sound.play("horribleJourney");
+        say = 'horribleJourney'
       } else if (this.level === 2) {
-        this.sound.play("againStairs");
-        delay = 10000;
+        say = 'againStairs'
       }
-      if (this.level === 1 || this.level === 2) {
+      if (say) {
         setTimeout(() => {
           this.player.freeze()
-        }, 250)
-        setTimeout(() => {
-          this.player.unfreeze()
-        }, delay)
+        }, 300)
+        this.narrator.say(say, 1).then(() => this.player.unfreeze())
       }
     }
-
-    this.tilemapVisibility.setActiveRoom(playerRoom);
   }
 }
