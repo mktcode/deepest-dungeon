@@ -15,14 +15,15 @@ import themeMp3 from "./assets/audio/kai-engel-downfall.mp3"
 export default class DungeonScene extends Phaser.Scene {
   constructor() {
     super();
-    this.level = 4;
+    this.level = 1;
     this.minLevel = 1;
     this.narrator = new Narrator()
+    this.ambientMusik
   }
 
   preload() {
     this.narrator.preload(this)
-    this.load.audio("ambient", themeMp3)
+    this.load.audio("ambientMusik", themeMp3)
 
     this.load.image("tileset", tileset)
     this.load.spritesheet(
@@ -39,7 +40,11 @@ export default class DungeonScene extends Phaser.Scene {
 
   create() {
     this.narrator.create(this)
-    this.sound.play("ambient", { volume: 0.3, loop: true });
+
+    if (!this.ambientMusik) {
+      this.ambientMusik = this.sound.add("ambientMusik")
+      this.ambientMusik.play({ volume: 0.3, loop: true });
+    }
 
     this.hasPlayerReachedStairs = false;
     this.hasPlayerFoundEndRoom = false;
