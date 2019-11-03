@@ -9,8 +9,16 @@ import horribleJourneyMp3 from "./assets/audio/horrible-journey.mp3"
 import furtherDownMp3 from "./assets/audio/further-down.mp3"
 import againStairsMp3 from "./assets/audio/again-stairs.mp3"
 import theLightMp3 from "./assets/audio/the-light.mp3"
+import restRoomMp3 from "./assets/audio/restroom.mp3"
+import orientationLostMp3 from "./assets/audio/orientationLost.mp3"
 
 export default class Narrator {
+  constructor() {
+    this.restRoomExplained = false
+    this.playerHasDied = 0
+    this.playedOrientationLost = false
+  }
+
   preload(scene) {
     scene.load.audio("emptyRoom", emptyRoomMp3)
     scene.load.audio("Door1", oneDoorMp3)
@@ -23,6 +31,8 @@ export default class Narrator {
     scene.load.audio("furtherDown", furtherDownMp3)
     scene.load.audio("againStairs", againStairsMp3)
     scene.load.audio("theLight", theLightMp3)
+    scene.load.audio("restRoom", restRoomMp3)
+    scene.load.audio("orientationLost", orientationLostMp3)
   }
 
   create(scene) {
@@ -37,6 +47,8 @@ export default class Narrator {
     this.furtherDown = scene.sound.add("furtherDown")
     this.againStairs = scene.sound.add("againStairs")
     this.theLight = scene.sound.add("theLight")
+    this.restRoom = scene.sound.add("restRoom")
+    this.orientationLost = scene.sound.add("orientationLost")
   }
 
   say(key, delay) {
@@ -50,24 +62,21 @@ export default class Narrator {
 
   levelIntro(level, doorCount) {
     return new Promise((resolve) => {
-      if (level === 1) {
+      if (this.playerHasDied && !this.playedOrientationLost) {
+        this.playedOrientationLost = true
+        this.say("orientationLost").then(() => resolve())
+      } else if (level === 1) {
         this.say('emptyRoom', 2).then(() => {
           this.say('Door' + doorCount, 0).then(() => {
-            this.say("although", 0).then(() => {
-              resolve()
-            });
+            this.say("although", 0).then(() => resolve());
           })
         });
       } else if (level === 2) {
         this.say('furtherDown', 2).then(() => {
-          this.say('Door' + doorCount, 0).then(() => {
-            resolve()
-          })
+          this.say('Door' + doorCount, 0).then(() => resolve())
         });
       } else if (level === 5) {
-        this.say("theLight", 2).then(() => {
-          resolve()
-        })
+        this.say("theLight", 2).then(() => resolve())
       } else {
         resolve()
       }

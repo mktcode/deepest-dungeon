@@ -15,6 +15,7 @@ export default {
     BOTTOM: 13
   },
   FLOOR: 7,
+  FLOOR_LIGHT: 97,
   DOOR: {
     TOP: [3, 7, 4],
     LEFT: [
@@ -28,6 +29,10 @@ export default {
       [7],
       [10]
     ]
+  },
+  LIGHT_ENTRANCE: {
+    X: 90,
+    Y: 91
   },
   CHEST: 34,
   STAIRS: 53

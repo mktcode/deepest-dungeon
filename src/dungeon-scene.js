@@ -15,7 +15,8 @@ import themeMp3 from "./assets/audio/kai-engel-downfall.mp3"
 export default class DungeonScene extends Phaser.Scene {
   constructor() {
     super();
-    this.level = 1;
+    this.level = 4;
+    this.minLevel = 1;
     this.narrator = new Narrator()
   }
 
@@ -71,7 +72,6 @@ export default class DungeonScene extends Phaser.Scene {
     this.stuffLayer = map.createBlankDynamicLayer("Stuff", tileset);
 
     // Use the array of rooms generated to place tiles in the map
-    // Note: using an arrow function here so that "this" still refers to our scene
     this.dungeon.rooms.forEach(room => {
       const { x, y, width, height, left, right, top, bottom } = room;
 
@@ -108,19 +108,44 @@ export default class DungeonScene extends Phaser.Scene {
 
     // Separate out the rooms into:
     //  - The starting room (index = 0)
-    //  - A random room to be designated as the end room (with stairs and nothing else)
-    //  - An array of 90% of the remaining rooms, for placing random stuff (leaving 10% empty)
+    //  - A random room to be designated as the end room
+    //  - A potential rest room
+    //  - All other rooms
     const rooms = this.dungeon.rooms.slice();
     const startRoom = rooms.shift();
     this.endRoom = Phaser.Utils.Array.RemoveRandomElement(rooms);
-    const otherRooms = Phaser.Utils.Array.Shuffle(rooms).slice(0, rooms.length * 0.9);
+    const otherRooms = Phaser.Utils.Array.Shuffle(rooms);
+    this.restRoom = null;
+
+    // prepare a rest room every five levels
+    if (this.level >= 5 && !(this.level % 5)) {
+      this.restRoom = otherRooms.find(room => room.getDoorLocations().length === 1)
+      if (this.restRoom) {
+        Phaser.Utils.Array.Remove(otherRooms, this.restRoom)
+        this.groundLayer.fill(TILES.FLOOR_LIGHT, this.restRoom.left + 1, this.restRoom.top + 1, this.restRoom.width - 2, this.restRoom.height - 2);
+        let restRoomDoor = this.restRoom.getDoorLocations()[0]
+        if (restRoomDoor.y === 0) {
+          this.groundLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y);
+          this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.restRoom.x + restRoomDoor.x, this.restRoom.y - 1);
+        } else if (restRoomDoor.y === this.restRoom.height - 1) {
+          this.groundLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y);
+          this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y + 1);
+          this.groundLayer.getTileAt(this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y + 1).setFlipY(true)
+        } else if (restRoomDoor.x === 0) {
+          this.groundLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x, this.restRoom.y + restRoomDoor.y);
+          this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.restRoom.x - 1, this.restRoom.y + restRoomDoor.y);
+          this.groundLayer.getTileAt(this.restRoom.x - 1, this.restRoom.y + restRoomDoor.y).setFlipX(true)
+        } else if (restRoomDoor.x === this.restRoom.width - 1) {
+          this.groundLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y);
+          this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.restRoom.x + restRoomDoor.x + 1, this.restRoom.y + restRoomDoor.y);
+        }
+      }
+    }
 
     // Place the stairs
     this.stuffLayer.putTileAt(TILES.STAIRS, this.endRoom.centerX, this.endRoom.centerY);
 
-    // Not exactly correct for the tileset since there are more possible floor tiles, but this will
-    // do for the example.
-    this.groundLayer.setCollisionByExclusion([7]);
+    this.groundLayer.setCollisionByExclusion([7, 90, 91, 97]);
 
     this.stuffLayer.setTileIndexCallback(TILES.STAIRS, () => {
       this.stuffLayer.setTileIndexCallback(TILES.STAIRS, null);
@@ -136,10 +161,11 @@ export default class DungeonScene extends Phaser.Scene {
     });
 
     // Place the player in the first room
-    const playerRoom = startRoom;
-    const x = map.tileToWorldX(playerRoom.centerX);
-    const y = map.tileToWorldY(playerRoom.centerY);
-    this.player = new Player(this, x, y);
+    this.player = new Player(
+      this,
+      map.tileToWorldX(startRoom.centerX),
+      map.tileToWorldY(startRoom.centerY)
+    );
 
     // place enemies
     this.enemies = [];
@@ -152,7 +178,9 @@ export default class DungeonScene extends Phaser.Scene {
       })
 
       this.physics.add.collider(this.player.sprite, this.enemyGroup, () => {
+        this.level = this.minLevel
         this.hasPlayerDied = true;
+        this.narrator.playerHasDied++
         this.player.freeze();
         const cam = this.cameras.main;
         cam.fade(250, 0, 0, 0);
@@ -223,6 +251,14 @@ export default class DungeonScene extends Phaser.Scene {
           this.player.freeze()
         }, 300)
         this.narrator.say(say, 1).then(() => this.player.unfreeze())
+      }
+    }
+
+    if (playerRoom === this.restRoom) {
+      this.minLevel = this.level
+      if (!this.narrator.restRoomExplained) {
+        this.narrator.restRoomExplained = true
+        this.narrator.say("restRoom", 1)
       }
     }
   }
