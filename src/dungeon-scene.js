@@ -7,6 +7,7 @@ import TILES from "./tile-mapping.js";
 import TilemapVisibility from "./tilemap-visibility.js";
 import tileset from "./assets/dungeon-extruded.png";
 import characters from "./assets/buch-characters-64px-extruded.png";
+import hero from "./assets/hero.png";
 import themeMp3 from "./assets/audio/kai-engel-downfall.mp3"
 
 /**
@@ -34,6 +35,14 @@ export default class DungeonScene extends Phaser.Scene {
         frameHeight: 64,
         margin: 1,
         spacing: 2
+      }
+    );
+    this.load.spritesheet(
+      "hero",
+      hero,
+      {
+        frameWidth: 64,
+        frameHeight: 64
       }
     );
   }
