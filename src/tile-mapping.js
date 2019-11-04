@@ -5,10 +5,10 @@
 export default {
   BLANK: 5,
   WALL: {
-    TOP_LEFT: 0,
-    TOP_RIGHT: 2,
-    BOTTOM_RIGHT: 14,
-    BOTTOM_LEFT: 12,
+    TOP_LEFT: [{index: 0, weight: 5}, {index: 51, weight: 1}],
+    TOP_RIGHT: [{index: 2, weight: 5}, {index: 52, weight: 1}],
+    BOTTOM_RIGHT: [{index: 14, weight: 5}, {index: 58, weight: 1}],
+    BOTTOM_LEFT: [{index: 12, weight: 5}, {index: 57, weight: 1}],
     TOP: 1,
     LEFT: 6,
     RIGHT: 8,

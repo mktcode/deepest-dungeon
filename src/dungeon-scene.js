@@ -16,7 +16,7 @@ import themeMp3 from "./assets/audio/kai-engel-downfall.mp3"
 export default class DungeonScene extends Phaser.Scene {
   constructor() {
     super();
-    this.level = 1;
+    this.level = 10;
     this.minLevel = 1;
     this.narrator = new Narrator()
     this.ambientMusik
@@ -93,10 +93,10 @@ export default class DungeonScene extends Phaser.Scene {
       this.groundLayer.fill(TILES.FLOOR, left + 1, top + 1, width - 2, height - 2);
 
       // Place the room corners tiles
-      this.groundLayer.putTileAt(TILES.WALL.TOP_LEFT, left, top);
-      this.groundLayer.putTileAt(TILES.WALL.TOP_RIGHT, right, top);
-      this.groundLayer.putTileAt(TILES.WALL.BOTTOM_RIGHT, right, bottom);
-      this.groundLayer.putTileAt(TILES.WALL.BOTTOM_LEFT, left, bottom);
+      this.groundLayer.weightedRandomize(left, top, 1, 1, TILES.WALL.TOP_LEFT);
+      this.groundLayer.weightedRandomize(right, top, 1, 1, TILES.WALL.TOP_RIGHT);
+      this.groundLayer.weightedRandomize(right, bottom, 1, 1, TILES.WALL.BOTTOM_RIGHT);
+      this.groundLayer.weightedRandomize(left, bottom, 1, 1, TILES.WALL.BOTTOM_LEFT);
 
       // Fill the walls
       this.groundLayer.fill(TILES.WALL.TOP, left + 1, top, width - 2, 1);
