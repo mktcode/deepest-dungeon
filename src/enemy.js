@@ -21,8 +21,8 @@ export default class Enemy {
 
     this.sprite = scene.physics.add
       .sprite(map.tileToWorldX(this.room.centerX), map.tileToWorldY(this.room.centerY), "characters", 0)
-      .setSize(22, 33)
-      .setOffset(23, 27);
+      .setSize(27, 28)
+      .setOffset(20, 35);
 
     this.sprite.anims.play("enemy-walk");
   }
