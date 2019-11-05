@@ -8,6 +8,7 @@ import TilemapVisibility from "./tilemap-visibility.js";
 import tileset from "./assets/dungeon-extruded.png";
 import characters from "./assets/buch-characters-64px-extruded.png";
 import hero from "./assets/hero.png";
+import sword from "./assets/sword.png";
 import themeMp3 from "./assets/audio/kai-engel-downfall.mp3"
 
 /**
@@ -43,6 +44,14 @@ export default class DungeonScene extends Phaser.Scene {
       {
         frameWidth: 64,
         frameHeight: 64
+      }
+    );
+    this.load.spritesheet(
+      "sword",
+      sword,
+      {
+        frameWidth: 128,
+        frameHeight: 128
       }
     );
   }
@@ -191,7 +200,7 @@ export default class DungeonScene extends Phaser.Scene {
         this.enemyGroup.add(enemy.sprite);
       })
 
-      this.physics.add.collider(this.player.sprite, this.enemyGroup, () => {
+      this.physics.add.collider(this.player.hero, this.enemyGroup, () => {
         this.level = this.minLevel
         this.hasPlayerDied = true;
         this.player.freeze();
@@ -217,15 +226,15 @@ export default class DungeonScene extends Phaser.Scene {
     ).then(() => this.player.unfreeze())
 
     // Watch the player and tilemap layers for collisions, for the duration of the scene:
-    this.physics.add.collider(this.player.sprite, this.groundLayer);
-    this.physics.add.collider(this.player.sprite, this.stuffLayer);
+    this.physics.add.collider(this.player.hero, this.groundLayer);
+    this.physics.add.collider(this.player.hero, this.stuffLayer);
 
     // Phaser supports multiple cameras, but you can access the default camera like this:
     const camera = this.cameras.main;
 
     // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-    camera.startFollow(this.player.sprite);
+    camera.startFollow(this.player.hero);
 
     // Help text that has a "fixed" position on the screen
     this.add
@@ -247,8 +256,8 @@ export default class DungeonScene extends Phaser.Scene {
     // Find the player's room using another helper method from the dungeon that converts from
     // dungeon XY (in grid units) to the corresponding room object
     const playerRoom = this.dungeon.getRoomAt(
-      this.groundLayer.worldToTileX(this.player.sprite.x),
-      this.groundLayer.worldToTileY(this.player.sprite.y)
+      this.groundLayer.worldToTileX(this.player.hero.x),
+      this.groundLayer.worldToTileY(this.player.hero.y)
     );
 
     this.tilemapVisibility.setActiveRoom(playerRoom);
