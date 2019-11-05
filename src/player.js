@@ -61,7 +61,7 @@ export default class Player {
 
     this.sprite = scene.physics.add
       .sprite(x, y, "hero", 0)
-      .setSize(22, 33)
+      .setSize(20, 27)
       .setOffset(23, 27);
 
     this.sprite.anims.play("player-walk-down");
