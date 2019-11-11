@@ -14,8 +14,16 @@ export default class Hero {
     this.keys = this.scene.input.keyboard.createCursorKeys();
     this.speed = 150
     this.attacking = false
+    this.lastDirection = 'down'
 
     this.addToScene(x, y)
+
+    this.keys.space.on('down', () => {
+      this.attacking = true
+      this.attack(this.lastDirection).once('complete', () => {
+        this.attacking = false
+      })
+    })
   }
 
   static preload(scene) {
@@ -50,12 +58,13 @@ export default class Hero {
   }
 
   walk(direction) {
-    this.sprites.hero.anims.play('walk-' + direction)
+    this.sprites.hero.anims.play('walk-' + direction, true)
   }
 
   attack(direction) {
-    this.sprites.hero.anims.play('attack-' + direction)
-    this.sprites.sword.anims.play('sword-' + direction)
+    this.sprites.hero.anims.play('attack-' + direction, true)
+    this.sprites.sword.anims.play('sword-' + direction, true)
+    return this.scene.anims.get('attack-' + direction)
   }
 
   stop() {
@@ -89,29 +98,29 @@ export default class Hero {
       if (this.keys.up.isDown) {
         this.lastDirection = 'up'
         if (this.keys.left.isDown) {
-          this.sprites.hero.anims.play("walk-up-left", true);
+          this.walk("up-left");
         } else if (this.keys.right.isDown) {
-          this.sprites.hero.anims.play("walk-up-right", true);
+          this.walk("up-right");
         } else {
-          this.sprites.hero.anims.play("walk-up", true);
+          this.walk("up");
         }
       } else if (this.keys.down.isDown) {
         this.lastDirection = 'down'
         if (this.keys.left.isDown) {
-          this.sprites.hero.anims.play("walk-down-left", true);
+          this.walk("down-left");
         } else if (this.keys.right.isDown) {
-          this.sprites.hero.anims.play("walk-down-right", true);
+          this.walk("down-right");
         } else {
-          this.sprites.hero.anims.play("walk-down", true);
+          this.walk("down");
         }
       } else if (this.keys.left.isDown) {
         this.lastDirection = 'left'
-        this.sprites.hero.anims.play("walk-left", true);
+        this.walk("left");
       } else if (this.keys.right.isDown) {
         this.lastDirection = 'right'
-        this.sprites.hero.anims.play("walk-right", true);
+        this.walk("right");
       } else {
-        this.sprites.hero.anims.stop();
+        this.stop()
 
         // If we were moving & now we're not, then pick a single idle frame to use
         if (this.lastDirection === 'up') this.sprites.hero.setTexture("hero", 12);

@@ -41,7 +41,9 @@ export default class MenuScene extends Phaser.Scene {
       callback: () => {
         const direction = directions.shift()
         directions.push(direction)
-        hero.attack(direction)
+        hero.attack(direction).once('complete', () => {
+          hero.walk('down')
+        })
       },
       repeat: -1
     })

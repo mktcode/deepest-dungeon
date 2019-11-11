@@ -6,7 +6,7 @@ import TILES from "../tile-mapping.js";
 import TilemapVisibility from "../tilemap-visibility.js";
 
 export default class DungeonScene extends Phaser.Scene {
-  constructor(level, hero) {
+  constructor(level) {
     super('Dungeon' + level)
     this.level = level
     this.dungeon = new Dungeon({
