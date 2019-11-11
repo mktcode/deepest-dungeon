@@ -3,7 +3,7 @@ import MenuScene from "./scenes/menu.js"
 import PreloadScene from "./scenes/preload.js"
 import './assets/style.sass'
 
-new Phaser.Game({
+const game = new Phaser.Game({
   type: Phaser.AUTO,
   scale: {
     mode: Phaser.Scale.RESIZE,
