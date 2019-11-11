@@ -4,6 +4,7 @@ import Hero from "../objects/hero.js";
 import Enemy from "../objects/enemy.js";
 import TILES from "../tile-mapping.js";
 import TilemapVisibility from "../tilemap-visibility.js";
+import Narrator from '../narrator.js'
 
 export default class DungeonScene extends Phaser.Scene {
   constructor(level) {
@@ -32,6 +33,7 @@ export default class DungeonScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.fadeIn(250, 0, 0, 0)
+    this.narrator = new Narrator(this)
 
     this.prepareMap()
     this.prepareRooms()
@@ -42,6 +44,7 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.events.on('wake', () => {
       this.cameras.main.fadeIn(250, 0, 0, 0)
+
       // keyboard bug workaround
       this.hero.keys.up.isDown = false
       this.hero.keys.down.isDown = false
@@ -50,11 +53,29 @@ export default class DungeonScene extends Phaser.Scene {
       this.hero.keys.space.isDown = false
       this.hero.keys.shift.isDown = false
 
-      // place hero in startroom again
-      this.hero.jumpTo(
-        this.map.tileToWorldX(this.startRoom.centerX),
-        this.map.tileToWorldY(this.startRoom.centerY)
-      )
+      if (this.restRoom && this.registry.get('wakeupInRestRoom')) {
+        this.registry.set('wakeupInRestRoom', false)
+        // place hero in rest room
+        this.hero.jumpTo(
+          this.map.tileToWorldX(this.restRoom.centerX),
+          this.map.tileToWorldY(this.restRoom.centerY)
+        )
+      } else {
+        // place hero in startroom
+        this.hero.jumpTo(
+          this.map.tileToWorldX(this.startRoom.centerX),
+          this.map.tileToWorldY(this.startRoom.centerY)
+        )
+      }
+
+      this.hero.unfreeze()
+    })
+
+    this.hero.freeze()
+    this.narrator.levelIntro(
+      this.level,
+      this.startRoom.getDoorLocations().length
+    ).then(() => {
       this.hero.unfreeze()
     })
   }
@@ -163,7 +184,10 @@ export default class DungeonScene extends Phaser.Scene {
       })
 
       this.physics.add.collider(this.hero.sprites.hero, this.enemyGroup, (hero, enemy) => {
-        this.hero.sprites.hero.body.moves = false
+        if (this.registry.get('minLevel') >= 5) {
+          this.registry.set('wakeupInRestRoom', true)
+        }
+        this.hero.freeze()
         enemy.body.moves = false
         this.scene.sleep()
         this.scene.wake('Dungeon' + this.registry.get('minLevel'))
@@ -206,6 +230,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.tilemapVisibility.setActiveRoom(playerRoom);
 
     if (playerRoom === this.restRoom) {
+      this.narrator.sayOnce('restRoom')
       this.registry.set('minLevel', this.level)
     }
   }
