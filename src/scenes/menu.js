@@ -15,6 +15,7 @@ export default class MenuScene extends Phaser.Scene {
 
   create() {
     this.registry.set('minLevel', 1)
+    this.registry.set('narratorSaid', [])
     this.cameras.main.fadeIn(250, 0, 0, 0);
     this.sound.play("ambientMusik", { volume: 0.3, loop: true })
 

@@ -13,8 +13,21 @@ import restRoomMp3 from "./assets/audio/restroom.mp3"
 import orientationLostMp3 from "./assets/audio/orientationLost.mp3"
 
 export default class Narrator {
-  constructor() {
-    this.said = []
+  constructor(scene) {
+    this.scene = scene
+    this.emptyRoom = scene.sound.add("emptyRoom")
+    this.Door1 = scene.sound.add("Door1")
+    this.Door2 = scene.sound.add("Door2")
+    this.Door3 = scene.sound.add("Door3")
+    this.Door4 = scene.sound.add("Door4")
+    this.Door5 = scene.sound.add("Door5")
+    this.although = scene.sound.add("although")
+    this.horribleJourney = scene.sound.add("horribleJourney")
+    this.furtherDown = scene.sound.add("furtherDown")
+    this.againStairs = scene.sound.add("againStairs")
+    this.theLight = scene.sound.add("theLight")
+    this.restRoom = scene.sound.add("restRoom")
+    this.orientationLost = scene.sound.add("orientationLost")
   }
 
   static preload(scene) {
@@ -33,22 +46,6 @@ export default class Narrator {
     scene.load.audio("orientationLost", orientationLostMp3)
   }
 
-  static create(scene) {
-    this.emptyRoom = scene.sound.add("emptyRoom")
-    this.Door1 = scene.sound.add("Door1")
-    this.Door2 = scene.sound.add("Door2")
-    this.Door3 = scene.sound.add("Door3")
-    this.Door4 = scene.sound.add("Door4")
-    this.Door5 = scene.sound.add("Door5")
-    this.although = scene.sound.add("although")
-    this.horribleJourney = scene.sound.add("horribleJourney")
-    this.furtherDown = scene.sound.add("furtherDown")
-    this.againStairs = scene.sound.add("againStairs")
-    this.theLight = scene.sound.add("theLight")
-    this.restRoom = scene.sound.add("restRoom")
-    this.orientationLost = scene.sound.add("orientationLost")
-  }
-
   say(key, delay) {
     return new Promise((resolve) => {
       this[key].play({delay: delay || 0})
@@ -59,9 +56,11 @@ export default class Narrator {
   }
 
   sayOnce(key, delay) {
+    const narratorSaid = this.scene.registry.get('narratorSaid')
     return new Promise((resolve) => {
-      if (!this.said.includes(key)) {
-        this.said.push(key)
+      if (!narratorSaid.includes(key)) {
+        narratorSaid.push(key)
+        this.scene.registry.set('narratorSaid', narratorSaid)
         this.say(key, delay).then(() => resolve(true))
       } else {
         resolve(false)
