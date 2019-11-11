@@ -39,6 +39,24 @@ export default class DungeonScene extends Phaser.Scene {
     this.addEnemies()
     this.addShadowLayer()
     this.addUi()
+
+    this.events.on('wake', () => {
+      this.cameras.main.fadeIn(250, 0, 0, 0)
+      // keyboard bug workaround
+      this.hero.keys.up.isDown = false
+      this.hero.keys.down.isDown = false
+      this.hero.keys.left.isDown = false
+      this.hero.keys.right.isDown = false
+      this.hero.keys.space.isDown = false
+      this.hero.keys.shift.isDown = false
+
+      // place hero in startroom again
+      this.hero.jumpTo(
+        this.map.tileToWorldX(this.startRoom.centerX),
+        this.map.tileToWorldY(this.startRoom.centerY)
+      )
+      this.hero.unfreeze()
+    })
   }
 
   prepareMap() {
@@ -94,16 +112,6 @@ export default class DungeonScene extends Phaser.Scene {
 
     // Place the stairs
     this.stuffLayer.putTileAt(TILES.STAIRS, this.endRoom.centerX, this.endRoom.centerY);
-    this.stuffLayer.setTileIndexCallback(TILES.STAIRS, () => {
-      this.stuffLayer.setTileIndexCallback(TILES.STAIRS, null);
-      const nextLevel = this.level + 1
-      if (this.scene.get('Dungeon' + nextLevel)) {
-        this.scene.start('Dungeon' + nextLevel)
-      } else {
-        this.scene.stop()
-        this.scene.add('Dungeon' + nextLevel, new DungeonScene(nextLevel), true)
-      }
-    });
 
     // prepare rest room if exists
     if (this.restRoom) {
@@ -157,7 +165,13 @@ export default class DungeonScene extends Phaser.Scene {
       this.physics.add.collider(this.hero.sprites.hero, this.enemyGroup, (hero, enemy) => {
         this.hero.sprites.hero.body.moves = false
         enemy.body.moves = false
-        this.scene.start('Dungeon' + this.registry.get('minLevel'))
+        this.scene.sleep()
+        this.scene.wake('Dungeon' + this.registry.get('minLevel'))
+      });
+      this.physics.add.collider(this.hero.sprites.sword, this.enemyGroup, (hero, enemy) => {
+        if (this.hero.attacking) {
+          console.log('enemy hit!')
+        }
       });
     }
   }
