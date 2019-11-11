@@ -53,12 +53,8 @@ export default class MenuScene extends Phaser.Scene {
       })
       .setInteractive();
     newGame.on('pointerup', () => {
-      // const cam = this.cameras.main;
-      // cam.fade(250, 0, 0, 0);
-      // cam.once("camerafadeoutcomplete", () => {
-        this.scene.sleep()
-        this.scene.add('Dungeon1', new DungeonScene(1), true)
-      // });
+      this.scene.sleep()
+      this.scene.add('Dungeon1', new DungeonScene(1), true)
     })
     const loadGame = this.add
       .text(centerX - 61, centerY + 200, 'Load Game', {
