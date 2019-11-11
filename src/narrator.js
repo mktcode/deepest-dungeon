@@ -17,7 +17,7 @@ export default class Narrator {
     this.said = []
   }
 
-  preload(scene) {
+  static preload(scene) {
     scene.load.audio("emptyRoom", emptyRoomMp3)
     scene.load.audio("Door1", oneDoorMp3)
     scene.load.audio("Door2", twoDoorsMp3)
@@ -33,7 +33,7 @@ export default class Narrator {
     scene.load.audio("orientationLost", orientationLostMp3)
   }
 
-  create(scene) {
+  static create(scene) {
     this.emptyRoom = scene.sound.add("emptyRoom")
     this.Door1 = scene.sound.add("Door1")
     this.Door2 = scene.sound.add("Door2")

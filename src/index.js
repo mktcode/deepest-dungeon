@@ -1,17 +1,9 @@
-/**
- * Author: Michael Hadley, mikewesthad.com
- * Asset Credits:
- *  - Tileset, Michele "Buch" Bucelli (tileset artist) & Abram Connelly (tileset sponsor):
- *     https://opengameart.org/content/top-down-dungeon-tileset
- *  - Character, Michele "Buch" Bucelli:
- *      https://opengameart.org/content/a-platformer-in-the-forest
- */
-
-import Phaser from "phaser";
-import DungeonScene from "./dungeon-scene.js";
+import Phaser from "phaser"
+import MenuScene from "./scenes/menu.js"
+import PreloadScene from "./scenes/preload.js"
 import './assets/style.sass'
 
-const config = {
+new Phaser.Game({
   type: Phaser.AUTO,
   scale: {
     mode: Phaser.Scale.RESIZE,
@@ -21,7 +13,7 @@ const config = {
   backgroundColor: "#000",
   parent: "body",
   pixelArt: true,
-  scene: DungeonScene,
+  scene: [PreloadScene, MenuScene],
   physics: {
     default: "arcade",
     arcade: {
@@ -31,13 +23,6 @@ const config = {
   },
   audio: {
     disableWebAudio: true
-  }
-};
-
-let game;
-window.addEventListener("click", event => {
-  if (!game) {
-    game = new Phaser.Game(config);
   }
 })
 
