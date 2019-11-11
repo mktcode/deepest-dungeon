@@ -9,6 +9,7 @@ import themeMp3 from "../assets/audio/kai-engel-downfall.mp3"
 import tileset from "../assets/dungeon-extruded.png";
 import introGround from "../assets/intro-ground.png";
 import enemies from "../assets/enemies.png";
+import ui from "../assets/ui.png";
 
 export default class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -24,6 +25,14 @@ export default class PreloadScene extends Phaser.Scene {
       {
         frameWidth: 192,
         frameHeight: 192
+      }
+    );
+    this.load.spritesheet(
+      "ui",
+      ui,
+      {
+        frameWidth: 16,
+        frameHeight: 16
       }
     );
 

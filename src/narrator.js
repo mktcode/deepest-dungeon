@@ -48,10 +48,14 @@ export default class Narrator {
 
   say(key, delay) {
     return new Promise((resolve) => {
-      this[key].play({delay: delay || 0})
-      this[key].once('complete', () => {
+      if (this.scene.registry.get('disableNarrator')) {
         resolve()
-      })
+      } else {
+        this[key].play({delay: delay || 0})
+        this[key].once('complete', () => {
+          resolve()
+        })
+      }
     })
   }
 
