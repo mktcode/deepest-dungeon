@@ -1,8 +1,6 @@
 import Phaser from "phaser"
 import DungeonScene from "../scenes/dungeon.js"
 import Hero from "../objects/hero.js"
-import Enemy from "../objects/enemy.js"
-import Animations from "../animations.js"
 
 // assets
 import themeMp3 from "../assets/audio/kai-engel-downfall.mp3"

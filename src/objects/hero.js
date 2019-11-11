@@ -1,4 +1,3 @@
-import Phaser from 'phaser'
 import DungeonScene from "../scenes/dungeon.js"
 import TILES from "../tile-mapping.js";
 
