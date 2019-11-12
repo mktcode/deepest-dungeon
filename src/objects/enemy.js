@@ -20,27 +20,50 @@ export default class Enemy {
     this.dungeon.physics.add.collider(this.sprite, this.dungeon.groundLayer);
 
     this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.hero, this.sprite, (hero, enemy) => {
-      if (this.dungeon.registry.get('minLevel') >= 5) {
-        this.dungeon.registry.set('wakeupInRestRoom', true)
+      if (!this.dungeon.hero.underAttack) {
+        this.dungeon.hero.underAttack = true
+        let heroHp = this.dungeon.registry.get('hp')
+        heroHp--
+        this.dungeon.registry.set('hp', heroHp)
+        if (heroHp) {
+          if (hero.body.touching.up) {
+            hero.body.setVelocityY(300)
+          } else if (hero.body.touching.down) {
+            hero.body.setVelocityY(-300)
+          } else if (hero.body.touching.left) {
+            hero.body.setVelocityX(300)
+          } else if (hero.body.touching.right) {
+            hero.body.setVelocityX(-300)
+          }
+          this.dungeon.time.delayedCall(250, () => {
+            this.dungeon.hero.underAttack = false
+          });
+        } else {
+          if (this.dungeon.registry.get('minLevel') >= 5) {
+            this.dungeon.registry.set('wakeupInRestRoom', true)
+          }
+          this.dungeon.hero.underAttack = false
+          this.dungeon.registry.set('hp', 3)
+          this.dungeon.hero.freeze()
+          this.dungeon.scene.sleep()
+          this.dungeon.scene.wake('Dungeon' + this.dungeon.registry.get('minLevel'))
+        }
       }
-      this.dungeon.hero.freeze()
-      this.dungeon.scene.sleep()
-      this.dungeon.scene.wake('Dungeon' + this.dungeon.registry.get('minLevel'))
     });
     this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.sword, this.sprite, (hero, enemy) => {
       if (this.dungeon.hero.attacking && !this.underAttack) {
         this.underAttack = true
         this.hp--
         if (this.dungeon.hero.lastDirection === 'up') {
-          enemy.body.setVelocityY(-100)
+          enemy.body.setVelocityY(-300)
         } else if (this.dungeon.hero.lastDirection === 'down') {
-          enemy.body.setVelocityY(100)
+          enemy.body.setVelocityY(300)
         } else if (this.dungeon.hero.lastDirection === 'left') {
-          enemy.body.setVelocityX(-100)
+          enemy.body.setVelocityX(-300)
         } else if (this.dungeon.hero.lastDirection === 'right') {
-          enemy.body.setVelocityX(100)
+          enemy.body.setVelocityX(300)
         }
-        this.dungeon.time.delayedCall(1000, () => {
+        this.dungeon.time.delayedCall(250, () => {
           this.underAttack = false
         });
       }

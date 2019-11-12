@@ -223,6 +223,14 @@ export default class DungeonScene extends Phaser.Scene {
         backgroundColor: "#ffffff"
       })
       .setScrollFactor(0);
+    this.hpText = this.add
+      .text(16, 64, `HP: ${this.registry.get('hp')}`, {
+        font: "18px monospace",
+        fill: "#000000",
+        padding: { x: 20, y: 10 },
+        backgroundColor: "#ffffff"
+      })
+      .setScrollFactor(0);
   }
 
   update() {
@@ -247,5 +255,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.narrator.sayOnce('restRoom')
       this.registry.set('minLevel', this.level)
     }
+
+    this.hpText.setText('HP: ' + this.registry.get('hp'))
   }
 }
