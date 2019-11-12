@@ -35,7 +35,7 @@ export default class Enemy {
           } else if (hero.body.touching.right) {
             hero.body.setVelocityX(-300)
           }
-          this.dungeon.time.delayedCall(250, () => {
+          this.dungeon.time.delayedCall(750, () => {
             this.dungeon.hero.underAttack = false
           });
         } else {
@@ -63,7 +63,7 @@ export default class Enemy {
         } else if (this.dungeon.hero.lastDirection === 'right') {
           enemy.body.setVelocityX(300)
         }
-        this.dungeon.time.delayedCall(250, () => {
+        this.dungeon.time.delayedCall(750, () => {
           this.underAttack = false
         });
       }
