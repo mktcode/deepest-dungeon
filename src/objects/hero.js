@@ -24,6 +24,7 @@ export default class Hero {
     this.keys.space.on('down', () => {
       if (this.scene.registry.get('weapon')) {
         this.attacking = true
+        this.scene.cameras.main.shake(500, .002)
         this.attack(this.lastDirection).once('complete', () => {
           this.attacking = false
         })
