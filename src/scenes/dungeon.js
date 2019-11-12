@@ -24,6 +24,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.endRoom = Phaser.Utils.Array.RemoveRandomElement(rooms);
     this.otherRooms = Phaser.Utils.Array.Shuffle(rooms);
     this.restRoom = null;
+    this.swordRoom = null;
 
     // add rest room only every 5 levels
     if (this.level >= 5 && !(this.level % 5)) {
@@ -39,6 +40,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.prepareRooms()
     this.addHero()
     this.addEnemies()
+    this.addItems()
     this.addShadowLayer()
     this.addUi()
 
@@ -176,26 +178,31 @@ export default class DungeonScene extends Phaser.Scene {
   addEnemies() {
     this.enemies = [];
     if (this.level > 1) {
-      this.enemyGroup = this.add.group();
       this.otherRooms.forEach(room => {
-        let enemy = new Enemy(this, this.map, room)
-        this.enemies.push(enemy);
-        this.enemyGroup.add(enemy.sprite);
+        this.enemies.push(new Enemy(this, this.map, room));
       })
+    }
+  }
 
-      this.physics.add.collider(this.hero.sprites.hero, this.enemyGroup, (hero, enemy) => {
-        if (this.registry.get('minLevel') >= 5) {
-          this.registry.set('wakeupInRestRoom', true)
-        }
-        this.hero.freeze()
-        enemy.body.moves = false
-        this.scene.sleep()
-        this.scene.wake('Dungeon' + this.registry.get('minLevel'))
-      });
-      this.physics.add.collider(this.hero.sprites.sword, this.enemyGroup, (hero, enemy) => {
-        if (this.hero.attacking) {
-          console.log('enemy hit!')
-        }
+  addItems() {
+    // sword
+    if (this.level === 3 && !this.registry.get('weapon')) {
+      this.swordRoom = Phaser.Utils.Array.GetRandom(this.otherRooms);
+      const theSword = this.physics.add.sprite(
+        this.map.tileToWorldX(this.swordRoom.centerX),
+        this.map.tileToWorldY(this.swordRoom.centerY),
+        'sword',
+        20
+      ).setSize(32, 32)
+      this.tweens.add({
+        targets: theSword,
+        yoyo: true,
+        repeat: -1,
+        y: '+=5'
+      })
+      this.physics.add.collider(this.hero.sprites.hero, theSword, () => {
+        this.registry.set('weapon', 'sword')
+        theSword.destroy()
       });
     }
   }
@@ -220,7 +227,14 @@ export default class DungeonScene extends Phaser.Scene {
 
   update() {
     this.hero.update()
-    this.enemies.forEach(e => e.update())
+    this.enemies.forEach(e => {
+      if (e.hp) {
+        e.update()
+      } else {
+        e.sprite.destroy()
+        Phaser.Utils.Array.Remove(this.enemies, e)
+      }
+    })
     // Find the player's room using another helper method from the dungeon that converts from
     // dungeon XY (in grid units) to the corresponding room object
     const playerRoom = this.dungeon.getRoomAt(

@@ -21,11 +21,14 @@ export default class Hero {
 
     // attack
     this.keys.space.on('down', () => {
-      this.attacking = true
-      this.setSwordHitBox(this.lastDirection)
-      this.attack(this.lastDirection).once('complete', () => {
-        this.attacking = false
-      })
+      if (this.scene.registry.get('weapon')) {
+        this.attacking = true
+        this.sprites.sword.body.checkCollision.none = false
+        this.attack(this.lastDirection).once('complete', () => {
+          this.attacking = false
+          this.sprites.sword.body.checkCollision.none = true
+        })
+      }
     })
 
     // use
@@ -71,6 +74,7 @@ export default class Hero {
     this.scene.cameras.main.startFollow(this.sprites.hero)
 
     this.sprites.sword = this.scene.physics.add.sprite(x, y, "sword", 0);
+    this.sprites.sword.body.checkCollision.none = true
     this.setSwordHitBox('down')
   }
 
@@ -80,11 +84,11 @@ export default class Hero {
   }
 
   walk(direction) {
+    this.setSwordHitBox(direction)
     this.sprites.hero.anims.play('walk-' + direction, true)
   }
 
   attack(direction) {
-    this.setSwordHitBox(direction)
     this.sprites.hero.anims.play('attack-' + direction, true)
     this.sprites.sword.anims.play('sword-' + direction, true)
     return this.scene.anims.get('attack-' + direction)
@@ -105,8 +109,16 @@ export default class Hero {
   setSwordHitBox(direction) {
     if (direction === 'down') {
       this.sprites.sword.setSize(50, 30).setOffset(40, 87)
+    } else if (direction === 'down-left') {
+      this.sprites.sword.setSize(50, 30).setOffset(25, 87)
+    } else if (direction === 'down-right') {
+      this.sprites.sword.setSize(50, 30).setOffset(55, 87)
     } else if (direction === 'up') {
       this.sprites.sword.setSize(50, 30).setOffset(40, 28)
+    } else if (direction === 'up-left') {
+      this.sprites.sword.setSize(50, 30).setOffset(25, 28)
+    } else if (direction === 'up-right') {
+      this.sprites.sword.setSize(50, 30).setOffset(55, 28)
     } else if (direction === 'left') {
       this.sprites.sword.setSize(30, 50).setOffset(24, 47)
     } else if (direction === 'right') {
