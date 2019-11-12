@@ -23,10 +23,8 @@ export default class Hero {
     this.keys.space.on('down', () => {
       if (this.scene.registry.get('weapon')) {
         this.attacking = true
-        this.sprites.sword.body.checkCollision.none = false
         this.attack(this.lastDirection).once('complete', () => {
           this.attacking = false
-          this.sprites.sword.body.checkCollision.none = true
         })
       }
     })
@@ -74,7 +72,6 @@ export default class Hero {
     this.scene.cameras.main.startFollow(this.sprites.hero)
 
     this.sprites.sword = this.scene.physics.add.sprite(x, y, "sword", 0);
-    this.sprites.sword.body.checkCollision.none = true
     this.setSwordHitBox('down')
   }
 
