@@ -91,7 +91,8 @@ export default class DungeonScene extends Phaser.Scene {
       width: this.dungeon.width,
       height: this.dungeon.height
     });
-    this.tileset = this.map.addTilesetImage("tileset", null, tileWidthHeight, tileWidthHeight, 1, 2); // 1px margin, 2px spacing
+    const tilesetImage = this.level === 10 ? "tilesetMc" : "tileset"
+    this.tileset = this.map.addTilesetImage(tilesetImage, null, tileWidthHeight, tileWidthHeight, 1, 2); // 1px margin, 2px spacing
     this.groundLayer = this.map.createBlankDynamicLayer("Ground", this.tileset).fill(TILES.BLANK);
     this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset);
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
