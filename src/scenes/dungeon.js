@@ -178,9 +178,13 @@ export default class DungeonScene extends Phaser.Scene {
 
   addEnemies() {
     this.enemies = [];
+    const maxEnemies = Math.min(10, this.level - 1)
     if (this.level > 1) {
       this.otherRooms.forEach(room => {
-        this.enemies.push(new Enemy(this, this.map, room));
+        const num = Phaser.Math.Between(1, maxEnemies)
+        for (let i = 1; i <= num; i++) {
+          this.enemies.push(new Enemy(this, this.map, room));
+        }
       })
     }
   }
