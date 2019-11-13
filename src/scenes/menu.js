@@ -14,6 +14,7 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   create() {
+    this.startLevel = 3
     this.registry.set('minLevel', 1)
     this.registry.set('narratorSaid', [])
     this.registry.set('disableNarrator', false)
@@ -74,7 +75,7 @@ export default class MenuScene extends Phaser.Scene {
       .setInteractive();
     newGame.on('pointerup', () => {
       this.scene.sleep()
-      this.scene.add('Dungeon1', new DungeonScene(1), true)
+      this.scene.add('Dungeon1', new DungeonScene(this.startLevel), true)
     })
     const loadGame = this.add
       .text(centerX - 61, centerY + 200, 'Load Game', {
