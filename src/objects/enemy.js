@@ -26,9 +26,9 @@ export default class Enemy {
     this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.hero, this.sprite, (hero, enemy) => {
       if (!this.dungeon.hero.underAttack) {
         this.dungeon.hero.underAttack = true
-        let heroHp = this.dungeon.registry.get('hp')
+        let heroHp = this.dungeon.registry.get('health')
         heroHp--
-        this.dungeon.registry.set('hp', heroHp)
+        this.dungeon.registry.set('health', heroHp)
         if (heroHp) {
           if (hero.body.touching.up) {
             hero.body.setVelocityY(300)
@@ -47,7 +47,7 @@ export default class Enemy {
             this.dungeon.registry.set('wakeupInRestRoom', true)
           }
           this.dungeon.hero.underAttack = false
-          this.dungeon.registry.set('hp', 3)
+          this.dungeon.registry.set('health', this.dungeon.registry.get('maxHealth'))
           this.dungeon.hero.freeze()
           this.dungeon.scene.sleep()
           this.dungeon.scene.wake('Dungeon' + this.dungeon.registry.get('minLevel'))

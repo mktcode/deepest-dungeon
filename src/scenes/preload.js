@@ -1,4 +1,5 @@
 import Phaser from "phaser"
+import GuiScene from "../scenes/gui.js"
 import Hero from "../objects/hero.js"
 import Enemy from "../objects/enemy.js"
 import Narrator from "../narrator.js"
@@ -41,6 +42,7 @@ export default class PreloadScene extends Phaser.Scene {
     Hero.preload(this)
     Enemy.preload(this)
     Narrator.preload(this)
+    GuiScene.preload(this)
 
     const centerX = this.game.scale.width / 2
     const centerY = this.game.scale.height / 2

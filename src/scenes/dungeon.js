@@ -42,7 +42,6 @@ export default class DungeonScene extends Phaser.Scene {
     this.addEnemies()
     this.addItems()
     this.addShadowLayer()
-    this.addUi()
 
     this.events.on('wake', () => {
       this.cameras.main.fadeIn(250, 0, 0, 0)
@@ -219,25 +218,6 @@ export default class DungeonScene extends Phaser.Scene {
     this.tilemapVisibility.setActiveRoom(this.startRoom, this.level)
   }
 
-  addUi() {
-    this.add
-      .text(16, 16, `Level: ${this.level}`, {
-        font: "18px monospace",
-        fill: "#000000",
-        padding: { x: 20, y: 10 },
-        backgroundColor: "#ffffff"
-      })
-      .setScrollFactor(0);
-    this.hpText = this.add
-      .text(16, 64, `HP: ${this.registry.get('hp')}`, {
-        font: "18px monospace",
-        fill: "#000000",
-        padding: { x: 20, y: 10 },
-        backgroundColor: "#ffffff"
-      })
-      .setScrollFactor(0);
-  }
-
   update() {
     this.hero.update()
     this.enemies.forEach(e => {
@@ -260,7 +240,5 @@ export default class DungeonScene extends Phaser.Scene {
       this.narrator.sayOnce('restRoom')
       this.registry.set('minLevel', this.level)
     }
-
-    this.hpText.setText('HP: ' + this.registry.get('hp'))
   }
 }

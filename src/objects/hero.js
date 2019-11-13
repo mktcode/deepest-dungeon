@@ -42,6 +42,7 @@ export default class Hero {
           this.scene.scene.wake('Dungeon' + nextLevel)
         } else {
           this.scene.scene.add('Dungeon' + nextLevel, new DungeonScene(nextLevel), true)
+          this.scene.scene.swapPosition('Gui', 'Dungeon' + nextLevel);
         }
       }
     });
