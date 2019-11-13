@@ -1,3 +1,4 @@
+import Phaser from 'phaser'
 import enemies from '../assets/enemies.png'
 
 export default class Enemy {
@@ -5,13 +6,16 @@ export default class Enemy {
     this.dungeon = dungeon;
     this.map = map;
     this.room = room;
-    this.directionX = ['left', 'right'][Math.floor(Math.random() * 2)]
-    this.directionY = ['up', 'down'][Math.floor(Math.random() * 2)]
+    this.directionX = ['left', 'right'][Phaser.Math.Between(0, 1)]
+    this.directionY = ['up', 'down'][Phaser.Math.Between(0, 1)]
     this.underAttack = false
     this.hp = 3
 
+    const x = map.tileToWorldX(Phaser.Math.Between(room.left + 1, room.right - 1))
+    const y = map.tileToWorldX(Phaser.Math.Between(room.top + 1, room.bottom - 1))
+
     this.sprite = this.dungeon.physics.add
-      .sprite(map.tileToWorldX(this.room.centerX), map.tileToWorldY(this.room.centerY), "enemies", 0)
+      .sprite(x, y, "enemies", 0)
       .setSize(27, 28)
       .setOffset(20, 35);
 
