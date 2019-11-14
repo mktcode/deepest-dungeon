@@ -35,6 +35,7 @@ export default class DungeonScene extends Phaser.Scene {
   create() {
     this.cameras.main.fadeIn(250, 0, 0, 0)
     this.narrator = new Narrator(this)
+    this.registry.set('currentLevel', this.level)
 
     this.prepareMap()
     this.prepareRooms()
@@ -45,6 +46,7 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.events.on('wake', () => {
       this.cameras.main.fadeIn(250, 0, 0, 0)
+      this.registry.set('currentLevel', this.level)
 
       // keyboard bug workaround
       this.hero.keys.up.isDown = false
@@ -90,7 +92,7 @@ export default class DungeonScene extends Phaser.Scene {
       width: this.dungeon.width,
       height: this.dungeon.height
     });
-    const tilesetImage = this.level === 10 ? "tilesetMc" : "tileset"
+    const tilesetImage = this.level === 11 ? "tilesetMc" : "tileset"
     this.tileset = this.map.addTilesetImage(tilesetImage, null, tileWidthHeight, tileWidthHeight, 1, 2); // 1px margin, 2px spacing
     this.groundLayer = this.map.createBlankDynamicLayer("Ground", this.tileset).fill(TILES.BLANK);
     this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset);

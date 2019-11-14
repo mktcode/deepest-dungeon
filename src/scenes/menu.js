@@ -16,12 +16,18 @@ export default class MenuScene extends Phaser.Scene {
 
   create() {
     this.startLevel = 1
+
     this.registry.set('minLevel', 1)
+    this.registry.set('currentLevel', 1)
+    this.registry.set('deepestLevel', 25)
     this.registry.set('narratorSaid', [])
     this.registry.set('disableNarrator', false)
     this.registry.set('weapon', null)
     this.registry.set('health', 3)
     this.registry.set('maxHealth', 3)
+    this.registry.set('mana', 0)
+    this.registry.set('maxMana', 0)
+
     this.cameras.main.fadeIn(250, 0, 0, 0);
     this.sound.play("ambientMusik", { volume: 0.3, loop: true })
 
@@ -29,7 +35,7 @@ export default class MenuScene extends Phaser.Scene {
     const centerY = this.game.scale.height / 2
 
     const title = this.add
-      .text(centerX - 143, centerY - 200, 'To Dungeons Deep', {
+      .text(centerX - 163, centerY - 200, 'The Deepest Dungeon', {
         font: "30px monospace",
         fill: "#FFFFFF"
       })

@@ -56,6 +56,7 @@ export default class Enemy {
     });
     this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.sword, this.sprite, (hero, enemy) => {
       if (this.dungeon.hero.attacking && !this.underAttack) {
+        this.dungeon.cameras.main.shake(500, .002)
         this.underAttack = true
         this.hp--
         if (this.dungeon.hero.lastDirection === 'up') {

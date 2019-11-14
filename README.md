@@ -1,55 +1,54 @@
-# Phaser 3 Webpack Project Template
+# phaser-electron-typescript-parcel [![Build Status](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel.svg?branch=master)](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel)
 
-A Phaser 3 project template with ES6 support via [Babel 7](https://babeljs.io/) and [Webpack 4](https://webpack.js.org/)
-that includes hot-reloading for development and production-ready builds.
+A minimal template with the following things.
 
-Loading images via JavaScript module `import` is also supported.
+- [Phaser](https://phaser.io/) 🕹️ Desktop and Mobile HTML5 game framework
+- [Electron](https://electronjs.org/) ⚛️ Build cross platform desktop apps with JavaScript, HTML, and CSS
+- [Parcel](https://github.com/parcel-bundler/parcel) 📦 Blazing fast, zero configuration web application bundler
+- [TypeScript](https://www.typescriptlang.org/) ⌨️ is a typed superset of JavaScript that compiles to plain JavaScript.
 
-## Requirements
+## Installation
 
-[Node.js](https://nodejs.org) is required to install dependencies and run scripts via `npm`.
+* `git@github.com:distantcam/phaser-electron-typescript-parcel.git`
+* `cd phaser-electron-typescript-parcel`
+* `yarn`
 
-## Available Commands
+## Usage
 
-| Command | Description |
-|---------|-------------|
-| `npm install` | Install project dependencies |
-| `npm start` | Build project and open web server running project |
-| `npm run build` | Builds code bundle with production settings (minification, uglification, etc..) |
+### Cleaning
+Run these commands to clean up the directory
+``` bash
+# Cleans up the build and dist folders
+yarn clean
 
-## Writing Code
+# Cleans up the builds, build cache, and node modules
+yarn superclean
+```
 
-After cloning the repo, run `npm install` from your project directory. Then, you can start the local development
-server by running `npm start`.
+### Development mode
+Run these commands to build and run the Electron app
+``` bash
+# Parcel bundles the code
+$ yarn build
 
+# Parcel bundles the code and watches for changes
+$ yarn watch
 
-After starting the development server with `npm start`, you can edit any files in the `src` folder
-and webpack will automatically recompile and reload your server (available at `http://localhost:8080`
-by default).
+# Run the electron app
+$ yarn app
 
-## Customizing Template
+# Run the electron app with options for a debugger to attach to the render process
+$ yarn debug
 
-### Babel
-You can write modern ES6+ JavaScript and Babel will transpile it to a version of JavaScript that you
-want your project to support. The targeted browsers are set in the `.babelrc` file and the default currently
-targets all browsers with total usage over "0.25%" but excludes IE11 and Opera Mini.
+# To debug the app in VS Code you can
+# - use yarn debug and run 'Electron: Renderer' in the debugger
+# or
+# - run 'Electron: All' in the debugger
+```
 
-  ```
-  "browsers": [
-    ">0.25%",
-    "not ie 11",
-    "not op_mini all"
-  ]
-  ```
-
-### Webpack
-If you want to customize your build, such as adding a new webpack loader or plugin (i.e. for loading CSS or fonts), you can
-modify the `webpack/base.js` file for cross-project changes, or you can modify and/or create
-new configuration files and target them in specific npm tasks inside of `package.json'.
-
-## Deploying Code
-After you run the `npm run build` command, your code will be built into a single bundle located at 
-`dist/bundle.min.js` along with any other assets you project depended. 
-
-If you put the contents of the `dist` folder in a publicly-accessible location (say something like `http://mycoolserver.com`), 
-you should be able to open `http://mycoolserver.com/index.html` and play your game.
+### Production mode and packaging app
+Run this command to bundle code in production mode
+``` bash
+# Create executables
+$ yarn dist
+```

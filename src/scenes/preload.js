@@ -62,7 +62,7 @@ export default class PreloadScene extends Phaser.Scene {
       progressBar.destroy();
       progressBox.destroy();
       const playButton = this.add
-        .text(centerX, centerY, 'Play', {
+        .text(centerX - 49, centerY, 'Play', {
           font: "24px monospace",
           fill: "#000000",
           padding: { x: 20, y: 10 },
