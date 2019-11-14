@@ -35,7 +35,7 @@ export default class MenuScene extends Phaser.Scene {
     const centerY = this.game.scale.height / 2
 
     const title = this.add
-      .text(centerX - 163, centerY - 200, 'The Deepest Dungeon', {
+      .text(centerX - 163, centerY - 200, 'Infinite Dungeons', {
         font: "30px monospace",
         fill: "#FFFFFF"
       })
