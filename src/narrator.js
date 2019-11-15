@@ -28,6 +28,7 @@ export default class Narrator {
     this.theLight = scene.sound.add("theLight")
     this.restRoom = scene.sound.add("restRoom")
     this.orientationLost = scene.sound.add("orientationLost")
+    this.slowmo = false
   }
 
   static preload(scene) {
@@ -73,30 +74,61 @@ export default class Narrator {
   }
 
   levelIntro(level, doorCount) {
+    const delay = 0.5
     return new Promise((resolve) => {
       if (level === 1) {
-        this.sayOnce('emptyRoom', 2).then((saidSth) => {
+        this.scene.time.delayedCall(delay * 1000, () => {
+          this.slowmoStart()
+        })
+        this.sayOnce('emptyRoom', delay).then((saidSth) => {
           if (saidSth) {
             this.say('Door' + doorCount, 0).then(() => {
-              this.sayOnce("although", 0).then(() => resolve());
+              this.sayOnce("although", 0).then(() => {
+                resolve()
+                this.slowmoEnd()
+              });
             })
           } else {
             resolve()
+            this.slowmoEnd()
           }
         });
       } else if (level === 2) {
-        this.sayOnce('furtherDown', 2).then((saidSth) => {
+        this.scene.time.delayedCall(delay * 1000, () => {
+          this.slowmoStart()
+        })
+        this.sayOnce('furtherDown', delay).then((saidSth) => {
           if (saidSth) {
-            this.say('Door' + doorCount, 0).then(() => resolve())
+            this.say('Door' + doorCount, 0).then(() => {
+              resolve()
+              this.slowmoEnd()
+            })
           } else {
             resolve()
+            this.slowmoEnd()
           }
         });
       } else if (level === 5) {
-        this.sayOnce("theLight", 2).then(() => resolve())
+        this.scene.time.delayedCall(delay * 1000, () => {
+          this.slowmoStart()
+        })
+        this.sayOnce("theLight", delay).then(() => {
+          resolve()
+          this.slowmoEnd()
+        })
       } else {
         resolve()
+        this.slowmoEnd()
       }
     })
+  }
+
+  slowmoStart() {
+    this.slowmo = true
+    this.scene.cameras.main.zoomTo(1.5)
+  }
+  slowmoEnd() {
+    this.slowmo = false
+    this.scene.cameras.main.zoomTo(1)
   }
 }

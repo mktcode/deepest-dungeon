@@ -83,14 +83,22 @@ export default class Hero {
   }
 
   walk(direction) {
+    if (!direction) {
+      direction = this.lastDirection
+    }
     this.setSwordHitBox(direction)
-    this.sprites.hero.anims.play('walk-' + direction, true)
+    let slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
+    this.sprites.hero.anims.play('walk-' + direction + slowmo, true)
   }
 
   attack(direction) {
-    this.sprites.hero.anims.play('attack-' + direction, true)
-    this.sprites.sword.anims.play('sword-' + direction, true)
-    return this.scene.anims.get('attack-' + direction)
+    if (!direction) {
+      direction = this.lastDirection
+    }
+    let slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
+    this.sprites.hero.anims.play('attack-' + direction + slowmo, true)
+    this.sprites.sword.anims.play('sword-' + direction + slowmo, true)
+    return this.scene.anims.get('attack-' + direction + slowmo)
   }
 
   stop() {
@@ -129,6 +137,8 @@ export default class Hero {
     if (!this.underAttack) {
       // Stop any previous movement from the last frame
       this.sprites.hero.body.setVelocity(0);
+
+      this.speed = this.scene.narrator.slowmo ? 25 : 150
 
       // Horizontal movement
       if (this.keys.left.isDown) {

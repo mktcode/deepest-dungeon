@@ -74,13 +74,10 @@ export default class DungeonScene extends Phaser.Scene {
       this.hero.unfreeze()
     })
 
-    this.hero.freeze()
     this.narrator.levelIntro(
       this.level,
       this.startRoom.getDoorLocations().length
-    ).then(() => {
-      this.hero.unfreeze()
-    })
+    )
   }
 
   prepareMap() {
