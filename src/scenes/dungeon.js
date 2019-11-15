@@ -11,8 +11,8 @@ export default class DungeonScene extends Phaser.Scene {
     super('Dungeon' + level)
     this.level = level
     this.dungeon = new Dungeon({
-      width: 25,
-      height: 25,
+      width: 30,
+      height: 30,
       doorPadding: 2,
       rooms: {
         width: { min: 7, max: 15, onlyOdd: true },
@@ -89,7 +89,7 @@ export default class DungeonScene extends Phaser.Scene {
       width: this.dungeon.width,
       height: this.dungeon.height
     });
-    const tilesetImage = this.level === 11 ? "tilesetMc" : "tileset"
+    const tilesetImage = this.level === 25 ? "tilesetMc" : "tileset"
     this.tileset = this.map.addTilesetImage(tilesetImage, null, tileWidthHeight, tileWidthHeight, 1, 2); // 1px margin, 2px spacing
     this.groundLayer = this.map.createBlankDynamicLayer("Ground", this.tileset).fill(TILES.BLANK);
     this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset);
@@ -165,8 +165,8 @@ export default class DungeonScene extends Phaser.Scene {
     // Place the player in the first room
     this.hero = new Hero(
       this,
-      this.map.tileToWorldX(this.startRoom.centerX),
-      this.map.tileToWorldY(this.startRoom.centerY)
+      this.map.tileToWorldX(this.startRoom.centerX) + 16,
+      this.map.tileToWorldY(this.startRoom.centerY) + 19
     );
 
     // Watch the player and tilemap layers for collisions, for the duration of the scene:
@@ -213,8 +213,10 @@ export default class DungeonScene extends Phaser.Scene {
   addShadowLayer() {
     // add shadows and set active room
     const shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK);
-    this.tilemapVisibility = new TilemapVisibility(shadowLayer, this.level);
-    this.tilemapVisibility.setActiveRoom(this.startRoom, this.level)
+    const roomShadowLayer = this.map.createBlankDynamicLayer("RoomShadow", this.tileset).fill(TILES.BLANK);
+    this.tilemapVisibility = new TilemapVisibility(shadowLayer, roomShadowLayer, this.restRoom, this.hero, this.level);
+    this.tilemapVisibility.setShadow()
+    this.tilemapVisibility.setActiveRoom(this.startRoom)
   }
 
   update() {
@@ -233,7 +235,8 @@ export default class DungeonScene extends Phaser.Scene {
       this.groundLayer.worldToTileX(this.hero.sprites.hero.x),
       this.groundLayer.worldToTileY(this.hero.sprites.hero.y)
     );
-    this.tilemapVisibility.setActiveRoom(playerRoom);
+    this.tilemapVisibility.setShadow();
+    this.tilemapVisibility.setActiveRoom(playerRoom)
 
     if (playerRoom === this.restRoom) {
       this.narrator.sayOnce('restRoom')

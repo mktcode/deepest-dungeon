@@ -74,6 +74,7 @@ export default class Narrator {
   }
 
   levelIntro(level, doorCount) {
+    if (this.scene.registry.get('disableNarrator')) return
     const delay = 0.5
     return new Promise((resolve) => {
       if (level === 1) {
