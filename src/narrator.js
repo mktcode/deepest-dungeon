@@ -126,7 +126,7 @@ export default class Narrator {
 
   slowmoStart() {
     this.slowmo = true
-    this.scene.cameras.main.zoomTo(1.5)
+    this.scene.cameras.main.zoomTo(2)
   }
   slowmoEnd() {
     this.slowmo = false

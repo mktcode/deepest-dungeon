@@ -21,7 +21,7 @@ export default class TilemapVisibility {
           this.shadowLayer.worldToTileX(this.hero.sprites.hero.y)
         );
         const distance = heroVector.distance({x: t.x, y: t.y})
-        t.alpha = this.restRoom === this.activeRoom ? 0 : 1 - 1 / Math.max(1, distance + this.level - 4)
+        t.alpha = this.restRoom === this.activeRoom ? 0 : 1 - 1 / Math.max(1, distance + Math.min(35, this.level) - 4)
       },
       this
     );
@@ -31,7 +31,7 @@ export default class TilemapVisibility {
     // We only need to update the tiles if the active room has changed
     if (room !== this.activeRoom) {
       this.setRoomAlpha(room, 0); // Make the new room visible
-      if (this.activeRoom) this.setRoomAlpha(this.activeRoom, Math.min(1, this.level / 5)); // Dim the old room
+      if (this.activeRoom) this.setRoomAlpha(this.activeRoom, Math.min(1, this.level / 15)); // Dim the old room
       this.activeRoom = room;
     }
   }

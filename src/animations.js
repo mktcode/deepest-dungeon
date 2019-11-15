@@ -10,8 +10,8 @@ export default class Animations {
 
   static hero(anims) {
     [0, 1].forEach((slowmo) => {
-      const moveFrameRate = slowmo ? 1.5 : 6
-      const swordFrameRate = slowmo ? 3 : 12
+      const moveFrameRate = slowmo ? 2 : 6
+      const swordFrameRate = slowmo ? 4 : 12
       const slowmoString = slowmo ? '-slowmo' : ''
       anims.create({
         key: "walk-up" + slowmoString,
