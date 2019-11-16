@@ -15,7 +15,7 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   create() {
-    this.startLevel = 5
+    this.startLevel = 1
 
     this.registry.set('minLevel', 1)
     this.registry.set('currentLevel', 1)
