@@ -31,6 +31,14 @@ export default class GuiScene extends Phaser.Scene {
   }
 
   create() {
+    var timer = this.time.addEvent({
+      delay: 60000,
+      callback: () => {
+        this.registry.set('torches', Math.max(this.registry.get('torches') - 1, 0))
+      },
+      loop: true
+    });
+
     const centerX = this.game.scale.width / 2
     const centerY = this.game.scale.height - 46
     const leftOrbX = centerX - 193

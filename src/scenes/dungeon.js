@@ -6,6 +6,9 @@ import TILES from "../tile-mapping.js";
 import TilemapVisibility from "../tilemap-visibility.js";
 import Narrator from '../narrator.js'
 
+// assets
+import torchSprite from "../assets/torch.png";
+
 export default class DungeonScene extends Phaser.Scene {
   constructor(level) {
     super('Dungeon' + level)
@@ -25,11 +28,23 @@ export default class DungeonScene extends Phaser.Scene {
     this.otherRooms = Phaser.Utils.Array.Shuffle(rooms);
     this.restRoom = null;
     this.swordRoom = null;
+    this.torch = null
 
     // add rest room only every 5 levels
     if (this.level >= 5 && !(this.level % 5)) {
       this.restRoom = this.otherRooms.find(room => room.getDoorLocations().length === 1)
     }
+  }
+
+  static preload(scene) {
+    scene.load.spritesheet(
+      "torch",
+      torchSprite,
+      {
+        frameWidth: 48,
+        frameHeight: 48
+      }
+    );
   }
 
   create() {
@@ -189,7 +204,7 @@ export default class DungeonScene extends Phaser.Scene {
 
   addItems() {
     // sword
-    if (this.level === 3 && !this.registry.get('weapon')) {
+    if (this.level >= 3 && this.level % 3 && !this.registry.get('weapon')) {
       this.swordRoom = Phaser.Utils.Array.GetRandom(this.otherRooms);
       const theSword = this.physics.add.sprite(
         this.map.tileToWorldX(this.swordRoom.centerX),
@@ -208,13 +223,31 @@ export default class DungeonScene extends Phaser.Scene {
         theSword.destroy()
       });
     }
+
+    // torches
+    if (this.level >= 5 && this.level % 2) {
+      const torchRoom = Phaser.Utils.Array.GetRandom(this.otherRooms);
+      this.torch = this.physics.add.sprite(
+        this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([torchRoom.left + 1, torchRoom.right - 1])) + 24,
+        this.map.tileToWorldY(Phaser.Utils.Array.GetRandom([torchRoom.top + 1, torchRoom.bottom - 1])) + 24,
+        'torch',
+        0
+      ).setSize(48, 48)
+      this.torch.anims.play('torch', true)
+
+      this.physics.add.collider(this.hero.sprites.hero, this.torch, () => {
+        this.registry.set('torches', this.registry.get('torches') + 1)
+        this.torch.destroy()
+        this.torch = null
+      });
+    }
   }
 
   addShadowLayer() {
     // add shadows and set active room
     const shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK);
     const roomShadowLayer = this.map.createBlankDynamicLayer("RoomShadow", this.tileset).fill(TILES.BLANK);
-    this.tilemapVisibility = new TilemapVisibility(shadowLayer, roomShadowLayer, this.restRoom, this.hero, this.level);
+    this.tilemapVisibility = new TilemapVisibility(this, shadowLayer, roomShadowLayer, this.restRoom, this.hero, this.level);
     this.tilemapVisibility.setShadow()
     this.tilemapVisibility.setActiveRoom(this.startRoom)
   }

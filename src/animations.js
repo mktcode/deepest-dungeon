@@ -128,4 +128,13 @@ export default class Animations {
       repeat: -1
     });
   }
+
+  static items(anims) {
+    anims.create({
+      key: "torch",
+      frames: anims.generateFrameNumbers("torch", { start: 0, end: 6 }),
+      frameRate: 8,
+      repeat: -1
+    });
+  }
 }

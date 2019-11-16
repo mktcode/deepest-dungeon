@@ -1,5 +1,6 @@
 import Phaser from "phaser"
 import GuiScene from "../scenes/gui.js"
+import DungeonScene from "../scenes/dungeon.js"
 import Hero from "../objects/hero.js"
 import Enemy from "../objects/enemy.js"
 import Narrator from "../narrator.js"
@@ -43,6 +44,7 @@ export default class PreloadScene extends Phaser.Scene {
     Enemy.preload(this)
     Narrator.preload(this)
     GuiScene.preload(this)
+    DungeonScene.preload(this)
 
     const centerX = this.game.scale.width / 2
     const centerY = this.game.scale.height / 2
@@ -84,5 +86,6 @@ export default class PreloadScene extends Phaser.Scene {
     Animations.intro(this.anims)
     Animations.hero(this.anims)
     Animations.enemies(this.anims)
+    Animations.items(this.anims)
   }
 }
