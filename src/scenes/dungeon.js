@@ -14,8 +14,8 @@ export default class DungeonScene extends Phaser.Scene {
     super('Dungeon' + level)
     this.level = level
     this.dungeon = new Dungeon({
-      width: 30,
-      height: 30,
+      width: 28,
+      height: 28,
       doorPadding: 2,
       rooms: {
         width: { min: 7, max: 15, onlyOdd: true },
@@ -220,6 +220,9 @@ export default class DungeonScene extends Phaser.Scene {
       })
       this.physics.add.collider(this.hero.sprites.hero, theSword, () => {
         this.registry.set('weapon', 'sword')
+        const items = this.registry.get('items')
+        items.push('sword')
+        this.registry.set('items', items)
         theSword.destroy()
       });
     }
@@ -236,7 +239,10 @@ export default class DungeonScene extends Phaser.Scene {
       this.torch.anims.play('torch', true)
 
       this.physics.add.collider(this.hero.sprites.hero, this.torch, () => {
-        this.registry.set('torches', this.registry.get('torches') + 1)
+        const items = this.registry.get('items')
+        items.push('torch')
+        this.registry.set('items', items)
+        this.scene.get('Gui').removeTorchDelayed()
         this.torch.destroy()
         this.torch = null
       });

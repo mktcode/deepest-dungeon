@@ -4,10 +4,22 @@ import Phaser from "phaser";
 import frame from "../assets/gui/frame.png";
 import orbs from "../assets/gui/orbs.png";
 import bars from "../assets/gui/bars.png";
+import items from "../assets/gui/items.png";
 
 export default class GuiScene extends Phaser.Scene {
   constructor() {
     super('Gui')
+    this.items = {
+      slot1: null,
+      slot2: null,
+      slot3: null,
+      slot4: null,
+      slot5: null,
+      slot6: null,
+      slot7: null,
+      slot8: null,
+      slot9: null
+    }
   }
 
   static preload(scene) {
@@ -28,17 +40,17 @@ export default class GuiScene extends Phaser.Scene {
         frameHeight: 9
       }
     );
+    scene.load.spritesheet(
+      "gui-items",
+      items,
+      {
+        frameWidth: 36,
+        frameHeight: 36
+      }
+    );
   }
 
   create() {
-    var timer = this.time.addEvent({
-      delay: 60000,
-      callback: () => {
-        this.registry.set('torches', Math.max(this.registry.get('torches') - 1, 0))
-      },
-      loop: true
-    });
-
     const centerX = this.game.scale.width / 2
     const centerY = this.game.scale.height - 46
     const leftOrbX = centerX - 193
@@ -85,6 +97,30 @@ export default class GuiScene extends Phaser.Scene {
       1
     ).setScrollFactor(0).setDepth(2);
 
+    // items
+    const itemsY = this.game.scale.height - 23
+    const itemsTextStyle = {
+      font: "11px monospace",
+      fill: "#FFFFFF"
+    }
+    this.items.slot1 = this.add.sprite(centerX - 156, itemsY, "gui-items", 0).setDepth(0)
+    // this.items.slot1counter = this.add.text(centerX - 171, itemsY + 5, '1', itemsTextStyle).setDepth(0)
+    this.items.slot2 = this.add.sprite(centerX - 156 + 39, itemsY, "gui-items", 1).setDepth(0)
+    this.items.slot3 = this.add.sprite(centerX - 156 + 2 * 39, itemsY, "gui-items", 2).setDepth(0)
+    this.items.slot4 = this.add.sprite(centerX - 156 + 3 * 39, itemsY, "gui-items", 3).setDepth(0)
+    this.items.slot5 = this.add.sprite(centerX - 156 + 4 * 39, itemsY, "gui-items", 4).setDepth(0)
+    this.items.slot6 = this.add.sprite(centerX - 156 + 5 * 39, itemsY, "gui-items", 5).setDepth(0)
+    this.items.slot7 = this.add.sprite(centerX - 156 + 6 * 39, itemsY, "gui-items", 6).setDepth(0)
+    this.items.slot8 = this.add.sprite(centerX - 156 + 7 * 39, itemsY, "gui-items", 7).setDepth(0)
+    this.items.slot9 = this.add.sprite(centerX - 156 + 8 * 39, itemsY, "gui-items", 8).setDepth(0)
+    this.items.slot9text = this.add.text(centerX - 171 + 8 * 39, itemsY + 5, '', itemsTextStyle).setDepth(0)
+
+    // selected item
+    this.selectedItem = this.add.graphics();
+    this.selectedItem.setDepth(0)
+    this.selectedItem.lineStyle(3, 0xffffff, 1);
+    this.selectedItem.strokeRect(centerX - 172, this.game.scale.height - 40, 34, 34);
+
     // listen to changes
     this.registry.events.on('changedata-health', () => {
       this.updateHealth()
@@ -107,9 +143,30 @@ export default class GuiScene extends Phaser.Scene {
       this.updateLevel()
     })
 
+    this.registry.events.on('changedata-weapon', () => {
+      this.updateSelectedItem()
+    })
+
+    this.registry.events.on('changedata-items', (parent, oldItems) => {
+      this.updateItems()
+    })
+
     this.updateHealth()
     this.updateMana()
     this.updateLevel()
+    this.updateSelectedItem()
+    this.updateItems()
+  }
+
+  removeTorchDelayed() {
+    this.time.delayedCall(60000, () => {
+      const items = this.registry.get('items')
+      const deleteIndex = items.findIndex((item) => item === 'torch')
+      if (deleteIndex != -1) {
+        items.splice(deleteIndex, 1)
+        this.registry.set('items', items)
+      }
+    })
   }
 
   updateHealth() {
@@ -131,5 +188,31 @@ export default class GuiScene extends Phaser.Scene {
     const deepestLevel = this.registry.get('deepestLevel')
 
     this.levelBar.setCrop(0, 0, 348 * (currentLevel / deepestLevel), 9)
+  }
+
+  updateSelectedItem() {
+    if (this.registry.get('weapon') === 'sword') {
+      this.selectedItem.setDepth(3)
+    } else {
+      this.selectedItem.setDepth(0)
+    }
+  }
+
+  updateItems() {
+    const items = this.registry.get('items')
+    if (items.includes('sword')) {
+      this.items.slot1.setDepth(3)
+    } else {
+      this.items.slot1.setDepth(0)
+    }
+    if (items.includes('torch')) {
+      this.items.slot9.setDepth(3)
+      this.items.slot9text.setDepth(3)
+      const torchesNum = items.filter(i => i === 'torch').length
+      this.items.slot9text.setText(torchesNum)
+    } else {
+      this.items.slot9.setDepth(0)
+      this.items.slot9text.setDepth(0)
+    }
   }
 }

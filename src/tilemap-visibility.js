@@ -17,27 +17,35 @@ export default class TilemapVisibility {
   setShadow() {
     this.shadowLayer.forEachTile(
       (t) => {
-        const distances = []
+        const alphaValues = []
+
+        // hero
         const heroVector = new Phaser.Math.Vector2(
           this.shadowLayer.worldToTileX(this.hero.sprites.hero.x),
           this.shadowLayer.worldToTileX(this.hero.sprites.hero.y)
         );
-        distances.push(heroVector.distance({x: t.x, y: t.y}))
+        let darkness = this.level
+        const torches = this.scene.registry.get('items').filter(item => item === 'torch')
 
+        if (torches && torches.length) {
+          darkness = Math.min(this.level, 5 - torches.length)
+        }
+        alphaValues.push(
+          this.restRoom === this.activeRoom
+          ? 0
+          : 1 - 1 / Math.max(1, (Math.max(1, heroVector.distance({x: t.x, y: t.y})) + Math.min(35, darkness) - 4))
+        )
+
+        // torch
         if (this.scene.torch) {
           const torchVector = new Phaser.Math.Vector2(
             this.shadowLayer.worldToTileX(this.scene.torch.x),
             this.shadowLayer.worldToTileX(this.scene.torch.y)
           );
-          distances.push(torchVector.distance({x: t.x, y: t.y}))
+          alphaValues.push(1 - 1 / Math.max(1, torchVector.distance({x: t.x, y: t.y})))
         }
-        const distanceToLightSource = Math.min(...distances)
-        let darkness = this.level
-        const torches = this.scene.registry.get('torches')
-        if (torches) {
-          darkness = Math.min(this.level, 5 - torches)
-        }
-        t.alpha = this.restRoom === this.activeRoom ? 0 : 1 - 1 / Math.max(1, distanceToLightSource + Math.min(35, darkness) - 4)
+
+        t.alpha = Math.min(...alphaValues)
       },
       this
     );
