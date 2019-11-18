@@ -54,10 +54,10 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.prepareMap()
     this.prepareRooms()
+    this.addShadowLayer()
     this.addHero()
     this.addEnemies()
     this.addItems()
-    this.addShadowLayer()
 
     this.events.on('wake', () => {
       this.cameras.main.fadeIn(250, 0, 0, 0)
@@ -183,6 +183,18 @@ export default class DungeonScene extends Phaser.Scene {
       this.map.tileToWorldX(this.startRoom.centerX) + 16,
       this.map.tileToWorldY(this.startRoom.centerY) + 19
     );
+    this.tilemapVisibility.lights.push({
+      sprite: this.hero.sprites.hero,
+      darkness: () => {
+        let darkness = this.level
+        const torches = this.registry.get('items').filter(item => item === 'torch')
+
+        if (torches && torches.length) {
+          darkness = Math.min(this.level, 5 - torches.length)
+        }
+        return darkness
+      }
+    })
 
     // Watch the player and tilemap layers for collisions, for the duration of the scene:
     this.physics.add.collider(this.hero.sprites.hero, this.groundLayer);
@@ -236,6 +248,10 @@ export default class DungeonScene extends Phaser.Scene {
         'torch',
         0
       ).setSize(48, 48)
+      this.tilemapVisibility.lights.push({
+        sprite: this.torch,
+        darkness: () => 4
+      })
       this.torch.anims.play('torch', true)
 
       this.physics.add.collider(this.hero.sprites.hero, this.torch, () => {
@@ -244,6 +260,7 @@ export default class DungeonScene extends Phaser.Scene {
         this.registry.set('items', items)
         this.scene.get('Gui').removeTorchDelayed()
         this.torch.destroy()
+        this.tilemapVisibility.removeLight(this.torch)
         this.torch = null
       });
     }
@@ -251,8 +268,8 @@ export default class DungeonScene extends Phaser.Scene {
 
   addShadowLayer() {
     // add shadows and set active room
-    const shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK);
-    const roomShadowLayer = this.map.createBlankDynamicLayer("RoomShadow", this.tileset).fill(TILES.BLANK);
+    const shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK).setDepth(5);
+    const roomShadowLayer = this.map.createBlankDynamicLayer("RoomShadow", this.tileset).fill(TILES.BLANK).setDepth(5);
     this.tilemapVisibility = new TilemapVisibility(this, shadowLayer, roomShadowLayer, this.restRoom, this.hero, this.level);
     this.tilemapVisibility.setShadow()
     this.tilemapVisibility.setActiveRoom(this.startRoom)

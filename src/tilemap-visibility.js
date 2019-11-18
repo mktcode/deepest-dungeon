@@ -1,50 +1,42 @@
 /**
  * A small helper class that can take control of our shadow tilemap layer. It keeps track of which
- * room is currently active.
+ * room is currently active and what light intensity to apply to each tile.
  */
 export default class TilemapVisibility {
-  constructor(scene, shadowLayer, roomShadowLayer, restRoom, hero, level) {
-    this.scene = scene;
-    this.shadowLayer = shadowLayer;
-    this.roomShadowLayer = roomShadowLayer;
-    this.restRoom = restRoom;
-    this.hero = hero;
-    this.level = level;
-    this.activeRoom = null;
+  constructor(shadowLayer, roomShadowLayer, restRoom, hero, level) {
+    this.shadowLayer = shadowLayer
+    this.roomShadowLayer = roomShadowLayer
+    this.restRoom = restRoom
+    this.level = level
+    this.activeRoom = null
+    this.lights = []
+  }
+
+  removeLight(sprite) {
+    const removeIndex = this.lights.findIndex(l => l.sprite === sprite)
+    if (removeIndex !== -1) {
+      this.lights.splice(removeIndex, 1)
+    }
   }
 
   // Helper to set the alpha on all tiles
   setShadow() {
+    const maxDarkness = 35
     this.shadowLayer.forEachTile(
       (t) => {
         const alphaValues = []
 
-        // hero
-        const heroVector = new Phaser.Math.Vector2(
-          this.shadowLayer.worldToTileX(this.hero.sprites.hero.x),
-          this.shadowLayer.worldToTileX(this.hero.sprites.hero.y)
-        );
-        let darkness = this.level
-        const torches = this.scene.registry.get('items').filter(item => item === 'torch')
-
-        if (torches && torches.length) {
-          darkness = Math.min(this.level, 5 - torches.length)
-        }
-        alphaValues.push(
-          this.restRoom === this.activeRoom
-          ? 0
-          : 1 - 1 / Math.max(1, (Math.max(1, heroVector.distance({x: t.x, y: t.y})) + Math.min(35, darkness) - 4))
-        )
-
-        // torch
-        if (this.scene.torch) {
-          const torchVector = new Phaser.Math.Vector2(
-            this.shadowLayer.worldToTileX(this.scene.torch.x),
-            this.shadowLayer.worldToTileX(this.scene.torch.y)
+        this.lights.forEach((light) => {
+          const vector = new Phaser.Math.Vector2(
+            this.shadowLayer.worldToTileX(light.sprite.x),
+            this.shadowLayer.worldToTileX(light.sprite.y)
           );
-          alphaValues.push(1 - 1 / Math.max(1, torchVector.distance({x: t.x, y: t.y})))
-        }
-
+          alphaValues.push(
+            this.restRoom === this.activeRoom
+            ? 0
+            : 1 - 1 / Math.max(1, (Math.max(1, vector.distance({x: t.x, y: t.y})) + Math.min(maxDarkness, light.darkness()) - 4))
+          )
+        })
         t.alpha = Math.min(...alphaValues)
       },
       this
