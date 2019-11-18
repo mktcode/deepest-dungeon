@@ -148,7 +148,11 @@ export default class DungeonScene extends Phaser.Scene {
     });
 
     // Place the stairs
-    this.stuffLayer.putTileAt(TILES.STAIRS, this.endRoom.centerX, this.endRoom.centerY);
+    this.stuffLayer.putTileAt(
+      this.restRoom ? TILES.STAIRS.CLOSED : TILES.STAIRS.OPEN,
+      this.endRoom.centerX,
+      this.endRoom.centerY
+    );
 
     // prepare rest room if exists
     if (this.restRoom) {
@@ -208,9 +212,23 @@ export default class DungeonScene extends Phaser.Scene {
       this.otherRooms.forEach(room => {
         const num = Phaser.Math.Between(1, maxEnemies)
         for (let i = 1; i <= num; i++) {
-          this.enemies.push(new Enemy(this, this.map, room));
+          this.enemies.push(new Enemy(this, this.map, room, 'snake', (enemy) => {
+            Phaser.Utils.Array.Remove(this.enemies, enemy)
+          }));
         }
       })
+
+      if (this.restRoom) {
+        this.enemies.push(new Enemy(this, this.map, this.endRoom, 'deamon', (enemy) => {
+          this.tilemapVisibility.removeLight(enemy.sprite)
+          Phaser.Utils.Array.Remove(this.enemies, enemy)
+          this.stuffLayer.putTileAt(
+            TILES.STAIRS.OPEN,
+            this.endRoom.centerX,
+            this.endRoom.centerY
+          );
+        }));
+      }
     }
   }
 
@@ -270,21 +288,14 @@ export default class DungeonScene extends Phaser.Scene {
     // add shadows and set active room
     const shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK).setDepth(5);
     const roomShadowLayer = this.map.createBlankDynamicLayer("RoomShadow", this.tileset).fill(TILES.BLANK).setDepth(5);
-    this.tilemapVisibility = new TilemapVisibility(this, shadowLayer, roomShadowLayer, this.restRoom, this.hero, this.level);
+    this.tilemapVisibility = new TilemapVisibility(shadowLayer, roomShadowLayer, this.restRoom, this.hero, this.level);
     this.tilemapVisibility.setShadow()
     this.tilemapVisibility.setActiveRoom(this.startRoom)
   }
 
   update() {
     this.hero.update()
-    this.enemies.forEach(e => {
-      if (e.hp) {
-        e.update()
-      } else {
-        e.sprite.destroy()
-        Phaser.Utils.Array.Remove(this.enemies, e)
-      }
-    })
+    this.enemies.forEach(e => e.update())
     // Find the player's room using another helper method from the dungeon that converts from
     // dungeon XY (in grid units) to the corresponding room object
     const playerRoom = this.dungeon.getRoomAt(

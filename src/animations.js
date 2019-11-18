@@ -127,6 +127,12 @@ export default class Animations {
       frameRate: 4,
       repeat: -1
     });
+    anims.create({
+      key: "deamon-idle",
+      frames: anims.generateFrameNumbers("deamon", { start: 0, end: 5 }),
+      frameRate: 4,
+      repeat: -1
+    });
   }
 
   static items(anims) {

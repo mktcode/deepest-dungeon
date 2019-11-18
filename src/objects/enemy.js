@@ -1,27 +1,56 @@
 import Phaser from 'phaser'
+import TILES from '../tile-mapping.js'
+
+// assets
 import enemies from '../assets/enemies.png'
+import deamonSprite from "../assets/deamon.png";
 
 export default class Enemy {
-  constructor(dungeon, map, room) {
-    this.dungeon = dungeon;
-    this.map = map;
-    this.room = room;
+  constructor(dungeon, map, room, type, dieCallback) {
+    this.dungeon = dungeon
+    this.map = map
+    this.room = room
+    this.type = type
     this.directionX = ['left', 'right'][Phaser.Math.Between(0, 1)]
     this.directionY = ['up', 'down'][Phaser.Math.Between(0, 1)]
     this.underAttack = false
-    this.hp = 3
+    this.dieCallback = dieCallback
 
     const x = map.tileToWorldX(Phaser.Math.Between(room.left + 1, room.right - 1))
     const y = map.tileToWorldX(Phaser.Math.Between(room.top + 1, room.bottom - 1))
 
-    this.sprite = this.dungeon.physics.add
-      .sprite(x, y, "enemies", 0)
-      .setSize(27, 28)
-      .setOffset(20, 35);
+    if (this.type === 'deamon') {
+      this.hp = 25
+      this.sprite = this.dungeon.physics.add.sprite(x, y, 'deamon', 1).setSize(75, 90).setOffset(23, 19)
+      this.sprite.anims.play("deamon-idle")
+      this.dungeon.tilemapVisibility.lights.push({
+        sprite: this.sprite,
+        darkness: () => 3
+      })
+    }
+    if (this.type === 'snake') {
+      this.hp = 3
+      this.sprite = this.dungeon.physics.add
+        .sprite(x, y, "enemies", 0)
+        .setSize(27, 28)
+        .setOffset(20, 35)
+      this.sprite.anims.play("enemy-walk")
+    }
 
-    this.sprite.anims.play("enemy-walk");
-
-    this.dungeon.physics.add.collider(this.sprite, this.dungeon.groundLayer);
+    this.dungeon.physics.add.collider(this.sprite, this.dungeon.groundLayer, (enemy, wall) => {
+      if ([TILES.WALL.TOP, ...TILES.DOOR.TOP].includes(wall.index)) {
+        this.directionY = 'down'
+      }
+      if ([TILES.WALL.RIGHT, ...TILES.DOOR.RIGHT[0]].includes(wall.index)) {
+        this.directionX = 'left'
+      }
+      if ([TILES.WALL.BOTTOM, ...TILES.DOOR.BOTTOM].includes(wall.index)) {
+        this.directionY = 'up'
+      }
+      if ([TILES.WALL.LEFT, ...TILES.DOOR.LEFT[0]].includes(wall.index)) {
+        this.directionX = 'right'
+      }
+    });
 
     this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.hero, this.sprite, (hero, enemy) => {
       if (!this.dungeon.hero.underAttack) {
@@ -59,18 +88,23 @@ export default class Enemy {
         this.dungeon.cameras.main.shake(500, .002)
         this.underAttack = true
         this.hp--
-        if (this.dungeon.hero.lastDirection === 'up') {
-          enemy.body.setVelocityY(-300)
-        } else if (this.dungeon.hero.lastDirection === 'down') {
-          enemy.body.setVelocityY(300)
-        } else if (this.dungeon.hero.lastDirection === 'left') {
-          enemy.body.setVelocityX(-300)
-        } else if (this.dungeon.hero.lastDirection === 'right') {
-          enemy.body.setVelocityX(300)
+        if (this.hp) {
+          if (this.dungeon.hero.lastDirection === 'up') {
+            enemy.body.setVelocityY(-300)
+          } else if (this.dungeon.hero.lastDirection === 'down') {
+            enemy.body.setVelocityY(300)
+          } else if (this.dungeon.hero.lastDirection === 'left') {
+            enemy.body.setVelocityX(-300)
+          } else if (this.dungeon.hero.lastDirection === 'right') {
+            enemy.body.setVelocityX(300)
+          }
+          this.dungeon.time.delayedCall(750, () => {
+            this.underAttack = false
+          });
+        } else if (this.dieCallback) {
+          this.sprite.destroy()
+          this.dieCallback(this)
         }
-        this.dungeon.time.delayedCall(750, () => {
-          this.underAttack = false
-        });
       }
     });
   }
@@ -84,6 +118,14 @@ export default class Enemy {
         frameHeight: 64,
         margin: 1,
         spacing: 2
+      }
+    );
+    scene.load.spritesheet(
+      "deamon",
+      deamonSprite,
+      {
+        frameWidth: 122,
+        frameHeight: 118
       }
     );
   }
@@ -105,25 +147,13 @@ export default class Enemy {
         sprite.body.setVelocityX(speed);
         sprite.setFlipX(false);
       }
-      if (sprite.body.x <= this.map.tileToWorldX(this.room.x + 2)) {
-        this.directionX = 'right'
-      }
-      if (sprite.body.x >= this.map.tileToWorldX(this.room.x + this.room.width - 2)) {
-        this.directionX = 'left'
-      }
 
       // vertical movement
       if (this.directionY === 'up') {
-        sprite.body.setVelocityY(speed);
-      }
-      if (this.directionY === 'down') {
         sprite.body.setVelocityY(-speed);
       }
-      if (sprite.body.y <= this.map.tileToWorldY(this.room.y + 2)) {
-        this.directionY = 'up'
-      }
-      if (sprite.body.y >= this.map.tileToWorldY(this.room.y + this.room.height - 2)) {
-        this.directionY = 'down'
+      if (this.directionY === 'down') {
+        sprite.body.setVelocityY(speed);
       }
 
       // Normalize and scale the velocity so that sprite can't move faster along a diagonal

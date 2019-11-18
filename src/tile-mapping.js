@@ -35,5 +35,8 @@ export default {
     Y: 91
   },
   CHEST: 34,
-  STAIRS: 53
+  STAIRS: {
+    OPEN: 53,
+    CLOSED: 59
+  }
 }

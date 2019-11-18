@@ -34,7 +34,7 @@ export default class Hero {
     this.scene.input.keyboard.on('keyup-E', () => {
       // stairs
       const tile = this.scene.stuffLayer.getTileAtWorldXY(this.sprites.hero.body.x, this.sprites.hero.body.y)
-      if (tile && tile.index === TILES.STAIRS) {
+      if (tile && tile.index === TILES.STAIRS.OPEN) {
         const nextLevel = this.scene.level + 1
         this.scene.scene.sleep()
         if (this.scene.scene.get('Dungeon' + nextLevel)) {
