@@ -14,8 +14,8 @@ export default class DungeonScene extends Phaser.Scene {
     super('Dungeon' + level)
     this.level = level
     this.dungeon = new Dungeon({
-      width: 28,
-      height: 28,
+      width: level > 25 ? 50 : (level > 10 ? 40 : 30),
+      height: level > 25 ? 50 : (level > 10 ? 40 : 30),
       doorPadding: 2,
       rooms: {
         width: { min: 7, max: 15, onlyOdd: true },
