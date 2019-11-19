@@ -5,9 +5,12 @@ import Enemy from "../objects/enemy.js";
 import TILES from "../tile-mapping.js";
 import TilemapVisibility from "../tilemap-visibility.js";
 import Narrator from '../narrator.js'
+import PathFinder from 'pathfinding'
 
 // assets
 import torchSprite from "../assets/torch.png";
+import pathSprite from "../assets/path.png";
+import pathfinderSprite from "../assets/pathfinder.png";
 
 export default class DungeonScene extends Phaser.Scene {
   constructor(level) {
@@ -22,13 +25,15 @@ export default class DungeonScene extends Phaser.Scene {
         height: { min: 7, max: 15, onlyOdd: true }
       }
     })
-    const rooms = this.dungeon.rooms.slice();
-    this.startRoom = rooms.shift();
-    this.endRoom = Phaser.Utils.Array.RemoveRandomElement(rooms);
-    this.otherRooms = Phaser.Utils.Array.Shuffle(rooms);
-    this.restRoom = null;
-    this.swordRoom = null;
+    const rooms = this.dungeon.rooms.slice()
+    this.startRoom = rooms.shift()
+    this.endRoom = Phaser.Utils.Array.RemoveRandomElement(rooms)
+    this.otherRooms = Phaser.Utils.Array.Shuffle(rooms)
+    this.restRoom = null
+    this.swordRoom = null
     this.torch = null
+    this.pathfinder = null
+    this.pathSprites = []
 
     // add rest room only every 5 levels
     if (this.level >= 5 && !(this.level % 5)) {
@@ -40,6 +45,22 @@ export default class DungeonScene extends Phaser.Scene {
     scene.load.spritesheet(
       "torch",
       torchSprite,
+      {
+        frameWidth: 48,
+        frameHeight: 48
+      }
+    );
+    scene.load.spritesheet(
+      "path",
+      pathSprite,
+      {
+        frameWidth: 18,
+        frameHeight: 18
+      }
+    );
+    scene.load.spritesheet(
+      "pathfinder",
+      pathfinderSprite,
       {
         frameWidth: 48,
         frameHeight: 48
@@ -282,6 +303,31 @@ export default class DungeonScene extends Phaser.Scene {
         this.torch = null
       });
     }
+
+    // pathfinder
+    if (this.level >= 10 && this.level % 4 && !this.registry.get('items').includes('pathfinder')) {
+      const pathFinderRoom = Phaser.Utils.Array.GetRandom(this.otherRooms);
+      this.pathfinder = this.physics.add.sprite(
+        this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([pathFinderRoom.left + 1, pathFinderRoom.right - 1])) + 24,
+        this.map.tileToWorldY(Phaser.Utils.Array.GetRandom([pathFinderRoom.top + 1, pathFinderRoom.bottom - 1])) + 24,
+        'pathfinder',
+        0
+      ).setSize(48, 48)
+      this.tilemapVisibility.lights.push({
+        sprite: this.pathfinder,
+        darkness: () => 4
+      })
+      this.pathfinder.anims.play('pathfinder', true)
+
+      this.physics.add.collider(this.hero.sprites.hero, this.pathfinder, () => {
+        const items = this.registry.get('items')
+        items.push('pathfinder')
+        this.registry.set('items', items)
+        this.pathfinder.destroy()
+        this.tilemapVisibility.removeLight(this.pathfinder)
+        this.pathfinder = null
+      });
+    }
   }
 
   addShadowLayer() {
@@ -291,6 +337,60 @@ export default class DungeonScene extends Phaser.Scene {
     this.tilemapVisibility = new TilemapVisibility(shadowLayer, roomShadowLayer, this.restRoom, this.hero, this.level);
     this.tilemapVisibility.setShadow()
     this.tilemapVisibility.setActiveRoom(this.startRoom)
+  }
+
+  showPath() {
+    if (!this.pathSprites.length) {
+      const finder = new PathFinder.AStarFinder()
+      const path = finder.findPath(
+        this.groundLayer.worldToTileX(this.hero.sprites.hero.x),
+        this.groundLayer.worldToTileY(this.hero.sprites.hero.y),
+        this.endRoom.centerX,
+        this.endRoom.centerY,
+        new PathFinder.Grid(
+          this.dungeon.tiles.map(
+            row => row.map(field => field === 2 || field === 3 ? 0 : 1)
+          )
+        )
+      )
+
+      // remove first and last point
+      path.splice(0, 1)
+      path.splice(path.length - 1, 1)
+
+      path.forEach((tile) => {
+        this.pathSprites.push(this.add.sprite(
+          this.groundLayer.tileToWorldX(tile[0]) + 24,
+          this.groundLayer.tileToWorldY(tile[1]) + 24,
+          "path",
+          0
+        ))
+      })
+      if (this.pathSprites.length) {
+        this.scene.get('Gui').startPathfinderCooldown()
+        this.time.addEvent({
+          delay: 300,
+          callback: () => {
+            const sprite = this.pathSprites.shift()
+            if (sprite) {
+              this.add.tween({
+                targets: [sprite],
+                ease: 'Sine.easeInOut',
+                duration: 1000,
+                alpha: {
+                  getStart: () => 1,
+                  getEnd: () => 0
+                },
+                onComplete: () => {
+                  sprite.destroy()
+                }
+              });
+            }
+          },
+          repeat: this.pathSprites.length - 1
+        })
+      }
+    }
   }
 
   update() {

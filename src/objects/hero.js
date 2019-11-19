@@ -45,6 +45,16 @@ export default class Hero {
         }
       }
     });
+
+    // show path
+    this.scene.input.keyboard.on('keyup-Q', () => {
+      if (
+        this.scene.registry.get('items').includes('pathfinder') &&
+        !this.scene.registry.get('pathfinderCooldown')
+      ) {
+        this.scene.showPath()
+      }
+    });
   }
 
   static preload(scene) {

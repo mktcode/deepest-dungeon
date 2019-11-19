@@ -169,6 +169,15 @@ export default class GuiScene extends Phaser.Scene {
     })
   }
 
+  startPathfinderCooldown() {
+    this.registry.set('pathfinderCooldown', true)
+    this.updateItems()
+    this.time.delayedCall(120000, () => {
+      this.registry.set('pathfinderCooldown', false)
+      this.updateItems()
+    })
+  }
+
   updateHealth() {
     const health = this.registry.get('health')
     const maxHealth = this.registry.get('maxHealth')
@@ -204,6 +213,12 @@ export default class GuiScene extends Phaser.Scene {
       this.items.slot1.setDepth(3)
     } else {
       this.items.slot1.setDepth(0)
+    }
+    if (items.includes('pathfinder')) {
+      this.items.slot8.setDepth(3)
+      this.items.slot8.setAlpha(this.registry.get('pathfinderCooldown') ? 0.3 : 1)
+    } else {
+      this.items.slot8.setDepth(0)
     }
     if (items.includes('torch')) {
       this.items.slot9.setDepth(3)

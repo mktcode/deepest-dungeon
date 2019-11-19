@@ -142,5 +142,11 @@ export default class Animations {
       frameRate: 8,
       repeat: -1
     });
+    anims.create({
+      key: "pathfinder",
+      frames: anims.generateFrameNumbers("pathfinder", { start: 0, end: 11 }),
+      frameRate: 12,
+      repeat: -1
+    });
   }
 }
