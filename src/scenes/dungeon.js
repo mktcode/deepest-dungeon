@@ -332,9 +332,9 @@ export default class DungeonScene extends Phaser.Scene {
 
   addShadowLayer() {
     // add shadows and set active room
-    const shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK).setDepth(5);
-    const roomShadowLayer = this.map.createBlankDynamicLayer("RoomShadow", this.tileset).fill(TILES.BLANK).setDepth(5);
-    this.tilemapVisibility = new TilemapVisibility(shadowLayer, roomShadowLayer, this.restRoom, this.hero, this.level);
+    this.shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK).setDepth(5);
+    this.roomShadowLayer = this.map.createBlankDynamicLayer("RoomShadow", this.tileset).fill(TILES.BLANK).setDepth(5);
+    this.tilemapVisibility = new TilemapVisibility(this);
     this.tilemapVisibility.setShadow()
     this.tilemapVisibility.setActiveRoom(this.startRoom)
   }

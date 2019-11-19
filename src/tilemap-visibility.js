@@ -3,11 +3,8 @@
  * room is currently active and what light intensity to apply to each tile.
  */
 export default class TilemapVisibility {
-  constructor(shadowLayer, roomShadowLayer, restRoom, hero, level) {
-    this.shadowLayer = shadowLayer
-    this.roomShadowLayer = roomShadowLayer
-    this.restRoom = restRoom
-    this.level = level
+  constructor(scene) {
+    this.scene = scene
     this.activeRoom = null
     this.lights = []
   }
@@ -22,20 +19,26 @@ export default class TilemapVisibility {
   // Helper to set the alpha on all tiles
   setShadow() {
     const maxDarkness = 35
-    this.shadowLayer.forEachTile(
+    this.scene.shadowLayer.forEachTile(
       (t) => {
         const alphaValues = []
 
         this.lights.forEach((light) => {
-          const vector = new Phaser.Math.Vector2(
-            this.shadowLayer.worldToTileX(light.sprite.x),
-            this.shadowLayer.worldToTileX(light.sprite.y)
+          const room = this.scene.dungeon.getRoomAt(
+            this.scene.groundLayer.worldToTileX(light.sprite.x),
+            this.scene.groundLayer.worldToTileY(light.sprite.y)
           );
-          alphaValues.push(
-            this.restRoom === this.activeRoom
-            ? 0
-            : 1 - 1 / Math.max(1, (Math.max(1, vector.distance({x: t.x, y: t.y})) + Math.min(maxDarkness, light.darkness()) - 4))
-          )
+          if (t.x >= room.left && t.x <= room.right && t.y >= room.top && t.y <= room.bottom) {
+            const vector = new Phaser.Math.Vector2(
+              this.scene.shadowLayer.worldToTileX(light.sprite.x),
+              this.scene.shadowLayer.worldToTileX(light.sprite.y)
+            );
+            alphaValues.push(
+              this.scene.restRoom === this.activeRoom
+              ? 0
+              : 1 - 1 / Math.max(1, (Math.max(1, vector.distance({x: t.x, y: t.y})) + Math.min(maxDarkness, light.darkness()) - 4))
+            )
+          }
         })
         t.alpha = Math.min(...alphaValues)
       },
@@ -47,14 +50,14 @@ export default class TilemapVisibility {
     // We only need to update the tiles if the active room has changed
     if (room !== this.activeRoom) {
       this.setRoomAlpha(room, 0); // Make the new room visible
-      if (this.activeRoom) this.setRoomAlpha(this.activeRoom, Math.min(1, this.level / 15)); // Dim the old room
+      if (this.activeRoom) this.setRoomAlpha(this.activeRoom, Math.min(1, this.scene.level / 15)); // Dim the old room
       this.activeRoom = room;
     }
   }
 
   // Helper to set the alpha on all tiles within a room
   setRoomAlpha(room, alpha) {
-    this.roomShadowLayer.forEachTile(
+    this.scene.roomShadowLayer.forEachTile(
       t => (t.alpha = alpha),
       this,
       room.x,
