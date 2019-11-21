@@ -16,6 +16,12 @@ export default {
   },
   FLOOR: 7,
   FLOOR_LIGHT: 97,
+  SHRINE: {
+    TOP: [11, 17],
+    BOTTOM: [29, 23],
+    LEFT: [30, 31],
+    RIGHT: [37, 36]
+  },
   DOOR: {
     TOP: [3, 7, 4],
     LEFT: [
