@@ -117,6 +117,14 @@ export default class Animations {
         hideOnComplete: true,
         showOnStart: true
       });
+      anims.create({
+        key: "levelUp",
+        frames: anims.generateFrameNumbers("levelUp", { start: 0, end: 8 }),
+        frameRate: 24,
+        repeat: 2,
+        hideOnComplete: true,
+        showOnStart: true
+      });
     })
   }
 

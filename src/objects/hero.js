@@ -3,6 +3,7 @@ import TILES from "../tile-mapping.js";
 
 // assets
 import hero from "../assets/hero.png";
+import levelUp from "../assets/levelUp.png";
 import sword from "../assets/sword.png";
 
 export default class Hero {
@@ -10,7 +11,8 @@ export default class Hero {
     this.scene = scene
     this.sprites = {
       hero: null,
-      sword: null
+      sword: null,
+      levelUp: null
     }
     this.keys = this.scene.input.keyboard.createCursorKeys();
     this.speed = 150
@@ -60,12 +62,30 @@ export default class Hero {
         this.scene.showPath()
       }
     });
+
+    // level up
+    this.level = this.constructor.getLevel(this.scene.registry.get('xp'))
+    this.scene.registry.events.on('changedata-xp', () => {
+      const currentLevel = this.constructor.getLevel(this.scene.registry.get('xp'))
+      if (this.level < currentLevel) {
+        this.level = currentLevel
+        this.sprites.levelUp.anims.play('levelUp')
+      }
+    })
   }
 
   static preload(scene) {
     scene.load.spritesheet(
       "hero",
       hero,
+      {
+        frameWidth: 64,
+        frameHeight: 64
+      }
+    );
+    scene.load.spritesheet(
+      "levelUp",
+      levelUp,
       {
         frameWidth: 64,
         frameHeight: 64
@@ -126,6 +146,7 @@ export default class Hero {
       .setOffset(23, 27);
     this.scene.cameras.main.startFollow(this.sprites.hero)
 
+    this.sprites.levelUp = this.scene.physics.add.sprite(x, y, "levelUp", 0);
     this.sprites.sword = this.scene.physics.add.sprite(x, y, "sword", 0);
     this.setSwordHitBox('down')
   }
@@ -250,5 +271,6 @@ export default class Hero {
     }
 
     this.sprites.sword.setX(this.sprites.hero.body.x + 9).setY(this.sprites.hero.body.y + 6)
+    this.sprites.levelUp.setX(this.sprites.hero.body.x + 9).setY(this.sprites.hero.body.y + 6)
   }
 }
