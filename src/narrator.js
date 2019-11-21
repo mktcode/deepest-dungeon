@@ -73,11 +73,11 @@ export default class Narrator {
     })
   }
 
-  levelIntro(level, doorCount) {
+  dungeonIntro(dungeonNumber, doorCount) {
     if (this.scene.registry.get('disableNarrator')) return
     const delay = 0.5
     return new Promise((resolve) => {
-      if (level === 1) {
+      if (dungeonNumber === 1) {
         this.scene.time.delayedCall(delay * 1000, () => {
           this.slowmoStart()
         })
@@ -94,7 +94,7 @@ export default class Narrator {
             this.slowmoEnd()
           }
         });
-      } else if (level === 2) {
+      } else if (dungeonNumber === 2) {
         this.scene.time.delayedCall(delay * 1000, () => {
           this.slowmoStart()
         })
@@ -109,7 +109,7 @@ export default class Narrator {
             this.slowmoEnd()
           }
         });
-      } else if (level === 5) {
+      } else if (dungeonNumber === 5) {
         this.scene.time.delayedCall(delay * 1000, () => {
           this.slowmoStart()
         })

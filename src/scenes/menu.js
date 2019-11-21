@@ -15,11 +15,11 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   create() {
-    this.startLevel = 1
+    this.startDungeon = 1
 
-    this.registry.set('minLevel', 1)
-    this.registry.set('currentLevel', 1)
-    this.registry.set('deepestLevel', 25)
+    this.registry.set('minDungeon', 1)
+    this.registry.set('currentDungeon', 1)
+    this.registry.set('deepestDungeon', 25)
     this.registry.set('narratorSaid', [])
     this.registry.set('disableNarrator', false)
     this.registry.set('weapon', null)
@@ -85,7 +85,7 @@ export default class MenuScene extends Phaser.Scene {
       .setInteractive();
     newGame.on('pointerup', () => {
       this.scene.sleep()
-      this.scene.add('Dungeon1', new DungeonScene(this.startLevel), true)
+      this.scene.add('Dungeon1', new DungeonScene(this.startDungeon), true)
       this.scene.add('Gui', new GuiScene(), true)
     })
     const loadGame = this.add

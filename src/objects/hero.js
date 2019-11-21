@@ -34,20 +34,20 @@ export default class Hero {
     this.scene.input.keyboard.on('keyup-E', () => {
       // stairs
       if (this.standsOn(TILES.STAIRS.OPEN)) {
-        const nextLevel = this.scene.level + 1
+        const nextDungeon = this.scene.dungeonNumber + 1
         this.scene.scene.sleep()
-        if (this.scene.scene.get('Dungeon' + nextLevel)) {
-          this.scene.scene.wake('Dungeon' + nextLevel)
+        if (this.scene.scene.get('Dungeon' + nextDungeon)) {
+          this.scene.scene.wake('Dungeon' + nextDungeon)
         } else {
-          this.scene.scene.add('Dungeon' + nextLevel, new DungeonScene(nextLevel), true)
-          this.scene.scene.swapPosition('Gui', 'Dungeon' + nextLevel);
+          this.scene.scene.add('Dungeon' + nextDungeon, new DungeonScene(nextDungeon), true)
+          this.scene.scene.swapPosition('Gui', 'Dungeon' + nextDungeon);
         }
       }
 
       // shrine
       if (this.looksAt([TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]])) {
         this.scene.restRoomActivated = true
-        this.scene.registry.set('minLevel', this.scene.level)
+        this.scene.registry.set('minDungeon', this.scene.dungeonNumber)
       }
     });
 

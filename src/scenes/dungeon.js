@@ -13,12 +13,12 @@ import pathSprite from "../assets/path.png";
 import pathfinderSprite from "../assets/pathfinder.png";
 
 export default class DungeonScene extends Phaser.Scene {
-  constructor(level) {
-    super('Dungeon' + level)
-    this.level = level
+  constructor(dungeonNumber) {
+    super('Dungeon' + dungeonNumber)
+    this.dungeonNumber = dungeonNumber
     this.dungeon = new Dungeon({
-      width: level > 25 ? 50 : (level > 10 ? 40 : 30),
-      height: level > 25 ? 50 : (level > 10 ? 40 : 30),
+      width: dungeonNumber > 25 ? 50 : (dungeonNumber > 10 ? 40 : 30),
+      height: dungeonNumber > 25 ? 50 : (dungeonNumber > 10 ? 40 : 30),
       doorPadding: 2,
       rooms: {
         width: { min: 7, max: 15, onlyOdd: true },
@@ -36,8 +36,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.pathSprites = []
     this.restRoomActivated = false
 
-    // add rest room only every 5 levels
-    if (this.level >= 5 && !(this.level % 5)) {
+    // add rest room only every 5 dungeons
+    if (this.dungeonNumber >= 5 && !(this.dungeonNumber % 5)) {
       this.restRoom = this.otherRooms.find(room => room.getDoorLocations().length === 1)
     }
   }
@@ -72,7 +72,7 @@ export default class DungeonScene extends Phaser.Scene {
   create() {
     this.cameras.main.fadeIn(250, 0, 0, 0)
     this.narrator = new Narrator(this)
-    this.registry.set('currentLevel', this.level)
+    this.registry.set('currentDungeon', this.dungeonNumber)
 
     this.prepareMap()
     this.prepareRooms()
@@ -83,7 +83,7 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.events.on('wake', () => {
       this.cameras.main.fadeIn(250, 0, 0, 0)
-      this.registry.set('currentLevel', this.level)
+      this.registry.set('currentDungeon', this.dungeonNumber)
 
       // keyboard bug workaround
       this.hero.keys.up.isDown = false
@@ -111,8 +111,8 @@ export default class DungeonScene extends Phaser.Scene {
       this.hero.unfreeze()
     })
 
-    this.narrator.levelIntro(
-      this.level,
+    this.narrator.dungeonIntro(
+      this.dungeonNumber,
       this.startRoom.getDoorLocations().length
     )
   }
@@ -126,7 +126,7 @@ export default class DungeonScene extends Phaser.Scene {
       width: this.dungeon.width,
       height: this.dungeon.height
     });
-    const tilesetImage = this.level === 25 ? "tilesetMc" : "tileset"
+    const tilesetImage = this.dungeonNumber === 25 ? "tilesetMc" : "tileset"
     this.tileset = this.map.addTilesetImage(tilesetImage, null, tileWidthHeight, tileWidthHeight, 1, 2); // 1px margin, 2px spacing
     this.groundLayer = this.map.createBlankDynamicLayer("Ground", this.tileset).fill(TILES.BLANK);
     this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset);
@@ -220,11 +220,11 @@ export default class DungeonScene extends Phaser.Scene {
     this.tilemapVisibility.lights.push({
       sprite: this.hero.sprites.hero,
       darkness: () => {
-        let darkness = this.level
+        let darkness = this.dungeonNumber
         const torches = this.registry.get('items').filter(item => item === 'torch')
 
         if (torches && torches.length) {
-          darkness = Math.min(this.level, 5 - torches.length)
+          darkness = Math.min(this.dungeonNumber, 5 - torches.length)
         }
         return darkness
       }
@@ -237,8 +237,8 @@ export default class DungeonScene extends Phaser.Scene {
 
   addEnemies() {
     this.enemies = [];
-    const maxEnemies = Math.min(10, this.level - 1)
-    if (this.level > 1) {
+    const maxEnemies = Math.min(10, this.dungeonNumber - 1)
+    if (this.dungeonNumber > 1) {
       this.otherRooms.forEach(room => {
         const num = Phaser.Math.Between(1, maxEnemies)
         for (let i = 1; i <= num; i++) {
@@ -264,7 +264,7 @@ export default class DungeonScene extends Phaser.Scene {
 
   addItems() {
     // sword
-    if (this.level >= 3 && this.level % 3 && !this.registry.get('weapon')) {
+    if (this.dungeonNumber >= 3 && this.dungeonNumber % 3 && !this.registry.get('weapon')) {
       this.swordRoom = Phaser.Utils.Array.GetRandom(this.otherRooms);
       const theSword = this.physics.add.sprite(
         this.map.tileToWorldX(this.swordRoom.centerX),
@@ -288,7 +288,7 @@ export default class DungeonScene extends Phaser.Scene {
     }
 
     // torches
-    if (this.level >= 5 && this.level % 2) {
+    if (this.dungeonNumber >= 5 && this.dungeonNumber % 2) {
       const torchRoom = Phaser.Utils.Array.GetRandom(this.otherRooms);
       this.torch = this.physics.add.sprite(
         this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([torchRoom.left + 1, torchRoom.right - 1])) + 24,
@@ -314,7 +314,7 @@ export default class DungeonScene extends Phaser.Scene {
     }
 
     // pathfinder
-    if (this.level >= 10 && this.level % 4 && !this.registry.get('items').includes('pathfinder')) {
+    if (this.dungeonNumber >= 10 && this.dungeonNumber % 4 && !this.registry.get('items').includes('pathfinder')) {
       const pathFinderRoom = Phaser.Utils.Array.GetRandom(this.otherRooms);
       this.pathfinder = this.physics.add.sprite(
         this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([pathFinderRoom.left + 1, pathFinderRoom.right - 1])) + 24,

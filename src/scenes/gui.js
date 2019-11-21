@@ -55,7 +55,7 @@ export default class GuiScene extends Phaser.Scene {
     const centerY = this.game.scale.height - 46
     const leftOrbX = centerX - 193
     const rightOrbX = centerX + 193
-    const levelBarY = centerY - 15
+    const dungeonProgressBarY = centerY - 15
     const xpBarY = centerY - 3
 
     // frame
@@ -81,10 +81,10 @@ export default class GuiScene extends Phaser.Scene {
       1
     ).setScrollFactor(0).setDepth(0);
 
-    // level process bar
-    this.levelBar = this.add.sprite(
+    // dungeon process bar
+    this.dungeonProgressBar = this.add.sprite(
       centerX,
-      levelBarY,
+      dungeonProgressBarY,
       "gui-bars",
       0
     ).setScrollFactor(0).setDepth(2);
@@ -136,11 +136,11 @@ export default class GuiScene extends Phaser.Scene {
       this.updateMana()
     })
 
-    this.registry.events.on('changedata-currentLevel', () => {
-      this.updateLevel()
+    this.registry.events.on('changedata-currentDungeon', () => {
+      this.updateDungeonProgress()
     })
-    this.registry.events.on('changedata-deepestLevel', () => {
-      this.updateLevel()
+    this.registry.events.on('changedata-deepestDungeon', () => {
+      this.updateDungeonProgress()
     })
 
     this.registry.events.on('changedata-xp', () => {
@@ -157,7 +157,7 @@ export default class GuiScene extends Phaser.Scene {
 
     this.updateHealth()
     this.updateMana()
-    this.updateLevel()
+    this.updateDungeonProgress()
     this.updateXp()
     this.updateSelectedItem()
     this.updateItems()
@@ -197,11 +197,11 @@ export default class GuiScene extends Phaser.Scene {
     this.manaFill.setCrop(0, 90 - 90 * (mana / maxMana), 90, 90)
   }
 
-  updateLevel() {
-    const currentLevel = this.registry.get('currentLevel')
-    const deepestLevel = this.registry.get('deepestLevel')
+  updateDungeonProgress() {
+    const currentDungeon = this.registry.get('currentDungeon')
+    const deepestDungeon = this.registry.get('deepestDungeon')
 
-    this.levelBar.setCrop(0, 0, 348 * (currentLevel / deepestLevel), 9)
+    this.dungeonProgressBar.setCrop(0, 0, 348 * (currentDungeon / deepestDungeon), 9)
   }
 
   updateXp() {

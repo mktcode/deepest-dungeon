@@ -50,7 +50,7 @@ export default class TilemapVisibility {
     // We only need to update the tiles if the active room has changed
     if (room !== this.activeRoom) {
       this.setRoomAlpha(room, 0); // Make the new room visible
-      if (this.activeRoom) this.setRoomAlpha(this.activeRoom, Math.min(1, this.scene.level / 15)); // Dim the old room
+      if (this.activeRoom) this.setRoomAlpha(this.activeRoom, Math.min(1, this.scene.dungeonNumber / 15)); // Dim the old room
       this.activeRoom = room;
     }
   }

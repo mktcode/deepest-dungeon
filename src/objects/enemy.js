@@ -74,14 +74,14 @@ export default class Enemy {
             this.dungeon.hero.underAttack = false
           });
         } else {
-          if (this.dungeon.registry.get('minLevel') >= 5) {
+          if (this.dungeon.registry.get('minDungeon') >= 5) {
             this.dungeon.registry.set('wakeupInRestRoom', true)
           }
           this.dungeon.hero.underAttack = false
           this.dungeon.registry.set('health', this.dungeon.registry.get('maxHealth'))
           this.dungeon.hero.freeze()
           this.dungeon.scene.sleep()
-          this.dungeon.scene.wake('Dungeon' + this.dungeon.registry.get('minLevel'))
+          this.dungeon.scene.wake('Dungeon' + this.dungeon.registry.get('minDungeon'))
         }
       }
     });
