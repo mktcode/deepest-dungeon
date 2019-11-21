@@ -219,14 +219,13 @@ export default class DungeonScene extends Phaser.Scene {
     );
     this.tilemapVisibility.lights.push({
       sprite: this.hero.sprites.hero,
-      darkness: () => {
-        let darkness = this.dungeonNumber
+      intensity: () => {
         const torches = this.registry.get('items').filter(item => item === 'torch')
 
         if (torches && torches.length) {
-          darkness = Math.min(this.dungeonNumber, 5 - torches.length)
+          return torches.length
         }
-        return darkness
+        return 0
       }
     })
 
@@ -298,7 +297,7 @@ export default class DungeonScene extends Phaser.Scene {
       ).setSize(48, 48)
       this.tilemapVisibility.lights.push({
         sprite: this.torch,
-        darkness: () => 4
+        intensity: () => 1
       })
       this.torch.anims.play('torch', true)
 
@@ -324,7 +323,7 @@ export default class DungeonScene extends Phaser.Scene {
       ).setSize(48, 48)
       this.tilemapVisibility.lights.push({
         sprite: this.pathfinder,
-        darkness: () => 4
+        intensity: () => 1
       })
       this.pathfinder.anims.play('pathfinder', true)
 
@@ -342,7 +341,6 @@ export default class DungeonScene extends Phaser.Scene {
   addShadowLayer() {
     // add shadows and set active room
     this.shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK).setDepth(5);
-    this.roomShadowLayer = this.map.createBlankDynamicLayer("RoomShadow", this.tileset).fill(TILES.BLANK).setDepth(5);
     this.tilemapVisibility = new TilemapVisibility(this);
     this.tilemapVisibility.setShadow()
     this.tilemapVisibility.setActiveRoom(this.startRoom)
@@ -411,8 +409,8 @@ export default class DungeonScene extends Phaser.Scene {
       this.groundLayer.worldToTileX(this.hero.sprites.hero.x),
       this.groundLayer.worldToTileY(this.hero.sprites.hero.y)
     );
-    this.tilemapVisibility.setShadow();
     this.tilemapVisibility.setActiveRoom(playerRoom)
+    this.tilemapVisibility.setShadow();
 
     if (playerRoom === this.restRoom) {
       this.narrator.sayOnce('restRoom')
