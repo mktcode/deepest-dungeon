@@ -15,15 +15,15 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   create() {
-    this.startDungeon = 5
+    this.startDungeon = 1
 
     this.registry.set('minDungeon', 1)
     this.registry.set('currentDungeon', 1)
     this.registry.set('deepestDungeon', 25)
     this.registry.set('narratorSaid', [])
     this.registry.set('disableNarrator', false)
-    this.registry.set('weapon', 'sword')
-    this.registry.set('items', ['sword'])
+    this.registry.set('weapon', null)
+    this.registry.set('items', [])
     this.registry.set('health', 3)
     this.registry.set('maxHealth', 3)
     this.registry.set('mana', 0)
