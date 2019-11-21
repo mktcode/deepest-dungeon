@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import Hero from "../objects/hero.js";
 
 // assets
 import frame from "../assets/gui/frame.png";
@@ -205,15 +206,14 @@ export default class GuiScene extends Phaser.Scene {
   }
 
   updateXp() {
-    const currentXp = this.registry.get('xp')
-    const maxXp = 100
+    const totalXp = this.registry.get('xp')
+    const currentLevel = Hero.getLevel(totalXp)
+    const lastMaxXp = Hero.getXpForLevelUp(currentLevel)
+    const currentMaxXp = Hero.getXpForLevelUp(currentLevel + 1)
+    const thisLevelXp = currentMaxXp - lastMaxXp
+    const xp = totalXp - lastMaxXp
 
-    this.xpBar.setCrop(0, 0, 348 * (currentXp / maxXp), 9)
-    if (currentXp >= maxXp) {
-      this.xpBar.anims.play('xpFull', true)
-    } else {
-      this.xpBar.anims.stop()
-    }
+    this.xpBar.setCrop(0, 0, 348 * (xp / thisLevelXp), 9)
   }
 
   updateSelectedItem() {

@@ -87,6 +87,5 @@ export default class PreloadScene extends Phaser.Scene {
     Animations.hero(this.anims)
     Animations.enemies(this.anims)
     Animations.items(this.anims)
-    Animations.gui(this.anims)
   }
 }

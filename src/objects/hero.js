@@ -81,6 +81,16 @@ export default class Hero {
     );
   }
 
+  static getLevel(xp) {
+    // required xp for level up: current level * 50
+    // https://gamedev.stackexchange.com/questions/110431/how-can-i-calculate-current-level-from-total-xp-when-each-level-requires-propor
+    return Math.floor((1 + Math.sqrt(1 + 8 * xp / 50)) / 2)
+  }
+
+  static getXpForLevelUp(level) {
+    return ((Math.pow(level, 2) - level) * 50) / 2
+  }
+
   looksAt(tileNumbers) {
     if (!Array.isArray(tileNumbers)) {
       tileNumbers = [tileNumbers]
