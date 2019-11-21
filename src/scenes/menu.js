@@ -28,6 +28,7 @@ export default class MenuScene extends Phaser.Scene {
     this.registry.set('maxHealth', 3)
     this.registry.set('mana', 0)
     this.registry.set('maxMana', 0)
+    this.registry.set('xp', 0)
 
     this.cameras.main.fadeIn(250, 0, 0, 0);
     this.sound.play("ambientMusik", { volume: 0.3, loop: true })

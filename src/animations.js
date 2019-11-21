@@ -149,4 +149,13 @@ export default class Animations {
       repeat: -1
     });
   }
+
+  static gui(anims) {
+    anims.create({
+      key: "xpFull",
+      frames: anims.generateFrameNumbers("gui-bars", { start: 2, end: 4 }),
+      frameRate: 8,
+      repeat: -1
+    });
+  }
 }

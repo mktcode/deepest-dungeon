@@ -34,7 +34,7 @@ export default class TilemapVisibility {
               this.scene.shadowLayer.worldToTileX(light.sprite.y)
             );
             alphaValues.push(
-              this.scene.restRoom === this.activeRoom
+              this.scene.restRoom === this.activeRoom && this.scene.restRoomActivated
               ? 0
               : 1 - 1 / Math.max(1, (Math.max(1, vector.distance({x: t.x, y: t.y})) + Math.min(maxDarkness, light.darkness()) - 4))
             )

@@ -20,7 +20,8 @@ export default class Enemy {
     const y = map.tileToWorldX(Phaser.Math.Between(room.top + 1, room.bottom - 1))
 
     if (this.type === 'deamon') {
-      this.hp = 25
+      this.hp = 10
+      this.xp = 10
       this.sprite = this.dungeon.physics.add.sprite(x, y, 'deamon', 1).setSize(75, 90).setOffset(23, 19)
       this.sprite.anims.play("deamon-idle")
       this.dungeon.tilemapVisibility.lights.push({
@@ -30,6 +31,7 @@ export default class Enemy {
     }
     if (this.type === 'snake') {
       this.hp = 3
+      this.xp = 3
       this.sprite = this.dungeon.physics.add
         .sprite(x, y, "enemies", 0)
         .setSize(27, 28)
@@ -102,6 +104,7 @@ export default class Enemy {
             this.underAttack = false
           });
         } else if (this.dieCallback) {
+          this.dungeon.registry.set('xp', this.dungeon.registry.get('xp') + this.xp)
           this.sprite.destroy()
           this.dieCallback(this)
         }

@@ -143,6 +143,10 @@ export default class GuiScene extends Phaser.Scene {
       this.updateLevel()
     })
 
+    this.registry.events.on('changedata-xp', () => {
+      this.updateXp()
+    })
+
     this.registry.events.on('changedata-weapon', () => {
       this.updateSelectedItem()
     })
@@ -154,6 +158,7 @@ export default class GuiScene extends Phaser.Scene {
     this.updateHealth()
     this.updateMana()
     this.updateLevel()
+    this.updateXp()
     this.updateSelectedItem()
     this.updateItems()
   }
@@ -197,6 +202,18 @@ export default class GuiScene extends Phaser.Scene {
     const deepestLevel = this.registry.get('deepestLevel')
 
     this.levelBar.setCrop(0, 0, 348 * (currentLevel / deepestLevel), 9)
+  }
+
+  updateXp() {
+    const currentXp = this.registry.get('xp')
+    const maxXp = 100
+
+    this.xpBar.setCrop(0, 0, 348 * (currentXp / maxXp), 9)
+    if (currentXp >= maxXp) {
+      this.xpBar.anims.play('xpFull', true)
+    } else {
+      this.xpBar.anims.stop()
+    }
   }
 
   updateSelectedItem() {

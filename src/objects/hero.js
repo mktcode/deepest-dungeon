@@ -33,8 +33,7 @@ export default class Hero {
     // use
     this.scene.input.keyboard.on('keyup-E', () => {
       // stairs
-      const tile = this.scene.stuffLayer.getTileAtWorldXY(this.sprites.hero.body.x, this.sprites.hero.body.y)
-      if (tile && tile.index === TILES.STAIRS.OPEN) {
+      if (this.standsOn(TILES.STAIRS.OPEN)) {
         const nextLevel = this.scene.level + 1
         this.scene.scene.sleep()
         if (this.scene.scene.get('Dungeon' + nextLevel)) {
@@ -43,6 +42,12 @@ export default class Hero {
           this.scene.scene.add('Dungeon' + nextLevel, new DungeonScene(nextLevel), true)
           this.scene.scene.swapPosition('Gui', 'Dungeon' + nextLevel);
         }
+      }
+
+      // shrine
+      if (this.looksAt([TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]])) {
+        this.scene.restRoomActivated = true
+        this.scene.registry.set('minLevel', this.scene.level)
       }
     });
 
@@ -74,6 +79,34 @@ export default class Hero {
         frameHeight: 128
       }
     );
+  }
+
+  looksAt(tileNumbers) {
+    if (!Array.isArray(tileNumbers)) {
+      tileNumbers = [tileNumbers]
+    }
+    let tile
+    if (this.lastDirection === 'up') {
+      tile = this.scene.stuffLayer.getTileAtWorldXY(this.sprites.hero.body.x, this.sprites.hero.body.y - 48)
+    }
+    if (this.lastDirection === 'down') {
+      tile = this.scene.stuffLayer.getTileAtWorldXY(this.sprites.hero.body.x, this.sprites.hero.body.y + 48)
+    }
+    if (this.lastDirection === 'left') {
+      tile = this.scene.stuffLayer.getTileAtWorldXY(this.sprites.hero.body.x - 48, this.sprites.hero.body.y)
+    }
+    if (this.lastDirection === 'right') {
+      tile = this.scene.stuffLayer.getTileAtWorldXY(this.sprites.hero.body.x + 48, this.sprites.hero.body.y)
+    }
+    return tile && tileNumbers.includes(tile.index)
+  }
+
+  standsOn(tileNumbers) {
+    if (!Array.isArray(tileNumbers)) {
+      tileNumbers = [tileNumbers]
+    }
+    const tile = this.scene.stuffLayer.getTileAtWorldXY(this.sprites.hero.body.x, this.sprites.hero.body.y)
+    return tile && tileNumbers.includes(tile.index)
   }
 
   addToScene(x, y) {
