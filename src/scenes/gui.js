@@ -207,9 +207,16 @@ export default class GuiScene extends Phaser.Scene {
 
   updateXp() {
     const totalXp = this.registry.get('xp')
-    const currentLevel = Hero.getLevel(totalXp)
-    const lastMaxXp = Hero.getXpForLevelUp(currentLevel)
-    const currentMaxXp = Hero.getXpForLevelUp(currentLevel + 1)
+    const currentLevel = this.registry.get('level')
+    const xpBasedLevel = Hero.getLevelByXp(totalXp)
+    if (currentLevel < xpBasedLevel) {
+      this.registry.set('level', xpBasedLevel)
+      this.registry.set('skillPoints', this.registry.get('skillPoints') + 1)
+      const currentDungeon = this.scene.get('Dungeon' + this.registry.get('currentDungeon'))
+      currentDungeon.hero.sprites.levelUp.anims.play('levelUp')
+    }
+    const lastMaxXp = Hero.getXpForLevelUp(xpBasedLevel)
+    const currentMaxXp = Hero.getXpForLevelUp(xpBasedLevel + 1)
     const thisLevelXp = currentMaxXp - lastMaxXp
     const xp = totalXp - lastMaxXp
 

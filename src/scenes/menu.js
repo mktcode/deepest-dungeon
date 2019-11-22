@@ -1,6 +1,7 @@
 import Phaser from "phaser"
 import DungeonScene from "../scenes/dungeon.js"
 import GuiScene from "../scenes/gui.js"
+import CharacterScene from "../scenes/character.js"
 import Hero from "../objects/hero.js"
 
 // assets
@@ -28,7 +29,9 @@ export default class MenuScene extends Phaser.Scene {
     this.registry.set('maxHealth', 3)
     this.registry.set('mana', 0)
     this.registry.set('maxMana', 0)
+    this.registry.set('level', 1)
     this.registry.set('xp', 0)
+    this.registry.set('skillPoints', 0)
 
     this.cameras.main.fadeIn(250, 0, 0, 0);
     this.sound.play("ambientMusik", { volume: 0.3, loop: true })
@@ -87,6 +90,7 @@ export default class MenuScene extends Phaser.Scene {
       this.scene.sleep()
       this.scene.add('Dungeon1', new DungeonScene(this.startDungeon), true)
       this.scene.add('Gui', new GuiScene(), true)
+      this.scene.add('Character', new CharacterScene())
     })
     const loadGame = this.add
       .text(centerX - 61, centerY + 200, 'Load Game', {

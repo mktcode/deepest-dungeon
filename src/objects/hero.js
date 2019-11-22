@@ -50,6 +50,8 @@ export default class Hero {
       if (this.looksAt([TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]])) {
         this.scene.restRoomActivated = true
         this.scene.registry.set('minDungeon', this.scene.dungeonNumber)
+        this.scene.scene.run('Character')
+        this.scene.scene.bringToTop('Character')
       }
     });
 
@@ -62,16 +64,6 @@ export default class Hero {
         this.scene.showPath()
       }
     });
-
-    // level up
-    this.level = this.constructor.getLevel(this.scene.registry.get('xp'))
-    this.scene.registry.events.on('changedata-xp', () => {
-      const currentLevel = this.constructor.getLevel(this.scene.registry.get('xp'))
-      if (this.level < currentLevel) {
-        this.level = currentLevel
-        this.sprites.levelUp.anims.play('levelUp')
-      }
-    })
   }
 
   static preload(scene) {
@@ -101,7 +93,7 @@ export default class Hero {
     );
   }
 
-  static getLevel(xp) {
+  static getLevelByXp(xp) {
     // required xp for level up: current level * 50
     // https://gamedev.stackexchange.com/questions/110431/how-can-i-calculate-current-level-from-total-xp-when-each-level-requires-propor
     return Math.floor((1 + Math.sqrt(1 + 8 * xp / 50)) / 2)

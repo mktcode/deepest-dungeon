@@ -103,10 +103,12 @@ export default class Enemy {
           this.dungeon.time.delayedCall(750, () => {
             this.underAttack = false
           });
-        } else if (this.dieCallback) {
+        } else {
           this.dungeon.registry.set('xp', this.dungeon.registry.get('xp') + this.xp)
           this.sprite.destroy()
-          this.dieCallback(this)
+          if (this.dieCallback) {
+            this.dieCallback(this)
+          }
         }
       }
     });
