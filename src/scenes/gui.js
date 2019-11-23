@@ -165,7 +165,7 @@ export default class GuiScene extends Phaser.Scene {
   }
 
   removeTorchDelayed() {
-    this.time.delayedCall(60000, () => {
+    this.time.delayedCall(this.registry.get('torchDuration') * 1000, () => {
       const items = this.registry.get('items')
       const deleteIndex = items.findIndex((item) => item === 'torch')
       if (deleteIndex != -1) {

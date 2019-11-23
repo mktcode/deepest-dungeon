@@ -89,8 +89,8 @@ export default class Enemy {
       if (this.dungeon.hero.attacking && !this.underAttack) {
         this.dungeon.cameras.main.shake(500, .002)
         this.underAttack = true
-        this.hp--
-        if (this.hp) {
+        this.hp -= this.dungeon.registry.get('damage')
+        if (this.hp > 0) {
           if (this.dungeon.hero.lastDirection === 'up') {
             enemy.body.setVelocityY(-300)
           } else if (this.dungeon.hero.lastDirection === 'down') {
