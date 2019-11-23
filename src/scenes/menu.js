@@ -66,21 +66,14 @@ export default class MenuScene extends Phaser.Scene {
       repeat: -1
     })
 
-    this.add
+    this.disableNarratorText = this.add
       .text(centerX - 65, centerY + 120, 'Disable Narrator', {
         font: "16px monospace",
         fill: "#FFFFFF"
-      })
-    const disableNarrator = this.add.sprite(centerX - 81, centerY + 130, "ui", 0).setInteractive()
-    disableNarrator.on("pointerup", () => {
-      if (this.registry.get("disableNarrator")) {
-        disableNarrator.setTexture("ui", 0)
-        this.registry.set("disableNarrator", false)
-      } else {
-        disableNarrator.setTexture("ui", 1)
-        this.registry.set("disableNarrator", true)
-      }
-    })
+      }).setInteractive()
+    this.disableNarratorCheckbox = this.add.sprite(centerX - 81, centerY + 130, "ui", 0).setInteractive()
+    this.disableNarratorText.on("pointerup", this.disableNarrator, this)
+    this.disableNarratorCheckbox.on("pointerup", this.disableNarrator, this)
 
     const newGame = this.add
       .text(centerX - 55, centerY + 160, 'New Game', {
@@ -106,5 +99,15 @@ export default class MenuScene extends Phaser.Scene {
         fill: "#222222"
       })
       .setInteractive();
+  }
+
+  disableNarrator() {
+    if (this.registry.get("disableNarrator")) {
+      this.disableNarratorCheckbox.setTexture("ui", 0)
+      this.registry.set("disableNarrator", false)
+    } else {
+      this.disableNarratorCheckbox.setTexture("ui", 1)
+      this.registry.set("disableNarrator", true)
+    }
   }
 }
