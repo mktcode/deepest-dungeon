@@ -1,3 +1,4 @@
+import Phaser from "phaser"
 import DungeonScene from "../scenes/dungeon.js"
 import TILES from "../tile-mapping.js";
 
@@ -15,6 +16,12 @@ export default class Hero {
       levelUp: null
     }
     this.keys = this.scene.input.keyboard.createCursorKeys();
+    this.wasdKeys = this.scene.input.keyboard.addKeys({
+      up: Phaser.Input.Keyboard.KeyCodes.W,
+      down: Phaser.Input.Keyboard.KeyCodes.S,
+      left: Phaser.Input.Keyboard.KeyCodes.A,
+      right: Phaser.Input.Keyboard.KeyCodes.D
+    })
     this.speed = 150
     this.attacking = false
     this.underAttack = false
@@ -199,6 +206,10 @@ export default class Hero {
     }
   }
 
+  isDirectionKeyDown(direction) {
+    return this.keys[direction].isDown || this.wasdKeys[direction].isDown
+  }
+
   update() {
     if (!this.underAttack) {
       // Stop any previous movement from the last frame
@@ -207,16 +218,16 @@ export default class Hero {
       this.speed = this.scene.narrator.slowmo ? 25 : 150
 
       // Horizontal movement
-      if (this.keys.left.isDown) {
+      if (this.isDirectionKeyDown('left')) {
         this.sprites.hero.body.setVelocityX(-this.speed);
-      } else if (this.keys.right.isDown) {
+      } else if (this.isDirectionKeyDown('right')) {
         this.sprites.hero.body.setVelocityX(this.speed);
       }
 
       // Vertical movement
-      if (this.keys.up.isDown) {
+      if (this.isDirectionKeyDown('up')) {
         this.sprites.hero.body.setVelocityY(-this.speed);
-      } else if (this.keys.down.isDown) {
+      } else if (this.isDirectionKeyDown('down')) {
         this.sprites.hero.body.setVelocityY(this.speed);
       }
 
@@ -226,28 +237,28 @@ export default class Hero {
       // Update the animation last and give left/right/down animations precedence over up animations
       // Do nothing if slashing animation is playing
       if (!this.attacking) {
-        if (this.keys.up.isDown) {
+        if (this.isDirectionKeyDown('up')) {
           this.lastDirection = 'up'
-          if (this.keys.left.isDown) {
+          if (this.isDirectionKeyDown('left')) {
             this.walk("up-left");
-          } else if (this.keys.right.isDown) {
+          } else if (this.isDirectionKeyDown('right')) {
             this.walk("up-right");
           } else {
             this.walk("up");
           }
-        } else if (this.keys.down.isDown) {
+        } else if (this.isDirectionKeyDown('down')) {
           this.lastDirection = 'down'
-          if (this.keys.left.isDown) {
+          if (this.isDirectionKeyDown('left')) {
             this.walk("down-left");
-          } else if (this.keys.right.isDown) {
+          } else if (this.isDirectionKeyDown('right')) {
             this.walk("down-right");
           } else {
             this.walk("down");
           }
-        } else if (this.keys.left.isDown) {
+        } else if (this.isDirectionKeyDown('left')) {
           this.lastDirection = 'left'
           this.walk("left");
-        } else if (this.keys.right.isDown) {
+        } else if (this.isDirectionKeyDown('right')) {
           this.lastDirection = 'right'
           this.walk("right");
         } else {
