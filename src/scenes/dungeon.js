@@ -17,6 +17,7 @@ export default class DungeonScene extends Phaser.Scene {
     super('Dungeon' + dungeonNumber)
     this.dungeonNumber = dungeonNumber
     this.dungeon = new Dungeon({
+      randomSeed: 'Dungeon' + this.dungeonNumber,
       width: dungeonNumber > 25 ? 50 : (dungeonNumber > 10 ? 40 : 30),
       height: dungeonNumber > 25 ? 50 : (dungeonNumber > 10 ? 40 : 30),
       doorPadding: 2,
