@@ -30,7 +30,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.startRoom = rooms.shift()
     this.endRoom = rooms.splice(this.dungeon.r.randomInteger(0, rooms.length - 1), 1)[0]
     this.restRoom = null
-    // add rest room only every 5 dungeons, must be a room with only one door
+    // add rest room every 5 dungeons (first room with only one door)
     if (this.dungeonNumber >= 5 && !(this.dungeonNumber % 5)) {
       this.restRoom = rooms.splice(rooms.findIndex(room => room.getDoorLocations().length === 1), 1)[0]
     }
@@ -244,7 +244,7 @@ export default class DungeonScene extends Phaser.Scene {
     const maxEnemies = Math.min(10, this.dungeonNumber - 1)
     if (this.dungeonNumber > 1) {
       this.otherRooms.forEach(room => {
-        const num = Phaser.Math.Between(1, maxEnemies)
+        const num = this.dungeon.r.randomInteger(1, maxEnemies)
         for (let i = 1; i <= num; i++) {
           this.enemies.push(new Enemy(this, this.map, room, 'snake', (enemy) => {
             Phaser.Utils.Array.Remove(this.enemies, enemy)
