@@ -274,7 +274,7 @@ export default class DungeonScene extends Phaser.Scene {
 
   addItems() {
     // sword
-    if (this.dungeonNumber >= 3 && this.dungeonNumber % 3 && !this.registry.get('weapon')) {
+    if (this.dungeonNumber >= 3 && this.dungeonNumber % 3 && !this.registry.get('items').includes('sword')) {
       const swordRoom = this.dungeon.r.randomPick(this.otherRooms)
       this.sword = this.physics.add.sprite(
         this.map.tileToWorldX(swordRoom.centerX),
