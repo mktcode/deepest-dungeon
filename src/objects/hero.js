@@ -42,7 +42,7 @@ export default class Hero {
     // use
     this.scene.input.keyboard.on('keyup-E', () => {
       // stairs
-      if (this.standsOn(TILES.STAIRS.OPEN)) {
+      if (this.standsOn(TILES.STAIRS.OPEN) || this.looksAt(TILES.STAIRS.OPEN)) {
         const nextDungeon = this.scene.dungeonNumber + 1
         this.scene.scene.sleep()
         if (this.scene.scene.get('Dungeon' + nextDungeon)) {
@@ -141,7 +141,7 @@ export default class Hero {
   addToScene(x, y) {
     this.sprites.hero = this.scene.physics.add
       .sprite(x, y, "hero", 35)
-      .setSize(20, 27)
+      .setSize(20, 25)
       .setOffset(23, 27);
     this.scene.cameras.main.startFollow(this.sprites.hero)
 

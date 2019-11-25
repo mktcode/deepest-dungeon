@@ -54,13 +54,15 @@ export default class Enemy {
       }
     });
 
-    this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.hero, this.sprite, (hero, enemy) => {
+    this.dungeon.physics.add.collider(this.dungeon.hero.sprites.hero, this.sprite, (hero, enemy) => {
       if (!this.dungeon.hero.underAttack) {
+        this.dungeon.cameras.main.shake(500, .002)
         this.dungeon.hero.underAttack = true
         let heroHp = this.dungeon.registry.get('health')
         heroHp--
         this.dungeon.registry.set('health', heroHp)
-        if (heroHp) {
+        if (heroHp > 0) {
+          this.flash(hero)
           if (hero.body.touching.up) {
             hero.body.setVelocityY(300)
           } else if (hero.body.touching.down) {
@@ -70,7 +72,7 @@ export default class Enemy {
           } else if (hero.body.touching.right) {
             hero.body.setVelocityX(-300)
           }
-          this.dungeon.time.delayedCall(750, () => {
+          this.dungeon.time.delayedCall(500, () => {
             this.dungeon.hero.underAttack = false
           });
         } else {
@@ -91,6 +93,7 @@ export default class Enemy {
         this.underAttack = true
         this.hp -= this.dungeon.registry.get('damage')
         if (this.hp > 0) {
+          this.flash(enemy)
           if (this.dungeon.hero.lastDirection === 'up') {
             enemy.body.setVelocityY(-300)
           } else if (this.dungeon.hero.lastDirection === 'down') {
@@ -112,6 +115,19 @@ export default class Enemy {
         }
       }
     });
+  }
+
+  flash(sprite) {
+    this.dungeon.time.addEvent({
+      delay: 150,
+      callback: () => {
+        sprite.setTintFill(0xffffff)
+        this.dungeon.time.delayedCall(75, () => {
+          sprite.clearTint()
+        })
+      },
+      repeat: 4
+  })
   }
 
   static preload(scene) {
