@@ -18,8 +18,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.dungeonNumber = dungeonNumber
     this.dungeon = new Dungeon({
       randomSeed: 'Dungeon' + this.dungeonNumber,
-      width: dungeonNumber > 25 ? 50 : (dungeonNumber > 10 ? 40 : 30),
-      height: dungeonNumber > 25 ? 50 : (dungeonNumber > 10 ? 40 : 30),
+      width: this.getWidthHeight(),
+      height: this.getWidthHeight(),
       doorPadding: 2,
       rooms: {
         width: { min: 7, max: 15, onlyOdd: true },
@@ -28,19 +28,23 @@ export default class DungeonScene extends Phaser.Scene {
     })
     const rooms = this.dungeon.rooms.slice()
     this.startRoom = rooms.shift()
-    this.endRoom = Phaser.Utils.Array.RemoveRandomElement(rooms)
-    this.otherRooms = Phaser.Utils.Array.Shuffle(rooms)
+    this.endRoom = rooms.splice(this.dungeon.r.randomInteger(0, rooms.length - 1), 1)[0]
     this.restRoom = null
-    this.swordRoom = null
+    // add rest room only every 5 dungeons, must be a room with only one door
+    if (this.dungeonNumber >= 5 && !(this.dungeonNumber % 5)) {
+      this.restRoom = rooms.splice(rooms.findIndex(room => room.getDoorLocations().length === 1), 1)[0]
+    }
+    this.otherRooms = rooms
+
+    this.sword = null
     this.torch = null
     this.pathfinder = null
     this.pathSprites = []
     this.restRoomActivated = false
+  }
 
-    // add rest room only every 5 dungeons
-    if (this.dungeonNumber >= 5 && !(this.dungeonNumber % 5)) {
-      this.restRoom = this.otherRooms.find(room => room.getDoorLocations().length === 1)
-    }
+  getWidthHeight() {
+    return Math.min(100, 30 + this.dungeonNumber)
   }
 
   static preload(scene) {
@@ -265,31 +269,31 @@ export default class DungeonScene extends Phaser.Scene {
   addItems() {
     // sword
     if (this.dungeonNumber >= 3 && this.dungeonNumber % 3 && !this.registry.get('weapon')) {
-      this.swordRoom = Phaser.Utils.Array.GetRandom(this.otherRooms);
-      const theSword = this.physics.add.sprite(
-        this.map.tileToWorldX(this.swordRoom.centerX),
-        this.map.tileToWorldY(this.swordRoom.centerY),
+      const swordRoom = this.dungeon.r.randomPick(this.otherRooms)
+      this.sword = this.physics.add.sprite(
+        this.map.tileToWorldX(swordRoom.centerX),
+        this.map.tileToWorldY(swordRoom.centerY),
         'sword',
         20
       ).setSize(32, 32)
       this.tweens.add({
-        targets: theSword,
+        targets: this.sword,
         yoyo: true,
         repeat: -1,
         y: '+=5'
       })
-      this.physics.add.collider(this.hero.sprites.hero, theSword, () => {
+      this.physics.add.collider(this.hero.sprites.hero, this.sword, () => {
         this.registry.set('weapon', 'sword')
         const items = this.registry.get('items')
         items.push('sword')
         this.registry.set('items', items)
-        theSword.destroy()
+        this.sword.destroy()
       });
     }
 
     // torches
     if (this.dungeonNumber >= 5 && this.dungeonNumber % 2) {
-      const torchRoom = Phaser.Utils.Array.GetRandom(this.otherRooms);
+      const torchRoom = this.dungeon.r.randomPick(this.otherRooms)
       this.torch = this.physics.add.sprite(
         this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([torchRoom.left + 1, torchRoom.right - 1])) + 24,
         this.map.tileToWorldY(Phaser.Utils.Array.GetRandom([torchRoom.top + 1, torchRoom.bottom - 1])) + 24,
@@ -315,7 +319,7 @@ export default class DungeonScene extends Phaser.Scene {
 
     // pathfinder
     if (this.dungeonNumber >= 10 && this.dungeonNumber % 4 && !this.registry.get('items').includes('pathfinder')) {
-      const pathFinderRoom = Phaser.Utils.Array.GetRandom(this.otherRooms);
+      const pathFinderRoom = this.dungeon.r.randomPick(this.otherRooms)
       this.pathfinder = this.physics.add.sprite(
         this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([pathFinderRoom.left + 1, pathFinderRoom.right - 1])) + 24,
         this.map.tileToWorldY(Phaser.Utils.Array.GetRandom([pathFinderRoom.top + 1, pathFinderRoom.bottom - 1])) + 24,
