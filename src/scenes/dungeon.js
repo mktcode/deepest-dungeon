@@ -190,7 +190,6 @@ export default class DungeonScene extends Phaser.Scene {
 
     // prepare rest room if exists
     if (this.restRoom) {
-      Phaser.Utils.Array.Remove(this.otherRooms, this.restRoom)
       this.groundLayer.fill(TILES.FLOOR_LIGHT, this.restRoom.left + 1, this.restRoom.top + 1, this.restRoom.width - 2, this.restRoom.height - 2);
       let restRoomDoor = this.restRoom.getDoorLocations()[0]
       if (restRoomDoor.y === 0) {
