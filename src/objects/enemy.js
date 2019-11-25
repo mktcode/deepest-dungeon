@@ -24,7 +24,7 @@ export default class Enemy {
       this.xp = 10
       this.sprite = this.dungeon.physics.add.sprite(x, y, 'deamon', 1).setSize(75, 90).setOffset(23, 19)
       this.sprite.anims.play("deamon-idle")
-      this.dungeon.tilemapVisibility.lights.push({
+      this.dungeon.lightManager.lights.push({
         sprite: this.sprite,
         intensity: () => 2
       })

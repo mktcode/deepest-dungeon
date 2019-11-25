@@ -2,7 +2,7 @@
  * A small helper class that can take control of our shadow tilemap layer. It keeps track of which
  * room is currently active and what light intensity to apply to each tile.
  */
-export default class TilemapVisibility {
+export default class LightManager {
   constructor(scene) {
     this.scene = scene
     this.activeRoom = null

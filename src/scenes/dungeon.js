@@ -3,7 +3,7 @@ import Dungeon from "@mikewesthad/dungeon";
 import Hero from "../objects/hero.js";
 import Enemy from "../objects/enemy.js";
 import TILES from "../tile-mapping.js";
-import TilemapVisibility from "../tilemap-visibility.js";
+import LightManager from "../light-manager.js";
 import Narrator from '../narrator.js'
 import PathFinder from 'pathfinding'
 
@@ -81,7 +81,6 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.prepareMap()
     this.prepareRooms()
-    this.addShadowLayer()
     this.addHero()
     this.addEnemies()
     this.addItems()
@@ -133,8 +132,16 @@ export default class DungeonScene extends Phaser.Scene {
     });
     const tilesetImage = this.dungeonNumber === 25 ? "tilesetMc" : "tileset"
     this.tileset = this.map.addTilesetImage(tilesetImage, null, tileWidthHeight, tileWidthHeight, 1, 2); // 1px margin, 2px spacing
+
     this.groundLayer = this.map.createBlankDynamicLayer("Ground", this.tileset).fill(TILES.BLANK);
     this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset);
+    this.shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK).setDepth(5);
+
+    // add shadows and set active room
+    this.lightManager = new LightManager(this);
+    this.lightManager.setShadow()
+    this.lightManager.setActiveRoom(this.startRoom)
+
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
   }
 
@@ -222,7 +229,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.map.tileToWorldX(this.startRoom.centerX) + 16,
       this.map.tileToWorldY(this.startRoom.centerY) + 19
     );
-    this.tilemapVisibility.lights.push({
+    this.lightManager.lights.push({
       sprite: this.hero.sprites.hero,
       intensity: () => {
         const torches = this.registry.get('items').filter(item => item === 'torch')
@@ -254,7 +261,7 @@ export default class DungeonScene extends Phaser.Scene {
 
       if (this.restRoom) {
         this.enemies.push(new Enemy(this, this.map, this.endRoom, 'deamon', (enemy) => {
-          this.tilemapVisibility.removeLight(enemy.sprite)
+          this.lightManager.removeLight(enemy.sprite)
           Phaser.Utils.Array.Remove(this.enemies, enemy)
           this.stuffLayer.putTileAt(
             TILES.STAIRS.OPEN,
@@ -300,7 +307,7 @@ export default class DungeonScene extends Phaser.Scene {
         'torch',
         0
       ).setSize(48, 48)
-      this.tilemapVisibility.lights.push({
+      this.lightManager.lights.push({
         sprite: this.torch,
         intensity: () => 1
       })
@@ -312,7 +319,7 @@ export default class DungeonScene extends Phaser.Scene {
         this.registry.set('items', items)
         this.scene.get('Gui').removeTorchDelayed()
         this.torch.destroy()
-        this.tilemapVisibility.removeLight(this.torch)
+        this.lightManager.removeLight(this.torch)
         this.torch = null
       });
     }
@@ -326,7 +333,7 @@ export default class DungeonScene extends Phaser.Scene {
         'pathfinder',
         0
       ).setSize(48, 48)
-      this.tilemapVisibility.lights.push({
+      this.lightManager.lights.push({
         sprite: this.pathfinder,
         intensity: () => 1
       })
@@ -337,18 +344,10 @@ export default class DungeonScene extends Phaser.Scene {
         items.push('pathfinder')
         this.registry.set('items', items)
         this.pathfinder.destroy()
-        this.tilemapVisibility.removeLight(this.pathfinder)
+        this.lightManager.removeLight(this.pathfinder)
         this.pathfinder = null
       });
     }
-  }
-
-  addShadowLayer() {
-    // add shadows and set active room
-    this.shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK).setDepth(5);
-    this.tilemapVisibility = new TilemapVisibility(this);
-    this.tilemapVisibility.setShadow()
-    this.tilemapVisibility.setActiveRoom(this.startRoom)
   }
 
   showPath() {
@@ -414,8 +413,8 @@ export default class DungeonScene extends Phaser.Scene {
       this.groundLayer.worldToTileX(this.hero.sprites.hero.x),
       this.groundLayer.worldToTileY(this.hero.sprites.hero.y)
     );
-    this.tilemapVisibility.setActiveRoom(playerRoom)
-    this.tilemapVisibility.setShadow();
+    this.lightManager.setActiveRoom(playerRoom)
+    this.lightManager.setShadow();
 
     if (playerRoom === this.restRoom) {
       this.narrator.sayOnce('restRoom')
