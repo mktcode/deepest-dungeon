@@ -73,25 +73,8 @@ export default class Hero {
 
     // use
     this.scene.input.keyboard.on('keyup-E', () => {
-      // stairs
-      if (this.standsOn(TILES.STAIRS.OPEN) || this.looksAt(TILES.STAIRS.OPEN)) {
-        const nextDungeon = this.scene.dungeonNumber + 1
-        this.scene.scene.sleep()
-        if (this.scene.scene.get('Dungeon' + nextDungeon)) {
-          this.scene.scene.wake('Dungeon' + nextDungeon)
-        } else {
-          this.scene.scene.add('Dungeon' + nextDungeon, new DungeonScene(nextDungeon), true)
-          this.scene.scene.swapPosition('Gui', 'Dungeon' + nextDungeon);
-        }
-      }
-
-      // shrine
-      if (this.looksAt([TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]])) {
-        this.scene.restRoomActivated = true
-        this.scene.registry.set('minDungeon', this.scene.dungeonNumber)
-        this.scene.scene.run('Character')
-        this.scene.scene.bringToTop('Character')
-      }
+      this.useStairs()
+      this.useShrine()
     });
 
     // show path
@@ -140,6 +123,28 @@ export default class Hero {
 
   static getXpForLevelUp(level) {
     return ((Math.pow(level, 2) - level) * 50) / 2
+  }
+
+  useStairs() {
+    if (this.standsOn(TILES.STAIRS.OPEN) || this.looksAt(TILES.STAIRS.OPEN)) {
+      const nextDungeon = this.scene.dungeonNumber + 1
+      this.scene.scene.sleep()
+      if (this.scene.scene.get('Dungeon' + nextDungeon)) {
+        this.scene.scene.wake('Dungeon' + nextDungeon)
+      } else {
+        this.scene.scene.add('Dungeon' + nextDungeon, new DungeonScene(nextDungeon), true)
+        this.scene.scene.swapPosition('Gui', 'Dungeon' + nextDungeon);
+      }
+    }
+  }
+
+  useShrine() {
+    if (this.looksAt([TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]])) {
+      this.scene.restRoomActivated = true
+      this.scene.registry.set('minDungeon', this.scene.dungeonNumber)
+      this.scene.scene.run('Character')
+      this.scene.scene.bringToTop('Character')
+    }
   }
 
   looksAt(tileNumbers) {

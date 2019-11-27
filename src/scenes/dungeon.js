@@ -187,6 +187,15 @@ export default class DungeonScene extends Phaser.Scene {
       this.endRoom.centerX,
       this.endRoom.centerY
     );
+    this.input.on('pointerup', (pointer) => {
+      const tile = this.stuffLayer.getTileAtWorldXY(pointer.worldX, pointer.worldY)
+      if (tile && tile.index === TILES.STAIRS.OPEN) {
+        this.hero.useStairs()
+      }
+      if (tile && [TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]].includes(tile.index)) {
+        this.hero.useShrine()
+      }
+    })
 
     // prepare rest room if exists
     if (this.restRoom) {
