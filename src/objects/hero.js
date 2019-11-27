@@ -22,6 +22,38 @@ export default class Hero {
       left: Phaser.Input.Keyboard.KeyCodes.A,
       right: Phaser.Input.Keyboard.KeyCodes.D
     })
+    this.scene.input.addPointer(1)
+    this.joystick = this.scene.plugins.get('joystick').add(this.scene, {
+      base: this.scene.add.circle(0, 0, 80).setStrokeStyle(3, 0xffffff, 0),
+      thumb: this.scene.add.circle(0, 0, 70).setFillStyle(0xffffff, 0),
+      x: this.scene.game.scale.width / 4,
+      y: this.scene.game.scale.height - 140,
+      radius: 80,
+      forceMin: 20
+    })
+    this.joystickCursorKeys = this.joystick.createCursorKeys()
+    this.scene.input.on('pointerdown', (pointer) => {
+      if (pointer.x < this.scene.game.scale.width / 2) {
+        this.joystick.setPosition(pointer.x, pointer.y)
+      }
+    })
+    if (this.scene.constructor.name === 'DungeonScene') {
+      const attackBtn = this.scene.add.rectangle(
+        this.scene.game.scale.width * 0.75,
+        this.scene.game.scale.height / 2,
+        this.scene.game.scale.width / 2,
+        this.scene.game.scale.height
+      ).setStrokeStyle(3, 0xffffff, 0).setInteractive().setDepth(7).setScrollFactor(0)
+      attackBtn.on('pointerdown', () => {
+        if (this.scene.registry.get('weapon')) {
+          this.attacking = true
+          this.attack(this.lastDirection).once('complete', () => {
+            this.attacking = false
+          })
+        }
+      }, this)
+    }
+
     this.speed = 150
     this.attacking = false
     this.underAttack = false
@@ -142,11 +174,12 @@ export default class Hero {
     this.sprites.hero = this.scene.physics.add
       .sprite(x, y, "hero", 35)
       .setSize(20, 25)
-      .setOffset(23, 27);
+      .setOffset(23, 27)
+      .setDepth(6);
     this.scene.cameras.main.startFollow(this.sprites.hero)
 
-    this.sprites.levelUp = this.scene.physics.add.sprite(x, y, "levelUp", 0);
-    this.sprites.sword = this.scene.physics.add.sprite(x, y, "sword", 0);
+    this.sprites.levelUp = this.scene.physics.add.sprite(x, y, "levelUp", 0).setDepth(6);
+    this.sprites.sword = this.scene.physics.add.sprite(x, y, "sword", 0).setDepth(6);
     this.setSwordHitBox('down')
   }
 
@@ -207,7 +240,7 @@ export default class Hero {
   }
 
   isDirectionKeyDown(direction) {
-    return this.keys[direction].isDown || this.wasdKeys[direction].isDown
+    return this.keys[direction].isDown || this.wasdKeys[direction].isDown || this.joystickCursorKeys[direction].isDown
   }
 
   update() {

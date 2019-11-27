@@ -1,5 +1,6 @@
 import MenuScene from "./scenes/menu.js";
 import PreloadScene from "./scenes/preload.js";
+import VirtualJoyStickPlugin from './plugins/rexvirtualjoystickplugin.min.js';
 
 const config: GameConfig = {
   type: Phaser.AUTO,
@@ -22,6 +23,13 @@ const config: GameConfig = {
   },
   audio: {
     disableWebAudio: true
+  },
+  plugins: {
+    global: [{
+        key: 'joystick',
+        plugin: VirtualJoyStickPlugin,
+        start: true
+    }]
   }
 };
 
