@@ -38,6 +38,7 @@ export default class Enemy {
         .setOffset(20, 35)
       this.sprite.anims.play("enemy-walk")
     }
+    this.sprite.setDepth(6)
 
     this.dungeon.physics.add.collider(this.sprite, this.dungeon.groundLayer, (enemy, wall) => {
       if ([TILES.WALL.TOP, ...TILES.DOOR.TOP].includes(wall.index)) {

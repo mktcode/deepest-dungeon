@@ -135,7 +135,7 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.groundLayer = this.map.createBlankDynamicLayer("Ground", this.tileset).fill(TILES.BLANK).setDepth(3);
     this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset).setDepth(4);
-    this.shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK).setDepth(5);
+    this.shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK).setDepth(10);
 
     // add shadows and set active room
     this.lightManager = new LightManager(this);
@@ -281,7 +281,7 @@ export default class DungeonScene extends Phaser.Scene {
         this.map.tileToWorldY(swordRoom.centerY),
         'sword',
         20
-      ).setSize(32, 32)
+      ).setSize(32, 32).setDepth(6)
       this.tweens.add({
         targets: this.sword,
         yoyo: true,
@@ -305,7 +305,7 @@ export default class DungeonScene extends Phaser.Scene {
         this.map.tileToWorldY(Phaser.Utils.Array.GetRandom([torchRoom.top + 1, torchRoom.bottom - 1])) + 24,
         'torch',
         0
-      ).setSize(48, 48)
+      ).setSize(48, 48).setDepth(6)
       this.lightManager.lights.push({
         sprite: this.torch,
         intensity: () => 1
@@ -331,7 +331,7 @@ export default class DungeonScene extends Phaser.Scene {
         this.map.tileToWorldY(Phaser.Utils.Array.GetRandom([pathFinderRoom.top + 1, pathFinderRoom.bottom - 1])) + 24,
         'pathfinder',
         0
-      ).setSize(48, 48)
+      ).setSize(48, 48).setDepth(6)
       this.lightManager.lights.push({
         sprite: this.pathfinder,
         intensity: () => 1
