@@ -11,6 +11,7 @@ import PathFinder from 'pathfinding'
 import torchSprite from "../assets/torch.png";
 import pathSprite from "../assets/path.png";
 import pathfinderSprite from "../assets/pathfinder.png";
+import particle from "../assets/particle.png";
 
 export default class DungeonScene extends Phaser.Scene {
   constructor(dungeonNumber) {
@@ -72,6 +73,7 @@ export default class DungeonScene extends Phaser.Scene {
         frameHeight: 48
       }
     );
+    scene.load.image("particle", particle);
   }
 
   create() {
@@ -187,6 +189,32 @@ export default class DungeonScene extends Phaser.Scene {
       this.endRoom.centerX,
       this.endRoom.centerY
     );
+    const stairsParticles = this.add.particles('particle')
+    stairsParticles.setDepth(5)
+    this.stairsParticlesEmitter = stairsParticles.createEmitter({
+      x: this.map.tileToWorldX(this.endRoom.centerX),
+      y: this.map.tileToWorldY(this.endRoom.centerY),
+      blendMode: 'SCREEN',
+      scale: { start: 0, end: 1.5 },
+      alpha: { start: 1, end: 0 },
+      speed: 10,
+      quantity: 20,
+      frequency: 200,
+      lifespan: 500,
+      emitZone: {
+        source: new Phaser.Geom.Rectangle(0, 0, 48, 48),
+        type: 'edge',
+        quantity: 20
+      },
+      deathZone: {
+        source: new Phaser.Geom.Rectangle(
+          this.map.tileToWorldX(this.endRoom.centerX),
+          this.map.tileToWorldY(this.endRoom.centerY),
+          48,
+          48
+        )
+      }
+    })
     this.input.on('pointerup', (pointer) => {
       const tile = this.stuffLayer.getTileAtWorldXY(pointer.worldX, pointer.worldY)
       if (tile && tile.index === TILES.STAIRS.OPEN) {
@@ -230,8 +258,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.groundLayer.setCollisionByExclusion([7, 90, 91, 97]);
   }
 
-  addHero() {
-    // Place the player in the first room
+  addHero() {// Place the player in the first room
     this.hero = new Hero(
       this,
       this.map.tileToWorldX(this.startRoom.centerX) + 16,

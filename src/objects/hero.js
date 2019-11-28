@@ -250,6 +250,14 @@ export default class Hero {
   }
 
   update() {
+    if ((this.looksAt(TILES.STAIRS.OPEN) || this.standsOn(TILES.STAIRS.OPEN))) {
+      if (this.scene.stairsParticlesEmitter.on === false) {
+        this.scene.stairsParticlesEmitter.start()
+      }
+    } else {
+      this.scene.stairsParticlesEmitter.stop()
+    }
+
     if (!this.underAttack) {
       // Stop any previous movement from the last frame
       this.sprites.hero.body.setVelocity(0);
