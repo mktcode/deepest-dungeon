@@ -55,7 +55,6 @@ export default class Hero {
       }, this)
     }
 
-    this.speed = 150
     this.attacking = false
     this.underAttack = false
     this.lastDirection = 'down'
@@ -262,24 +261,32 @@ export default class Hero {
       // Stop any previous movement from the last frame
       this.sprites.hero.body.setVelocity(0);
 
-      this.speed = this.scene.narrator.slowmo ? 25 : 150
+      this.baseSpeed = this.scene.narrator.slowmo ? 25 : 150
 
-      // Horizontal movement
-      if (this.isDirectionKeyDown('left')) {
-        this.sprites.hero.body.setVelocityX(-this.speed);
-      } else if (this.isDirectionKeyDown('right')) {
-        this.sprites.hero.body.setVelocityX(this.speed);
+      if (this.joystick.force >= this.joystick.touchCursor.forceMin) {
+        this.scene.physics.velocityFromRotation(
+          this.joystick.rotation,
+          Math.min(this.baseSpeed, this.baseSpeed * (this.joystick.force / 50)),
+          this.sprites.hero.body.velocity
+        )
+      } else {
+        // Horizontal movement
+        if (this.isDirectionKeyDown('left')) {
+          this.sprites.hero.body.setVelocityX(-this.baseSpeed);
+        } else if (this.isDirectionKeyDown('right')) {
+          this.sprites.hero.body.setVelocityX(this.baseSpeed);
+        }
+
+        // Vertical movement
+        if (this.isDirectionKeyDown('up')) {
+          this.sprites.hero.body.setVelocityY(-this.baseSpeed);
+        } else if (this.isDirectionKeyDown('down')) {
+          this.sprites.hero.body.setVelocityY(this.baseSpeed);
+        }
+
+        // Normalize and scale the velocity so that sprite can't move faster along a diagonal
+        this.sprites.hero.body.velocity.normalize().scale(this.baseSpeed);
       }
-
-      // Vertical movement
-      if (this.isDirectionKeyDown('up')) {
-        this.sprites.hero.body.setVelocityY(-this.speed);
-      } else if (this.isDirectionKeyDown('down')) {
-        this.sprites.hero.body.setVelocityY(this.speed);
-      }
-
-      // Normalize and scale the velocity so that sprite can't move faster along a diagonal
-      this.sprites.hero.body.velocity.normalize().scale(this.speed);
 
       // Update the animation last and give left/right/down animations precedence over up animations
       // Do nothing if slashing animation is playing
