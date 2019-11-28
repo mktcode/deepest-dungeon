@@ -37,7 +37,8 @@ export default class Hero {
         this.joystick.setPosition(pointer.x, pointer.y)
       }
     })
-    if (this.scene.constructor.name === 'DungeonScene') {
+
+    if (this.scene.scene.key.startsWith('Dungeon')) {
       const attackBtn = this.scene.add.rectangle(
         this.scene.game.scale.width * 0.75,
         this.scene.game.scale.height / 2,
