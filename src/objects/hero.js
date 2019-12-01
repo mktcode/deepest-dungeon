@@ -256,12 +256,14 @@ export default class Hero {
     } else {
       this.scene.stairsParticlesEmitter.stop()
     }
-    if (this.looksAt([TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]])) {
-      if (this.scene.shrineParticlesEmitter.on === false) {
-        this.scene.shrineParticlesEmitter.start()
+    if (this.scene.shrineParticlesEmitter) {
+      if (this.looksAt([TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]])) {
+        if (this.scene.shrineParticlesEmitter.on === false) {
+          this.scene.shrineParticlesEmitter.start()
+        }
+      } else {
+        this.scene.shrineParticlesEmitter.stop()
       }
-    } else {
-      this.scene.shrineParticlesEmitter.stop()
     }
 
     if (!this.underAttack) {
