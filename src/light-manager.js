@@ -5,8 +5,6 @@
 export default class LightManager {
   constructor(scene) {
     this.scene = scene
-    this.activeRoom = null
-    this.visitedRooms = []
     this.lights = []
   }
 
@@ -31,13 +29,13 @@ export default class LightManager {
   }
 
   // Helper to set the alpha on all tiles
-  setShadow() {
+  update() {
     const minLight = Math.max(0.02, 1 / this.scene.dungeonNumber)
     this.scene.dungeon.rooms.forEach(room => {
       const lights = this.getLightsByRoom(room)
       const tiles = this.getTilesByRoom(room)
 
-      if (room === this.activeRoom) {
+      if (room === this.scene.currentRoom) {
         tiles.forEach((tile) => {
           if (room === this.scene.restRoom && this.scene.restRoomActivated) {
             tile.alpha = 0
@@ -56,7 +54,7 @@ export default class LightManager {
             tile.alpha = 1 - Math.max(...lightValues)
           }
         })
-      } else if (this.visitedRooms.includes(room)) {
+      } else if (this.scene.visitedRooms.includes(room)) {
         tiles.forEach((tile) => {
           tile.alpha = 1 - minLight / 2
         })
@@ -64,12 +62,5 @@ export default class LightManager {
 
       }
     })
-  }
-
-  setActiveRoom(room) {
-    if (room !== this.activeRoom) {
-      this.activeRoom = room;
-      this.visitedRooms.push(room)
-    }
   }
 }

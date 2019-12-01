@@ -19,8 +19,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.dungeonNumber = dungeonNumber
     this.dungeon = new Dungeon({
       randomSeed: 'Dungeon' + this.dungeonNumber,
-      width: this.getWidthHeight(),
-      height: this.getWidthHeight(),
+      width: Math.min(100, 30 + this.dungeonNumber),
+      height: Math.min(100, 30 + this.dungeonNumber),
       doorPadding: 2,
       rooms: {
         width: { min: 7, max: 15, onlyOdd: true },
@@ -33,16 +33,14 @@ export default class DungeonScene extends Phaser.Scene {
     // add rest room every 5 dungeons (first room with only one door)
     this.restRoom = !(this.dungeonNumber % 5) ? rooms.splice(rooms.findIndex(room => room.getDoorLocations().length === 1), 1)[0] : null
     this.otherRooms = rooms
+    this.currentRoom = this.startRoom
+    this.visitedRooms = [this.startRoom]
 
     this.sword = null
     this.torch = null
     this.pathfinder = null
     this.pathSprites = []
     this.restRoomActivated = false
-  }
-
-  getWidthHeight() {
-    return Math.min(100, 30 + this.dungeonNumber)
   }
 
   static preload(scene) {
@@ -121,11 +119,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.groundLayer = this.map.createBlankDynamicLayer("Ground", this.tileset).fill(TILES.BLANK).setDepth(3);
     this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset).setDepth(4);
     this.shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK).setDepth(10);
-
-    // add shadows and set active room
     this.lightManager = new LightManager(this);
-    this.lightManager.setShadow()
-    this.lightManager.setActiveRoom(this.startRoom)
 
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
   }
@@ -435,20 +429,18 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
+  setCurrentRoom() {
+    this.currentRoom = this.dungeon.getRoomAt(
+      this.groundLayer.worldToTileX(this.hero.sprites.hero.x),
+      this.groundLayer.worldToTileY(this.hero.sprites.hero.y)
+    )
+    this.visitedRooms.push(this.currentRoom)
+  }
+
   update() {
     this.hero.update()
     this.enemies.forEach(e => e.update())
-    // Find the player's room using another helper method from the dungeon that converts from
-    // dungeon XY (in grid units) to the corresponding room object
-    const playerRoom = this.dungeon.getRoomAt(
-      this.groundLayer.worldToTileX(this.hero.sprites.hero.x),
-      this.groundLayer.worldToTileY(this.hero.sprites.hero.y)
-    );
-    this.lightManager.setActiveRoom(playerRoom)
-    this.lightManager.setShadow();
-
-    if (playerRoom === this.restRoom) {
-      this.narrator.sayOnce('restRoom')
-    }
+    this.setCurrentRoom()
+    this.lightManager.update()
   }
 }
