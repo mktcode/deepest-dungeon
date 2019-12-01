@@ -139,7 +139,7 @@ export default class Hero {
   }
 
   useStairs() {
-    if (this.standsOn(TILES.STAIRS.OPEN) || this.looksAt(TILES.STAIRS.OPEN)) {
+    if (this.isNear(TILES.STAIRS.OPEN)) {
       const nextDungeon = this.scene.dungeonNumber + 1
       this.scene.scene.sleep()
       if (this.scene.scene.get('Dungeon' + nextDungeon)) {
@@ -152,7 +152,7 @@ export default class Hero {
   }
 
   useShrine() {
-    if (this.looksAt([TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]])) {
+    if (this.isNear([TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]])) {
       this.scene.restRoomActivated = true
       this.scene.registry.set('minDungeon', this.scene.dungeonNumber)
       this.scene.scene.run('Character')
@@ -160,32 +160,18 @@ export default class Hero {
     }
   }
 
-  looksAt(tileNumbers) {
+  isNear(tileNumbers) {
     if (!Array.isArray(tileNumbers)) {
       tileNumbers = [tileNumbers]
     }
-    let tile
-    if (this.lastDirection === 'up') {
-      tile = this.scene.stuffLayer.getTileAtWorldXY(this.sprites.hero.body.x, this.sprites.hero.body.y - 48)
-    }
-    if (this.lastDirection === 'down') {
-      tile = this.scene.stuffLayer.getTileAtWorldXY(this.sprites.hero.body.x, this.sprites.hero.body.y + 48)
-    }
-    if (this.lastDirection === 'left') {
-      tile = this.scene.stuffLayer.getTileAtWorldXY(this.sprites.hero.body.x - 48, this.sprites.hero.body.y)
-    }
-    if (this.lastDirection === 'right') {
-      tile = this.scene.stuffLayer.getTileAtWorldXY(this.sprites.hero.body.x + 48, this.sprites.hero.body.y)
-    }
-    return tile && tileNumbers.includes(tile.index)
-  }
 
-  standsOn(tileNumbers) {
-    if (!Array.isArray(tileNumbers)) {
-      tileNumbers = [tileNumbers]
-    }
-    const tile = this.scene.stuffLayer.getTileAtWorldXY(this.sprites.hero.body.x, this.sprites.hero.body.y)
-    return tile && tileNumbers.includes(tile.index)
+    const tiles = this.scene.stuffLayer.getTilesWithin(
+      this.scene.stuffLayer.worldToTileX(this.sprites.hero.body.x) - 1,
+      this.scene.stuffLayer.worldToTileY(this.sprites.hero.body.y) - 1,
+      3, 3
+    )
+
+    return tiles.find(tile => tileNumbers.includes(tile.index))
   }
 
   addToScene(x, y) {
@@ -262,23 +248,6 @@ export default class Hero {
   }
 
   update() {
-    if (this.looksAt(TILES.STAIRS.OPEN) || this.standsOn(TILES.STAIRS.OPEN)) {
-      if (this.scene.stairsParticlesEmitter.on === false) {
-        this.scene.stairsParticlesEmitter.start()
-      }
-    } else {
-      this.scene.stairsParticlesEmitter.stop()
-    }
-    if (this.scene.shrineParticlesEmitter) {
-      if (this.looksAt([TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]])) {
-        if (this.scene.shrineParticlesEmitter.on === false) {
-          this.scene.shrineParticlesEmitter.start()
-        }
-      } else {
-        this.scene.shrineParticlesEmitter.stop()
-      }
-    }
-
     if (!this.underAttack) {
       // Stop any previous movement from the last frame
       this.sprites.hero.body.setVelocity(0);

@@ -44,31 +44,10 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   static preload(scene) {
-    scene.load.spritesheet(
-      "torch",
-      torchSprite,
-      {
-        frameWidth: 48,
-        frameHeight: 48
-      }
-    );
-    scene.load.spritesheet(
-      "path",
-      pathSprite,
-      {
-        frameWidth: 18,
-        frameHeight: 18
-      }
-    );
-    scene.load.spritesheet(
-      "pathfinder",
-      pathfinderSprite,
-      {
-        frameWidth: 48,
-        frameHeight: 48
-      }
-    );
-    scene.load.image("particle", particle);
+    scene.load.spritesheet('torch', torchSprite, { frameWidth: 48, frameHeight: 48 });
+    scene.load.spritesheet('path', pathSprite, { frameWidth: 18, frameHeight: 18 });
+    scene.load.spritesheet('pathfinder', pathfinderSprite, { frameWidth: 48, frameHeight: 48 });
+    scene.load.image('particle', particle);
   }
 
   create() {
@@ -81,6 +60,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.addHero()
     this.addEnemies()
     this.addItems()
+    this.addParticles()
 
     this.events.on('wake', () => {
       this.cameras.main.fadeIn(250, 0, 0, 0)
@@ -89,7 +69,7 @@ export default class DungeonScene extends Phaser.Scene {
       // keyboard bug workaround
       this.hero.resetKeys()
 
-      // place hero in rest room
+      // place hero in start/rest room
       this.hero.jumpTo(
         this.map.tileToWorldX(this.restRoom ? this.restRoom.centerX : this.startRoom.centerX),
         this.map.tileToWorldY(this.restRoom ? this.restRoom.centerY : this.startRoom.centerY)
@@ -106,15 +86,15 @@ export default class DungeonScene extends Phaser.Scene {
 
   prepareMap() {
     // Creating a blank tilemap with dimensions matching the dungeon
-    const tileWidthHeight = 48;
+    this.tileSize = 48
     this.map = this.make.tilemap({
-      tileWidth: tileWidthHeight,
-      tileHeight: tileWidthHeight,
+      tileWidth: this.tileSize,
+      tileHeight: this.tileSize,
       width: this.dungeon.width,
       height: this.dungeon.height
     });
     const tilesetImage = this.dungeonNumber === 25 ? "tilesetMc" : "tileset"
-    this.tileset = this.map.addTilesetImage(tilesetImage, null, tileWidthHeight, tileWidthHeight, 1, 2); // 1px margin, 2px spacing
+    this.tileset = this.map.addTilesetImage(tilesetImage, null, this.tileSize, this.tileSize, 1, 2); // 1px margin, 2px spacing
 
     this.groundLayer = this.map.createBlankDynamicLayer("Ground", this.tileset).fill(TILES.BLANK).setDepth(3);
     this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset).setDepth(4);
@@ -166,24 +146,6 @@ export default class DungeonScene extends Phaser.Scene {
       this.endRoom.centerX,
       this.endRoom.centerY
     );
-    const stairsParticles = this.add.particles('particle')
-    stairsParticles.setDepth(5)
-    this.stairsParticlesEmitter = stairsParticles.createEmitter({
-      x: this.map.tileToWorldX(this.endRoom.centerX),
-      y: this.map.tileToWorldY(this.endRoom.centerY),
-      blendMode: 'SCREEN',
-      scale: { start: 0, end: 1.5 },
-      alpha: { start: 1, end: 0 },
-      speed: 10,
-      quantity: 20,
-      frequency: 200,
-      lifespan: 500,
-      emitZone: {
-        source: new Phaser.Geom.Rectangle(0, 0, 48, 48),
-        type: 'edge',
-        quantity: 20
-      }
-    })
     this.input.on('pointerup', (pointer) => {
       const tile = this.stuffLayer.getTileAtWorldXY(pointer.worldX, pointer.worldY)
       if (tile && tile.index === TILES.STAIRS.OPEN) {
@@ -196,23 +158,6 @@ export default class DungeonScene extends Phaser.Scene {
 
     // prepare rest room if exists
     if (this.restRoom) {
-      const shrineParticles = this.add.particles('particle')
-      shrineParticles.setDepth(5)
-      this.shrineParticlesEmitter = shrineParticles.createEmitter({
-        blendMode: 'SCREEN',
-        scale: { start: 0, end: 1.5 },
-        alpha: { start: 1, end: 0 },
-        speed: 10,
-        quantity: 20,
-        frequency: 200,
-        lifespan: 500,
-        emitZone: {
-          source: new Phaser.Geom.Rectangle(0, 0, 48, 48),
-          type: 'edge',
-          quantity: 20
-        }
-      })
-
       this.groundLayer.fill(TILES.FLOOR_LIGHT, this.restRoom.left + 1, this.restRoom.top + 1, this.restRoom.width - 2, this.restRoom.height - 2);
       let restRoomDoor = this.restRoom.getDoorLocations()[0]
       if (restRoomDoor.y === 0) {
@@ -220,27 +165,23 @@ export default class DungeonScene extends Phaser.Scene {
         this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.restRoom.x + restRoomDoor.x, this.restRoom.y - 1);
         this.stuffLayer.putTileAt(TILES.SHRINE.BOTTOM[0], this.restRoom.centerX, this.restRoom.bottom);
         this.stuffLayer.putTileAt(TILES.SHRINE.BOTTOM[1], this.restRoom.centerX, this.restRoom.bottom - 1);
-        this.shrineParticlesEmitter.setPosition(this.map.tileToWorldX(this.restRoom.centerX), this.map.tileToWorldX(this.restRoom.bottom))
       } else if (restRoomDoor.y === this.restRoom.height - 1) {
         this.groundLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y);
         this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y + 1);
         this.groundLayer.getTileAt(this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y + 1).setFlipY(true)
         this.stuffLayer.putTileAt(TILES.SHRINE.TOP[0], this.restRoom.centerX, this.restRoom.top);
         this.stuffLayer.putTileAt(TILES.SHRINE.TOP[1], this.restRoom.centerX, this.restRoom.top + 1);
-        this.shrineParticlesEmitter.setPosition(this.map.tileToWorldX(this.restRoom.centerX), this.map.tileToWorldX(this.restRoom.top))
       } else if (restRoomDoor.x === 0) {
         this.groundLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x, this.restRoom.y + restRoomDoor.y);
         this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.restRoom.x - 1, this.restRoom.y + restRoomDoor.y);
         this.groundLayer.getTileAt(this.restRoom.x - 1, this.restRoom.y + restRoomDoor.y).setFlipX(true)
         this.stuffLayer.putTileAt(TILES.SHRINE.RIGHT[0], this.restRoom.right, this.restRoom.centerY);
         this.stuffLayer.putTileAt(TILES.SHRINE.RIGHT[1], this.restRoom.right - 1, this.restRoom.centerY);
-        this.shrineParticlesEmitter.setPosition(this.map.tileToWorldX(this.restRoom.right), this.map.tileToWorldX(this.restRoom.centerY))
       } else if (restRoomDoor.x === this.restRoom.width - 1) {
         this.groundLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y);
         this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.restRoom.x + restRoomDoor.x + 1, this.restRoom.y + restRoomDoor.y);
         this.stuffLayer.putTileAt(TILES.SHRINE.LEFT[0], this.restRoom.left, this.restRoom.centerY);
         this.stuffLayer.putTileAt(TILES.SHRINE.LEFT[1], this.restRoom.left + 1, this.restRoom.centerY);
-        this.shrineParticlesEmitter.setPosition(this.map.tileToWorldX(this.restRoom.left), this.map.tileToWorldX(this.restRoom.centerY))
       }
     }
 
@@ -248,7 +189,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.groundLayer.setCollisionByExclusion([7, 90, 91, 97]);
   }
 
-  addHero() {// Place the player in the first room
+  addHero() {
+    // Place the player in the first room
     this.hero = new Hero(
       this,
       this.map.tileToWorldX(this.startRoom.centerX) + 16,
@@ -266,7 +208,6 @@ export default class DungeonScene extends Phaser.Scene {
       }
     })
 
-    // Watch the player and tilemap layers for collisions, for the duration of the scene:
     this.physics.add.collider(this.hero.sprites.hero, this.groundLayer);
     this.physics.add.collider(this.hero.sprites.hero, this.stuffLayer);
   }
@@ -375,6 +316,44 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
+  addParticles() {
+    this.particles = this.add.particles('particle').setDepth(5).createEmitter({
+      blendMode: 'SCREEN',
+      scale: { start: 0, end: 1.5 },
+      alpha: { start: 1, end: 0 },
+      speed: 10,
+      quantity: 20,
+      frequency: 200,
+      lifespan: 500,
+      emitZone: {
+        source: new Phaser.Geom.Rectangle(0, 0, this.tileSize, this.tileSize),
+        type: 'edge',
+        quantity: 20
+      }
+    })
+  }
+
+  updateParticles() {
+    const tile = this.hero.isNear([
+      TILES.STAIRS.OPEN,
+      TILES.SHRINE.TOP[0],
+      TILES.SHRINE.BOTTOM[0],
+      TILES.SHRINE.LEFT[0],
+      TILES.SHRINE.RIGHT[0]
+    ])
+    if (tile) {
+      if (this.particles.on === false) {
+        this.particles.setPosition(
+          this.map.tileToWorldX(tile.x),
+          this.map.tileToWorldX(tile.y)
+        )
+        this.particles.start()
+      }
+    } else {
+      this.particles.stop()
+    }
+  }
+
   showPath() {
     if (!this.pathSprites.length) {
       const finder = new PathFinder.AStarFinder()
@@ -441,6 +420,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.hero.update()
     this.enemies.forEach(e => e.update())
     this.setCurrentRoom()
+    this.updateParticles()
     this.lightManager.update()
   }
 }
