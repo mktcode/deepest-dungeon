@@ -205,14 +205,6 @@ export default class DungeonScene extends Phaser.Scene {
         source: new Phaser.Geom.Rectangle(0, 0, 48, 48),
         type: 'edge',
         quantity: 20
-      },
-      deathZone: {
-        source: new Phaser.Geom.Rectangle(
-          this.map.tileToWorldX(this.endRoom.centerX),
-          this.map.tileToWorldY(this.endRoom.centerY),
-          48,
-          48
-        )
       }
     })
     this.input.on('pointerup', (pointer) => {
@@ -227,6 +219,23 @@ export default class DungeonScene extends Phaser.Scene {
 
     // prepare rest room if exists
     if (this.restRoom) {
+      const shrineParticles = this.add.particles('particle')
+      shrineParticles.setDepth(5)
+      this.shrineParticlesEmitter = shrineParticles.createEmitter({
+        blendMode: 'SCREEN',
+        scale: { start: 0, end: 1.5 },
+        alpha: { start: 1, end: 0 },
+        speed: 10,
+        quantity: 20,
+        frequency: 200,
+        lifespan: 500,
+        emitZone: {
+          source: new Phaser.Geom.Rectangle(0, 0, 48, 48),
+          type: 'edge',
+          quantity: 20
+        }
+      })
+
       this.groundLayer.fill(TILES.FLOOR_LIGHT, this.restRoom.left + 1, this.restRoom.top + 1, this.restRoom.width - 2, this.restRoom.height - 2);
       let restRoomDoor = this.restRoom.getDoorLocations()[0]
       if (restRoomDoor.y === 0) {
@@ -234,23 +243,27 @@ export default class DungeonScene extends Phaser.Scene {
         this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.restRoom.x + restRoomDoor.x, this.restRoom.y - 1);
         this.stuffLayer.putTileAt(TILES.SHRINE.BOTTOM[0], this.restRoom.centerX, this.restRoom.bottom);
         this.stuffLayer.putTileAt(TILES.SHRINE.BOTTOM[1], this.restRoom.centerX, this.restRoom.bottom - 1);
+        this.shrineParticlesEmitter.setPosition(this.map.tileToWorldX(this.restRoom.centerX), this.map.tileToWorldX(this.restRoom.bottom))
       } else if (restRoomDoor.y === this.restRoom.height - 1) {
         this.groundLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y);
         this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y + 1);
         this.groundLayer.getTileAt(this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y + 1).setFlipY(true)
         this.stuffLayer.putTileAt(TILES.SHRINE.TOP[0], this.restRoom.centerX, this.restRoom.top);
         this.stuffLayer.putTileAt(TILES.SHRINE.TOP[1], this.restRoom.centerX, this.restRoom.top + 1);
+        this.shrineParticlesEmitter.setPosition(this.map.tileToWorldX(this.restRoom.centerX), this.map.tileToWorldX(this.restRoom.top))
       } else if (restRoomDoor.x === 0) {
         this.groundLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x, this.restRoom.y + restRoomDoor.y);
         this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.restRoom.x - 1, this.restRoom.y + restRoomDoor.y);
         this.groundLayer.getTileAt(this.restRoom.x - 1, this.restRoom.y + restRoomDoor.y).setFlipX(true)
         this.stuffLayer.putTileAt(TILES.SHRINE.RIGHT[0], this.restRoom.right, this.restRoom.centerY);
         this.stuffLayer.putTileAt(TILES.SHRINE.RIGHT[1], this.restRoom.right - 1, this.restRoom.centerY);
+        this.shrineParticlesEmitter.setPosition(this.map.tileToWorldX(this.restRoom.right), this.map.tileToWorldX(this.restRoom.centerY))
       } else if (restRoomDoor.x === this.restRoom.width - 1) {
         this.groundLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y);
         this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.restRoom.x + restRoomDoor.x + 1, this.restRoom.y + restRoomDoor.y);
         this.stuffLayer.putTileAt(TILES.SHRINE.LEFT[0], this.restRoom.left, this.restRoom.centerY);
         this.stuffLayer.putTileAt(TILES.SHRINE.LEFT[1], this.restRoom.left + 1, this.restRoom.centerY);
+        this.shrineParticlesEmitter.setPosition(this.map.tileToWorldX(this.restRoom.left), this.map.tileToWorldX(this.restRoom.centerY))
       }
     }
 

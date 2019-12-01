@@ -249,12 +249,19 @@ export default class Hero {
   }
 
   update() {
-    if ((this.looksAt(TILES.STAIRS.OPEN) || this.standsOn(TILES.STAIRS.OPEN))) {
+    if (this.looksAt(TILES.STAIRS.OPEN) || this.standsOn(TILES.STAIRS.OPEN)) {
       if (this.scene.stairsParticlesEmitter.on === false) {
         this.scene.stairsParticlesEmitter.start()
       }
     } else {
       this.scene.stairsParticlesEmitter.stop()
+    }
+    if (this.looksAt([TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]])) {
+      if (this.scene.shrineParticlesEmitter.on === false) {
+        this.scene.shrineParticlesEmitter.start()
+      }
+    } else {
+      this.scene.shrineParticlesEmitter.stop()
     }
 
     if (!this.underAttack) {
