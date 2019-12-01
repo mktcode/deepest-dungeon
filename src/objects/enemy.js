@@ -77,9 +77,6 @@ export default class Enemy {
             this.dungeon.hero.underAttack = false
           });
         } else {
-          if (this.dungeon.registry.get('minDungeon') >= 5) {
-            this.dungeon.registry.set('wakeupInRestRoom', true)
-          }
           this.dungeon.hero.underAttack = false
           this.dungeon.registry.set('health', this.dungeon.registry.get('maxHealth'))
           this.dungeon.hero.freeze()
