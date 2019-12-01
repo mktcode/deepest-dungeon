@@ -30,11 +30,8 @@ export default class DungeonScene extends Phaser.Scene {
     const rooms = this.dungeon.rooms.slice()
     this.startRoom = rooms.shift()
     this.endRoom = rooms.splice(this.dungeon.r.randomInteger(0, rooms.length - 1), 1)[0]
-    this.restRoom = null
     // add rest room every 5 dungeons (first room with only one door)
-    if (this.dungeonNumber >= 5 && !(this.dungeonNumber % 5)) {
-      this.restRoom = rooms.splice(rooms.findIndex(room => room.getDoorLocations().length === 1), 1)[0]
-    }
+    this.restRoom = !(this.dungeonNumber % 5) ? rooms.splice(rooms.findIndex(room => room.getDoorLocations().length === 1), 1)[0] : null
     this.otherRooms = rooms
 
     this.sword = null
