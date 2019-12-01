@@ -125,6 +125,19 @@ export default class Hero {
     return ((Math.pow(level, 2) - level) * 50) / 2
   }
 
+  resetKeys() {
+    this.keys.up.isDown = false
+    this.keys.down.isDown = false
+    this.keys.left.isDown = false
+    this.keys.right.isDown = false
+    this.keys.space.isDown = false
+    this.keys.shift.isDown = false
+    this.wasdKeys.up.isDown = false
+    this.wasdKeys.down.isDown = false
+    this.wasdKeys.left.isDown = false
+    this.wasdKeys.right.isDown = false
+  }
+
   useStairs() {
     if (this.standsOn(TILES.STAIRS.OPEN) || this.looksAt(TILES.STAIRS.OPEN)) {
       const nextDungeon = this.scene.dungeonNumber + 1

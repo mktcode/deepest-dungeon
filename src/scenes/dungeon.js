@@ -92,12 +92,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.registry.set('currentDungeon', this.dungeonNumber)
 
       // keyboard bug workaround
-      this.hero.keys.up.isDown = false
-      this.hero.keys.down.isDown = false
-      this.hero.keys.left.isDown = false
-      this.hero.keys.right.isDown = false
-      this.hero.keys.space.isDown = false
-      this.hero.keys.shift.isDown = false
+      this.hero.resetKeys()
 
       if (this.restRoom && this.registry.get('wakeupInRestRoom')) {
         this.registry.set('wakeupInRestRoom', false)
