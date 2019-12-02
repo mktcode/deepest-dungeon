@@ -219,7 +219,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.otherRooms.forEach(room => {
         const num = this.dungeon.r.randomInteger(1, maxEnemies)
         for (let i = 1; i <= num; i++) {
-          this.enemies.push(new Enemy(this, this.map, room, 'snake', (enemy) => {
+          this.enemies.push(new Enemy(this, room, 'snake', (enemy) => {
             Phaser.Utils.Array.Remove(this.enemies, enemy)
           }));
         }

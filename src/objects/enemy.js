@@ -6,9 +6,8 @@ import enemies from '../assets/enemies.png'
 import deamonSprite from "../assets/deamon.png";
 
 export default class Enemy {
-  constructor(dungeon, map, room, type, dieCallback) {
+  constructor(dungeon, room, type, dieCallback) {
     this.dungeon = dungeon
-    this.map = map
     this.room = room
     this.type = type
     this.directionX = ['left', 'right'][Phaser.Math.Between(0, 1)]
@@ -16,8 +15,8 @@ export default class Enemy {
     this.underAttack = false
     this.dieCallback = dieCallback
 
-    const x = map.tileToWorldX(Phaser.Math.Between(room.left + 2, room.right - 2))
-    const y = map.tileToWorldX(Phaser.Math.Between(room.top + 2, room.bottom - 2))
+    const x = this.dungeon.map.tileToWorldX(Phaser.Math.Between(room.left + 2, room.right - 2))
+    const y = this.dungeon.map.tileToWorldX(Phaser.Math.Between(room.top + 2, room.bottom - 2))
 
     if (this.type === 'deamon') {
       this.hp = 10
@@ -125,7 +124,7 @@ export default class Enemy {
         })
       },
       repeat: 4
-  })
+    })
   }
 
   static preload(scene) {
