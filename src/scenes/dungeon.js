@@ -506,7 +506,7 @@ export default class DungeonScene extends Phaser.Scene {
           this.groundLayer.tileToWorldY(tile[1]) + 24,
           "path",
           0
-        ))
+        ).setDepth(6))
       })
       if (this.pathSprites.length) {
         this.scene.get('Gui').startPathfinderCooldown()
