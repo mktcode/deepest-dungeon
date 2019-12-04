@@ -54,13 +54,15 @@ export default class DungeonScene extends Phaser.Scene {
     this.cameras.main.fadeIn(250, 0, 0, 0)
     this.narrator = new Narrator(this)
     this.registry.set('currentDungeon', this.dungeonNumber)
+    this.particle = this.add.particles('particle').setDepth(7)
 
     this.prepareMap()
     this.prepareRooms()
     this.addHero()
     this.addEnemies()
     this.addItems()
-    this.addParticles()
+    this.addFireTraps()
+    this.addInteractionParticles()
 
     this.events.on('wake', () => {
       this.cameras.main.fadeIn(250, 0, 0, 0)
@@ -226,7 +228,7 @@ export default class DungeonScene extends Phaser.Scene {
       })
 
       if (this.restRoom) {
-        this.enemies.push(new Enemy(this, this.map, this.endRoom, 'deamon', (enemy) => {
+        this.enemies.push(new Enemy(this, this.endRoom, 'deamon', (enemy) => {
           this.lightManager.removeLight(enemy.sprite)
           Phaser.Utils.Array.Remove(this.enemies, enemy)
           this.stuffLayer.putTileAt(
@@ -236,6 +238,95 @@ export default class DungeonScene extends Phaser.Scene {
           );
         }));
       }
+    }
+  }
+
+  addFireTraps() {
+    if (this.dungeonNumber > 5) {
+      const allowedTiles = [TILES.WALL.TOP, TILES.WALL.BOTTOM, TILES.WALL.LEFT, TILES.WALL.RIGHT]
+      this.otherRooms.forEach(room => {
+        const count = this.dungeon.r.randomInteger(1, 4)
+        const walls = []
+        const availableWalls = ['top', 'bottom', 'left', 'right']
+        while (walls.length < count) {
+          walls.push(Phaser.Utils.Array.RemoveAt(availableWalls, this.dungeon.r.randomInteger(0, availableWalls.length - 1)))
+        }
+
+        walls.forEach(wall => {
+          let x, y, angle
+          if (wall === 'top') {
+            const tiles = this.groundLayer.getTilesWithin(room.left, room.top, room.width, 1).filter(t => allowedTiles.includes(t.index))
+            if (tiles.length) {
+              const tile = tiles[this.dungeon.r.randomInteger(0, tiles.length -1)]
+              x = this.groundLayer.tileToWorldX(tile.x) + this.tileSize / 2
+              y = this.groundLayer.tileToWorldY(tile.y) + this.tileSize / 2
+              angle = { min: 80, max: 100}
+            }
+          } else if (wall === 'bottom') {
+            const tiles = this.groundLayer.getTilesWithin(room.left, room.bottom, room.width, 1).filter(t => allowedTiles.includes(t.index))
+            if (tiles.length) {
+              const tile = tiles[this.dungeon.r.randomInteger(0, tiles.length -1)]
+              x = this.groundLayer.tileToWorldX(tile.x) + this.tileSize / 2
+              y = this.groundLayer.tileToWorldY(tile.y) + this.tileSize / 2
+              angle = { min: -80, max: -100}
+            }
+          } else if (wall === 'left') {
+            const tiles = this.groundLayer.getTilesWithin(room.left, room.top, 1, room.height).filter(t => allowedTiles.includes(t.index))
+            if (tiles.length) {
+              const tile = tiles[this.dungeon.r.randomInteger(0, tiles.length -1)]
+              x = this.groundLayer.tileToWorldX(tile.x) + this.tileSize / 2
+              y = this.groundLayer.tileToWorldY(tile.y) + this.tileSize / 2
+              angle = { min: -10, max: 10}
+            }
+          } else if (wall === 'right') {
+            const tiles = this.groundLayer.getTilesWithin(room.right, room.top, 1, room.height).filter(t => allowedTiles.includes(t.index))
+            if (tiles.length) {
+              const tile = tiles[this.dungeon.r.randomInteger(0, tiles.length -1)]
+              x = this.groundLayer.tileToWorldX(tile.x) + this.tileSize / 2
+              y = this.groundLayer.tileToWorldY(tile.y) + this.tileSize / 2
+              angle = { min: -190, max: -170}
+            }
+          }
+
+          this.add.rectangle(x, y, 8, 8, 0x000000).setDepth(6)
+
+          const fireTrap = this.particle.createEmitter({
+            x: x,
+            y: y,
+            on: false,
+            tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
+            blendMode: 'SCREEN',
+            scale: { start: 1, end: 3 },
+            alpha: { start: 1, end: 0 },
+            rotate: { min: 0, max: 180 },
+            speed: 150,
+            quantity: 9,
+            frequency: 60,
+            lifespan: 1000,
+            angle: angle,
+            emitCallback: (particle) => {
+              this.lightManager.lights.push({
+                sprite: particle,
+                intensity: () => 1
+              })
+            },
+            deathCallback: (particle) => {
+              this.lightManager.removeLight(particle)
+            }
+          })
+
+          this.time.addEvent({
+            delay: 2000 * this.dungeon.r.randomInteger(1, 5),
+            callback: () => {
+              fireTrap.start()
+              this.time.delayedCall(1000, () => {
+                fireTrap.stop()
+              })
+            },
+            loop: true
+          })
+        })
+      })
     }
   }
 
@@ -316,8 +407,8 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
-  addParticles() {
-    this.particles = this.add.particles('particle').setDepth(5).createEmitter({
+  addInteractionParticles() {
+    this.interactionParticles = this.particle.createEmitter({
       blendMode: 'SCREEN',
       scale: { start: 0, end: 1.5 },
       alpha: { start: 1, end: 0 },
@@ -342,15 +433,15 @@ export default class DungeonScene extends Phaser.Scene {
       TILES.SHRINE.RIGHT[0]
     ])
     if (tile) {
-      if (this.particles.on === false) {
-        this.particles.setPosition(
+      if (this.interactionParticles.on === false) {
+        this.interactionParticles.setPosition(
           this.map.tileToWorldX(tile.x),
           this.map.tileToWorldX(tile.y)
         )
-        this.particles.start()
+        this.interactionParticles.start()
       }
     } else {
-      this.particles.stop()
+      this.interactionParticles.stop()
     }
   }
 
