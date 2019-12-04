@@ -57,6 +57,7 @@ export default class Hero {
 
     this.attacking = false
     this.underAttack = false
+    this.burning = false
     this.lastDirection = 'down'
 
     this.addToScene(x, y)
@@ -209,6 +210,38 @@ export default class Hero {
     this.sprites.hero.anims.play('attack-' + direction + slowmo, true)
     this.sprites.sword.anims.play('sword-' + direction + slowmo, true)
     return this.scene.anims.get('attack-' + direction + slowmo)
+  }
+
+  takeDamage(damage) {
+    const hero = this.sprites.hero
+    let heroHp = this.scene.registry.get('health')
+    heroHp -= damage
+    this.scene.registry.set('health', heroHp)
+    this.scene.flashSprite(hero)
+
+    if (hero.body.touching.up) {
+      hero.body.setVelocityY(300)
+    } else if (hero.body.touching.down) {
+      hero.body.setVelocityY(-300)
+    } else if (hero.body.touching.left) {
+      hero.body.setVelocityX(300)
+    } else if (hero.body.touching.right) {
+      hero.body.setVelocityX(-300)
+    }
+
+    if (heroHp <= 0) {
+      this.scene.time.delayedCall(600, () => {
+        this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
+        this.scene.hero.freeze()
+        this.scene.scene.sleep()
+        this.scene.scene.wake('Dungeon' + this.scene.registry.get('minDungeon'))
+      })
+    }
+
+    this.scene.time.delayedCall(600, () => {
+      this.underAttack = false
+      this.burning = false
+    })
   }
 
   stop() {

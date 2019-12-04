@@ -58,30 +58,7 @@ export default class Enemy {
       if (!this.dungeon.hero.underAttack) {
         this.dungeon.cameras.main.shake(500, .002)
         this.dungeon.hero.underAttack = true
-        let heroHp = this.dungeon.registry.get('health')
-        heroHp--
-        this.dungeon.registry.set('health', heroHp)
-        if (heroHp > 0) {
-          this.flash(hero)
-          if (hero.body.touching.up) {
-            hero.body.setVelocityY(300)
-          } else if (hero.body.touching.down) {
-            hero.body.setVelocityY(-300)
-          } else if (hero.body.touching.left) {
-            hero.body.setVelocityX(300)
-          } else if (hero.body.touching.right) {
-            hero.body.setVelocityX(-300)
-          }
-          this.dungeon.time.delayedCall(500, () => {
-            this.dungeon.hero.underAttack = false
-          });
-        } else {
-          this.dungeon.hero.underAttack = false
-          this.dungeon.registry.set('health', this.dungeon.registry.get('maxHealth'))
-          this.dungeon.hero.freeze()
-          this.dungeon.scene.sleep()
-          this.dungeon.scene.wake('Dungeon' + this.dungeon.registry.get('minDungeon'))
-        }
+        this.dungeon.hero.takeDamage(1)
       }
     });
     this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.sword, this.sprite, (hero, enemy) => {
@@ -90,7 +67,7 @@ export default class Enemy {
         this.underAttack = true
         this.hp -= this.dungeon.registry.get('damage')
         if (this.hp > 0) {
-          this.flash(enemy)
+          this.dungeon.flashSprite(enemy)
           if (this.dungeon.hero.lastDirection === 'up') {
             enemy.body.setVelocityY(-300)
           } else if (this.dungeon.hero.lastDirection === 'down') {
@@ -112,19 +89,6 @@ export default class Enemy {
         }
       }
     });
-  }
-
-  flash(sprite) {
-    this.dungeon.time.addEvent({
-      delay: 150,
-      callback: () => {
-        sprite.setTintFill(0xffffff)
-        this.dungeon.time.delayedCall(75, () => {
-          sprite.clearTint()
-        })
-      },
-      repeat: 4
-    })
   }
 
   static preload(scene) {

@@ -242,6 +242,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   addFireTraps() {
+    this.fireTraps = []
     if (this.dungeonNumber > 5) {
       const allowedTiles = [TILES.WALL.TOP, TILES.WALL.BOTTOM, TILES.WALL.LEFT, TILES.WALL.RIGHT]
       this.otherRooms.forEach(room => {
@@ -325,9 +326,44 @@ export default class DungeonScene extends Phaser.Scene {
             },
             loop: true
           })
+
+          this.fireTraps.push(fireTrap)
         })
       })
     }
+  }
+
+  checkFireTrapCollision() {
+    this.fireTraps.forEach(trap => {
+      trap.forEachAlive((particle) => {
+        if (
+          particle.x > this.hero.sprites.hero.body.left &&
+          particle.x < this.hero.sprites.hero.body.right &&
+          particle.y > this.hero.sprites.hero.body.top &&
+          particle.y < this.hero.sprites.hero.body.bottom &&
+          !this.hero.burning
+        ) {
+          this.hero.burning = true
+          this.hero.takeDamage(1)
+          this.time.delayedCall(1000, () => {
+            this.hero.burning = false
+          })
+        }
+      })
+    })
+  }
+
+  flashSprite(sprite) {
+    this.time.addEvent({
+      delay: 150,
+      callback: () => {
+        sprite.setTintFill(0xffffff)
+        this.time.delayedCall(75, () => {
+          sprite.clearTint()
+        })
+      },
+      repeat: 3
+    })
   }
 
   addItems() {
@@ -513,5 +549,6 @@ export default class DungeonScene extends Phaser.Scene {
     this.setCurrentRoom()
     this.updateParticles()
     this.lightManager.update()
+    this.checkFireTrapCollision()
   }
 }
