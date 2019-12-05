@@ -118,32 +118,38 @@ export default class Enemy {
 
   update() {
     if (!this.underAttack) {
-
       const sprite = this.sprite;
-      const speed = 50;
+      const vector = new Phaser.Math.Vector2(sprite.x, sprite.y);
+      const distance = vector.distance({x: this.dungeon.hero.sprites.hero.body.x, y: this.dungeon.hero.sprites.hero.body.y})
+      if (distance < 100 && this.dungeon.dungeonNumber > 5) {
+        this.dungeon.physics.moveToObject(this.sprite, this.dungeon.hero.sprites.hero)
+        sprite.setFlipX(this.sprite.body.velocity.x < 0);
+      } else {
+        const speed = 50;
 
-      sprite.body.setVelocity(0);
+        sprite.body.setVelocity(0);
 
-      // horizontal movement
-      if (this.directionX === 'left') {
-        sprite.body.setVelocityX(-speed);
-        sprite.setFlipX(true);
-      }
-      if (this.directionX === 'right') {
-        sprite.body.setVelocityX(speed);
-        sprite.setFlipX(false);
-      }
+        // horizontal movement
+        if (this.directionX === 'left') {
+          sprite.body.setVelocityX(-speed);
+          sprite.setFlipX(true);
+        }
+        if (this.directionX === 'right') {
+          sprite.body.setVelocityX(speed);
+          sprite.setFlipX(false);
+        }
 
-      // vertical movement
-      if (this.directionY === 'up') {
-        sprite.body.setVelocityY(-speed);
-      }
-      if (this.directionY === 'down') {
-        sprite.body.setVelocityY(speed);
-      }
+        // vertical movement
+        if (this.directionY === 'up') {
+          sprite.body.setVelocityY(-speed);
+        }
+        if (this.directionY === 'down') {
+          sprite.body.setVelocityY(speed);
+        }
 
-      // Normalize and scale the velocity so that sprite can't move faster along a diagonal
-      sprite.body.velocity.normalize().scale(speed);
+        // Normalize and scale the velocity so that sprite can't move faster along a diagonal
+        sprite.body.velocity.normalize().scale(speed);
+      }
     }
   }
 }
