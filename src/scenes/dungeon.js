@@ -457,6 +457,15 @@ export default class DungeonScene extends Phaser.Scene {
         source: new Phaser.Geom.Rectangle(0, 0, this.tileSize, this.tileSize),
         type: 'edge',
         quantity: 20
+      },
+      emitCallback: (particle) => {
+        this.lightManager.lights.push({
+          sprite: particle,
+          intensity: () => 0.3
+        })
+      },
+      deathCallback: (particle) => {
+        this.lightManager.removeLight(particle)
       }
     })
   }
