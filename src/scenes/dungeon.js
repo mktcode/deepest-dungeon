@@ -245,7 +245,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.fireTraps = []
     if (this.dungeonNumber > 5) {
       const allowedTiles = [TILES.WALL.TOP, TILES.WALL.BOTTOM, TILES.WALL.LEFT, TILES.WALL.RIGHT]
-      this.otherRooms.forEach(room => {
+      this.otherRooms.forEach((room, i) => {
+        if (i % 3) return
         const count = this.dungeon.r.randomInteger(1, 4)
         const walls = []
         const availableWalls = ['top', 'bottom', 'left', 'right']
