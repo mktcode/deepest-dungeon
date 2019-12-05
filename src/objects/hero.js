@@ -181,7 +181,7 @@ export default class Hero {
       .setSize(20, 25)
       .setOffset(23, 27)
       .setDepth(6);
-    this.scene.cameras.main.startFollow(this.sprites.hero)
+    this.scene.cameras.main.startFollow(this.sprites.hero, true, 0.1, 0.1)
 
     this.sprites.levelUp = this.scene.physics.add.sprite(x, y, "levelUp", 0).setDepth(6);
     this.sprites.sword = this.scene.physics.add.sprite(x, y, "sword", 0).setDepth(6);
