@@ -36,6 +36,10 @@ export default class Enemy {
         .setSize(27, 28)
         .setOffset(20, 35)
       this.sprite.anims.play("enemy-walk")
+      this.dungeon.lightManager.lights.push({
+        sprite: this.sprite,
+        intensity: () => 0.04
+      })
     }
     this.sprite.setDepth(6)
 
