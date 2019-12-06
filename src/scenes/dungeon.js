@@ -71,11 +71,17 @@ export default class DungeonScene extends Phaser.Scene {
       // keyboard bug workaround
       this.hero.resetKeys()
 
-      // place hero in start/rest room
-      this.hero.jumpTo(
-        this.map.tileToWorldX(this.restRoom ? this.restRoom.centerX : this.startRoom.centerX),
-        this.map.tileToWorldY(this.restRoom ? this.restRoom.centerY : this.startRoom.centerY)
-      )
+      // place hero
+      this.hero.sprites.hero.visible = false
+      this.hero.freeze()
+      this.time.delayedCall(1000, () => {
+        this.hero.sprites.hero.visible = true
+        this.hero.unfreeze()
+        this.hero.jumpTo(
+          this.map.tileToWorldX(this.restRoom ? this.restRoom.centerX : this.startRoom.centerX),
+          this.map.tileToWorldY(this.restRoom ? this.restRoom.centerY : this.startRoom.centerY)
+        )
+      })
 
       this.hero.unfreeze()
     })
