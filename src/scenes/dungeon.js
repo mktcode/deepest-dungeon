@@ -210,7 +210,7 @@ export default class DungeonScene extends Phaser.Scene {
         const torches = this.registry.get('items').filter(item => item === 'torch')
 
         if (torches && torches.length) {
-          return torches.length
+          return torches.length - 1 + LightManager.flickering()
         }
         return 0
       }
@@ -407,9 +407,10 @@ export default class DungeonScene extends Phaser.Scene {
         'torch',
         0
       ).setSize(48, 48).setDepth(6)
+
       this.lightManager.lights.push({
         sprite: this.torch,
-        intensity: () => 1
+        intensity: () => LightManager.flickering()
       })
       this.torch.anims.play('torch', true)
 
