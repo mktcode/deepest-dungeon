@@ -431,7 +431,7 @@ export default class DungeonScene extends Phaser.Scene {
     }
 
     // pathfinder
-    if (this.dungeonNumber >= 10 && this.dungeonNumber % 4 && !this.registry.get('items').includes('pathfinder')) {
+    if (this.dungeonNumber >= 10 && this.dungeonNumber % 2 && !this.registry.get('items').includes('pathfinder')) {
       const pathFinderRoom = this.dungeon.r.randomPick(this.otherRooms)
       this.pathfinder = this.physics.add.sprite(
         this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([pathFinderRoom.left + 1, pathFinderRoom.right - 1])) + 24,
