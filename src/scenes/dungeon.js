@@ -387,7 +387,7 @@ export default class DungeonScene extends Phaser.Scene {
         targets: this.sword,
         yoyo: true,
         repeat: -1,
-        y: '+=5'
+        y: '+=8'
       })
       this.physics.add.collider(this.hero.sprites.hero, this.sword, () => {
         this.registry.set('weapon', 'sword')
@@ -407,7 +407,12 @@ export default class DungeonScene extends Phaser.Scene {
         'torch',
         0
       ).setSize(48, 48).setDepth(6)
-
+      this.tweens.add({
+        targets: this.torch,
+        yoyo: true,
+        repeat: -1,
+        y: '+=8'
+      })
       this.lightManager.lights.push({
         sprite: this.torch,
         intensity: () => LightManager.flickering()
@@ -434,6 +439,12 @@ export default class DungeonScene extends Phaser.Scene {
         'pathfinder',
         0
       ).setSize(48, 48).setDepth(6)
+      this.tweens.add({
+        targets: this.pathfinder,
+        yoyo: true,
+        repeat: -1,
+        y: '+=8'
+      })
       this.lightManager.lights.push({
         sprite: this.pathfinder,
         intensity: () => 1
