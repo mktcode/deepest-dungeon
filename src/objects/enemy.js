@@ -70,6 +70,7 @@ export default class Enemy {
         this.dungeon.cameras.main.shake(500, .002)
         this.underAttack = true
         this.hp -= this.dungeon.registry.get('damage')
+        this.dungeon.popupDamageNumber(this.dungeon.registry.get('damage'), this.sprite, '#CCCCCC')
         if (this.hp > 0) {
           this.dungeon.flashSprite(enemy)
           if (this.dungeon.hero.lastDirection === 'up') {

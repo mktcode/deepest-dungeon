@@ -552,6 +552,23 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
+  popupDamageNumber(damage, sprite, color) {
+    const damageText = this.add.text(sprite.body.x, sprite.body.y, '-' + damage, {
+      font: '14px monospace',
+      fill: color
+    }).setDepth(10)
+    this.tweens.add({
+      targets: damageText,
+      alpha: { start: 0, from: 1, to: 0 },
+      scale: { from: 0.5, to: 1 },
+      duration: 2500,
+      ease: 'Cubic',
+      y: '-=50'
+    }).on('complete', () => {
+      damageText.destroy()
+    })
+  }
+
   setCurrentRoom() {
     this.currentRoom = this.dungeon.getRoomAt(
       this.groundLayer.worldToTileX(this.hero.sprites.hero.x),

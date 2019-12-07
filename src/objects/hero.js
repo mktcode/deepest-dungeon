@@ -218,6 +218,7 @@ export default class Hero {
     heroHp -= damage
     this.scene.registry.set('health', heroHp)
     this.scene.flashSprite(hero)
+    this.scene.popupDamageNumber(damage, hero, '#CC0000')
 
     if (hero.body.touching.up) {
       hero.body.setVelocityY(300)
