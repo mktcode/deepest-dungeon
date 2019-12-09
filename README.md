@@ -1,3 +1,27 @@
+# TODO
+
+- first version
+  - [ ] Bugfix: character.js:78
+  - [x] Numbers when hitting
+  - [ ] better gui for skill menu
+  - [ ] trapdoors: random tiles change after standing on them too long, instant death
+  - [ ] ingame instructions
+  - [ ] adjust/expand narrator
+  - [ ] pause
+  - [x] let hero emit light when leveling up
+  - [ ] add sound for sword and hero when attacking
+  - [x] let torches/pathfinder bounce like the sword does
+  - [ ] implement global high score
+  - [x] make lights flickering (dynamic intensity)
+  - [ ] implement mana and spell attack
+  - [ ] animate cooldowns in item slots
+  - [ ] loose items when dieing, place them where died
+
+- next version
+  - [ ] let people create the "deepest dungeon"
+  - [ ] use seeds as sharable "sessions" and saved games
+  - [ ] more enemies/traps
+
 # phaser-electron-typescript-parcel [![Build Status](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel.svg?branch=master)](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel)
 
 A minimal template with the following things.
