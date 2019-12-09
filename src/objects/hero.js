@@ -274,7 +274,10 @@ export default class Hero {
       })
     }
 
-    this.scene.time.delayedCall(600, () => {
+    this.scene.time.delayedCall(300, () => {
+      this.cantMove = false
+    })
+    this.scene.time.delayedCall(1500, () => {
       this.underAttack = false
       this.burning = false
     })
@@ -317,7 +320,7 @@ export default class Hero {
   }
 
   update() {
-    if (!this.underAttack) {
+    if (!this.cantMove) {
       // Stop any previous movement from the last frame
       this.sprites.hero.body.setVelocity(0);
 

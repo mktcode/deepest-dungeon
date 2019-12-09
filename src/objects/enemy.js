@@ -58,10 +58,11 @@ export default class Enemy {
       }
     });
 
-    this.dungeon.physics.add.collider(this.dungeon.hero.sprites.hero, this.sprite, (hero, enemy) => {
+    this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.hero, this.sprite, (hero, enemy) => {
       if (!this.dungeon.hero.underAttack && !this.dungeon.hero.dead) {
         this.dungeon.cameras.main.shake(500, .002)
         this.dungeon.hero.underAttack = true
+        this.dungeon.hero.cantMove = true
         this.dungeon.hero.takeDamage(1)
       }
     });
