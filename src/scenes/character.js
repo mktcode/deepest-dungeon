@@ -3,7 +3,6 @@ import Phaser from "phaser";
 export default class CharacterScene extends Phaser.Scene {
   constructor() {
     super('Character')
-    this.pointsSpent = 0
   }
 
   static preload(scene) {
@@ -19,7 +18,7 @@ export default class CharacterScene extends Phaser.Scene {
     const centerY = this.game.scale.height / 2
 
     const availableSkillPoints = this.add
-      .text(centerX, centerY - 80, 'Skill Points: ' + (this.registry.get('skillPoints') - this.pointsSpent), {
+      .text(centerX, centerY - 80, 'Skill Points: ' + (this.registry.get('skillPoints') - this.registry.get('skillPointsSpent')), {
         font: "24px monospace",
         fill: "#ffffff",
         padding: { x: 20, y: 10 }
@@ -34,8 +33,8 @@ export default class CharacterScene extends Phaser.Scene {
       })
       .setInteractive();
     moreHealth.on('pointerup', () => {
-      if (this.registry.get('skillPoints') > this.pointsSpent) {
-        this.pointsSpent += 1
+      if (this.registry.get('skillPoints') > this.registry.get('skillPointsSpent')) {
+        this.registry.set('skillPointsSpent', this.registry.get('skillPointsSpent') + 1)
         this.registry.set('maxHealth', this.registry.get('maxHealth') + 1)
         this.registry.set('health', this.registry.get('maxHealth'))
       }
@@ -50,8 +49,8 @@ export default class CharacterScene extends Phaser.Scene {
       })
       .setInteractive();
     moreDamage.on('pointerup', () => {
-      if (this.registry.get('skillPoints') > this.pointsSpent) {
-        this.pointsSpent += 1
+      if (this.registry.get('skillPoints') > this.registry.get('skillPointsSpent')) {
+        this.registry.set('skillPointsSpent', this.registry.get('skillPointsSpent') + 1)
         this.registry.set('damage', this.registry.get('damage') + 1)
       }
     })
@@ -65,8 +64,8 @@ export default class CharacterScene extends Phaser.Scene {
       })
       .setInteractive();
     moreTorchDuration.on('pointerup', () => {
-      if (this.registry.get('skillPoints') > this.pointsSpent) {
-        this.pointsSpent += 1
+      if (this.registry.get('skillPoints') > this.registry.get('skillPointsSpent')) {
+        this.registry.set('skillPointsSpent', this.registry.get('skillPointsSpent') + 1)
         this.registry.set('torchDuration', this.registry.get('torchDuration') + 30)
       }
     })
@@ -75,7 +74,7 @@ export default class CharacterScene extends Phaser.Scene {
       moreHealth.setText('Health: ' + this.registry.get('maxHealth'))
       moreDamage.setText('Damage: ' + this.registry.get('damage'))
       moreTorchDuration.setText('Torch Duration: ' + this.registry.get('torchDuration') + 's')
-      availableSkillPoints.setText('Skill Points: ' + (this.registry.get('skillPoints') - this.pointsSpent))
+      availableSkillPoints.setText('Skill Points: ' + (this.registry.get('skillPoints') - this.registry.get('skillPointsSpent')))
     })
   }
 }

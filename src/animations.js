@@ -1,14 +1,12 @@
 export default class Animations {
-  static intro(anims) {
+  static create(anims) {
     anims.create({
       key: "intro-ground",
       frames: anims.generateFrameNumbers("intro-ground", { start: 0, end: 7 }),
       frameRate: 12,
       repeat: -1
     });
-  }
 
-  static hero(anims) {
     [0, 1].forEach((slowmo) => {
       const moveFrameRate = slowmo ? 2 : 6
       const swordFrameRate = slowmo ? 4 : 12
@@ -126,9 +124,7 @@ export default class Animations {
         showOnStart: true
       });
     })
-  }
 
-  static enemies(anims) {
     anims.create({
       key: "enemy-walk",
       frames: anims.generateFrameNumbers("enemies", { start: 69, end: 72 }),
@@ -141,9 +137,7 @@ export default class Animations {
       frameRate: 4,
       repeat: -1
     });
-  }
 
-  static items(anims) {
     anims.create({
       key: "torch",
       frames: anims.generateFrameNumbers("torch", { start: 0, end: 6 }),
@@ -154,6 +148,13 @@ export default class Animations {
       key: "pathfinder",
       frames: anims.generateFrameNumbers("pathfinder", { start: 0, end: 11 }),
       frameRate: 12,
+      repeat: -1
+    });
+
+    anims.create({
+      key: "xpDust",
+      frames: anims.generateFrameNumbers("xpDust", { start: 0, end: 2 }),
+      frameRate: 6,
       repeat: -1
     });
   }

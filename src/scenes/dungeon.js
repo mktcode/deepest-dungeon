@@ -76,10 +76,11 @@ export default class DungeonScene extends Phaser.Scene {
       this.hero.freeze()
       this.time.delayedCall(1000, () => {
         this.hero.sprites.hero.visible = true
+        this.hero.dead = false
         this.hero.unfreeze()
         this.hero.jumpTo(
-          this.map.tileToWorldX(this.restRoom ? this.restRoom.centerX : this.startRoom.centerX),
-          this.map.tileToWorldY(this.restRoom ? this.restRoom.centerY : this.startRoom.centerY)
+          this.map.tileToWorldX(this.restRoom && this.restRoomActivated ? this.restRoom.centerX : this.startRoom.centerX),
+          this.map.tileToWorldY(this.restRoom && this.restRoomActivated ? this.restRoom.centerY : this.startRoom.centerY)
         )
       })
 
@@ -374,92 +375,124 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   addItems() {
-    // sword
-    if (this.dungeonNumber >= 3 && !this.registry.get('items').includes('sword')) {
-      const swordRoom = this.dungeon.r.randomPick(this.otherRooms)
-      this.sword = this.physics.add.sprite(
-        this.map.tileToWorldX(swordRoom.centerX),
-        this.map.tileToWorldY(swordRoom.centerY),
-        'sword',
-        20
-      ).setSize(32, 32).setDepth(6)
-      this.tweens.add({
-        targets: this.sword,
-        yoyo: true,
-        repeat: -1,
-        y: '+=8'
-      })
-      this.physics.add.collider(this.hero.sprites.hero, this.sword, () => {
-        this.registry.set('weapon', 'sword')
-        const items = this.registry.get('items')
-        items.push('sword')
-        this.registry.set('items', items)
-        this.sword.destroy()
-      });
+    if (this.dungeonNumber >= 3 && !this.hero.hasItem('sword')) {
+      this.addSword()
     }
 
-    // torches
     if (this.dungeonNumber >= 5 && this.dungeonNumber % 2) {
+      this.addTorch()
+    }
+
+    if (this.dungeonNumber >= 10 && this.dungeonNumber % 2 && !this.hero.hasItem('pathfinder')) {
+      this.addPathfinder()
+    }
+  }
+
+  addSword(x, y) {
+    if (!x && !y) {
+      const swordRoom = this.dungeon.r.randomPick(this.otherRooms)
+      x = this.map.tileToWorldX(swordRoom.centerX)
+      y = this.map.tileToWorldY(swordRoom.centerY)
+    }
+
+    this.sword = this.physics.add.sprite(x, y, 'sword', 20).setSize(32, 32).setDepth(8)
+    this.tweens.add({
+      targets: this.sword,
+      yoyo: true,
+      repeat: -1,
+      y: '+=8'
+    })
+    this.physics.add.collider(this.hero.sprites.hero, this.sword, () => {
+      if (this.hero.dead) return
+
+      this.registry.set('weapon', 'sword')
+      const items = this.registry.get('items')
+      items.push('sword')
+      this.registry.set('items', items)
+      this.sword.destroy()
+    });
+  }
+
+  addTorch(x, y) {
+    if (!x && !y) {
       const torchRoom = this.dungeon.r.randomPick(this.otherRooms)
-      this.torch = this.physics.add.sprite(
-        this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([torchRoom.left + 1, torchRoom.right - 1])) + 24,
-        this.map.tileToWorldY(Phaser.Utils.Array.GetRandom([torchRoom.top + 1, torchRoom.bottom - 1])) + 24,
-        'torch',
-        0
-      ).setSize(48, 48).setDepth(6)
-      this.tweens.add({
-        targets: this.torch,
-        yoyo: true,
-        repeat: -1,
-        y: '+=8'
-      })
-      this.lightManager.lights.push({
-        sprite: this.torch,
-        intensity: () => LightManager.flickering()
-      })
-      this.torch.anims.play('torch', true)
-
-      this.physics.add.collider(this.hero.sprites.hero, this.torch, () => {
-        const items = this.registry.get('items')
-        items.push('torch')
-        this.registry.set('items', items)
-        this.scene.get('Gui').removeTorchDelayed()
-        this.torch.destroy()
-        this.lightManager.removeLight(this.torch)
-        this.torch = null
-      });
+      x = this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([torchRoom.left + 1, torchRoom.right - 1])) + 24
+      y = this.map.tileToWorldY(Phaser.Utils.Array.GetRandom([torchRoom.top + 1, torchRoom.bottom - 1])) + 24
     }
+    this.torch = this.physics.add.sprite(x, y, 'torch', 0).setSize(48, 48).setDepth(7)
+    this.tweens.add({
+      targets: this.torch,
+      yoyo: true,
+      repeat: -1,
+      y: '+=8'
+    })
+    this.lightManager.lights.push({
+      sprite: this.torch,
+      intensity: () => LightManager.flickering()
+    })
+    this.torch.anims.play('torch', true)
 
-    // pathfinder
-    if (this.dungeonNumber >= 10 && this.dungeonNumber % 2 && !this.registry.get('items').includes('pathfinder')) {
+    this.physics.add.collider(this.hero.sprites.hero, this.torch, () => {
+      if (this.hero.dead) return
+      const items = this.registry.get('items')
+      items.push('torch')
+      this.registry.set('items', items)
+      this.scene.get('Gui').removeTorchDelayed()
+      this.torch.destroy()
+      this.lightManager.removeLight(this.torch)
+      this.torch = null
+    });
+  }
+
+  addPathfinder(x, y) {
+    if (!x && !y) {
       const pathFinderRoom = this.dungeon.r.randomPick(this.otherRooms)
-      this.pathfinder = this.physics.add.sprite(
-        this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([pathFinderRoom.left + 1, pathFinderRoom.right - 1])) + 24,
-        this.map.tileToWorldY(Phaser.Utils.Array.GetRandom([pathFinderRoom.top + 1, pathFinderRoom.bottom - 1])) + 24,
-        'pathfinder',
-        0
-      ).setSize(48, 48).setDepth(6)
-      this.tweens.add({
-        targets: this.pathfinder,
-        yoyo: true,
-        repeat: -1,
-        y: '+=8'
-      })
-      this.lightManager.lights.push({
-        sprite: this.pathfinder,
-        intensity: () => 1
-      })
-      this.pathfinder.anims.play('pathfinder', true)
-
-      this.physics.add.collider(this.hero.sprites.hero, this.pathfinder, () => {
-        const items = this.registry.get('items')
-        items.push('pathfinder')
-        this.registry.set('items', items)
-        this.pathfinder.destroy()
-        this.lightManager.removeLight(this.pathfinder)
-        this.pathfinder = null
-      });
+      x = this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([pathFinderRoom.left + 1, pathFinderRoom.right - 1])) + 24
+      y = this.map.tileToWorldY(Phaser.Utils.Array.GetRandom([pathFinderRoom.top + 1, pathFinderRoom.bottom - 1])) + 24
     }
+    this.pathfinder = this.physics.add.sprite(x, y, 'pathfinder', 0).setSize(48, 48).setDepth(8)
+    this.tweens.add({
+      targets: this.pathfinder,
+      yoyo: true,
+      repeat: -1,
+      y: '+=8'
+    })
+    this.lightManager.lights.push({
+      sprite: this.pathfinder,
+      intensity: () => 1
+    })
+    this.pathfinder.anims.play('pathfinder', true)
+
+    this.physics.add.collider(this.hero.sprites.hero, this.pathfinder, () => {
+      if (this.hero.dead) return
+      const items = this.registry.get('items')
+      items.push('pathfinder')
+      this.registry.set('items', items)
+      this.pathfinder.destroy()
+      this.lightManager.removeLight(this.pathfinder)
+      this.pathfinder = null
+    });
+  }
+
+  addXpDust(x, y, xp, points) {
+    this.xpDust = this.physics.add.sprite(x, y, 'xpDust', 0).setSize(52, 22).setDepth(7)
+    this.lightManager.lights.push({
+      sprite: this.xpDust,
+      intensity: () => 1
+    })
+    this.xpDust.anims.play('xpDust', true)
+
+    this.physics.add.collider(this.hero.sprites.hero, this.xpDust, () => {
+      if (this.hero.dead) return
+      this.xpDust.destroy()
+      this.lightManager.removeLight(this.xpDust)
+      if (xp) {
+        this.registry.set('xp', this.registry.get('xp') + xp)
+      }
+      if (points) {
+        this.registry.set('skillPoints', this.registry.get('skillPoints') + points)
+      }
+    });
   }
 
   addInteractionParticles() {

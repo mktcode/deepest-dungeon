@@ -59,14 +59,14 @@ export default class Enemy {
     });
 
     this.dungeon.physics.add.collider(this.dungeon.hero.sprites.hero, this.sprite, (hero, enemy) => {
-      if (!this.dungeon.hero.underAttack) {
+      if (!this.dungeon.hero.underAttack && !this.dungeon.hero.dead) {
         this.dungeon.cameras.main.shake(500, .002)
         this.dungeon.hero.underAttack = true
         this.dungeon.hero.takeDamage(1)
       }
     });
     this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.sword, this.sprite, (hero, enemy) => {
-      if (this.dungeon.hero.attacking && !this.underAttack) {
+      if (this.dungeon.hero.attacking && !this.underAttack && !this.dungeon.hero.dead) {
         this.dungeon.cameras.main.shake(500, .002)
         this.underAttack = true
         this.hp -= this.dungeon.registry.get('damage')

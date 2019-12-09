@@ -6,6 +6,7 @@ import TILES from "../tile-mapping.js";
 import hero from "../assets/hero.png";
 import levelUp from "../assets/levelUp.png";
 import sword from "../assets/sword.png";
+import xpDust from "../assets/xp-dust.png";
 
 export default class Hero {
   constructor(scene, x, y) {
@@ -58,6 +59,7 @@ export default class Hero {
     this.attacking = false
     this.underAttack = false
     this.burning = false
+    this.dead = false
     this.lastDirection = 'down'
 
     this.addToScene(x, y)
@@ -114,6 +116,14 @@ export default class Hero {
         frameHeight: 128
       }
     );
+    scene.load.spritesheet(
+      "xpDust",
+      xpDust,
+      {
+        frameWidth: 52,
+        frameHeight: 22
+      }
+    );
   }
 
   static getLevelByXp(xp) {
@@ -124,6 +134,10 @@ export default class Hero {
 
   static getXpForLevelUp(level) {
     return ((Math.pow(level, 2) - level) * 50) / 2
+  }
+
+  hasItem(item) {
+    return this.scene.registry.get('items').includes(item)
   }
 
   resetKeys() {
@@ -177,7 +191,7 @@ export default class Hero {
 
   addToScene(x, y) {
     this.sprites.hero = this.scene.physics.add
-      .sprite(x, y, "hero", 35)
+      .sprite(x, y, 'hero', 35)
       .setSize(20, 25)
       .setOffset(23, 27)
       .setDepth(6);
@@ -231,7 +245,28 @@ export default class Hero {
     }
 
     if (heroHp <= 0) {
+      this.dead = true
+      this.scene.cameras.main.fadeOut(1000, 0, 0, 0)
       this.scene.time.delayedCall(600, () => {
+        const x = this.sprites.hero.body.x
+        const y = this.sprites.hero.body.y
+        if (this.hasItem('sword')) {
+          this.scene.addSword(x + Phaser.Math.Between(-15, 15), y + Phaser.Math.Between(-15, 15))
+        }
+        if (this.hasItem('pathfinder')) {
+          this.scene.addPathfinder(x + Phaser.Math.Between(-15, 15), y + Phaser.Math.Between(-15, 15))
+        }
+        this.scene.registry.set('items', [])
+        this.scene.registry.set('weapon', null)
+        const lastLevelXp = this.constructor.getXpForLevelUp(this.scene.registry.get('level'))
+        const lostXp = this.scene.registry.get('xp') - lastLevelXp
+        const lostSkillPoints = this.scene.registry.get('skillPoints') - this.scene.registry.get('skillPointsSpent')
+        this.scene.registry.set('skillPoints', this.scene.registry.get('skillPointsSpent'))
+        if (lostXp || lostSkillPoints) {
+          this.scene.addXpDust(x + Phaser.Math.Between(-15, 15), y + Phaser.Math.Between(-15, 15), lostXp, lostSkillPoints)
+        }
+
+        this.scene.registry.set('xp', lastLevelXp)
         this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
         this.scene.hero.freeze()
         this.scene.scene.sleep()
