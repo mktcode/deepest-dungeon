@@ -16,6 +16,7 @@
   - [ ] implement mana and spell attack
   - [ ] animate cooldowns in item slots
   - [ ] loose items when dieing, place them where died
+  - [ ] make torches usable on demand
 
 - next version
   - [ ] let people create the "deepest dungeon"

@@ -16,15 +16,27 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   create() {
-    this.startDungeon = 1
+    this.cameras.main.fadeIn(250, 0, 0, 0);
+    this.sound.play("ambientMusik", { volume: 0.3, loop: true })
 
-    this.registry.set('minDungeon', 1)
+    this.centerX = this.game.scale.width / 2
+    this.centerY = this.game.scale.height / 2
+
+    this.setRegistryDefaults()
+    this.addTitle()
+    this.addLogoAnimation()
+    this.addDisableNarratorButton()
+    this.addNewGameButton()
+  }
+
+  setRegistryDefaults() {
     this.registry.set('currentDungeon', 1)
+    this.registry.set('minDungeon', 1)
     this.registry.set('deepestDungeon', 25)
     this.registry.set('narratorSaid', [])
     this.registry.set('disableNarrator', false)
-    this.registry.set('weapon', null)
-    this.registry.set('items', [])
+    this.registry.set('weapon', 'sword')
+    this.registry.set('items', ['sword', 'torch', 'pathfinder', 'torch'])
     this.registry.set('torchDuration', 60)
     this.registry.set('damage', 1)
     this.registry.set('health', 3)
@@ -35,27 +47,23 @@ export default class MenuScene extends Phaser.Scene {
     this.registry.set('xp', 0)
     this.registry.set('skillPoints', 0)
     this.registry.set('skillPointsSpent', 0)
+  }
 
-    this.cameras.main.fadeIn(250, 0, 0, 0);
-    this.sound.play("ambientMusik", { volume: 0.3, loop: true })
+  addTitle() {
+    this.add.text(this.centerX - 163, this.centerY - 170, 'Infinite Dungeons', {
+      font: "30px monospace",
+      fill: "#FFFFFF"
+    })
+  }
 
-    const centerX = this.game.scale.width / 2
-    const centerY = this.game.scale.height / 2
-
-    const title = this.add
-      .text(centerX - 163, centerY - 200, 'Infinite Dungeons', {
-        font: "30px monospace",
-        fill: "#FFFFFF"
-      })
-      .setInteractive();
-
-    let ground = this.add.sprite(centerX, centerY, "introGround")
+  addLogoAnimation() {
+    const ground = this.add.sprite(this.centerX, this.centerY, "introGround")
     ground.anims.play('intro-ground')
-    const hero = new Hero(this, centerX, centerY)
+    const hero = new Hero(this, this.centerX, this.centerY)
     hero.walk('down')
 
     const directions = ['down', 'left', 'right']
-    var timer = this.time.addEvent({
+    this.time.addEvent({
       delay: 5000,
       callback: () => {
         const direction = directions.shift()
@@ -66,40 +74,16 @@ export default class MenuScene extends Phaser.Scene {
       },
       repeat: -1
     })
+  }
 
-    this.disableNarratorText = this.add
-      .text(centerX - 65, centerY + 120, 'Disable Narrator', {
-        font: "16px monospace",
-        fill: "#FFFFFF"
-      }).setInteractive()
-    this.disableNarratorCheckbox = this.add.sprite(centerX - 81, centerY + 130, "ui", 0).setInteractive()
+  addDisableNarratorButton() {
+    this.disableNarratorText = this.add.text(this.centerX - 65, this.centerY + 150, 'Disable Narrator', {
+      font: "16px monospace",
+      fill: "#FFFFFF"
+    }).setInteractive()
+    this.disableNarratorCheckbox = this.add.sprite(this.centerX - 81, this.centerY + 160, "ui", 0).setInteractive()
     this.disableNarratorText.on("pointerup", this.disableNarrator, this)
     this.disableNarratorCheckbox.on("pointerup", this.disableNarrator, this)
-
-    const newGame = this.add
-      .text(centerX - 55, centerY + 160, 'New Game', {
-        font: "24px monospace",
-        fill: "#FFFFFF"
-      })
-      .setInteractive();
-    newGame.on('pointerup', () => {
-      this.scene.sleep()
-      this.scene.add('Dungeon1', new DungeonScene(this.startDungeon), true)
-      this.scene.add('Gui', new GuiScene(), true)
-      this.scene.add('Character', new CharacterScene())
-    })
-    const loadGame = this.add
-      .text(centerX - 61, centerY + 200, 'Load Game', {
-        font: "24px monospace",
-        fill: "#222222"
-      })
-      .setInteractive();
-    const options = this.add
-      .text(centerX - 48, centerY + 240, 'Options', {
-        font: "24px monospace",
-        fill: "#222222"
-      })
-      .setInteractive();
   }
 
   disableNarrator() {
@@ -110,5 +94,19 @@ export default class MenuScene extends Phaser.Scene {
       this.disableNarratorCheckbox.setTexture("ui", 1)
       this.registry.set("disableNarrator", true)
     }
+  }
+
+  addNewGameButton() {
+    const newGame = this.add.text(this.centerX - 55, this.centerY + 110, 'New Game', {
+      font: "24px monospace",
+      fill: "#FFFFFF"
+    }).setInteractive()
+
+    newGame.on('pointerup', () => {
+      this.scene.sleep()
+      this.scene.add('Dungeon1', new DungeonScene(this.registry.get('currentDungeon')), true)
+      this.scene.add('Gui', new GuiScene(), true)
+      this.scene.add('Character', new CharacterScene())
+    })
   }
 }
