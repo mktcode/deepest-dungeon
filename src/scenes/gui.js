@@ -52,75 +52,58 @@ export default class GuiScene extends Phaser.Scene {
   }
 
   create() {
+    this.scale.on('resize', this.resize, this)
+
     const centerX = this.game.scale.width / 2
     const centerY = this.game.scale.height - 46
-    const leftOrbX = centerX - 193
-    const rightOrbX = centerX + 193
-    const dungeonProgressBarY = centerY - 15
-    const xpBarY = centerY - 3
 
-    // frame
-    this.add.image(
-      centerX,
-      centerY,
-      "gui-frame"
-    ).setScrollFactor(0).setDepth(1);
-
-    // health orb
-    this.healthFill = this.add.sprite(
-      leftOrbX,
-      centerY,
-      "gui-orbs",
-      0
-    ).setScrollFactor(0).setDepth(0);
-
-    // mana orb
-    this.manaFill = this.add.sprite(
-      rightOrbX,
-      centerY,
-      "gui-orbs",
-      1
-    ).setScrollFactor(0).setDepth(0);
-
-    // dungeon process bar
-    this.dungeonProgressBar = this.add.sprite(
-      centerX,
-      dungeonProgressBarY,
-      "gui-bars",
-      0
-    ).setScrollFactor(0).setDepth(2);
-
-    // xp process bar
-    this.xpBar = this.add.sprite(
-      centerX,
-      xpBarY,
-      "gui-bars",
-      1
-    ).setScrollFactor(0).setDepth(2);
+    this.container = this.add.container(centerX, centerY)
+    this.frame = this.add.image(0, 0, "gui-frame")
+    this.healthFill = this.add.sprite(-193, 0, "gui-orbs", 0)
+    this.manaFill = this.add.sprite(193, 0, "gui-orbs", 1)
+    this.dungeonProgressBar = this.add.sprite(0, -15, "gui-bars", 0)
+    this.xpBar = this.add.sprite(0, -3, "gui-bars", 1)
 
     // items
-    const itemsY = this.game.scale.height - 23
     const itemsTextStyle = {
       font: "11px monospace",
       fill: "#FFFFFF"
     }
-    this.items.slot1 = this.add.sprite(centerX - 156, itemsY, "gui-items", 0).setDepth(0)
-    // this.items.slot1counter = this.add.text(centerX - 171, itemsY + 5, '1', itemsTextStyle).setDepth(0)
-    this.items.slot2 = this.add.sprite(centerX - 156 + 39, itemsY, "gui-items", 1).setDepth(0)
-    this.items.slot3 = this.add.sprite(centerX - 156 + 2 * 39, itemsY, "gui-items", 2).setDepth(0)
-    this.items.slot4 = this.add.sprite(centerX - 156 + 3 * 39, itemsY, "gui-items", 3).setDepth(0)
-    this.items.slot5 = this.add.sprite(centerX - 156 + 4 * 39, itemsY, "gui-items", 4).setDepth(0)
-    this.items.slot6 = this.add.sprite(centerX - 156 + 5 * 39, itemsY, "gui-items", 5).setDepth(0)
-    this.items.slot7 = this.add.sprite(centerX - 156 + 6 * 39, itemsY, "gui-items", 6).setDepth(0)
-    this.items.slot8 = this.add.sprite(centerX - 156 + 7 * 39, itemsY, "gui-items", 7).setDepth(0)
-    this.items.slot9 = this.add.sprite(centerX - 156 + 8 * 39, itemsY, "gui-items", 8).setDepth(0)
-    this.items.slot9text = this.add.text(centerX - 171 + 8 * 39, itemsY + 5, '', itemsTextStyle).setDepth(0)
+    this.items.slot1 = this.add.sprite(-156, 23, "gui-items", 0)
+    this.items.slot2 = this.add.sprite(-156 + 39, 23, "gui-items", 1)
+    this.items.slot3 = this.add.sprite(-156 + 2 * 39, 23, "gui-items", 2)
+    this.items.slot4 = this.add.sprite(-156 + 3 * 39, 23, "gui-items", 3)
+    this.items.slot5 = this.add.sprite(-156 + 4 * 39, 23, "gui-items", 4)
+    this.items.slot6 = this.add.sprite(-156 + 5 * 39, 23, "gui-items", 5)
+    this.items.slot7 = this.add.sprite(-156 + 6 * 39, 23, "gui-items", 6)
+    this.items.slot8 = this.add.sprite(-156 + 7 * 39, 23, "gui-items", 7)
+    this.items.slot9 = this.add.sprite(-156 + 8 * 39, 23, "gui-items", 8)
+    this.items.slot9text = this.add.text(-171 + 8 * 39, 23 + 5, '', itemsTextStyle)
 
     // selected item
     this.selectedItem = this.add.graphics();
     this.selectedItem.setDepth(0)
     this.selectedItem.lineStyle(3, 0xffffff, 1);
-    this.selectedItem.strokeRect(centerX - 172, this.game.scale.height - 40, 34, 34);
+    this.selectedItem.strokeRect(-173, 5, 34, 34);
+
+    this.container.add([
+      this.healthFill,
+      this.manaFill,
+      this.frame,
+      this.dungeonProgressBar,
+      this.xpBar,
+      this.items.slot1,
+      this.items.slot2,
+      this.items.slot3,
+      this.items.slot4,
+      this.items.slot5,
+      this.items.slot6,
+      this.items.slot7,
+      this.items.slot8,
+      this.items.slot9,
+      this.items.slot9text,
+      this.selectedItem
+    ])
 
     // listen to changes
     this.registry.events.on('changedata-health', () => {
@@ -241,24 +224,30 @@ export default class GuiScene extends Phaser.Scene {
   updateItems() {
     const items = this.registry.get('items')
     if (items.includes('sword')) {
-      this.items.slot1.setDepth(3)
+      this.container.bringToTop(this.items.slot1)
     } else {
-      this.items.slot1.setDepth(0)
+      this.container.sendToBack(this.items.slot1)
     }
     if (items.includes('pathfinder')) {
-      this.items.slot8.setDepth(3)
+      this.container.bringToTop(this.items.slot8)
       this.items.slot8.setAlpha(this.registry.get('pathfinderCooldown') ? 0.3 : 1)
     } else {
-      this.items.slot8.setDepth(0)
+      this.container.sendToBack(this.items.slot8)
     }
     if (items.includes('torch')) {
-      this.items.slot9.setDepth(3)
-      this.items.slot9text.setDepth(3)
+      this.container.bringToTop(this.items.slot9)
+      this.container.bringToTop(this.items.slot9text)
       const torchesNum = items.filter(i => i === 'torch').length
       this.items.slot9text.setText(torchesNum)
     } else {
-      this.items.slot9.setDepth(0)
-      this.items.slot9text.setDepth(0)
+      this.container.sendToBack(this.items.slot9)
+      this.container.sendToBack(this.items.slot9text)
     }
+  }
+
+  resize() {
+    const centerX = this.game.scale.width / 2
+    const centerY = this.game.scale.height - 46
+    this.container.setPosition(centerX, centerY)
   }
 }
