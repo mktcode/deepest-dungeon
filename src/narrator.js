@@ -80,6 +80,7 @@ export default class Narrator {
       if (dungeonNumber === 1) {
         this.scene.time.delayedCall(delay * 1000, () => {
           this.slowmoStart()
+          this.scene.hero.freeze()
         })
         this.sayOnce('emptyRoom', delay).then((saidSth) => {
           if (saidSth) {
@@ -87,6 +88,7 @@ export default class Narrator {
               this.sayOnce("although", 0).then(() => {
                 resolve()
                 this.slowmoEnd()
+                this.scene.hero.unfreeze()
               });
             })
           } else {
