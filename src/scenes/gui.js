@@ -82,7 +82,6 @@ export default class GuiScene extends Phaser.Scene {
 
     // selected item
     this.selectedItem = this.add.graphics();
-    this.selectedItem.setDepth(0)
     this.selectedItem.lineStyle(3, 0xffffff, 1);
     this.selectedItem.strokeRect(-173, 5, 34, 34);
 
@@ -106,39 +105,11 @@ export default class GuiScene extends Phaser.Scene {
     ])
 
     // listen to changes
-    this.registry.events.on('changedata-health', () => {
-      this.updateHealth()
-    })
-    this.registry.events.on('changedata-maxHealth', () => {
-      this.updateHealth()
-    })
+    this.registry.events.on('changedata', this.update, this)
+    this.update()
+  }
 
-    this.registry.events.on('changedata-mana', () => {
-      this.updateMana()
-    })
-    this.registry.events.on('changedata-maxMana', () => {
-      this.updateMana()
-    })
-
-    this.registry.events.on('changedata-currentDungeon', () => {
-      this.updateDungeonProgress()
-    })
-    this.registry.events.on('changedata-deepestDungeon', () => {
-      this.updateDungeonProgress()
-    })
-
-    this.registry.events.on('changedata-xp', () => {
-      this.updateXp()
-    })
-
-    this.registry.events.on('changedata-weapon', () => {
-      this.updateSelectedItem()
-    })
-
-    this.registry.events.on('changedata-items', (parent, oldItems) => {
-      this.updateItems()
-    })
-
+  update() {
     this.updateHealth()
     this.updateMana()
     this.updateDungeonProgress()
@@ -215,9 +186,9 @@ export default class GuiScene extends Phaser.Scene {
 
   updateSelectedItem() {
     if (this.registry.get('weapon') === 'sword') {
-      this.selectedItem.setDepth(3)
+      this.container.bringToTop(this.selectedItem)
     } else {
-      this.selectedItem.setDepth(0)
+      this.container.sendToBack(this.selectedItem)
     }
   }
 
