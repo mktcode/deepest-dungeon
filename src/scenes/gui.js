@@ -58,7 +58,7 @@ export default class GuiScene extends Phaser.Scene {
     const centerY = this.game.scale.height - 46
 
     this.container = this.add.container(centerX, centerY)
-    this.frame = this.add.image(0, 0, "gui-frame")
+    this.frame = this.add.image(0, 0, "gui-frame").setInteractive()
     this.healthFill = this.add.sprite(-193, 0, "gui-orbs", 0)
     this.manaFill = this.add.sprite(193, 0, "gui-orbs", 1)
     this.dungeonProgressBar = this.add.sprite(0, -15, "gui-bars", 0)
@@ -76,9 +76,14 @@ export default class GuiScene extends Phaser.Scene {
     this.items.slot5 = this.add.sprite(-156 + 4 * 39, 23, "gui-items", 4)
     this.items.slot6 = this.add.sprite(-156 + 5 * 39, 23, "gui-items", 5)
     this.items.slot7 = this.add.sprite(-156 + 6 * 39, 23, "gui-items", 6)
-    this.items.slot8 = this.add.sprite(-156 + 7 * 39, 23, "gui-items", 7)
+    this.items.slot8 = this.add.sprite(-156 + 7 * 39, 23, "gui-items", 7).setInteractive()
     this.items.slot9 = this.add.sprite(-156 + 8 * 39, 23, "gui-items", 8)
     this.items.slot9text = this.add.text(-171 + 8 * 39, 23 + 5, '', itemsTextStyle)
+
+    this.items.slot8.on('pointerup', () => {
+      const currentDungeon = this.scene.get('Dungeon' + this.registry.get('currentDungeon'))
+      currentDungeon.hero.usePathfinder()
+    })
 
     // selected item
     this.selectedItem = this.add.graphics();

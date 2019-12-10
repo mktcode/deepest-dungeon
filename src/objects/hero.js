@@ -82,12 +82,7 @@ export default class Hero {
 
     // show path
     this.scene.input.keyboard.on('keyup-Q', () => {
-      if (
-        this.scene.registry.get('items').includes('pathfinder') &&
-        !this.scene.registry.get('pathfinderCooldown')
-      ) {
-        this.scene.showPath()
-      }
+      this.usePathfinder()
     });
   }
 
@@ -172,6 +167,15 @@ export default class Hero {
       this.scene.registry.set('minDungeon', this.scene.dungeonNumber)
       this.scene.scene.run('Character')
       this.scene.scene.bringToTop('Character')
+    }
+  }
+
+  usePathfinder() {
+    if (
+      this.scene.registry.get('items').includes('pathfinder') &&
+      !this.scene.registry.get('pathfinderCooldown')
+    ) {
+      this.scene.showPath()
     }
   }
 
