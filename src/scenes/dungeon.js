@@ -327,7 +327,7 @@ export default class DungeonScene extends Phaser.Scene {
             emitCallback: (particle) => {
               this.lightManager.lights.push({
                 sprite: particle,
-                intensity: () => 1
+                intensity: () => Math.max(0.5, particle.alpha)
               })
             },
             deathCallback: (particle) => {
