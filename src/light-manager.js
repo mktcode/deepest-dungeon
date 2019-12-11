@@ -56,7 +56,12 @@ export default class LightManager {
 
               lightValues.push(lightValue)
             })
-            tile.alpha = 1 - Math.max(...lightValues)
+            const targetAlpha = 1 - Math.max(...lightValues)
+            // smooth out the alpha difference to have a more fade-like effect
+            let alphaDiff = targetAlpha - tile.alpha
+            if (alphaDiff > 0.02) alphaDiff = 0.02
+            if (alphaDiff < -0.02) alphaDiff = -0.02
+            tile.alpha += alphaDiff
           }
         })
       } else if (this.scene.visitedRooms.includes(room)) {
