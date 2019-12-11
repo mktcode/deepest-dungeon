@@ -70,29 +70,7 @@ export default class Enemy {
       if (this.dungeon.hero.attacking && !this.underAttack && !this.dungeon.hero.dead) {
         this.dungeon.cameras.main.shake(500, .002)
         this.underAttack = true
-        this.hp -= this.dungeon.registry.get('damage')
-        this.dungeon.popupDamageNumber(this.dungeon.registry.get('damage'), this.sprite, '#CCCCCC')
-        if (this.hp > 0) {
-          this.dungeon.flashSprite(enemy)
-          if (this.dungeon.hero.lastDirection === 'up') {
-            enemy.body.setVelocityY(-300)
-          } else if (this.dungeon.hero.lastDirection === 'down') {
-            enemy.body.setVelocityY(300)
-          } else if (this.dungeon.hero.lastDirection === 'left') {
-            enemy.body.setVelocityX(-300)
-          } else if (this.dungeon.hero.lastDirection === 'right') {
-            enemy.body.setVelocityX(300)
-          }
-          this.dungeon.time.delayedCall(750, () => {
-            this.underAttack = false
-          });
-        } else {
-          this.dungeon.registry.set('xp', this.dungeon.registry.get('xp') + this.xp)
-          this.sprite.destroy()
-          if (this.dieCallback) {
-            this.dieCallback(this)
-          }
-        }
+        this.takeDamage(this.dungeon.registry.get('damage'))
       }
     });
   }
@@ -116,6 +94,34 @@ export default class Enemy {
         frameHeight: 118
       }
     );
+  }
+
+  takeDamage(damage) {
+    this.hp -= damage
+    this.dungeon.popupDamageNumber(damage, this.sprite, '#CCCCCC')
+    if (this.hp > 0) {
+      this.dungeon.flashSprite(this.sprite)
+      if (this.dungeon.hero.lastDirection === 'up') {
+        this.sprite.body.setVelocityY(-300)
+      } else if (this.dungeon.hero.lastDirection === 'down') {
+        this.sprite.body.setVelocityY(300)
+      } else if (this.dungeon.hero.lastDirection === 'left') {
+        this.sprite.body.setVelocityX(-300)
+      } else if (this.dungeon.hero.lastDirection === 'right') {
+        this.sprite.body.setVelocityX(300)
+      }
+    } else {
+      this.dungeon.registry.set('xp', this.dungeon.registry.get('xp') + this.xp)
+      this.sprite.destroy()
+      if (this.dieCallback) {
+        this.dieCallback(this)
+      }
+    }
+
+    this.dungeon.time.delayedCall(1500, () => {
+      this.underAttack = false
+      this.burning = false
+    })
   }
 
   update() {

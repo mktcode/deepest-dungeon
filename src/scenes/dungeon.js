@@ -63,6 +63,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.addItems()
     this.addFireTraps()
     this.addInteractionParticles()
+    this.addTimebomb()
 
     this.events.on('wake', () => {
       this.cameras.main.fadeIn(250, 0, 0, 0)
@@ -85,6 +86,16 @@ export default class DungeonScene extends Phaser.Scene {
       })
 
       this.hero.unfreeze()
+    })
+
+    this.events.on('sleep', () => {
+      this.countdown = null
+      if (this.countdownText) {
+        this.countdownText.destroy()
+      }
+      if (this.heroParticles) {
+        this.heroParticles.stop()
+      }
     })
 
     this.narrator.dungeonIntro(
@@ -533,12 +544,151 @@ export default class DungeonScene extends Phaser.Scene {
       if (this.interactionParticles.on === false) {
         this.interactionParticles.setPosition(
           this.map.tileToWorldX(tile.x),
-          this.map.tileToWorldX(tile.y)
+          this.map.tileToWorldY(tile.y)
         )
         this.interactionParticles.start()
       }
     } else {
       this.interactionParticles.stop()
+    }
+  }
+
+  addTimebomb() {
+    if (this.dungeonNumber > 15) {
+      this.timebombRoom = this.dungeon.r.randomPick(this.otherRooms)
+      this.timebomb = this.add.rectangle(this.map.tileToWorldX(this.timebombRoom.centerX), this.map.tileToWorldY(this.timebombRoom.centerY), 8, 8, 0xffffff).setDepth(6)
+      this.physics.add.existing(this.timebomb)
+      this.physics.add.collider(this.timebomb, this.groundLayer)
+      this.timebombParticles = this.particle.createEmitter({
+        blendMode: 'SCREEN',
+        scale: { start: 0.5, end: 1.5 },
+        alpha: { start: 1, end: 0 },
+        speed: 20,
+        quantity: 10,
+        frequency: 50,
+        lifespan: 2000,
+        emitCallback: (particle) => {
+          this.lightManager.lights.push({
+            sprite: particle,
+            intensity: () => Math.max(0, particle.alpha - 0.5)
+          })
+        },
+        deathCallback: (particle) => {
+          this.lightManager.removeLight(particle)
+        }
+      })
+
+      this.physics.add.collider(this.timebomb, this.hero.sprites.hero, () => {
+        this.timebomb.destroy()
+        this.timebombParticles.stop()
+        this.heroParticles = this.particle.createEmitter({
+          tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
+          blendMode: 'SCREEN',
+          scale: { start: 0.5, end: 1.5 },
+          alpha: { start: 1, end: 0 },
+          speed: 20,
+          quantity: 10,
+          frequency: 50,
+          lifespan: 2000,
+          emitCallback: (particle) => {
+            this.lightManager.lights.push({
+              sprite: particle,
+              intensity: () => Math.max(0, particle.alpha - 0.5)
+            })
+          },
+          deathCallback: (particle) => {
+            this.lightManager.removeLight(particle)
+          }
+        })
+        this.heroParticles.startFollow(this.hero.sprites.hero)
+        this.startCountdown(60)
+      })
+
+      this.timebombParticles.startFollow(this.timebomb)
+      this.timebombFollows = false
+    }
+  }
+
+  updateTimebomb() {
+    if (!this.timebomb || !this.timebomb.active) return
+    const vector = new Phaser.Math.Vector2(this.timebomb.x, this.timebomb.y);
+    const distance = vector.distance({x: this.hero.sprites.hero.body.x, y: this.hero.sprites.hero.body.y})
+    if (this.currentRoom === this.restRoom) {
+      this.timebombFollows = false
+      this.timebomb.body.setVelocity(0)
+    } else if (this.timebombRoom === this.currentRoom && distance < 200) {
+      this.timebombFollows = true
+    }
+    if (this.timebombFollows) {
+      const tileX = this.groundLayer.worldToTileX(this.timebomb.x)
+      const tileY = this.groundLayer.worldToTileY(this.timebomb.y)
+      this.timebombRoom = this.dungeon.getRoomAt(tileX, tileY)
+      if (this.timebombRoom === this.currentRoom && tileX > this.timebombRoom.left && tileX < this.timebombRoom.right && tileY > this.timebombRoom.top && tileY < this.timebombRoom.bottom) {
+        this.physics.moveToObject(this.timebomb, this.hero.sprites.hero)
+      } else {
+        const finder = new PathFinder.AStarFinder({ allowDiagonal: true, dontCrossCorners: true })
+        const path = PathFinder.Util.compressPath(finder.findPath(
+          this.map.worldToTileX(this.timebomb.x),
+          this.map.worldToTileY(this.timebomb.y),
+          this.map.worldToTileX(this.hero.sprites.hero.x),
+          this.map.worldToTileY(this.hero.sprites.hero.y),
+          new PathFinder.Grid(
+            this.dungeon.tiles.map(
+              row => row.map(field => field === 2 || field === 3 ? 0 : 1)
+            )
+          )
+        ))
+        if (path.length > 1) {
+          this.physics.moveTo(this.timebomb, this.groundLayer.tileToWorldX(path[1][0]) + 24, this.groundLayer.tileToWorldY(path[1][1]) + 24)
+        }
+      }
+    }
+  }
+
+  checkHeroParticlesCollision() {
+    if (this.heroParticles) {
+      this.heroParticles.forEachAlive((particle) => {
+        this.enemies.forEach((enemy) => {
+          if (
+            particle.x > enemy.sprite.body.left &&
+            particle.x < enemy.sprite.body.right &&
+            particle.y > enemy.sprite.body.top &&
+            particle.y < enemy.sprite.body.bottom &&
+            !enemy.burning
+          ) {
+            enemy.burning = true
+            enemy.takeDamage(1)
+            this.time.delayedCall(1000, () => {
+              enemy.burning = false
+            })
+          }
+        })
+      })
+    }
+  }
+
+  startCountdown(seconds) {
+    this.countdown = new Date().getTime() / 1000 + seconds
+    this.countdownText = this.add.text(25, 25, '1:00', {
+      font: "15px monospace",
+      fill: "#FFFFFF"
+    }).setDepth(11).setScrollFactor(0)
+  }
+
+  updateCountdown() {
+    const currentTime = new Date().getTime() / 1000
+    if (this.countdown && this.countdown > currentTime) {
+      const diff = this.countdown - currentTime
+      const minutes = Math.floor(diff / 60)
+      const seconds = Math.floor(diff % 60)
+      this.countdownText.setText(minutes + ':' + seconds)
+      if (minutes === 0 && seconds === 0) {
+        this.countdown = null
+        this.countdownText.destroy()
+        this.cameras.main.shake(1000, 0.005)
+        this.heroParticles.stop()
+        this.hero.takeDamage(this.registry.get('maxHealth'))
+      }
     }
   }
 
@@ -628,5 +778,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.updateParticles()
     this.lightManager.update()
     this.checkFireTrapCollision()
+    this.checkHeroParticlesCollision()
+    this.updateCountdown()
+    this.updateTimebomb()
   }
 }
