@@ -19,8 +19,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.dungeonNumber = dungeonNumber
     this.dungeon = new Dungeon({
       randomSeed: 'Dungeon' + this.dungeonNumber,
-      width: Math.min(100, 30 + this.dungeonNumber),
-      height: Math.min(100, 30 + this.dungeonNumber),
+      width: Math.min(70, 30 + this.dungeonNumber),
+      height: Math.min(70, 30 + this.dungeonNumber),
       doorPadding: 2,
       rooms: {
         width: { min: 7, max: 15, onlyOdd: true },
@@ -31,7 +31,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.startRoom = rooms.shift()
     this.endRoom = rooms.splice(this.dungeon.r.randomInteger(0, rooms.length - 1), 1)[0]
     // add rest room every 5 dungeons (first room with only one door)
-    this.restRoom = !(this.dungeonNumber % 5) ? rooms.splice(rooms.findIndex(room => room.getDoorLocations().length === 1), 1)[0] : null
+    this.restRoom = !(this.dungeonNumber % 4) ? rooms.splice(rooms.findIndex(room => room.getDoorLocations().length === 1), 1)[0] : null
     this.otherRooms = rooms
     this.currentRoom = this.startRoom
     this.visitedRooms = [this.startRoom]
@@ -386,7 +386,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   addItems() {
-    if (this.dungeonNumber >= 3 && !this.hero.hasItem('sword')) {
+    if (this.dungeonNumber >= 2 && !this.hero.hasItem('sword')) {
       this.addSword()
     }
 
@@ -394,7 +394,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.addTorch()
     }
 
-    if (this.dungeonNumber >= 10 && this.dungeonNumber % 2 && !this.hero.hasItem('pathfinder')) {
+    if (this.dungeonNumber >= 8 && !this.hero.hasItem('pathfinder')) {
       this.addPathfinder()
     }
   }
@@ -554,7 +554,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   addTimebomb() {
-    if (this.dungeonNumber > 15) {
+    if (this.dungeonNumber >= 11) {
       this.timebombRoom = this.dungeon.r.randomPick(this.otherRooms)
       this.timebomb = this.add.rectangle(this.map.tileToWorldX(this.timebombRoom.centerX), this.map.tileToWorldY(this.timebombRoom.centerY), 8, 8, 0xffffff).setDepth(6)
       this.physics.add.existing(this.timebomb)
