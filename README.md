@@ -1,6 +1,8 @@
 # TODO
 
 - [ ] Bugfix: character.js:78
+- [ ] Bugfix: when died, xp/points disappear, some weird tween/animation moves them away
+- [x] reduce follow distance for snakes
 - [x] Numbers when hitting
 - [ ] better gui for skill menu
 - [ ] trapdoors: random tiles change after standing on them too long, instant death
