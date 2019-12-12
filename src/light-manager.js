@@ -35,7 +35,7 @@ export default class LightManager {
 
   // Helper to set the alpha on all tiles
   update() {
-    const minLight = Math.max(0.02, 1 / this.scene.dungeonNumber)
+    const minLight = Math.max(0.03, 1 / this.scene.dungeonNumber)
     this.scene.dungeon.rooms.forEach(room => {
       const lights = this.getLightsByRoom(room)
       const tiles = this.getTilesByRoom(room)
