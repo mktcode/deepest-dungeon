@@ -43,20 +43,7 @@ export default class Enemy {
     }
     this.sprite.setDepth(6)
 
-    this.dungeon.physics.add.collider(this.sprite, this.dungeon.groundLayer, (enemy, wall) => {
-      if ([TILES.WALL.TOP, ...TILES.DOOR.TOP].includes(wall.index)) {
-        this.directionY = 'down'
-      }
-      if ([TILES.WALL.RIGHT, ...TILES.DOOR.RIGHT[0]].includes(wall.index)) {
-        this.directionX = 'left'
-      }
-      if ([TILES.WALL.BOTTOM, ...TILES.DOOR.BOTTOM].includes(wall.index)) {
-        this.directionY = 'up'
-      }
-      if ([TILES.WALL.LEFT, ...TILES.DOOR.LEFT[0]].includes(wall.index)) {
-        this.directionX = 'right'
-      }
-    });
+    this.dungeon.physics.add.collider(this.sprite, this.dungeon.groundLayer)
 
     this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.hero, this.sprite, (hero, enemy) => {
       if (!this.dungeon.hero.underAttack && !this.dungeon.hero.dead) {
@@ -136,6 +123,19 @@ export default class Enemy {
         const speed = 50;
 
         sprite.body.setVelocity(0);
+
+        if (this.room.left + 1 >= this.dungeon.map.worldToTileX(this.sprite.x)) {
+          this.directionX = 'right'
+        }
+        if (this.room.right - 1 <= this.dungeon.map.worldToTileX(this.sprite.x)) {
+          this.directionX = 'left'
+        }
+        if (this.room.top + 1 >= this.dungeon.map.worldToTileY(this.sprite.y)) {
+          this.directionY = 'down'
+        }
+        if (this.room.bottom - 1 <= this.dungeon.map.worldToTileY(this.sprite.y)) {
+          this.directionY = 'up'
+        }
 
         // horizontal movement
         if (this.directionX === 'left') {
