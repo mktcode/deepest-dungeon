@@ -43,7 +43,7 @@ export default class Enemy {
     }
     this.sprite.setDepth(6)
 
-    this.dungeon.physics.add.collider(this.sprite, this.dungeon.groundLayer)
+    this.dungeon.physics.add.collider(this.sprite, this.dungeon.wallLayer)
 
     this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.hero, this.sprite, (hero, enemy) => {
       if (!this.dungeon.hero.underAttack && !this.dungeon.hero.dead) {

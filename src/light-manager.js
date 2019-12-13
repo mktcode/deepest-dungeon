@@ -18,8 +18,8 @@ export default class LightManager {
   getLightsByRoom(room) {
     return this.lights.filter(light => {
       return room === this.scene.dungeon.getRoomAt(
-        this.scene.groundLayer.worldToTileX(light.sprite.x),
-        this.scene.groundLayer.worldToTileY(light.sprite.y)
+        this.scene.floorLayer.worldToTileX(light.sprite.x),
+        this.scene.floorLayer.worldToTileY(light.sprite.y)
       );
     })
   }

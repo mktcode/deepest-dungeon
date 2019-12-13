@@ -8,6 +8,8 @@ import Narrator from '../narrator.js'
 import PathFinder from 'pathfinding'
 
 // assets
+import tileset from "../assets/dungeon-tileset-extruded.png";
+import tilesetMc from "../assets/dungeon-mc-extruded.png";
 import torchSprite from "../assets/torch.png";
 import pathSprite from "../assets/path.png";
 import pathfinderSprite from "../assets/pathfinder.png";
@@ -19,12 +21,12 @@ export default class DungeonScene extends Phaser.Scene {
     this.dungeonNumber = dungeonNumber
     this.dungeon = new Dungeon({
       randomSeed: 'Dungeon' + this.dungeonNumber,
-      width: Math.min(70, 30 + this.dungeonNumber),
-      height: Math.min(70, 30 + this.dungeonNumber),
-      doorPadding: 2,
+      width: Math.min(200, 60 + this.dungeonNumber),
+      height: Math.min(200, 60 + this.dungeonNumber),
+      doorPadding: 4,
       rooms: {
-        width: { min: 7, max: 15, onlyOdd: true },
-        height: { min: 7, max: 15, onlyOdd: true }
+        width: { min: 15, max: 31, onlyOdd: true },
+        height: { min: 15, max: 31, onlyOdd: true }
       }
     })
     const rooms = this.dungeon.rooms.slice()
@@ -44,6 +46,8 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   static preload(scene) {
+    scene.load.image("tileset", tileset)
+    scene.load.image("tilesetMc", tilesetMc)
     scene.load.spritesheet('torch', torchSprite, { frameWidth: 48, frameHeight: 48 });
     scene.load.spritesheet('path', pathSprite, { frameWidth: 18, frameHeight: 18 });
     scene.load.spritesheet('pathfinder', pathfinderSprite, { frameWidth: 48, frameHeight: 48 });
@@ -51,6 +55,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.setZoom(2)
     this.cameras.main.fadeIn(250, 0, 0, 0)
     this.narrator = new Narrator(this)
     this.registry.set('currentDungeon', this.dungeonNumber)
@@ -106,7 +111,7 @@ export default class DungeonScene extends Phaser.Scene {
 
   prepareMap() {
     // Creating a blank tilemap with dimensions matching the dungeon
-    this.tileSize = 48
+    this.tileSize = 16
     this.map = this.make.tilemap({
       tileWidth: this.tileSize,
       tileHeight: this.tileSize,
@@ -116,8 +121,9 @@ export default class DungeonScene extends Phaser.Scene {
     const tilesetImage = this.dungeonNumber === 25 ? "tilesetMc" : "tileset"
     this.tileset = this.map.addTilesetImage(tilesetImage, null, this.tileSize, this.tileSize, 1, 2); // 1px margin, 2px spacing
 
-    this.groundLayer = this.map.createBlankDynamicLayer("Ground", this.tileset).fill(TILES.BLANK).setDepth(3);
-    this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset).setDepth(4);
+    this.floorLayer = this.map.createBlankDynamicLayer("Floor", this.tileset).fill(TILES.BLANK).setDepth(1);
+    this.wallLayer = this.map.createBlankDynamicLayer("Wall", this.tileset).setDepth(2);
+    this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset).setDepth(3);
     this.shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK).setDepth(10);
     this.lightManager = new LightManager(this);
 
@@ -130,34 +136,49 @@ export default class DungeonScene extends Phaser.Scene {
       const { x, y, width, height, left, right, top, bottom } = room;
 
       // Fill the floor
-      this.groundLayer.fill(TILES.FLOOR, left + 1, top + 1, width - 2, height - 2);
+      this.floorLayer.weightedRandomize(left, top, width, height, TILES.FLOOR);
 
       // Place the room corners tiles
-      this.groundLayer.weightedRandomize(left, top, 1, 1, TILES.WALL.TOP_LEFT);
-      this.groundLayer.weightedRandomize(right, top, 1, 1, TILES.WALL.TOP_RIGHT);
-      this.groundLayer.weightedRandomize(right, bottom, 1, 1, TILES.WALL.BOTTOM_RIGHT);
-      this.groundLayer.weightedRandomize(left, bottom, 1, 1, TILES.WALL.BOTTOM_LEFT);
+      this.wallLayer.putTileAt(TILES.WALL.TOP_LEFT, left, top, 1, 1);
+      this.wallLayer.putTileAt(TILES.WALL.TOP_RIGHT, right, top, 1, 1);
+      this.wallLayer.putTileAt(TILES.WALL.BOTTOM_RIGHT, right, bottom, 1, 1);
+      this.wallLayer.putTileAt(TILES.WALL.BOTTOM_LEFT, left, bottom, 1, 1);
 
       // Fill the walls
-      this.groundLayer.fill(TILES.WALL.TOP, left + 1, top, width - 2, 1);
-      this.groundLayer.fill(TILES.WALL.BOTTOM, left + 1, bottom, width - 2, 1);
-      this.groundLayer.fill(TILES.WALL.LEFT, left, top + 1, 1, height - 2);
-      this.groundLayer.fill(TILES.WALL.RIGHT, right, top + 1, 1, height - 2);
+      // top
+      this.wallLayer.weightedRandomize(left + 1, top, width - 2, 1, TILES.WALL.TOP[0]);
+      this.wallLayer.weightedRandomize(left + 1, top + 1, width - 2, 1, TILES.WALL.TOP[1]);
+      this.wallLayer.weightedRandomize(left + 1, top + 2, width - 2, 1, TILES.WALL.TOP[2]);
+      this.wallLayer.weightedRandomize(left + 1, top + 3, width - 2, 1, TILES.WALL.TOP[3]);
+      // bottom
+      this.wallLayer.weightedRandomize(left + 1, bottom, width - 2, 1, TILES.WALL.BOTTOM);
+      // left
+      this.wallLayer.weightedRandomize(left, top + 1, 1, height - 2, TILES.WALL.LEFT[0]);
+      this.wallLayer.putTileAt(TILES.WALL.LEFT[1][0], left + 1, top + 3, 1, height - 2);
+      this.wallLayer.weightedRandomize(left + 1, top + 4, 1, height - 5, TILES.WALL.LEFT[1][1]);
+      // right
+      this.wallLayer.weightedRandomize(right, top + 1, 1, height - 2, TILES.WALL.RIGHT[0]);
+      this.wallLayer.putTileAt(TILES.WALL.RIGHT[1][0], right - 1, top + 3, 1, height - 2);
+      this.wallLayer.weightedRandomize(right - 1, top + 4, 1, height - 5, TILES.WALL.RIGHT[1][1]);
 
       // Dungeons have rooms that are connected with doors. Each door has an x & y relative to the
       // room's location
       var doors = room.getDoorLocations();
       for (var i = 0; i < doors.length; i++) {
         if (doors[i].y === 0) {
-          this.groundLayer.putTilesAt(TILES.DOOR.TOP, x + doors[i].x - 1, y + doors[i].y);
+          this.wallLayer.putTilesAt(TILES.DOOR.TOP, x + doors[i].x - 2, y + doors[i].y);
         } else if (doors[i].y === room.height - 1) {
-          this.groundLayer.putTilesAt(TILES.DOOR.BOTTOM, x + doors[i].x - 1, y + doors[i].y);
+          this.wallLayer.putTilesAt(TILES.DOOR.BOTTOM, x + doors[i].x - 2, y + doors[i].y);
         } else if (doors[i].x === 0) {
-          this.groundLayer.putTilesAt(TILES.DOOR.LEFT, x + doors[i].x, y + doors[i].y - 1);
+          this.wallLayer.putTilesAt(TILES.DOOR.LEFT[0], x + doors[i].x, y + doors[i].y - 2);
+          this.wallLayer.putTilesAt(TILES.DOOR.LEFT[1], x + doors[i].x + 1, y + doors[i].y + 1);
         } else if (doors[i].x === room.width - 1) {
-          this.groundLayer.putTilesAt(TILES.DOOR.RIGHT, x + doors[i].x, y + doors[i].y - 1);
+          this.wallLayer.putTilesAt(TILES.DOOR.RIGHT[0], x + doors[i].x, y + doors[i].y - 2);
+          this.wallLayer.putTilesAt(TILES.DOOR.RIGHT[1], x + doors[i].x - 1, y + doors[i].y + 1);
         }
       }
+
+      this.wallLayer.setCollisionByExclusion(TILES.NONCOLLIDING)
     });
 
     // Place the stairs
@@ -178,35 +199,32 @@ export default class DungeonScene extends Phaser.Scene {
 
     // prepare rest room if exists
     if (this.restRoom) {
-      this.groundLayer.fill(TILES.FLOOR_LIGHT, this.restRoom.left + 1, this.restRoom.top + 1, this.restRoom.width - 2, this.restRoom.height - 2);
+      this.floorLayer.fill(TILES.FLOOR_LIGHT, this.restRoom.left + 1, this.restRoom.top + 1, this.restRoom.width - 2, this.restRoom.height - 2);
       let restRoomDoor = this.restRoom.getDoorLocations()[0]
       if (restRoomDoor.y === 0) {
-        this.groundLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y);
-        this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.restRoom.x + restRoomDoor.x, this.restRoom.y - 1);
+        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y);
+        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.restRoom.x + restRoomDoor.x, this.restRoom.y - 1);
         this.stuffLayer.putTileAt(TILES.SHRINE.BOTTOM[0], this.restRoom.centerX, this.restRoom.bottom);
         this.stuffLayer.putTileAt(TILES.SHRINE.BOTTOM[1], this.restRoom.centerX, this.restRoom.bottom - 1);
       } else if (restRoomDoor.y === this.restRoom.height - 1) {
-        this.groundLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y);
-        this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y + 1);
-        this.groundLayer.getTileAt(this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y + 1).setFlipY(true)
+        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y);
+        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y + 1);
+        this.floorLayer.getTileAt(this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y + 1).setFlipY(true)
         this.stuffLayer.putTileAt(TILES.SHRINE.TOP[0], this.restRoom.centerX, this.restRoom.top);
         this.stuffLayer.putTileAt(TILES.SHRINE.TOP[1], this.restRoom.centerX, this.restRoom.top + 1);
       } else if (restRoomDoor.x === 0) {
-        this.groundLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x, this.restRoom.y + restRoomDoor.y);
-        this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.restRoom.x - 1, this.restRoom.y + restRoomDoor.y);
-        this.groundLayer.getTileAt(this.restRoom.x - 1, this.restRoom.y + restRoomDoor.y).setFlipX(true)
+        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x, this.restRoom.y + restRoomDoor.y);
+        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.restRoom.x - 1, this.restRoom.y + restRoomDoor.y);
+        this.floorLayer.getTileAt(this.restRoom.x - 1, this.restRoom.y + restRoomDoor.y).setFlipX(true)
         this.stuffLayer.putTileAt(TILES.SHRINE.RIGHT[0], this.restRoom.right, this.restRoom.centerY);
         this.stuffLayer.putTileAt(TILES.SHRINE.RIGHT[1], this.restRoom.right - 1, this.restRoom.centerY);
       } else if (restRoomDoor.x === this.restRoom.width - 1) {
-        this.groundLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y);
-        this.groundLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.restRoom.x + restRoomDoor.x + 1, this.restRoom.y + restRoomDoor.y);
+        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y);
+        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.restRoom.x + restRoomDoor.x + 1, this.restRoom.y + restRoomDoor.y);
         this.stuffLayer.putTileAt(TILES.SHRINE.LEFT[0], this.restRoom.left, this.restRoom.centerY);
         this.stuffLayer.putTileAt(TILES.SHRINE.LEFT[1], this.restRoom.left + 1, this.restRoom.centerY);
       }
     }
-
-    // set collision tiles
-    this.groundLayer.setCollisionByExclusion([7, 90, 91, 97]);
   }
 
   addHero() {
@@ -228,7 +246,7 @@ export default class DungeonScene extends Phaser.Scene {
       }
     })
 
-    this.physics.add.collider(this.hero.sprites.hero, this.groundLayer);
+    this.physics.add.collider(this.hero.sprites.hero, this.wallLayer);
     this.physics.add.collider(this.hero.sprites.hero, this.stuffLayer);
   }
 
@@ -275,35 +293,35 @@ export default class DungeonScene extends Phaser.Scene {
         walls.forEach(wall => {
           let x, y, angle
           if (wall === 'top') {
-            const tiles = this.groundLayer.getTilesWithin(room.left, room.top, room.width, 1).filter(t => allowedTiles.includes(t.index))
+            const tiles = this.wallLayer.getTilesWithin(room.left, room.top, room.width, 1).filter(t => allowedTiles.includes(t.index))
             if (tiles.length) {
               const tile = tiles[this.dungeon.r.randomInteger(0, tiles.length -1)]
-              x = this.groundLayer.tileToWorldX(tile.x) + this.tileSize / 2
-              y = this.groundLayer.tileToWorldY(tile.y) + this.tileSize / 2
+              x = this.wallLayer.tileToWorldX(tile.x) + this.tileSize / 2
+              y = this.wallLayer.tileToWorldY(tile.y) + this.tileSize / 2
               angle = { min: 80, max: 100}
             }
           } else if (wall === 'bottom') {
-            const tiles = this.groundLayer.getTilesWithin(room.left, room.bottom, room.width, 1).filter(t => allowedTiles.includes(t.index))
+            const tiles = this.wallLayer.getTilesWithin(room.left, room.bottom, room.width, 1).filter(t => allowedTiles.includes(t.index))
             if (tiles.length) {
               const tile = tiles[this.dungeon.r.randomInteger(0, tiles.length -1)]
-              x = this.groundLayer.tileToWorldX(tile.x) + this.tileSize / 2
-              y = this.groundLayer.tileToWorldY(tile.y) + this.tileSize / 2
+              x = this.wallLayer.tileToWorldX(tile.x) + this.tileSize / 2
+              y = this.wallLayer.tileToWorldY(tile.y) + this.tileSize / 2
               angle = { min: -80, max: -100}
             }
           } else if (wall === 'left') {
-            const tiles = this.groundLayer.getTilesWithin(room.left, room.top, 1, room.height).filter(t => allowedTiles.includes(t.index))
+            const tiles = this.wallLayer.getTilesWithin(room.left, room.top, 1, room.height).filter(t => allowedTiles.includes(t.index))
             if (tiles.length) {
               const tile = tiles[this.dungeon.r.randomInteger(0, tiles.length -1)]
-              x = this.groundLayer.tileToWorldX(tile.x) + this.tileSize / 2
-              y = this.groundLayer.tileToWorldY(tile.y) + this.tileSize / 2
+              x = this.wallLayer.tileToWorldX(tile.x) + this.tileSize / 2
+              y = this.wallLayer.tileToWorldY(tile.y) + this.tileSize / 2
               angle = { min: -10, max: 10}
             }
           } else if (wall === 'right') {
-            const tiles = this.groundLayer.getTilesWithin(room.right, room.top, 1, room.height).filter(t => allowedTiles.includes(t.index))
+            const tiles = this.wallLayer.getTilesWithin(room.right, room.top, 1, room.height).filter(t => allowedTiles.includes(t.index))
             if (tiles.length) {
               const tile = tiles[this.dungeon.r.randomInteger(0, tiles.length -1)]
-              x = this.groundLayer.tileToWorldX(tile.x) + this.tileSize / 2
-              y = this.groundLayer.tileToWorldY(tile.y) + this.tileSize / 2
+              x = this.wallLayer.tileToWorldX(tile.x) + this.tileSize / 2
+              y = this.wallLayer.tileToWorldY(tile.y) + this.tileSize / 2
               angle = { min: -190, max: -170}
             }
           }
@@ -558,7 +576,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.timebombRoom = this.dungeon.r.randomPick(this.otherRooms)
       this.timebomb = this.add.rectangle(this.map.tileToWorldX(this.timebombRoom.centerX), this.map.tileToWorldY(this.timebombRoom.centerY), 8, 8, 0xffffff).setDepth(6)
       this.physics.add.existing(this.timebomb)
-      this.physics.add.collider(this.timebomb, this.groundLayer)
+      this.physics.add.collider(this.timebomb, this.wallLayer)
       this.timebombParticles = this.particle.createEmitter({
         blendMode: 'SCREEN',
         scale: { start: 0.5, end: 1.5 },
@@ -620,8 +638,8 @@ export default class DungeonScene extends Phaser.Scene {
       this.timebombFollows = true
     }
     if (this.timebombFollows) {
-      const tileX = this.groundLayer.worldToTileX(this.timebomb.x)
-      const tileY = this.groundLayer.worldToTileY(this.timebomb.y)
+      const tileX = this.wallLayer.worldToTileX(this.timebomb.x)
+      const tileY = this.wallLayer.worldToTileY(this.timebomb.y)
       this.timebombRoom = this.dungeon.getRoomAt(tileX, tileY)
       if (this.timebombRoom === this.currentRoom && tileX > this.timebombRoom.left && tileX < this.timebombRoom.right && tileY > this.timebombRoom.top && tileY < this.timebombRoom.bottom) {
         this.physics.moveToObject(this.timebomb, this.hero.sprites.hero)
@@ -639,7 +657,7 @@ export default class DungeonScene extends Phaser.Scene {
           )
         ))
         if (path.length > 1) {
-          this.physics.moveTo(this.timebomb, this.groundLayer.tileToWorldX(path[1][0]) + 24, this.groundLayer.tileToWorldY(path[1][1]) + 24)
+          this.physics.moveTo(this.timebomb, this.wallLayer.tileToWorldX(path[1][0]) + 24, this.wallLayer.tileToWorldY(path[1][1]) + 24)
         }
       }
     }
@@ -696,8 +714,8 @@ export default class DungeonScene extends Phaser.Scene {
     if (!this.pathSprites.length) {
       const finder = new PathFinder.AStarFinder()
       const path = finder.findPath(
-        this.groundLayer.worldToTileX(this.hero.sprites.hero.x),
-        this.groundLayer.worldToTileY(this.hero.sprites.hero.y),
+        this.floorLayer.worldToTileX(this.hero.sprites.hero.x),
+        this.floorLayer.worldToTileY(this.hero.sprites.hero.y),
         this.endRoom.centerX,
         this.endRoom.centerY,
         new PathFinder.Grid(
@@ -713,8 +731,8 @@ export default class DungeonScene extends Phaser.Scene {
 
       path.forEach((tile) => {
         this.pathSprites.push(this.add.sprite(
-          this.groundLayer.tileToWorldX(tile[0]) + 24,
-          this.groundLayer.tileToWorldY(tile[1]) + 24,
+          this.floorLayer.tileToWorldX(tile[0]) + 24,
+          this.floorLayer.tileToWorldY(tile[1]) + 24,
           "path",
           0
         ).setDepth(6))
@@ -765,8 +783,8 @@ export default class DungeonScene extends Phaser.Scene {
 
   setCurrentRoom() {
     this.currentRoom = this.dungeon.getRoomAt(
-      this.groundLayer.worldToTileX(this.hero.sprites.hero.x),
-      this.groundLayer.worldToTileY(this.hero.sprites.hero.y)
+      this.floorLayer.worldToTileX(this.hero.sprites.hero.x),
+      this.floorLayer.worldToTileY(this.hero.sprites.hero.y)
     )
     this.visitedRooms.push(this.currentRoom)
   }

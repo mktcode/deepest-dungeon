@@ -91,8 +91,8 @@ export default class Hero {
       "hero",
       hero,
       {
-        frameWidth: 64,
-        frameHeight: 64
+        frameWidth: 32,
+        frameHeight: 32
       }
     );
     scene.load.spritesheet(
@@ -107,8 +107,8 @@ export default class Hero {
       "sword",
       sword,
       {
-        frameWidth: 128,
-        frameHeight: 128
+        frameWidth: 64,
+        frameHeight: 64
       }
     );
     scene.load.spritesheet(
@@ -196,8 +196,8 @@ export default class Hero {
   addToScene(x, y) {
     this.sprites.hero = this.scene.physics.add
       .sprite(x, y, 'hero', 35)
-      .setSize(20, 25)
-      .setOffset(23, 27)
+      .setSize(10, 12)
+      .setOffset(12, 13)
       .setDepth(6);
     this.scene.cameras.main.startFollow(this.sprites.hero, true, 0.1, 0.1)
 
