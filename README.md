@@ -2,27 +2,22 @@
 
 - [ ] Bugfix: character.js:78
 - [ ] Bugfix: when died, xp/points disappear, some weird tween/animation moves them away
-- [x] reduce follow distance for snakes
-- [x] Numbers when hitting
+- [ ] Bugfix: enemies stuck in corners due to new wall avoidance
 - [ ] better gui for skill menu
 - [ ] trapdoors: random tiles change after standing on them too long, instant death
 - [ ] ingame instructions
 - [ ] adjust/expand narrator
 - [ ] pause
-- [x] let hero emit light when leveling up
 - [ ] add sound for sword and hero when attacking
-- [x] let torches/pathfinder bounce like the sword does
 - [ ] implement global high score
-- [x] make lights flickering (dynamic intensity)
 - [ ] implement mana and spell attack
 - [ ] animate cooldowns in item slots
-- [x] loose items when dieing, place them where died
 - [ ] make torches usable on demand
 - [ ] subtitles for the narrator
 - [ ] let people create the "deepest dungeon"
 - [ ] use seeds as sharable "sessions" and saved games
 - [ ] more enemies/traps
-- [ ] dungeons with timelimit
+- [ ] better display of countdown (near to character)
 
 # phaser-electron-typescript-parcel [![Build Status](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel.svg?branch=master)](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel)
 
