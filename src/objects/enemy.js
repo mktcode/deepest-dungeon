@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 import TILES from '../tile-mapping.js'
 
 // assets
-import enemies from '../assets/enemies.png'
+import snakeSprite from '../assets/snake.png'
 import deamonSprite from "../assets/deamon.png";
 
 export default class Enemy {
@@ -31,8 +31,8 @@ export default class Enemy {
     if (this.type === 'snake') {
       this.hp = 3
       this.xp = 3
-      this.sprite = this.dungeon.matter.add.sprite(x, y, "enemies", 0)
-      this.sprite.anims.play("enemy-walk")
+      this.sprite = this.dungeon.matter.add.sprite(x, y, "snake", 0)
+      this.sprite.anims.play("snake-walk")
       this.dungeon.lightManager.lights.push({
         sprite: this.sprite,
         intensity: () => 0.04
@@ -61,13 +61,11 @@ export default class Enemy {
 
   static preload(scene) {
     scene.load.spritesheet(
-      "enemies",
-      enemies,
+      "snake",
+      snakeSprite,
       {
-        frameWidth: 64,
-        frameHeight: 64,
-        margin: 1,
-        spacing: 2
+        frameWidth: 18,
+        frameHeight: 15
       }
     );
     scene.load.spritesheet(

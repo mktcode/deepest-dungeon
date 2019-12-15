@@ -8,7 +8,6 @@ import Hero from "../objects/hero.js"
 import themeMp3 from "../assets/audio/kai-engel-downfall.mp3"
 import tileset from "../assets/dungeon-extruded.png";
 import introGround from "../assets/intro-ground.png";
-import enemies from "../assets/enemies.png";
 
 export default class MenuScene extends Phaser.Scene {
   constructor() {

@@ -126,8 +126,8 @@ export default class Animations {
     })
 
     anims.create({
-      key: "enemy-walk",
-      frames: anims.generateFrameNumbers("enemies", { start: 69, end: 72 }),
+      key: "snake-walk",
+      frames: anims.generateFrameNumbers("snake", { start: 0, end: 3 }),
       frameRate: 4,
       repeat: -1
     });

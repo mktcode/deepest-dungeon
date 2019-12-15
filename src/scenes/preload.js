@@ -9,7 +9,6 @@ import Animations from "../animations.js"
 // assets
 import themeMp3 from "../assets/audio/kai-engel-downfall.mp3"
 import introGround from "../assets/intro-ground.png";
-import enemies from "../assets/enemies.png";
 import ui from "../assets/ui.png";
 
 export default class PreloadScene extends Phaser.Scene {
