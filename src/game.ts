@@ -1,6 +1,7 @@
-import MenuScene from "./scenes/menu.js";
-import PreloadScene from "./scenes/preload.js";
+import MenuScene from './scenes/menu.js';
+import PreloadScene from './scenes/preload.js';
 import VirtualJoyStickPlugin from './plugins/rexvirtualjoystickplugin.min.js';
+import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin'
 
 const config: GameConfig = {
   type: Phaser.AUTO,
@@ -10,14 +11,13 @@ const config: GameConfig = {
     width: '100%',
     height: '100%'
   },
-  backgroundColor: "#000",
-  parent: "body",
+  backgroundColor: '#000',
+  parent: 'body',
   pixelArt: true,
   scene: [PreloadScene, MenuScene],
   physics: {
-    default: "arcade",
-    arcade: {
-      debug: false,
+    default: 'matter',
+    matter: {
       gravity: { y: 0 }
     }
   },
@@ -29,7 +29,14 @@ const config: GameConfig = {
         key: 'joystick',
         plugin: VirtualJoyStickPlugin,
         start: true
-    }]
+    }],
+    scene: [
+      {
+        key: 'matterCollision',
+        plugin: PhaserMatterCollisionPlugin,
+        mapping: 'matterCollision'
+      }
+    ]
   }
 };
 

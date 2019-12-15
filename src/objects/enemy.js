@@ -21,7 +21,7 @@ export default class Enemy {
     if (this.type === 'deamon') {
       this.hp = 10
       this.xp = 10
-      this.sprite = this.dungeon.physics.add.sprite(x, y, 'deamon', 1).setSize(75, 90).setOffset(23, 19)
+      this.sprite = this.dungeon.matter.add.sprite(x, y, 'deamon', 1)
       this.sprite.anims.play("deamon-idle")
       this.dungeon.lightManager.lights.push({
         sprite: this.sprite,
@@ -31,10 +31,7 @@ export default class Enemy {
     if (this.type === 'snake') {
       this.hp = 3
       this.xp = 3
-      this.sprite = this.dungeon.physics.add
-        .sprite(x, y, "enemies", 0)
-        .setSize(27, 28)
-        .setOffset(20, 35)
+      this.sprite = this.dungeon.matter.add.sprite(x, y, "enemies", 0)
       this.sprite.anims.play("enemy-walk")
       this.dungeon.lightManager.lights.push({
         sprite: this.sprite,
@@ -43,23 +40,23 @@ export default class Enemy {
     }
     this.sprite.setDepth(6)
 
-    this.dungeon.physics.add.collider(this.sprite, this.dungeon.wallLayer)
-
-    this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.hero, this.sprite, (hero, enemy) => {
-      if (!this.dungeon.hero.underAttack && !this.dungeon.hero.dead) {
-        this.dungeon.cameras.main.shake(500, .002)
-        this.dungeon.hero.underAttack = true
-        this.dungeon.hero.cantMove = true
-        this.dungeon.hero.takeDamage(1)
-      }
-    });
-    this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.sword, this.sprite, (hero, enemy) => {
-      if (this.dungeon.hero.attacking && !this.underAttack && !this.dungeon.hero.dead) {
-        this.dungeon.cameras.main.shake(500, .002)
-        this.underAttack = true
-        this.takeDamage(this.dungeon.registry.get('damage'))
-      }
-    });
+    // this.dungeon.physics.add.collider(this.sprite, this.dungeon.wallLayer)
+    //
+    // this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.hero, this.sprite, (hero, enemy) => {
+    //   if (!this.dungeon.hero.underAttack && !this.dungeon.hero.dead) {
+    //     this.dungeon.cameras.main.shake(500, .002)
+    //     this.dungeon.hero.underAttack = true
+    //     this.dungeon.hero.cantMove = true
+    //     this.dungeon.hero.takeDamage(1)
+    //   }
+    // });
+    // this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.sword, this.sprite, (hero, enemy) => {
+    //   if (this.dungeon.hero.attacking && !this.underAttack && !this.dungeon.hero.dead) {
+    //     this.dungeon.cameras.main.shake(500, .002)
+    //     this.underAttack = true
+    //     this.takeDamage(this.dungeon.registry.get('damage'))
+    //   }
+    // });
   }
 
   static preload(scene) {
@@ -89,13 +86,13 @@ export default class Enemy {
     if (this.hp > 0) {
       this.dungeon.flashSprite(this.sprite)
       if (this.dungeon.hero.lastDirection === 'up') {
-        this.sprite.body.setVelocityY(-300)
+        this.sprite.setVelocityY(-300)
       } else if (this.dungeon.hero.lastDirection === 'down') {
-        this.sprite.body.setVelocityY(300)
+        this.sprite.setVelocityY(300)
       } else if (this.dungeon.hero.lastDirection === 'left') {
-        this.sprite.body.setVelocityX(-300)
+        this.sprite.setVelocityX(-300)
       } else if (this.dungeon.hero.lastDirection === 'right') {
-        this.sprite.body.setVelocityX(300)
+        this.sprite.setVelocityX(300)
       }
     } else {
       this.dungeon.registry.set('xp', this.dungeon.registry.get('xp') + this.xp)
@@ -117,12 +114,12 @@ export default class Enemy {
       const vector = new Phaser.Math.Vector2(sprite.x, sprite.y);
       const distance = vector.distance({x: this.dungeon.hero.sprites.hero.body.x, y: this.dungeon.hero.sprites.hero.body.y})
       if (this.room === this.dungeon.currentRoom && distance < 100 && this.dungeon.dungeonNumber > 5) {
-        this.dungeon.physics.moveToObject(this.sprite, this.dungeon.hero.sprites.hero)
-        sprite.setFlipX(this.sprite.body.velocity.x < 0);
+        // this.dungeon.physics.moveToObject(this.sprite, this.dungeon.hero.sprites.hero)
+        // sprite.setFlipX(this.sprite.body.velocity.x < 0);
       } else {
-        const speed = 50;
+        const speed = 1;
 
-        sprite.body.setVelocity(0);
+        sprite.setVelocity(0);
 
         if (this.room.left + 1 >= this.dungeon.map.worldToTileX(this.sprite.x)) {
           this.directionX = 'right'
@@ -139,24 +136,26 @@ export default class Enemy {
 
         // horizontal movement
         if (this.directionX === 'left') {
-          sprite.body.setVelocityX(-speed);
+          sprite.setVelocityX(-speed);
           sprite.setFlipX(true);
         }
         if (this.directionX === 'right') {
-          sprite.body.setVelocityX(speed);
+          sprite.setVelocityX(speed);
           sprite.setFlipX(false);
         }
 
         // vertical movement
         if (this.directionY === 'up') {
-          sprite.body.setVelocityY(-speed);
+          sprite.setVelocityY(-speed);
         }
         if (this.directionY === 'down') {
-          sprite.body.setVelocityY(speed);
+          sprite.setVelocityY(speed);
         }
 
         // Normalize and scale the velocity so that sprite can't move faster along a diagonal
-        sprite.body.velocity.normalize().scale(speed);
+        const vector = new Phaser.Math.Vector2(sprite.body.velocity)
+        vector.normalize().scale(speed)
+        sprite.setVelocity(vector.x, vector.y);
       }
     }
   }

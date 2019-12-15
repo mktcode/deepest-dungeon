@@ -89,19 +89,5 @@ export default {
   STAIRS: {
     OPEN: 53,
     CLOSED: 59
-  },
-  NONCOLLIDING: [
-    -1,
-    6,
-    15,
-    44,
-    814,
-    815,
-    816,
-    817,
-    851,
-    852,
-    853,
-    854
-  ]
+  }
 }

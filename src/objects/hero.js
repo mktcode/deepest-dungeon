@@ -194,15 +194,16 @@ export default class Hero {
   }
 
   addToScene(x, y) {
-    this.sprites.hero = this.scene.physics.add
+    this.sprites.hero = this.scene.matter.add
       .sprite(x, y, 'hero', 35)
-      .setSize(10, 12)
-      .setOffset(12, 13)
+      .setRectangle(8, 8)
+      .setFixedRotation()
+      .setOrigin(0.5, 0.7)
       .setDepth(6);
     this.scene.cameras.main.startFollow(this.sprites.hero, true, 0.1, 0.1)
 
-    this.sprites.levelUp = this.scene.physics.add.sprite(x, y, "levelUp", 0).setDepth(6);
-    this.sprites.sword = this.scene.physics.add.sprite(x, y, "sword", 0).setDepth(6);
+    this.sprites.levelUp = this.scene.matter.add.sprite(x, y, "levelUp", 0).setDepth(6);
+    this.sprites.sword = this.scene.matter.add.sprite(x, y, "sword", 0).setDepth(6);
     this.setSwordHitBox('down')
   }
 
@@ -300,23 +301,23 @@ export default class Hero {
   }
 
   setSwordHitBox(direction) {
-    if (direction === 'down') {
-      this.sprites.sword.setSize(50, 30).setOffset(40, 87)
-    } else if (direction === 'down-left') {
-      this.sprites.sword.setSize(50, 30).setOffset(25, 87)
-    } else if (direction === 'down-right') {
-      this.sprites.sword.setSize(50, 30).setOffset(55, 87)
-    } else if (direction === 'up') {
-      this.sprites.sword.setSize(50, 30).setOffset(40, 28)
-    } else if (direction === 'up-left') {
-      this.sprites.sword.setSize(50, 30).setOffset(25, 28)
-    } else if (direction === 'up-right') {
-      this.sprites.sword.setSize(50, 30).setOffset(55, 28)
-    } else if (direction === 'left') {
-      this.sprites.sword.setSize(30, 50).setOffset(24, 47)
-    } else if (direction === 'right') {
-      this.sprites.sword.setSize(30, 50).setOffset(76, 47)
-    }
+    // if (direction === 'down') {
+    //   this.sprites.sword.setSize(50, 30).setOffset(40, 87)
+    // } else if (direction === 'down-left') {
+    //   this.sprites.sword.setSize(50, 30).setOffset(25, 87)
+    // } else if (direction === 'down-right') {
+    //   this.sprites.sword.setSize(50, 30).setOffset(55, 87)
+    // } else if (direction === 'up') {
+    //   this.sprites.sword.setSize(50, 30).setOffset(40, 28)
+    // } else if (direction === 'up-left') {
+    //   this.sprites.sword.setSize(50, 30).setOffset(25, 28)
+    // } else if (direction === 'up-right') {
+    //   this.sprites.sword.setSize(50, 30).setOffset(55, 28)
+    // } else if (direction === 'left') {
+    //   this.sprites.sword.setSize(30, 50).setOffset(24, 47)
+    // } else if (direction === 'right') {
+    //   this.sprites.sword.setSize(30, 50).setOffset(76, 47)
+    // }
   }
 
   isDirectionKeyDown(direction) {
@@ -326,33 +327,35 @@ export default class Hero {
   update() {
     if (!this.cantMove) {
       // Stop any previous movement from the last frame
-      this.sprites.hero.body.setVelocity(0);
+      this.sprites.hero.setVelocity(0);
 
-      this.baseSpeed = this.scene.narrator.slowmo ? 25 : 150
+      this.baseSpeed = this.scene.narrator.slowmo ? 0.5 : 2
 
       if (this.joystick.force >= this.joystick.touchCursor.forceMin) {
-        this.scene.physics.velocityFromRotation(
-          this.joystick.rotation,
-          Math.min(this.baseSpeed, this.baseSpeed * (this.joystick.force / 50)),
-          this.sprites.hero.body.velocity
-        )
+        // this.scene.physics.velocityFromRotation(
+        //   this.joystick.rotation,
+        //   Math.min(this.baseSpeed, this.baseSpeed * (this.joystick.force / 50)),
+        //   this.sprites.hero.body.velocity
+        // )
       } else {
         // Horizontal movement
         if (this.isDirectionKeyDown('left')) {
-          this.sprites.hero.body.setVelocityX(-this.baseSpeed);
+          this.sprites.hero.setVelocityX(-this.baseSpeed);
         } else if (this.isDirectionKeyDown('right')) {
-          this.sprites.hero.body.setVelocityX(this.baseSpeed);
+          this.sprites.hero.setVelocityX(this.baseSpeed);
         }
 
         // Vertical movement
         if (this.isDirectionKeyDown('up')) {
-          this.sprites.hero.body.setVelocityY(-this.baseSpeed);
+          this.sprites.hero.setVelocityY(-this.baseSpeed);
         } else if (this.isDirectionKeyDown('down')) {
-          this.sprites.hero.body.setVelocityY(this.baseSpeed);
+          this.sprites.hero.setVelocityY(this.baseSpeed);
         }
 
         // Normalize and scale the velocity so that sprite can't move faster along a diagonal
-        this.sprites.hero.body.velocity.normalize().scale(this.baseSpeed);
+        const vector = new Phaser.Math.Vector2(this.sprites.hero.body.velocity)
+        vector.normalize().scale(this.baseSpeed)
+        this.sprites.hero.setVelocity(vector.x, vector.y);
       }
 
       // Update the animation last and give left/right/down animations precedence over up animations

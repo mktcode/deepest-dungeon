@@ -6,6 +6,7 @@ import TILES from "../tile-mapping.js";
 import LightManager from "../light-manager.js";
 import Narrator from '../narrator.js'
 import PathFinder from 'pathfinding'
+import { Slice } from 'polyk'
 
 // assets
 import tileset from "../assets/dungeon-tileset-extruded.png";
@@ -26,7 +27,8 @@ export default class DungeonScene extends Phaser.Scene {
       doorPadding: 4,
       rooms: {
         width: { min: 15, max: 31, onlyOdd: true },
-        height: { min: 15, max: 31, onlyOdd: true }
+        height: { min: 15, max: 31, onlyOdd: true },
+        maxArea: 961
       }
     })
     const rooms = this.dungeon.rooms.slice()
@@ -123,6 +125,7 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.floorLayer = this.map.createBlankDynamicLayer("Floor", this.tileset).fill(TILES.BLANK).setDepth(1);
     this.wallLayer = this.map.createBlankDynamicLayer("Wall", this.tileset).setDepth(2);
+    this.wallAboveLayer = this.map.createBlankDynamicLayer("WallAbove", this.tileset).setDepth(8);
     this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset).setDepth(3);
     this.shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK).setDepth(10);
     this.lightManager = new LightManager(this);
@@ -134,6 +137,7 @@ export default class DungeonScene extends Phaser.Scene {
     // Use the array of rooms generated to place tiles in the map
     this.dungeon.rooms.forEach(room => {
       const { x, y, width, height, left, right, top, bottom } = room;
+      const doors = room.getDoorLocations();
 
       // Fill the floor
       this.floorLayer.weightedRandomize(left, top, width, height, TILES.FLOOR);
@@ -161,9 +165,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.wallLayer.putTileAt(TILES.WALL.RIGHT[1][0], right - 1, top + 3, 1, height - 2);
       this.wallLayer.weightedRandomize(right - 1, top + 4, 1, height - 5, TILES.WALL.RIGHT[1][1]);
 
-      // Dungeons have rooms that are connected with doors. Each door has an x & y relative to the
-      // room's location
-      var doors = room.getDoorLocations();
+      // Dungeons have rooms that are connected with doors. Each door has an x & y relative to the room's location
       for (var i = 0; i < doors.length; i++) {
         if (doors[i].y === 0) {
           this.wallLayer.putTilesAt(TILES.DOOR.TOP, x + doors[i].x - 2, y + doors[i].y);
@@ -178,8 +180,96 @@ export default class DungeonScene extends Phaser.Scene {
         }
       }
 
-      this.wallLayer.setCollisionByExclusion(TILES.NONCOLLIDING)
-    });
+      // fill above layer
+      this.wallLayer.forEachTile(tile => {
+        if (
+          TILES.WALL.TOP[0].find(t => t.index === tile.index) ||
+          TILES.WALL.BOTTOM.find(t => t.index === tile.index) ||
+          TILES.WALL.LEFT[0].find(t => t.index === tile.index) ||
+          TILES.WALL.RIGHT[0].find(t => t.index === tile.index) ||
+          TILES.WALL.TOP_LEFT === tile.index ||
+          TILES.WALL.TOP_RIGHT === tile.index ||
+          TILES.DOOR.TOP[0][0] === tile.index ||
+          TILES.DOOR.TOP[0][4] === tile.index ||
+          TILES.DOOR.BOTTOM[0] === tile.index ||
+          TILES.DOOR.BOTTOM[4] === tile.index
+        ) {
+          this.wallLayer.removeTileAt(tile.x, tile.y)
+          this.wallAboveLayer.putTileAt(tile.index, tile.x, tile.y)
+        }
+      })
+
+      // set collision
+      const opt = { isStatic: true}
+      const hasTopDoors = doors.find(d => d.y === 0)
+      const hasBottomDoors = doors.find(d => d.y === height - 1)
+      const hasLeftDoors = doors.find(d => d.x === 0)
+      const hasRightDoors = doors.find(d => d.x === width - 1)
+      const worldTop = this.floorLayer.tileToWorldY(top + 3) + 5
+      const worldBottom = this.floorLayer.tileToWorldY(bottom + 2) - 3
+      const worldLeft = this.floorLayer.tileToWorldX(left + 1)
+      const worldRight = this.floorLayer.tileToWorldX(right)
+
+      // inside of doors
+      doors.forEach(door => {
+        if (door.y === 0) {
+          const topDoorLeft = this.floorLayer.tileToWorldX(left + door.x) - 10
+          const topDoorRight = this.floorLayer.tileToWorldX(left + door.x) + 26
+          this.matter.add.rectangle(topDoorLeft - 2, worldTop - 20, 5, 40, opt)
+          this.matter.add.rectangle(topDoorRight + 2, worldTop - 20, 5, 40, opt)
+        }
+        if (door.x === 0) {
+          const leftDoorTop = this.floorLayer.tileToWorldY(top + door.y) + 22
+          const leftDoorBottom = this.floorLayer.tileToWorldY(top + door.y) + 62
+          this.matter.add.rectangle(worldLeft - 16, leftDoorTop, 40, 5, opt)
+          this.matter.add.rectangle(worldLeft - 16, leftDoorBottom, 40, 5, opt)
+        }
+      })
+
+      // walls
+      let wallColliders = [
+        [0, 0, (width - 2) * this.tileSize, 0, (width - 2) * this.tileSize, 5, 0, 5],
+        [0, (height - 3) * this.tileSize + 2, (width - 2) * this.tileSize, (height - 3) * this.tileSize + 2, (width - 2) * this.tileSize, (height - 3) * this.tileSize + 7, 0, (height - 3) * this.tileSize + 7],
+        [0, 0, 5, 0, 5, (height - 3) * this.tileSize, 0, (height - 3) * this.tileSize],
+        [(width - 2) * this.tileSize - 5, 0, (width - 2) * this.tileSize, 0, (width - 2) * this.tileSize, (height - 3) * this.tileSize, (width - 2) * this.tileSize - 5, (height - 3) * this.tileSize],
+      ]
+      // slicing out doors
+      doors.forEach(door => {
+        const sliced = []
+        wallColliders.forEach(part => {
+          const dimensions = this.getDimensionsByVertices(part)
+          let slices
+          if (dimensions.width > dimensions.height) {
+            slices = Slice(part, this.tileSize * door.x, this.tileSize * door.y - 32, this.tileSize * door.x, this.tileSize * door.y + 32)
+            if (slices.length > 1) {
+              slices[0][0] += 10
+              slices[0][6] += 10
+              slices[1][6] -= 26
+              slices[1][0] -= 26
+            }
+          } else {
+            slices = Slice(part, this.tileSize * door.x - 32, this.tileSize * door.y, this.tileSize * door.x + 32, this.tileSize * door.y)
+            if (slices.length > 1) {
+              slices[0][1] -= 30
+              slices[0][7] -= 30
+              slices[1][7] += 8
+              slices[1][1] += 8
+            }
+          }
+          sliced.push(...slices)
+        })
+        wallColliders = sliced
+      })
+
+      // placing
+      for (let i = 0; i < wallColliders.length; i++) {
+        const part = wallColliders[i]
+        const x = i ? wallColliders[i - 1][2] : worldLeft
+        const rect = Phaser.Physics.Matter.Matter.Vertices.clockwiseSort([{ x: part[0], y: part[1] }, { x: part[2], y: part[3] }, { x: part[4], y: part[5] }, { x: part[6], y: part[7] }])
+        const center = Phaser.Physics.Matter.Matter.Vertices.centre(rect)
+        this.matter.add.fromVertices(worldLeft + center.x, worldTop + center.y, rect, opt)
+      }
+    })
 
     // Place the stairs
     this.stuffLayer.putTileAt(
@@ -227,6 +317,16 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
+  getDimensionsByVertices(vertices) {
+    const xValues = vertices.filter((v, i) => !(i % 2))
+    const yValues = vertices.filter((v, i) => i % 2)
+
+    return {
+      width: Math.abs(Math.max(...xValues) - Math.min(...xValues)),
+      height: Math.abs(Math.max(...yValues) - Math.min(...yValues)),
+    }
+  }
+
   addHero() {
     // Place the player in the first room
     this.hero = new Hero(
@@ -245,9 +345,6 @@ export default class DungeonScene extends Phaser.Scene {
         return 0
       }
     })
-
-    this.physics.add.collider(this.hero.sprites.hero, this.wallLayer);
-    this.physics.add.collider(this.hero.sprites.hero, this.stuffLayer);
   }
 
   addEnemies() {
@@ -424,22 +521,26 @@ export default class DungeonScene extends Phaser.Scene {
       y = this.map.tileToWorldY(swordRoom.centerY)
     }
 
-    this.sword = this.physics.add.sprite(x, y, 'sword', 20).setSize(32, 32).setDepth(8)
+    this.sword = this.matter.add.sprite(x, y, 'sword', 20).setSize(32, 32).setDepth(8)
     this.tweens.add({
       targets: this.sword,
       yoyo: true,
       repeat: -1,
       y: '+=8'
     })
-    this.physics.add.collider(this.hero.sprites.hero, this.sword, () => {
-      if (this.hero.dead) return
+    this.matterCollision.addOnCollideStart({
+      objectA: this.hero.sprites.hero,
+      objectB: this.sword,
+      callback: () => {
+        if (this.hero.dead) return
 
-      this.registry.set('weapon', 'sword')
-      const items = this.registry.get('items')
-      items.push('sword')
-      this.registry.set('items', items)
-      this.sword.destroy()
-    });
+        this.registry.set('weapon', 'sword')
+        const items = this.registry.get('items')
+        items.push('sword')
+        this.registry.set('items', items)
+        this.sword.destroy()
+      }
+    })
   }
 
   addTorch(x, y) {
@@ -448,7 +549,7 @@ export default class DungeonScene extends Phaser.Scene {
       x = this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([torchRoom.left + 1, torchRoom.right - 1])) + 24
       y = this.map.tileToWorldY(Phaser.Utils.Array.GetRandom([torchRoom.top + 1, torchRoom.bottom - 1])) + 24
     }
-    this.torch = this.physics.add.sprite(x, y, 'torch', 0).setSize(48, 48).setDepth(7)
+    this.torch = this.matter.add.sprite(x, y, 'torch', 0).setSize(48, 48).setDepth(7)
     this.tweens.add({
       targets: this.torch,
       yoyo: true,
@@ -461,16 +562,20 @@ export default class DungeonScene extends Phaser.Scene {
     })
     this.torch.anims.play('torch', true)
 
-    this.physics.add.collider(this.hero.sprites.hero, this.torch, () => {
-      if (this.hero.dead) return
-      const items = this.registry.get('items')
-      items.push('torch')
-      this.registry.set('items', items)
-      this.scene.get('Gui').removeTorchDelayed()
-      this.torch.destroy()
-      this.lightManager.removeLight(this.torch)
-      this.torch = null
-    });
+    this.matterCollision.addOnCollideStart({
+      objectA: this.hero.sprites.hero,
+      objectB: this.torch,
+      callback: () => {
+        if (this.hero.dead) return
+        const items = this.registry.get('items')
+        items.push('torch')
+        this.registry.set('items', items)
+        this.scene.get('Gui').removeTorchDelayed()
+        this.torch.destroy()
+        this.lightManager.removeLight(this.torch)
+        this.torch = null
+      }
+    })
   }
 
   addPathfinder(x, y) {
@@ -479,7 +584,7 @@ export default class DungeonScene extends Phaser.Scene {
       x = this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([pathFinderRoom.left + 1, pathFinderRoom.right - 1])) + 24
       y = this.map.tileToWorldY(Phaser.Utils.Array.GetRandom([pathFinderRoom.top + 1, pathFinderRoom.bottom - 1])) + 24
     }
-    this.pathfinder = this.physics.add.sprite(x, y, 'pathfinder', 0).setSize(48, 48).setDepth(8)
+    this.pathfinder = this.matter.add.sprite(x, y, 'pathfinder', 0).setSize(48, 48).setDepth(8)
     this.tweens.add({
       targets: this.pathfinder,
       yoyo: true,
@@ -492,34 +597,42 @@ export default class DungeonScene extends Phaser.Scene {
     })
     this.pathfinder.anims.play('pathfinder', true)
 
-    this.physics.add.collider(this.hero.sprites.hero, this.pathfinder, () => {
-      if (this.hero.dead) return
-      const items = this.registry.get('items')
-      items.push('pathfinder')
-      this.registry.set('items', items)
-      this.pathfinder.destroy()
-      this.lightManager.removeLight(this.pathfinder)
-      this.pathfinder = null
+    this.matterCollision.addOnCollideStart({
+      objectA: this.hero.sprites.hero,
+      objectB: this.pathfinder,
+      callback: () => {
+        if (this.hero.dead) return
+        const items = this.registry.get('items')
+        items.push('pathfinder')
+        this.registry.set('items', items)
+        this.pathfinder.destroy()
+        this.lightManager.removeLight(this.pathfinder)
+        this.pathfinder = null
+      }
     });
   }
 
   addXpDust(x, y, xp, points) {
-    this.xpDust = this.physics.add.sprite(x, y, 'xpDust', 0).setSize(52, 22).setDepth(7)
+    this.xpDust = this.matter.add.sprite(x, y, 'xpDust', 0).setSize(52, 22).setDepth(7)
     this.lightManager.lights.push({
       sprite: this.xpDust,
       intensity: () => 1
     })
     this.xpDust.anims.play('xpDust', true)
 
-    this.physics.add.collider(this.hero.sprites.hero, this.xpDust, () => {
-      if (this.hero.dead) return
-      this.xpDust.destroy()
-      this.lightManager.removeLight(this.xpDust)
-      if (xp) {
-        this.registry.set('xp', this.registry.get('xp') + xp)
-      }
-      if (points) {
-        this.registry.set('skillPoints', this.registry.get('skillPoints') + points)
+    this.matterCollision.addOnCollideStart({
+      objectA: this.hero.sprites.hero,
+      objectB: this.xpDust,
+      callback: () => {
+        if (this.hero.dead) return
+        this.xpDust.destroy()
+        this.lightManager.removeLight(this.xpDust)
+        if (xp) {
+          this.registry.set('xp', this.registry.get('xp') + xp)
+        }
+        if (points) {
+          this.registry.set('skillPoints', this.registry.get('skillPoints') + points)
+        }
       }
     });
   }
@@ -574,9 +687,8 @@ export default class DungeonScene extends Phaser.Scene {
   addTimebomb() {
     if (this.dungeonNumber >= 11) {
       this.timebombRoom = this.dungeon.r.randomPick(this.otherRooms)
-      this.timebomb = this.add.rectangle(this.map.tileToWorldX(this.timebombRoom.centerX), this.map.tileToWorldY(this.timebombRoom.centerY), 8, 8, 0xffffff).setDepth(6)
-      this.physics.add.existing(this.timebomb)
-      this.physics.add.collider(this.timebomb, this.wallLayer)
+      this.timebomb = this.matter.add.rectangle(this.map.tileToWorldX(this.timebombRoom.centerX), this.map.tileToWorldY(this.timebombRoom.centerY), 8, 8, 0xffffff).setDepth(6)
+      // this.physics.add.collider(this.timebomb, this.wallLayer)
       this.timebombParticles = this.particle.createEmitter({
         blendMode: 'SCREEN',
         scale: { start: 0.5, end: 1.5 },
@@ -596,30 +708,34 @@ export default class DungeonScene extends Phaser.Scene {
         }
       })
 
-      this.physics.add.collider(this.timebomb, this.hero.sprites.hero, () => {
-        this.timebomb.destroy()
-        this.timebombParticles.stop()
-        this.heroParticles = this.particle.createEmitter({
-          tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
-          blendMode: 'SCREEN',
-          scale: { start: 0.5, end: 1.5 },
-          alpha: { start: 1, end: 0 },
-          speed: 20,
-          quantity: 10,
-          frequency: 50,
-          lifespan: 2000,
-          emitCallback: (particle) => {
-            this.lightManager.lights.push({
-              sprite: particle,
-              intensity: () => Math.max(0, particle.alpha - 0.5)
-            })
-          },
-          deathCallback: (particle) => {
-            this.lightManager.removeLight(particle)
-          }
-        })
-        this.heroParticles.startFollow(this.hero.sprites.hero)
-        this.startCountdown(60)
+      this.matterCollision.addOnCollideStart({
+        objectA: this.timebomb,
+        objectB: this.hero.sprites.hero,
+        callback: () => {
+          this.timebomb.destroy()
+          this.timebombParticles.stop()
+          this.heroParticles = this.particle.createEmitter({
+            tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
+            blendMode: 'SCREEN',
+            scale: { start: 0.5, end: 1.5 },
+            alpha: { start: 1, end: 0 },
+            speed: 20,
+            quantity: 10,
+            frequency: 50,
+            lifespan: 2000,
+            emitCallback: (particle) => {
+              this.lightManager.lights.push({
+                sprite: particle,
+                intensity: () => Math.max(0, particle.alpha - 0.5)
+              })
+            },
+            deathCallback: (particle) => {
+              this.lightManager.removeLight(particle)
+            }
+          })
+          this.heroParticles.startFollow(this.hero.sprites.hero)
+          this.startCountdown(60)
+        }
       })
 
       this.timebombParticles.startFollow(this.timebomb)
@@ -641,8 +757,9 @@ export default class DungeonScene extends Phaser.Scene {
       const tileX = this.wallLayer.worldToTileX(this.timebomb.x)
       const tileY = this.wallLayer.worldToTileY(this.timebomb.y)
       this.timebombRoom = this.dungeon.getRoomAt(tileX, tileY)
+      const vector = new Phaser.Math.Vector2(this.timebomb.x, this.timebomb.y)
       if (this.timebombRoom === this.currentRoom && tileX > this.timebombRoom.left && tileX < this.timebombRoom.right && tileY > this.timebombRoom.top && tileY < this.timebombRoom.bottom) {
-        this.physics.moveToObject(this.timebomb, this.hero.sprites.hero)
+        this.timebomb.applyForce(vector.distance({ x: this.hero.sprites.hero.x, y: this.hero.sprites.hero.y }))
       } else {
         const finder = new PathFinder.AStarFinder({ allowDiagonal: true, dontCrossCorners: true })
         const path = PathFinder.Util.compressPath(finder.findPath(
@@ -657,7 +774,7 @@ export default class DungeonScene extends Phaser.Scene {
           )
         ))
         if (path.length > 1) {
-          this.physics.moveTo(this.timebomb, this.wallLayer.tileToWorldX(path[1][0]) + 24, this.wallLayer.tileToWorldY(path[1][1]) + 24)
+          this.timebomb.applyForce(vector.distance({ x: this.wallLayer.tileToWorldX(path[1][0]) + 24, y: this.wallLayer.tileToWorldY(path[1][1]) + 24 }))
         }
       }
     }
