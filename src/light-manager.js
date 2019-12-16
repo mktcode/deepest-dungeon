@@ -18,8 +18,8 @@ export default class LightManager {
   getLightsByRoom(room) {
     return this.lights.filter(light => {
       return room === this.scene.dungeon.getRoomAt(
-        this.scene.floorLayer.worldToTileX(light.sprite.x),
-        this.scene.floorLayer.worldToTileY(light.sprite.y)
+        this.scene.worldToTileX(light.sprite.x),
+        this.scene.worldToTileY(light.sprite.y)
       );
     })
   }
@@ -48,8 +48,8 @@ export default class LightManager {
             const lightValues = []
             lights.forEach((light) => {
               const vector = new Phaser.Math.Vector2(
-                this.scene.shadowLayer.worldToTileX(light.sprite.x),
-                this.scene.shadowLayer.worldToTileX(light.sprite.y)
+                this.scene.worldToTileX(light.sprite.x),
+                this.scene.worldToTileY(light.sprite.y)
               );
               const distance = Math.max(1, vector.distance({x: tile.x, y: tile.y}))
               const lightValue = Math.max(minLight, 1 / distance * light.intensity())

@@ -191,8 +191,8 @@ export default class Hero {
     }
 
     const tiles = this.scene.stuffLayer.getTilesWithin(
-      this.scene.stuffLayer.worldToTileX(this.sprites.hero.x) - 1,
-      this.scene.stuffLayer.worldToTileY(this.sprites.hero.y) - 1,
+      this.scene.worldToTileX(this.sprites.hero.x) - 1,
+      this.scene.worldToTileY(this.sprites.hero.y) - 1,
       3, 3
     )
 

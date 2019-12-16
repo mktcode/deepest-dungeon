@@ -15,8 +15,8 @@ export default class Enemy {
     this.underAttack = false
     this.dieCallback = dieCallback
 
-    const x = this.dungeon.map.tileToWorldX(Phaser.Math.Between(room.left + 2, room.right - 2))
-    const y = this.dungeon.map.tileToWorldX(Phaser.Math.Between(room.top + 2, room.bottom - 2))
+    const x = this.dungeon.tileToWorldX(Phaser.Math.Between(room.left + 2, room.right - 2))
+    const y = this.dungeon.tileToWorldY(Phaser.Math.Between(room.top + 2, room.bottom - 2))
 
     if (this.type === 'deamon') {
       this.hp = 10
@@ -119,16 +119,16 @@ export default class Enemy {
 
         sprite.setVelocity(0);
 
-        if (this.room.left + 1 >= this.dungeon.map.worldToTileX(this.sprite.x)) {
+        if (this.room.left + 1 >= this.dungeon.worldToTileX(this.sprite.x)) {
           this.directionX = 'right'
         }
-        if (this.room.right - 1 <= this.dungeon.map.worldToTileX(this.sprite.x)) {
+        if (this.room.right - 1 <= this.dungeon.worldToTileX(this.sprite.x)) {
           this.directionX = 'left'
         }
-        if (this.room.top + 1 >= this.dungeon.map.worldToTileY(this.sprite.y)) {
+        if (this.room.top + 1 >= this.dungeon.worldToTileY(this.sprite.y)) {
           this.directionY = 'down'
         }
-        if (this.room.bottom - 1 <= this.dungeon.map.worldToTileY(this.sprite.y)) {
+        if (this.room.bottom - 1 <= this.dungeon.worldToTileY(this.sprite.y)) {
           this.directionY = 'up'
         }
 
