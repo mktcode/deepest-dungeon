@@ -169,7 +169,7 @@ export default class Hero {
 
   useShrine() {
     if (this.isNear([TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]])) {
-      this.scene.restRoomActivated = true
+      this.scene.safeRoomActivated = true
       this.scene.registry.set('minDungeon', this.scene.dungeonNumber)
       this.scene.scene.run('Character')
       this.scene.scene.bringToTop('Character')

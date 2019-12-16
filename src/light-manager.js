@@ -42,7 +42,7 @@ export default class LightManager {
 
       if (room === this.scene.currentRoom) {
         tiles.forEach((tile) => {
-          if (room === this.scene.restRoom && this.scene.restRoomActivated) {
+          if (room === this.scene.safeRoom && this.scene.safeRoomActivated) {
             tile.alpha = 0
           } else {
             const lightValues = []

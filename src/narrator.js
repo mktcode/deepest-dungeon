@@ -9,7 +9,7 @@ import horribleJourneyMp3 from "./assets/audio/horrible-journey.mp3"
 import furtherDownMp3 from "./assets/audio/further-down.mp3"
 import againStairsMp3 from "./assets/audio/again-stairs.mp3"
 import theLightMp3 from "./assets/audio/the-light.mp3"
-import restRoomMp3 from "./assets/audio/restroom.mp3"
+import safeRoomMp3 from "./assets/audio/saferoom.mp3"
 import orientationLostMp3 from "./assets/audio/orientationLost.mp3"
 
 export default class Narrator {
@@ -26,7 +26,7 @@ export default class Narrator {
     this.furtherDown = scene.sound.add("furtherDown")
     this.againStairs = scene.sound.add("againStairs")
     this.theLight = scene.sound.add("theLight")
-    this.restRoom = scene.sound.add("restRoom")
+    this.safeRoom = scene.sound.add("safeRoom")
     this.orientationLost = scene.sound.add("orientationLost")
     this.slowmo = false
   }
@@ -43,7 +43,7 @@ export default class Narrator {
     scene.load.audio("furtherDown", furtherDownMp3)
     scene.load.audio("againStairs", againStairsMp3)
     scene.load.audio("theLight", theLightMp3)
-    scene.load.audio("restRoom", restRoomMp3)
+    scene.load.audio("safeRoom", safeRoomMp3)
     scene.load.audio("orientationLost", orientationLostMp3)
   }
 

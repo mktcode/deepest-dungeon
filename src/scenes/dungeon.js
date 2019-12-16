@@ -36,7 +36,7 @@ export default class DungeonScene extends Phaser.Scene {
     // add end room (must not have door in the top cause the exit will go there)
     this.endRoom = rooms.splice(rooms.findIndex(room => !room.getDoorLocations().find(d => d.y === 0)), 1)[0]
     // add rest room every 5 dungeons (first room with only one door)
-    this.restRoom = !(this.dungeonNumber % 4) ? rooms.splice(rooms.findIndex(room => room.getDoorLocations().length === 1), 1)[0] : null
+    this.safeRoom = !(this.dungeonNumber % 4) ? rooms.splice(rooms.findIndex(room => room.getDoorLocations().length === 1), 1)[0] : null
     this.otherRooms = rooms
     this.currentRoom = this.startRoom
     this.visitedRooms = [this.startRoom]
@@ -45,7 +45,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.torch = null
     this.pathfinder = null
     this.pathSprites = []
-    this.restRoomActivated = false
+    this.safeRoomActivated = false
 
     this.isStatic = { isStatic: true }
   }
@@ -92,8 +92,8 @@ export default class DungeonScene extends Phaser.Scene {
         this.hero.dead = false
         this.hero.unfreeze()
         this.hero.jumpTo(
-          this.map.tileToWorldX(this.restRoom && this.restRoomActivated ? this.restRoom.centerX : this.startRoom.centerX),
-          this.map.tileToWorldY(this.restRoom && this.restRoomActivated ? this.restRoom.centerY : this.startRoom.centerY)
+          this.map.tileToWorldX(this.safeRoom && this.safeRoomActivated ? this.safeRoom.centerX : this.startRoom.centerX),
+          this.map.tileToWorldY(this.safeRoom && this.safeRoomActivated ? this.safeRoom.centerY : this.startRoom.centerY)
         )
       })
 
@@ -276,31 +276,31 @@ export default class DungeonScene extends Phaser.Scene {
     })
 
     // prepare rest room if exists
-    if (this.restRoom) {
-      this.floorLayer.fill(TILES.FLOOR_LIGHT, this.restRoom.left + 1, this.restRoom.top + 1, this.restRoom.width - 2, this.restRoom.height - 2);
-      let restRoomDoor = this.restRoom.getDoorLocations()[0]
-      if (restRoomDoor.y === 0) {
-        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y);
-        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.restRoom.x + restRoomDoor.x, this.restRoom.y - 1);
-        this.stuffLayer.putTileAt(TILES.SHRINE.BOTTOM[0], this.restRoom.centerX, this.restRoom.bottom);
-        this.stuffLayer.putTileAt(TILES.SHRINE.BOTTOM[1], this.restRoom.centerX, this.restRoom.bottom - 1);
-      } else if (restRoomDoor.y === this.restRoom.height - 1) {
-        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y);
-        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y + 1);
-        this.floorLayer.getTileAt(this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y + 1).setFlipY(true)
-        this.stuffLayer.putTileAt(TILES.SHRINE.TOP[0], this.restRoom.centerX, this.restRoom.top);
-        this.stuffLayer.putTileAt(TILES.SHRINE.TOP[1], this.restRoom.centerX, this.restRoom.top + 1);
-      } else if (restRoomDoor.x === 0) {
-        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x, this.restRoom.y + restRoomDoor.y);
-        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.restRoom.x - 1, this.restRoom.y + restRoomDoor.y);
-        this.floorLayer.getTileAt(this.restRoom.x - 1, this.restRoom.y + restRoomDoor.y).setFlipX(true)
-        this.stuffLayer.putTileAt(TILES.SHRINE.RIGHT[0], this.restRoom.right, this.restRoom.centerY);
-        this.stuffLayer.putTileAt(TILES.SHRINE.RIGHT[1], this.restRoom.right - 1, this.restRoom.centerY);
-      } else if (restRoomDoor.x === this.restRoom.width - 1) {
-        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.restRoom.x + restRoomDoor.x, this.restRoom.y + restRoomDoor.y);
-        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.restRoom.x + restRoomDoor.x + 1, this.restRoom.y + restRoomDoor.y);
-        this.stuffLayer.putTileAt(TILES.SHRINE.LEFT[0], this.restRoom.left, this.restRoom.centerY);
-        this.stuffLayer.putTileAt(TILES.SHRINE.LEFT[1], this.restRoom.left + 1, this.restRoom.centerY);
+    if (this.safeRoom) {
+      this.floorLayer.fill(TILES.FLOOR_LIGHT, this.safeRoom.left + 1, this.safeRoom.top + 1, this.safeRoom.width - 2, this.safeRoom.height - 2);
+      let safeRoomDoor = this.safeRoom.getDoorLocations()[0]
+      if (safeRoomDoor.y === 0) {
+        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.safeRoom.x + safeRoomDoor.x, this.safeRoom.y);
+        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.safeRoom.x + safeRoomDoor.x, this.safeRoom.y - 1);
+        this.stuffLayer.putTileAt(TILES.SHRINE.BOTTOM[0], this.safeRoom.centerX, this.safeRoom.bottom);
+        this.stuffLayer.putTileAt(TILES.SHRINE.BOTTOM[1], this.safeRoom.centerX, this.safeRoom.bottom - 1);
+      } else if (safeRoomDoor.y === this.safeRoom.height - 1) {
+        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.safeRoom.x + safeRoomDoor.x, this.safeRoom.y + safeRoomDoor.y);
+        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.safeRoom.x + safeRoomDoor.x, this.safeRoom.y + safeRoomDoor.y + 1);
+        this.floorLayer.getTileAt(this.safeRoom.x + safeRoomDoor.x, this.safeRoom.y + safeRoomDoor.y + 1).setFlipY(true)
+        this.stuffLayer.putTileAt(TILES.SHRINE.TOP[0], this.safeRoom.centerX, this.safeRoom.top);
+        this.stuffLayer.putTileAt(TILES.SHRINE.TOP[1], this.safeRoom.centerX, this.safeRoom.top + 1);
+      } else if (safeRoomDoor.x === 0) {
+        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.safeRoom.x, this.safeRoom.y + safeRoomDoor.y);
+        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.safeRoom.x - 1, this.safeRoom.y + safeRoomDoor.y);
+        this.floorLayer.getTileAt(this.safeRoom.x - 1, this.safeRoom.y + safeRoomDoor.y).setFlipX(true)
+        this.stuffLayer.putTileAt(TILES.SHRINE.RIGHT[0], this.safeRoom.right, this.safeRoom.centerY);
+        this.stuffLayer.putTileAt(TILES.SHRINE.RIGHT[1], this.safeRoom.right - 1, this.safeRoom.centerY);
+      } else if (safeRoomDoor.x === this.safeRoom.width - 1) {
+        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.safeRoom.x + safeRoomDoor.x, this.safeRoom.y + safeRoomDoor.y);
+        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.safeRoom.x + safeRoomDoor.x + 1, this.safeRoom.y + safeRoomDoor.y);
+        this.stuffLayer.putTileAt(TILES.SHRINE.LEFT[0], this.safeRoom.left, this.safeRoom.centerY);
+        this.stuffLayer.putTileAt(TILES.SHRINE.LEFT[1], this.safeRoom.left + 1, this.safeRoom.centerY);
       }
     }
   }
@@ -420,7 +420,7 @@ export default class DungeonScene extends Phaser.Scene {
         }
       })
 
-      if (this.restRoom) {
+      if (this.safeRoom) {
         this.enemies.push(new Enemy(this, this.endRoom, 'deamon', (enemy) => {
           this.lightManager.removeLight(enemy.sprite)
           Phaser.Utils.Array.Remove(this.enemies, enemy)
@@ -781,7 +781,7 @@ export default class DungeonScene extends Phaser.Scene {
     if (!this.timebomb || !this.timebomb.active) return
     const vector = new Phaser.Math.Vector2(this.timebomb.x, this.timebomb.y);
     const distance = vector.distance({x: this.hero.sprites.hero.body.x, y: this.hero.sprites.hero.body.y})
-    if (this.currentRoom === this.restRoom) {
+    if (this.currentRoom === this.safeRoom) {
       this.timebombFollows = false
       this.timebomb.body.setVelocity(0)
     } else if (this.timebombRoom === this.currentRoom && distance < 200) {
