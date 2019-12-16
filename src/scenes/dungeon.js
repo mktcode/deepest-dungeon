@@ -33,7 +33,8 @@ export default class DungeonScene extends Phaser.Scene {
     })
     const rooms = this.dungeon.rooms.slice()
     this.startRoom = rooms.shift()
-    this.endRoom = rooms.splice(this.dungeon.r.randomInteger(0, rooms.length - 1), 1)[0]
+    // add end room (must not have door in the top cause the exit will go there)
+    this.endRoom = rooms.splice(rooms.findIndex(room => !room.getDoorLocations().find(d => d.y === 0)), 1)[0]
     // add rest room every 5 dungeons (first room with only one door)
     this.restRoom = !(this.dungeonNumber % 4) ? rooms.splice(rooms.findIndex(room => room.getDoorLocations().length === 1), 1)[0] : null
     this.otherRooms = rooms
@@ -45,6 +46,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.pathfinder = null
     this.pathSprites = []
     this.restRoomActivated = false
+
+    this.isStatic = { isStatic: true }
   }
 
   static preload(scene) {
@@ -61,15 +64,17 @@ export default class DungeonScene extends Phaser.Scene {
     this.cameras.main.fadeIn(250, 0, 0, 0)
     this.narrator = new Narrator(this)
     this.registry.set('currentDungeon', this.dungeonNumber)
-    this.particle = this.add.particles('particle').setDepth(7)
+    this.interactionParticle = this.add.particles('particle').setDepth(7)
+    this.fireParticle = this.add.particles('particle').setDepth(7)
+    // this.matter.world.createDebugGraphic()
 
     this.prepareMap()
     this.prepareRooms()
+    this.addStairs()
     this.addHero()
     this.addEnemies()
     this.addItems()
     this.addFireTraps()
-    this.addInteractionParticles()
     this.addTimebomb()
 
     this.events.on('wake', () => {
@@ -200,7 +205,6 @@ export default class DungeonScene extends Phaser.Scene {
       })
 
       // set collision
-      const opt = { isStatic: true}
       const hasTopDoors = doors.find(d => d.y === 0)
       const hasBottomDoors = doors.find(d => d.y === height - 1)
       const hasLeftDoors = doors.find(d => d.x === 0)
@@ -215,14 +219,14 @@ export default class DungeonScene extends Phaser.Scene {
         if (door.y === 0) {
           const topDoorLeft = this.floorLayer.tileToWorldX(left + door.x) - 10
           const topDoorRight = this.floorLayer.tileToWorldX(left + door.x) + 26
-          this.matter.add.rectangle(topDoorLeft - 2, worldTop - 20, 5, 40, opt)
-          this.matter.add.rectangle(topDoorRight + 2, worldTop - 20, 5, 40, opt)
+          this.matter.add.rectangle(topDoorLeft - 2, worldTop - 20, 5, 40, this.isStatic)
+          this.matter.add.rectangle(topDoorRight + 2, worldTop - 20, 5, 40, this.isStatic)
         }
         if (door.x === 0) {
           const leftDoorTop = this.floorLayer.tileToWorldY(top + door.y) + 22
           const leftDoorBottom = this.floorLayer.tileToWorldY(top + door.y) + 62
-          this.matter.add.rectangle(worldLeft - 16, leftDoorTop, 40, 5, opt)
-          this.matter.add.rectangle(worldLeft - 16, leftDoorBottom, 40, 5, opt)
+          this.matter.add.rectangle(worldLeft - 16, leftDoorTop, 40, 5, this.isStatic)
+          this.matter.add.rectangle(worldLeft - 16, leftDoorBottom, 40, 5, this.isStatic)
         }
       })
 
@@ -267,23 +271,7 @@ export default class DungeonScene extends Phaser.Scene {
         const x = i ? wallColliders[i - 1][2] : worldLeft
         const rect = Phaser.Physics.Matter.Matter.Vertices.clockwiseSort([{ x: part[0], y: part[1] }, { x: part[2], y: part[3] }, { x: part[4], y: part[5] }, { x: part[6], y: part[7] }])
         const center = Phaser.Physics.Matter.Matter.Vertices.centre(rect)
-        this.matter.add.fromVertices(worldLeft + center.x, worldTop + center.y, rect, opt)
-      }
-    })
-
-    // Place the stairs
-    this.stuffLayer.putTileAt(
-      this.restRoom ? TILES.STAIRS.CLOSED : TILES.STAIRS.OPEN,
-      this.endRoom.centerX,
-      this.endRoom.centerY
-    );
-    this.input.on('pointerup', (pointer) => {
-      const tile = this.stuffLayer.getTileAtWorldXY(pointer.worldX, pointer.worldY)
-      if (tile && tile.index === TILES.STAIRS.OPEN) {
-        this.hero.useStairs()
-      }
-      if (tile && [TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]].includes(tile.index)) {
-        this.hero.useShrine()
+        this.matter.add.fromVertices(worldLeft + center.x, worldTop + center.y, rect, this.isStatic)
       }
     })
 
@@ -314,6 +302,78 @@ export default class DungeonScene extends Phaser.Scene {
         this.stuffLayer.putTileAt(TILES.SHRINE.LEFT[0], this.restRoom.left, this.restRoom.centerY);
         this.stuffLayer.putTileAt(TILES.SHRINE.LEFT[1], this.restRoom.left + 1, this.restRoom.centerY);
       }
+    }
+  }
+
+  addStairs() {
+    const x = this.floorLayer.tileToWorldX(this.endRoom.centerX) + this.tileSize / 2
+    const y = this.floorLayer.tileToWorldY(this.endRoom.centerY + 2) + this.tileSize / 2
+    const width = this.tileSize * 3.5
+    const height = width
+
+    // tiles
+    this.stuffLayer.putTilesAt(
+      TILES.STAIRS.OPEN,
+      this.endRoom.centerX - 2,
+      this.endRoom.centerY
+    )
+    // collision
+    this.matter.add.rectangle(x, y, width, height, this.isStatic)
+    // particle emitter
+    this.stairParticles = this.interactionParticle.createEmitter({
+      x: x - width / 2,
+      y: y - height / 2,
+      blendMode: 'SCREEN',
+      scale: { start: 0, end: 0.75 },
+      alpha: { start: 1, end: 0 },
+      speed: 10,
+      quantity: 40,
+      frequency: 200,
+      lifespan: 500,
+      emitZone: {
+        source: new Phaser.Geom.Rectangle(0, 0, width, height),
+        type: 'edge',
+        quantity: 40
+      },
+      emitCallback: (particle) => {
+        this.lightManager.lights.push({
+          sprite: particle,
+          intensity: () => 0.3
+        })
+      },
+      deathCallback: (particle) => {
+        this.lightManager.removeLight(particle)
+      }
+    })
+
+    this.input.on('pointerup', (pointer) => {
+      const tile = this.stuffLayer.getTileAtWorldXY(pointer.worldX, pointer.worldY)
+      if (tile && [
+        ...TILES.STAIRS.OPEN[0],
+        ...TILES.STAIRS.OPEN[1],
+        ...TILES.STAIRS.OPEN[2],
+        ...TILES.STAIRS.OPEN[3],
+        ...TILES.STAIRS.OPEN[4]
+      ].includes(tile.index)) {
+        this.hero.useStairs()
+      }
+    })
+  }
+
+  updateStairParticles() {
+    const tile = this.hero.isNear([
+      ...TILES.STAIRS.OPEN[0],
+      ...TILES.STAIRS.OPEN[1],
+      ...TILES.STAIRS.OPEN[2],
+      ...TILES.STAIRS.OPEN[3],
+      ...TILES.STAIRS.OPEN[4]
+    ])
+    if (tile) {
+      if (this.stairParticles.on === false) {
+        this.stairParticles.start()
+      }
+    } else {
+      this.stairParticles.stop()
     }
   }
 
@@ -425,7 +485,7 @@ export default class DungeonScene extends Phaser.Scene {
 
           this.add.rectangle(x, y, 8, 8, 0x000000).setDepth(6)
 
-          const fireTrap = this.particle.createEmitter({
+          const fireTrap = this.fireParticle.createEmitter({
             x: x,
             y: y,
             on: false,
@@ -637,33 +697,7 @@ export default class DungeonScene extends Phaser.Scene {
     });
   }
 
-  addInteractionParticles() {
-    this.interactionParticles = this.particle.createEmitter({
-      blendMode: 'SCREEN',
-      scale: { start: 0, end: 1.5 },
-      alpha: { start: 1, end: 0 },
-      speed: 10,
-      quantity: 20,
-      frequency: 200,
-      lifespan: 500,
-      emitZone: {
-        source: new Phaser.Geom.Rectangle(0, 0, this.tileSize, this.tileSize),
-        type: 'edge',
-        quantity: 20
-      },
-      emitCallback: (particle) => {
-        this.lightManager.lights.push({
-          sprite: particle,
-          intensity: () => 0.3
-        })
-      },
-      deathCallback: (particle) => {
-        this.lightManager.removeLight(particle)
-      }
-    })
-  }
-
-  updateParticles() {
+  updateShrineParticles() {
     const tile = this.hero.isNear([
       TILES.STAIRS.OPEN,
       TILES.SHRINE.TOP[0],
@@ -714,7 +748,7 @@ export default class DungeonScene extends Phaser.Scene {
         callback: () => {
           this.timebomb.destroy()
           this.timebombParticles.stop()
-          this.heroParticles = this.particle.createEmitter({
+          this.heroParticles = this.interactionParticle.createEmitter({
             tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
             blendMode: 'SCREEN',
             scale: { start: 0.5, end: 1.5 },
@@ -910,7 +944,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.hero.update()
     this.enemies.forEach(e => e.update())
     this.setCurrentRoom()
-    this.updateParticles()
+    this.updateStairParticles()
     this.lightManager.update()
     this.checkFireTrapCollision()
     this.checkHeroParticlesCollision()

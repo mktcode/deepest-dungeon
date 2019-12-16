@@ -149,7 +149,13 @@ export default class Hero {
   }
 
   useStairs() {
-    if (this.isNear(TILES.STAIRS.OPEN)) {
+    if (this.isNear([
+      ...TILES.STAIRS.OPEN[0],
+      ...TILES.STAIRS.OPEN[1],
+      ...TILES.STAIRS.OPEN[2],
+      ...TILES.STAIRS.OPEN[3],
+      ...TILES.STAIRS.OPEN[4]
+    ])) {
       const nextDungeon = this.scene.dungeonNumber + 1
       this.scene.scene.sleep()
       if (this.scene.scene.get('Dungeon' + nextDungeon)) {
@@ -185,8 +191,8 @@ export default class Hero {
     }
 
     const tiles = this.scene.stuffLayer.getTilesWithin(
-      this.scene.stuffLayer.worldToTileX(this.sprites.hero.body.x) - 1,
-      this.scene.stuffLayer.worldToTileY(this.sprites.hero.body.y) - 1,
+      this.scene.stuffLayer.worldToTileX(this.sprites.hero.x) - 1,
+      this.scene.stuffLayer.worldToTileY(this.sprites.hero.y) - 1,
       3, 3
     )
 
