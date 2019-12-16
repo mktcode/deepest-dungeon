@@ -3,7 +3,8 @@
 // - Array of weights for weightedRandomize
 // - Array or 2D array for putTilesAt
 export default {
-  BLANK: 44,
+  BLANK: 0,
+  SHADOW: 44,
   WALL: {
     TOP_LEFT: 52,
     TOP_RIGHT: 43,
@@ -86,7 +87,7 @@ export default {
         [201]
       ]
     ],
-    BOTTOM: [15, 814, 815, 816, 6],
+    BOTTOM: [15, 814, -1, 816, 6],
     RIGHT: [
       [
         [265],

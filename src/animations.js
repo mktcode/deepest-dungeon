@@ -85,7 +85,7 @@ export default class Animations {
       });
       anims.create({
         key: "sword-up" + slowmoString,
-        frames: anims.generateFrameNumbers("sword", { start: 0, end: 4 }),
+        frames: anims.generateFrameNumbers("heroSword", { start: 0, end: 4 }),
         frameRate: swordFrameRate,
         repeat: 0,
         hideOnComplete: true,
@@ -93,7 +93,7 @@ export default class Animations {
       });
       anims.create({
         key: "sword-down" + slowmoString,
-        frames: anims.generateFrameNumbers("sword", { start: 15, end: 19 }),
+        frames: anims.generateFrameNumbers("heroSword", { start: 15, end: 19 }),
         frameRate: swordFrameRate,
         repeat: 0,
         hideOnComplete: true,
@@ -101,7 +101,7 @@ export default class Animations {
       });
       anims.create({
         key: "sword-left" + slowmoString,
-        frames: anims.generateFrameNumbers("sword", { start: 5, end: 9 }),
+        frames: anims.generateFrameNumbers("heroSword", { start: 5, end: 9 }),
         frameRate: swordFrameRate,
         repeat: 0,
         hideOnComplete: true,
@@ -109,7 +109,7 @@ export default class Animations {
       });
       anims.create({
         key: "sword-right" + slowmoString,
-        frames: anims.generateFrameNumbers("sword", { start: 10, end: 14 }),
+        frames: anims.generateFrameNumbers("heroSword", { start: 10, end: 14 }),
         frameRate: swordFrameRate,
         repeat: 0,
         hideOnComplete: true,
@@ -140,7 +140,7 @@ export default class Animations {
 
     anims.create({
       key: "torch",
-      frames: anims.generateFrameNumbers("torch", { start: 0, end: 6 }),
+      frames: anims.generateFrameNumbers("torch", { start: 0, end: 3 }),
       frameRate: 8,
       repeat: -1
     });

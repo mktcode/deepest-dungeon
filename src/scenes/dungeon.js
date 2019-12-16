@@ -11,6 +11,7 @@ import { Slice } from 'polyk'
 // assets
 import tileset from "../assets/dungeon-tileset-extruded.png";
 import tilesetMc from "../assets/dungeon-mc-extruded.png";
+import swordSprite from "../assets/sword.png";
 import torchSprite from "../assets/torch.png";
 import pathSprite from "../assets/path.png";
 import pathfinderSprite from "../assets/pathfinder.png";
@@ -53,10 +54,11 @@ export default class DungeonScene extends Phaser.Scene {
   static preload(scene) {
     scene.load.image("tileset", tileset)
     scene.load.image("tilesetMc", tilesetMc)
-    scene.load.spritesheet('torch', torchSprite, { frameWidth: 48, frameHeight: 48 });
-    scene.load.spritesheet('path', pathSprite, { frameWidth: 18, frameHeight: 18 });
-    scene.load.spritesheet('pathfinder', pathfinderSprite, { frameWidth: 48, frameHeight: 48 });
-    scene.load.image('particle', particle);
+    scene.load.spritesheet('sword', swordSprite, { frameWidth: 16, frameHeight: 16 })
+    scene.load.spritesheet('torch', torchSprite, { frameWidth: 8, frameHeight: 18 })
+    scene.load.spritesheet('path', pathSprite, { frameWidth: 6, frameHeight: 6 })
+    scene.load.spritesheet('pathfinder', pathfinderSprite, { frameWidth: 24, frameHeight: 24 })
+    scene.load.image('particle', particle)
   }
 
   create() {
@@ -66,7 +68,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.registry.set('currentDungeon', this.dungeonNumber)
     this.interactionParticle = this.add.particles('particle').setDepth(7)
     this.fireParticle = this.add.particles('particle').setDepth(7)
-    // this.matter.world.createDebugGraphic()
+    this.matter.world.createDebugGraphic()
 
     this.prepareMap()
     this.prepareRooms()
@@ -140,10 +142,10 @@ export default class DungeonScene extends Phaser.Scene {
     this.tileset = this.map.addTilesetImage(tilesetImage, null, this.tileSize, this.tileSize, 1, 2); // 1px margin, 2px spacing
 
     this.floorLayer = this.map.createBlankDynamicLayer("Floor", this.tileset).fill(TILES.BLANK).setDepth(1);
-    this.wallLayer = this.map.createBlankDynamicLayer("Wall", this.tileset).setDepth(2);
-    this.wallAboveLayer = this.map.createBlankDynamicLayer("WallAbove", this.tileset).setDepth(8);
+    this.wallLayer = this.map.createBlankDynamicLayer("Wall", this.tileset).fill(TILES.BLANK).setDepth(2);
+    this.wallAboveLayer = this.map.createBlankDynamicLayer("WallAbove", this.tileset).fill(TILES.BLANK).setDepth(8);
     this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset).setDepth(3);
-    this.shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.BLANK).setDepth(10);
+    this.shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.SHADOW).setDepth(10);
     this.lightManager = new LightManager(this);
 
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
@@ -219,7 +221,7 @@ export default class DungeonScene extends Phaser.Scene {
           TILES.DOOR.BOTTOM[0] === tile.index ||
           TILES.DOOR.BOTTOM[4] === tile.index
         ) {
-          this.wallLayer.removeTileAt(tile.x, tile.y)
+          this.wallLayer.removeTileAt(tile.x, tile.y, false)
           this.wallAboveLayer.putTileAt(tile.index, tile.x, tile.y)
         }
       })
@@ -572,7 +574,7 @@ export default class DungeonScene extends Phaser.Scene {
       y = this.tileToWorldY(swordRoom.centerY)
     }
 
-    this.sword = this.matter.add.sprite(x, y, 'sword', 20, this.isStatic).setSize(32, 32).setDepth(8)
+    this.sword = this.matter.add.sprite(x, y, 'sword', 0, this.isStatic).setDepth(8)
     const tween = this.tweens.add({
       targets: this.sword,
       yoyo: true,
@@ -598,10 +600,10 @@ export default class DungeonScene extends Phaser.Scene {
   addTorch(x, y) {
     if (!x && !y) {
       const torchRoom = this.dungeon.r.randomPick(this.otherRooms)
-      x = this.tileToWorldX(Phaser.Utils.Array.GetRandom([torchRoom.left + 1, torchRoom.right - 1])) + 24
-      y = this.tileToWorldY(Phaser.Utils.Array.GetRandom([torchRoom.top + 1, torchRoom.bottom - 1])) + 24
+      x = this.tileToWorldX(Phaser.Utils.Array.GetRandom([torchRoom.left + 3, torchRoom.right - 2])) + 4
+      y = this.tileToWorldY(Phaser.Utils.Array.GetRandom([torchRoom.top + 5, torchRoom.bottom - 2])) + 9
     }
-    this.torch = this.matter.add.sprite(x, y, 'torch', 0, this.isStatic).setSize(48, 48).setDepth(7)
+    this.torch = this.matter.add.sprite(x, y, 'torch', 0, this.isStatic).setSize(8, 24).setDepth(7)
     const tween = this.tweens.add({
       targets: this.torch,
       yoyo: true,
@@ -633,10 +635,10 @@ export default class DungeonScene extends Phaser.Scene {
   addPathfinder(x, y) {
     if (!x && !y) {
       const pathFinderRoom = this.dungeon.r.randomPick(this.otherRooms)
-      x = this.tileToWorldX(Phaser.Utils.Array.GetRandom([pathFinderRoom.left + 1, pathFinderRoom.right - 1])) + 24
-      y = this.tileToWorldY(Phaser.Utils.Array.GetRandom([pathFinderRoom.top + 1, pathFinderRoom.bottom - 1])) + 24
+      x = this.tileToWorldX(Phaser.Utils.Array.GetRandom([pathFinderRoom.left + 3, pathFinderRoom.right - 2])) + 12
+      y = this.tileToWorldY(Phaser.Utils.Array.GetRandom([pathFinderRoom.top + 5, pathFinderRoom.bottom - 2])) + 12
     }
-    this.pathfinder = this.matter.add.sprite(x, y, 'pathfinder', 0, this.isStatic).setSize(48, 48).setDepth(8)
+    this.pathfinder = this.matter.add.sprite(x, y, 'pathfinder', 0, this.isStatic).setSize(24, 24).setDepth(8)
     const tween = this.tweens.add({
       targets: this.pathfinder,
       yoyo: true,
@@ -856,16 +858,24 @@ export default class DungeonScene extends Phaser.Scene {
   showPath() {
     if (!this.pathSprites.length) {
       const finder = new PathFinder.AStarFinder()
+      const grid = this.dungeon.tiles.map(row => row.map(field => field === 2 || field === 3 ? 0 : 1))
+      // remove tiles that are part of top wall
+      this.wallLayer.forEachTile(tile => {
+        if (![-1, TILES.BLANK].includes(tile.index)) {
+          grid[tile.y][tile.x] = 1
+        }
+      })
+      this.wallAboveLayer.forEachTile(tile => {
+        if ([6, 15].includes(tile.index)) {
+          grid[tile.y][tile.x] = 0
+        }
+      })
       const path = finder.findPath(
         this.worldToTileX(this.hero.sprites.hero.x),
         this.worldToTileY(this.hero.sprites.hero.y),
-        this.endRoom.centerX,
-        this.endRoom.centerY,
-        new PathFinder.Grid(
-          this.dungeon.tiles.map(
-            row => row.map(field => field === 2 || field === 3 ? 0 : 1)
-          )
-        )
+        this.endRoom.centerX + 1,
+        this.endRoom.centerY + 2,
+        new PathFinder.Grid(grid)
       )
 
       // remove first and last point
@@ -874,8 +884,8 @@ export default class DungeonScene extends Phaser.Scene {
 
       path.forEach((tile) => {
         this.pathSprites.push(this.add.sprite(
-          this.tileToWorldX(tile[0]) + 24,
-          this.tileToWorldY(tile[1]) + 24,
+          this.tileToWorldX(tile[0]) + 8,
+          this.tileToWorldY(tile[1]) + 8,
           "path",
           0
         ).setDepth(6))

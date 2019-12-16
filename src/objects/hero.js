@@ -4,8 +4,8 @@ import TILES from "../tile-mapping.js";
 
 // assets
 import hero from "../assets/hero.png";
+import heroSword from "../assets/hero-sword.png";
 import levelUp from "../assets/levelUp.png";
-import sword from "../assets/sword.png";
 import xpDust from "../assets/xp-dust.png";
 
 export default class Hero {
@@ -104,8 +104,8 @@ export default class Hero {
       }
     );
     scene.load.spritesheet(
-      "sword",
-      sword,
+      "heroSword",
+      heroSword,
       {
         frameWidth: 64,
         frameHeight: 64
@@ -209,7 +209,7 @@ export default class Hero {
     this.scene.cameras.main.startFollow(this.sprites.hero, true, 0.1, 0.1)
 
     this.sprites.levelUp = this.scene.matter.add.sprite(x, y, "levelUp", 0).setDepth(6);
-    this.sprites.sword = this.scene.matter.add.sprite(x, y, "sword", 0).setDepth(6);
+    this.sprites.sword = this.scene.matter.add.sprite(x, y, "heroSword", 0).setDepth(6);
     this.setSwordHitBox('down')
   }
 
