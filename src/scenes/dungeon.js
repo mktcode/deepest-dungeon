@@ -572,8 +572,8 @@ export default class DungeonScene extends Phaser.Scene {
       y = this.map.tileToWorldY(swordRoom.centerY)
     }
 
-    this.sword = this.matter.add.sprite(x, y, 'sword', 20).setSize(32, 32).setDepth(8)
-    this.tweens.add({
+    this.sword = this.matter.add.sprite(x, y, 'sword', 20, this.isStatic).setSize(32, 32).setDepth(8)
+    const tween = this.tweens.add({
       targets: this.sword,
       yoyo: true,
       repeat: -1,
@@ -589,6 +589,7 @@ export default class DungeonScene extends Phaser.Scene {
         const items = this.registry.get('items')
         items.push('sword')
         this.registry.set('items', items)
+        tween.remove()
         this.sword.destroy()
       }
     })
@@ -600,8 +601,8 @@ export default class DungeonScene extends Phaser.Scene {
       x = this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([torchRoom.left + 1, torchRoom.right - 1])) + 24
       y = this.map.tileToWorldY(Phaser.Utils.Array.GetRandom([torchRoom.top + 1, torchRoom.bottom - 1])) + 24
     }
-    this.torch = this.matter.add.sprite(x, y, 'torch', 0).setSize(48, 48).setDepth(7)
-    this.tweens.add({
+    this.torch = this.matter.add.sprite(x, y, 'torch', 0, this.isStatic).setSize(48, 48).setDepth(7)
+    const tween = this.tweens.add({
       targets: this.torch,
       yoyo: true,
       repeat: -1,
@@ -622,9 +623,9 @@ export default class DungeonScene extends Phaser.Scene {
         items.push('torch')
         this.registry.set('items', items)
         this.scene.get('Gui').removeTorchDelayed()
+        tween.remove()
         this.torch.destroy()
         this.lightManager.removeLight(this.torch)
-        this.torch = null
       }
     })
   }
@@ -635,8 +636,8 @@ export default class DungeonScene extends Phaser.Scene {
       x = this.map.tileToWorldX(Phaser.Utils.Array.GetRandom([pathFinderRoom.left + 1, pathFinderRoom.right - 1])) + 24
       y = this.map.tileToWorldY(Phaser.Utils.Array.GetRandom([pathFinderRoom.top + 1, pathFinderRoom.bottom - 1])) + 24
     }
-    this.pathfinder = this.matter.add.sprite(x, y, 'pathfinder', 0).setSize(48, 48).setDepth(8)
-    this.tweens.add({
+    this.pathfinder = this.matter.add.sprite(x, y, 'pathfinder', 0, this.isStatic).setSize(48, 48).setDepth(8)
+    const tween = this.tweens.add({
       targets: this.pathfinder,
       yoyo: true,
       repeat: -1,
@@ -656,15 +657,15 @@ export default class DungeonScene extends Phaser.Scene {
         const items = this.registry.get('items')
         items.push('pathfinder')
         this.registry.set('items', items)
+        tween.remove()
         this.pathfinder.destroy()
         this.lightManager.removeLight(this.pathfinder)
-        this.pathfinder = null
       }
     });
   }
 
   addXpDust(x, y, xp, points) {
-    this.xpDust = this.matter.add.sprite(x, y, 'xpDust', 0).setSize(52, 22).setDepth(7)
+    this.xpDust = this.matter.add.sprite(x, y, 'xpDust', 0, this.isStatic).setSize(52, 22).setDepth(7)
     this.lightManager.lights.push({
       sprite: this.xpDust,
       intensity: () => 1
