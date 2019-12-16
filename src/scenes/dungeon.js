@@ -35,9 +35,9 @@ export default class DungeonScene extends Phaser.Scene {
     this.startRoom = rooms.shift()
     // add end room (must not have door in the top cause the exit will go there)
     this.endRoom = rooms.splice(rooms.findIndex(room => !room.getDoorLocations().find(d => d.y === 0)), 1)[0]
-    // add rest room every 5 dungeons (first room with only one door)
-    this.safeRoom = !(this.dungeonNumber % 4) ? rooms.splice(rooms.findIndex(room => room.getDoorLocations().length === 1), 1)[0] : null
     this.otherRooms = rooms
+    // add rest room every 5 dungeons (smallest room with only one door)
+    this.safeRoom = this.getSafeRoom()
     this.currentRoom = this.startRoom
     this.visitedRooms = [this.startRoom]
 
@@ -116,6 +116,17 @@ export default class DungeonScene extends Phaser.Scene {
     )
   }
 
+  getSafeRoom() {
+    if (!(this.dungeonNumber % 4)) {
+      const roomsWithOneDoor = this.otherRooms.filter(r => r.getDoorLocations().length === 1)
+      const safeRoom = roomsWithOneDoor.sort((a, b) => a.width * a.height - b.width * b.height)[0]
+      Phaser.Utils.Array.Remove(this.otherRooms, safeRoom)
+      return safeRoom
+    }
+
+    return null
+  }
+
   prepareMap() {
     // Creating a blank tilemap with dimensions matching the dungeon
     this.tileSize = 16
@@ -144,8 +155,16 @@ export default class DungeonScene extends Phaser.Scene {
       const { x, y, width, height, left, right, top, bottom } = room;
       const doors = room.getDoorLocations();
 
+      let floorTiles = TILES.FLOOR
+      let topWallTiles = TILES.WALL.TOP
+      let topDoorTiles = TILES.DOOR.TOP
+      if (room === this.safeRoom) {
+        floorTiles = TILES.FLOOR_ALT
+        topWallTiles = TILES.WALL.TOP_ALT
+        topDoorTiles = TILES.DOOR.TOP_ALT
+      }
       // Fill the floor
-      this.floorLayer.weightedRandomize(left, top, width, height, TILES.FLOOR);
+      this.floorLayer.weightedRandomize(left, top, width, height, floorTiles)
 
       // Place the room corners tiles
       this.wallLayer.putTileAt(TILES.WALL.TOP_LEFT, left, top, 1, 1);
@@ -155,10 +174,10 @@ export default class DungeonScene extends Phaser.Scene {
 
       // Fill the walls
       // top
-      this.wallLayer.weightedRandomize(left + 1, top, width - 2, 1, TILES.WALL.TOP[0]);
-      this.wallLayer.weightedRandomize(left + 1, top + 1, width - 2, 1, TILES.WALL.TOP[1]);
-      this.wallLayer.weightedRandomize(left + 1, top + 2, width - 2, 1, TILES.WALL.TOP[2]);
-      this.wallLayer.weightedRandomize(left + 1, top + 3, width - 2, 1, TILES.WALL.TOP[3]);
+      this.wallLayer.weightedRandomize(left + 1, top, width - 2, 1, topWallTiles[0]);
+      this.wallLayer.weightedRandomize(left + 1, top + 1, width - 2, 1, topWallTiles[1]);
+      this.wallLayer.weightedRandomize(left + 1, top + 2, width - 2, 1, topWallTiles[2]);
+      this.wallLayer.weightedRandomize(left + 1, top + 3, width - 2, 1, topWallTiles[3]);
       // bottom
       this.wallLayer.weightedRandomize(left + 1, bottom, width - 2, 1, TILES.WALL.BOTTOM);
       // left
@@ -173,7 +192,7 @@ export default class DungeonScene extends Phaser.Scene {
       // Dungeons have rooms that are connected with doors. Each door has an x & y relative to the room's location
       for (var i = 0; i < doors.length; i++) {
         if (doors[i].y === 0) {
-          this.wallLayer.putTilesAt(TILES.DOOR.TOP, x + doors[i].x - 2, y + doors[i].y);
+          this.wallLayer.putTilesAt(topDoorTiles, x + doors[i].x - 2, y + doors[i].y);
         } else if (doors[i].y === room.height - 1) {
           this.wallLayer.putTilesAt(TILES.DOOR.BOTTOM, x + doors[i].x - 2, y + doors[i].y);
         } else if (doors[i].x === 0) {
@@ -189,6 +208,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.wallLayer.forEachTile(tile => {
         if (
           TILES.WALL.TOP[0].find(t => t.index === tile.index) ||
+          TILES.WALL.TOP_ALT[0].find(t => t.index === tile.index) ||
           TILES.WALL.BOTTOM.find(t => t.index === tile.index) ||
           TILES.WALL.LEFT[0].find(t => t.index === tile.index) ||
           TILES.WALL.RIGHT[0].find(t => t.index === tile.index) ||
@@ -274,35 +294,6 @@ export default class DungeonScene extends Phaser.Scene {
         this.matter.add.fromVertices(worldLeft + center.x, worldTop + center.y, rect, this.isStatic)
       }
     })
-
-    // prepare rest room if exists
-    if (this.safeRoom) {
-      this.floorLayer.fill(TILES.FLOOR_LIGHT, this.safeRoom.left + 1, this.safeRoom.top + 1, this.safeRoom.width - 2, this.safeRoom.height - 2);
-      let safeRoomDoor = this.safeRoom.getDoorLocations()[0]
-      if (safeRoomDoor.y === 0) {
-        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.safeRoom.x + safeRoomDoor.x, this.safeRoom.y);
-        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.safeRoom.x + safeRoomDoor.x, this.safeRoom.y - 1);
-        this.stuffLayer.putTileAt(TILES.SHRINE.BOTTOM[0], this.safeRoom.centerX, this.safeRoom.bottom);
-        this.stuffLayer.putTileAt(TILES.SHRINE.BOTTOM[1], this.safeRoom.centerX, this.safeRoom.bottom - 1);
-      } else if (safeRoomDoor.y === this.safeRoom.height - 1) {
-        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.safeRoom.x + safeRoomDoor.x, this.safeRoom.y + safeRoomDoor.y);
-        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.Y, this.safeRoom.x + safeRoomDoor.x, this.safeRoom.y + safeRoomDoor.y + 1);
-        this.floorLayer.getTileAt(this.safeRoom.x + safeRoomDoor.x, this.safeRoom.y + safeRoomDoor.y + 1).setFlipY(true)
-        this.stuffLayer.putTileAt(TILES.SHRINE.TOP[0], this.safeRoom.centerX, this.safeRoom.top);
-        this.stuffLayer.putTileAt(TILES.SHRINE.TOP[1], this.safeRoom.centerX, this.safeRoom.top + 1);
-      } else if (safeRoomDoor.x === 0) {
-        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.safeRoom.x, this.safeRoom.y + safeRoomDoor.y);
-        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.safeRoom.x - 1, this.safeRoom.y + safeRoomDoor.y);
-        this.floorLayer.getTileAt(this.safeRoom.x - 1, this.safeRoom.y + safeRoomDoor.y).setFlipX(true)
-        this.stuffLayer.putTileAt(TILES.SHRINE.RIGHT[0], this.safeRoom.right, this.safeRoom.centerY);
-        this.stuffLayer.putTileAt(TILES.SHRINE.RIGHT[1], this.safeRoom.right - 1, this.safeRoom.centerY);
-      } else if (safeRoomDoor.x === this.safeRoom.width - 1) {
-        this.floorLayer.putTileAt(TILES.FLOOR_LIGHT, this.safeRoom.x + safeRoomDoor.x, this.safeRoom.y + safeRoomDoor.y);
-        this.floorLayer.putTileAt(TILES.LIGHT_ENTRANCE.X, this.safeRoom.x + safeRoomDoor.x + 1, this.safeRoom.y + safeRoomDoor.y);
-        this.stuffLayer.putTileAt(TILES.SHRINE.LEFT[0], this.safeRoom.left, this.safeRoom.centerY);
-        this.stuffLayer.putTileAt(TILES.SHRINE.LEFT[1], this.safeRoom.left + 1, this.safeRoom.centerY);
-      }
-    }
   }
 
   addStairs() {

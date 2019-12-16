@@ -15,6 +15,12 @@ export default {
       [{ index: 127, weight: 1 }, { index: 130, weight: 1 }],
       [{ index: 413, weight: 1 }, { index: 414, weight: 1 }, { index: 415, weight: 1 }]
     ],
+    TOP_ALT: [
+      [{ index: 25, weight: 1 }],
+      [{ index: 62, weight: 1 }, { index: 63, weight: 1 }, { index: 63, weight: 1 }],
+      [{ index: 135, weight: 1 }, { index: 136, weight: 1 }],
+      [{ index: 413, weight: 1 }, { index: 414, weight: 1 }, { index: 415, weight: 1 }]
+    ],
     LEFT: [
       [{ index: 126, weight: 1 }, { index: 237, weight: 5 }],
       [312, [{ index: 238, weight: 1 }, { index: 275, weight: 1 }]]
@@ -35,6 +41,16 @@ export default {
     {index: 853, weight: 1},
     {index: 854, weight: 1}
   ],
+  FLOOR_ALT: [
+    {index: 1480, weight: 5},
+    {index: 1481, weight: 5},
+    {index: 1482, weight: 5},
+    {index: 1483, weight: 5},
+    {index: 1517, weight: 5},
+    {index: 1518, weight: 5},
+    {index: 1519, weight: 1},
+    {index: 1520, weight: 5}
+  ],
   FLOOR_LIGHT: 97,
   SHRINE: {
     TOP: [11, 17],
@@ -44,10 +60,16 @@ export default {
   },
   DOOR: {
     TOP: [
-      [274, 201, 814, 190, 265],
-      [311, 238, 815, 264, 302],
-      [348, 275, 816, 227, 339],
-      [414, 423, 817, 412, 413]
+      [274, 201, -1, 190, 265],
+      [311, 238, -1, 264, 302],
+      [348, 275, -1, 227, 339],
+      [414, 423, -1, 412, 413]
+    ],
+    TOP_ALT: [
+      [23, 201, -1, 190, 23],
+      [60, 238, -1, 264, 60],
+      [134, 275, -1, 227, 134],
+      [414, 423, -1, 412, 413]
     ],
     LEFT: [
       [
@@ -60,7 +82,7 @@ export default {
       ],
       [
         [423],
-        [854],
+        [-1],
         [201]
       ]
     ],
@@ -76,7 +98,7 @@ export default {
       ],
       [
         [412],
-        [854],
+        [-1],
         [190]
       ]
     ]
