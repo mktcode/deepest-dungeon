@@ -9,7 +9,7 @@ export default class Animations {
 
     [0, 1].forEach((slowmo) => {
       const moveFrameRate = slowmo ? 2 : 6
-      const swordFrameRate = slowmo ? 4 : 12
+      const attackFrameRate = slowmo ? 4 : 12
       const slowmoString = slowmo ? '-slowmo' : ''
       anims.create({
         key: "walk-up" + slowmoString,
@@ -62,31 +62,31 @@ export default class Animations {
       anims.create({
         key: "attack-up" + slowmoString,
         frames: anims.generateFrameNumbers("hero", { start: 40, end: 44 }),
-        frameRate: moveFrameRate,
+        frameRate: attackFrameRate,
         repeat: 0
       });
       anims.create({
         key: "attack-down" + slowmoString,
         frames: anims.generateFrameNumbers("hero", { start: 55, end: 59 }),
-        frameRate: moveFrameRate,
+        frameRate: attackFrameRate,
         repeat: 0
       });
       anims.create({
         key: "attack-left" + slowmoString,
         frames: anims.generateFrameNumbers("hero", { start: 45, end: 49 }),
-        frameRate: moveFrameRate,
+        frameRate: attackFrameRate,
         repeat: 0
       });
       anims.create({
         key: "attack-right" + slowmoString,
         frames: anims.generateFrameNumbers("hero", { start: 50, end: 54 }),
-        frameRate: moveFrameRate,
+        frameRate: attackFrameRate,
         repeat: 0
       });
       anims.create({
         key: "sword-up" + slowmoString,
         frames: anims.generateFrameNumbers("heroSword", { start: 0, end: 4 }),
-        frameRate: swordFrameRate,
+        frameRate: attackFrameRate,
         repeat: 0,
         hideOnComplete: true,
         showOnStart: true
@@ -94,7 +94,7 @@ export default class Animations {
       anims.create({
         key: "sword-down" + slowmoString,
         frames: anims.generateFrameNumbers("heroSword", { start: 15, end: 19 }),
-        frameRate: swordFrameRate,
+        frameRate: attackFrameRate,
         repeat: 0,
         hideOnComplete: true,
         showOnStart: true
@@ -102,7 +102,7 @@ export default class Animations {
       anims.create({
         key: "sword-left" + slowmoString,
         frames: anims.generateFrameNumbers("heroSword", { start: 5, end: 9 }),
-        frameRate: swordFrameRate,
+        frameRate: attackFrameRate,
         repeat: 0,
         hideOnComplete: true,
         showOnStart: true
@@ -110,7 +110,7 @@ export default class Animations {
       anims.create({
         key: "sword-right" + slowmoString,
         frames: anims.generateFrameNumbers("heroSword", { start: 10, end: 14 }),
-        frameRate: swordFrameRate,
+        frameRate: attackFrameRate,
         repeat: 0,
         hideOnComplete: true,
         showOnStart: true
