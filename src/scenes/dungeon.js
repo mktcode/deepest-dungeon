@@ -715,9 +715,9 @@ export default class DungeonScene extends Phaser.Scene {
   addTimebomb() {
     if (this.dungeonNumber >= 11) {
       this.timebombRoom = this.dungeon.r.randomPick(this.otherRooms)
-      this.timebomb = this.matter.add.rectangle(this.tileToWorldX(this.timebombRoom.centerX), this.tileToWorldY(this.timebombRoom.centerY), 8, 8, 0xffffff).setDepth(6)
+      this.timebomb = this.matter.add.image(this.tileToWorldX(this.timebombRoom.centerX), this.tileToWorldY(this.timebombRoom.centerY), 'particle', 0).setDepth(6)
       // this.physics.add.collider(this.timebomb, this.wallLayer)
-      this.timebombParticles = this.particle.createEmitter({
+      this.timebombParticles = this.interactionParticle.createEmitter({
         blendMode: 'SCREEN',
         scale: { start: 0.5, end: 1.5 },
         alpha: { start: 1, end: 0 },
