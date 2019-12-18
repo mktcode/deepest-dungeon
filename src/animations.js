@@ -8,112 +8,200 @@ export default class Animations {
     });
 
     [0, 1].forEach((slowmo) => {
-      const moveFrameRate = slowmo ? 2 : 6
-      const attackFrameRate = slowmo ? 4 : 12
+      const moveFrameRate = slowmo ? 6 : 25
+      const attackFrameRate = slowmo ? 6 : 25
       const slowmoString = slowmo ? '-slowmo' : ''
       anims.create({
+        key: "idle-up" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 306, end: 319 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "idle-up-left" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 289, end: 302 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "idle-up-right" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 272, end: 285 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "idle-down" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 391, end: 404 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "idle-down-left" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 374, end: 387 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "idle-down-right" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 357, end: 370 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "idle-left" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 340, end: 353 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "idle-right" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 323, end: 336 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
         key: "walk-up" + slowmoString,
-        frames: anims.generateFrameNumbers("hero", { start: 10, end: 13 }),
+        frames: anims.generateFrameNumbers("hero", { start: 34, end: 49 }),
         frameRate: moveFrameRate,
         repeat: -1
       });
       anims.create({
         key: "walk-up-left" + slowmoString,
-        frames: anims.generateFrameNumbers("hero", { start: 5, end: 8 }),
+        frames: anims.generateFrameNumbers("hero", { start: 17, end: 32 }),
         frameRate: moveFrameRate,
         repeat: -1
       });
       anims.create({
         key: "walk-up-right" + slowmoString,
-        frames: anims.generateFrameNumbers("hero", { start: 0, end: 3 }),
+        frames: anims.generateFrameNumbers("hero", { start: 0, end: 15 }),
         frameRate: moveFrameRate,
         repeat: -1
       });
       anims.create({
         key: "walk-down" + slowmoString,
-        frames: anims.generateFrameNumbers("hero", { start: 35, end: 38 }),
+        frames: anims.generateFrameNumbers("hero", { start: 119, end: 134 }),
         frameRate: moveFrameRate,
         repeat: -1
       });
       anims.create({
         key: "walk-down-left" + slowmoString,
-        frames: anims.generateFrameNumbers("hero", { start: 30, end: 33 }),
+        frames: anims.generateFrameNumbers("hero", { start: 102, end: 117 }),
         frameRate: moveFrameRate,
         repeat: -1
       });
       anims.create({
         key: "walk-down-right" + slowmoString,
-        frames: anims.generateFrameNumbers("hero", { start: 25, end: 28 }),
+        frames: anims.generateFrameNumbers("hero", { start: 85, end: 100 }),
         frameRate: moveFrameRate,
         repeat: -1
       });
       anims.create({
         key: "walk-left" + slowmoString,
-        frames: anims.generateFrameNumbers("hero", { start: 20, end: 23 }),
+        frames: anims.generateFrameNumbers("hero", { start: 68, end: 83 }),
         frameRate: moveFrameRate,
         repeat: -1
       });
       anims.create({
         key: "walk-right" + slowmoString,
-        frames: anims.generateFrameNumbers("hero", { start: 15, end: 18 }),
+        frames: anims.generateFrameNumbers("hero", { start: 51, end: 66 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "run-up" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 170, end: 180 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "run-up-left" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 153, end: 163 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "run-up-right" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 136, end: 146 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "run-down" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 255, end: 265 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "run-down-left" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 238, end: 248 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "run-down-right" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 221, end: 231 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "run-left" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 204, end: 214 }),
+        frameRate: moveFrameRate,
+        repeat: -1
+      });
+      anims.create({
+        key: "run-right" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 187, end: 197 }),
         frameRate: moveFrameRate,
         repeat: -1
       });
       anims.create({
         key: "attack-up" + slowmoString,
-        frames: anims.generateFrameNumbers("hero", { start: 40, end: 44 }),
+        frames: anims.generateFrameNumbers("hero", { start: 442, end: 458 }),
+        frameRate: attackFrameRate,
+        repeat: 0
+      });
+      anims.create({
+        key: "attack-up-left" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 425, end: 441 }),
+        frameRate: attackFrameRate,
+        repeat: 0
+      });
+      anims.create({
+        key: "attack-up-right" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 408, end: 424 }),
         frameRate: attackFrameRate,
         repeat: 0
       });
       anims.create({
         key: "attack-down" + slowmoString,
-        frames: anims.generateFrameNumbers("hero", { start: 55, end: 59 }),
+        frames: anims.generateFrameNumbers("hero", { start: 527, end: 543 }),
+        frameRate: attackFrameRate,
+        repeat: 0
+      });
+      anims.create({
+        key: "attack-down-right" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 493, end: 509 }),
+        frameRate: attackFrameRate,
+        repeat: 0
+      });
+      anims.create({
+        key: "attack-down-left" + slowmoString,
+        frames: anims.generateFrameNumbers("hero", { start: 510, end: 526 }),
         frameRate: attackFrameRate,
         repeat: 0
       });
       anims.create({
         key: "attack-left" + slowmoString,
-        frames: anims.generateFrameNumbers("hero", { start: 45, end: 49 }),
+        frames: anims.generateFrameNumbers("hero", { start: 476, end: 492 }),
         frameRate: attackFrameRate,
         repeat: 0
       });
       anims.create({
         key: "attack-right" + slowmoString,
-        frames: anims.generateFrameNumbers("hero", { start: 50, end: 54 }),
+        frames: anims.generateFrameNumbers("hero", { start: 459, end: 475 }),
         frameRate: attackFrameRate,
         repeat: 0
-      });
-      anims.create({
-        key: "sword-up" + slowmoString,
-        frames: anims.generateFrameNumbers("heroSword", { start: 0, end: 4 }),
-        frameRate: attackFrameRate,
-        repeat: 0,
-        hideOnComplete: true,
-        showOnStart: true
-      });
-      anims.create({
-        key: "sword-down" + slowmoString,
-        frames: anims.generateFrameNumbers("heroSword", { start: 15, end: 19 }),
-        frameRate: attackFrameRate,
-        repeat: 0,
-        hideOnComplete: true,
-        showOnStart: true
-      });
-      anims.create({
-        key: "sword-left" + slowmoString,
-        frames: anims.generateFrameNumbers("heroSword", { start: 5, end: 9 }),
-        frameRate: attackFrameRate,
-        repeat: 0,
-        hideOnComplete: true,
-        showOnStart: true
-      });
-      anims.create({
-        key: "sword-right" + slowmoString,
-        frames: anims.generateFrameNumbers("heroSword", { start: 10, end: 14 }),
-        frameRate: attackFrameRate,
-        repeat: 0,
-        hideOnComplete: true,
-        showOnStart: true
       });
       anims.create({
         key: "levelUp",

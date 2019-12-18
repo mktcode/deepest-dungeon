@@ -91,8 +91,8 @@ export default class Hero {
       "hero",
       hero,
       {
-        frameWidth: 32,
-        frameHeight: 32
+        frameWidth: 125,
+        frameHeight: 125
       }
     );
     scene.load.spritesheet(
@@ -201,7 +201,7 @@ export default class Hero {
 
   addToScene(x, y) {
     this.sprites.hero = this.scene.matter.add
-      .sprite(x, y, 'hero', 35)
+      .sprite(x, y, 'hero', 132)
       .setRectangle(8, 8)
       .setFixedRotation()
       .setOrigin(0.5, 0.7)
@@ -218,6 +218,15 @@ export default class Hero {
     this.sprites.sword.setX(x + 9).setY(y + 6)
   }
 
+  idle(direction) {
+    if (!direction) {
+      direction = this.lastDirection
+    }
+    this.setSwordHitBox(direction)
+    let slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
+    this.sprites.hero.anims.play('idle-' + direction + slowmo, true)
+  }
+
   walk(direction) {
     if (!direction) {
       direction = this.lastDirection
@@ -227,13 +236,21 @@ export default class Hero {
     this.sprites.hero.anims.play('walk-' + direction + slowmo, true)
   }
 
+  run(direction) {
+    if (!direction) {
+      direction = this.lastDirection
+    }
+    this.setSwordHitBox(direction)
+    let slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
+    this.sprites.hero.anims.play('run-' + direction + slowmo, true)
+  }
+
   attack(direction) {
     if (!direction) {
       direction = this.lastDirection
     }
     let slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
     this.sprites.hero.anims.play('attack-' + direction + slowmo, true)
-    this.sprites.sword.anims.play('sword-' + direction + slowmo, true)
     return this.scene.anims.get('attack-' + direction + slowmo)
   }
 
@@ -294,10 +311,6 @@ export default class Hero {
     })
   }
 
-  stop() {
-    this.sprites.hero.anims.stop()
-  }
-
   freeze() {
     this.sprites.hero.body.moves = false
   }
@@ -335,7 +348,9 @@ export default class Hero {
       // Stop any previous movement from the last frame
       this.sprites.hero.setVelocity(0);
 
-      this.baseSpeed = this.scene.narrator.slowmo ? 0.5 : 2
+      const runOrWalk = this.keys.shift.isDown ? 'run' : 'walk'
+      this.baseSpeed = runOrWalk === 'run' ? 2.5 : 1.5
+      if (this.attacking) this.baseSpeed *= 0.1
 
       if (this.joystick.force >= this.joystick.touchCursor.forceMin) {
         // this.scene.physics.velocityFromRotation(
@@ -370,35 +385,33 @@ export default class Hero {
         if (this.isDirectionKeyDown('up')) {
           this.lastDirection = 'up'
           if (this.isDirectionKeyDown('left')) {
-            this.walk("up-left");
+            this.lastDirection = 'up-left'
+            this[runOrWalk]("up-left")
           } else if (this.isDirectionKeyDown('right')) {
-            this.walk("up-right");
+            this.lastDirection = 'up-right'
+            this[runOrWalk]("up-right")
           } else {
-            this.walk("up");
+            this[runOrWalk]("up")
           }
         } else if (this.isDirectionKeyDown('down')) {
           this.lastDirection = 'down'
           if (this.isDirectionKeyDown('left')) {
-            this.walk("down-left");
+            this.lastDirection = 'down-left'
+            this[runOrWalk]("down-left")
           } else if (this.isDirectionKeyDown('right')) {
-            this.walk("down-right");
+            this.lastDirection = 'down-right'
+            this[runOrWalk]("down-right")
           } else {
-            this.walk("down");
+            this[runOrWalk]("down")
           }
         } else if (this.isDirectionKeyDown('left')) {
           this.lastDirection = 'left'
-          this.walk("left");
+          this[runOrWalk]("left")
         } else if (this.isDirectionKeyDown('right')) {
           this.lastDirection = 'right'
-          this.walk("right");
+          this[runOrWalk]("right")
         } else {
-          this.stop()
-
-          // If we were moving & now we're not, then pick a single idle frame to use
-          if (this.lastDirection === 'up') this.sprites.hero.setTexture("hero", 12);
-          else if (this.lastDirection === 'down') this.sprites.hero.setTexture("hero", 37);
-          else if (this.lastDirection === 'left') this.sprites.hero.setTexture("hero", 20);
-          else if (this.lastDirection === 'right') this.sprites.hero.setTexture("hero", 15);
+          this.idle()
         }
       }
     }
