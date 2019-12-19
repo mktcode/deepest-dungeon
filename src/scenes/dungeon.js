@@ -313,7 +313,9 @@ export default class DungeonScene extends Phaser.Scene {
     // collision
     this.matter.add.rectangle(x, y, width, height, this.isStatic)
     // particle emitter
+    let lightsCount = 0
     this.stairParticles = this.interactionParticle.createEmitter({
+      on: false,
       x: x - width / 2,
       y: y - height / 2,
       blendMode: 'SCREEN',
@@ -329,13 +331,20 @@ export default class DungeonScene extends Phaser.Scene {
         quantity: 40
       },
       emitCallback: (particle) => {
-        this.lightManager.lights.push({
-          sprite: particle,
-          intensity: () => 0.3
-        })
+        // max 10 lights, at more or less random positions
+        if (lightsCount < 10 && !(Phaser.Math.Between(1, 10) % 4)) {
+          lightsCount++
+          this.lightManager.lights.push({
+            sprite: particle,
+            intensity: () => 1
+          })
+        }
       },
       deathCallback: (particle) => {
-        this.lightManager.removeLight(particle)
+        this.time.delayedCall(1000, () => {
+          lightsCount = Math.max(0, lightsCount - 1)
+          this.lightManager.removeLight(particle)
+        })
       }
     })
 
@@ -717,6 +726,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.timebombRoom = this.dungeon.r.randomPick(this.otherRooms)
       this.timebomb = this.matter.add.image(this.tileToWorldX(this.timebombRoom.centerX), this.tileToWorldY(this.timebombRoom.centerY), 'particle', 0).setDepth(6)
       // this.physics.add.collider(this.timebomb, this.wallLayer)
+      let lightsCount = 0
       this.timebombParticles = this.interactionParticle.createEmitter({
         blendMode: 'SCREEN',
         scale: { start: 0.5, end: 1.5 },
@@ -726,13 +736,20 @@ export default class DungeonScene extends Phaser.Scene {
         frequency: 50,
         lifespan: 2000,
         emitCallback: (particle) => {
-          this.lightManager.lights.push({
-            sprite: particle,
-            intensity: () => Math.max(0, particle.alpha - 0.5)
-          })
+          // max 10 lights, at more or less random positions
+          if (lightsCount < 10 && !(Phaser.Math.Between(1, 10) % 4)) {
+            lightsCount++
+            this.lightManager.lights.push({
+              sprite: particle,
+              intensity: () => Math.max(0, particle.alpha - 0.5)
+            })
+          }
         },
         deathCallback: (particle) => {
-          this.lightManager.removeLight(particle)
+          this.time.delayedCall(1000, () => {
+            lightsCount = Math.max(0, lightsCount - 1)
+            this.lightManager.removeLight(particle)
+          })
         }
       })
 
@@ -752,13 +769,20 @@ export default class DungeonScene extends Phaser.Scene {
             frequency: 50,
             lifespan: 2000,
             emitCallback: (particle) => {
-              this.lightManager.lights.push({
-                sprite: particle,
-                intensity: () => Math.max(0, particle.alpha - 0.5)
-              })
+              // max 10 lights, at more or less random positions
+              if (lightsCount < 10 && !(Phaser.Math.Between(1, 10) % 4)) {
+                lightsCount++
+                this.lightManager.lights.push({
+                  sprite: particle,
+                  intensity: () => Math.max(0, particle.alpha - 0.5)
+                })
+              }
             },
             deathCallback: (particle) => {
-              this.lightManager.removeLight(particle)
+              this.time.delayedCall(1000, () => {
+                lightsCount = Math.max(0, lightsCount - 1)
+                this.lightManager.removeLight(particle)
+              })
             }
           })
           this.heroParticles.startFollow(this.hero.sprites.hero)
