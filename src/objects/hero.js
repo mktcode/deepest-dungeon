@@ -202,9 +202,9 @@ export default class Hero {
   addToScene(x, y) {
     this.sprites.hero = this.scene.matter.add
       .sprite(x, y, 'hero', 132)
-      .setRectangle(8, 8)
+      .setRectangle(16, 16)
       .setFixedRotation()
-      .setOrigin(0.5, 0.7)
+      .setOrigin(0.5, 0.55)
       .setDepth(6);
     this.scene.cameras.main.startFollow(this.sprites.hero, true, 0.1, 0.1)
 
