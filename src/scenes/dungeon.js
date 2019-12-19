@@ -487,6 +487,7 @@ export default class DungeonScene extends Phaser.Scene {
 
           this.add.rectangle(x, y, 8, 8, 0x000000).setDepth(6)
 
+          let lightsCount = 0
           const fireTrap = this.fireParticle.createEmitter({
             x: x,
             y: y,
@@ -502,13 +503,20 @@ export default class DungeonScene extends Phaser.Scene {
             lifespan: 1000,
             angle: angle,
             emitCallback: (particle) => {
-              this.lightManager.lights.push({
-                sprite: particle,
-                intensity: () => Math.max(0.5, particle.alpha)
-              })
+              // max 10 lights, at more or less random positions
+              if (lightsCount < 10 && !(Phaser.Math.Between(1, 10) % 4)) {
+                lightsCount++
+                this.lightManager.lights.push({
+                  sprite: particle,
+                  intensity: () => 1
+                })
+              }
             },
             deathCallback: (particle) => {
-              this.lightManager.removeLight(particle)
+              this.time.delayedCall(1000, () => {
+                lightsCount = Math.max(0, lightsCount - 1)
+                this.lightManager.removeLight(particle)
+              })
             }
           })
 
