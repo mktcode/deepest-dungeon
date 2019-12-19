@@ -4,7 +4,6 @@ import TILES from "../tile-mapping.js";
 
 // assets
 import hero from "../assets/hero.png";
-import heroSword from "../assets/hero-sword.png";
 import levelUp from "../assets/levelUp.png";
 import xpDust from "../assets/xp-dust.png";
 
@@ -94,7 +93,7 @@ export default class Hero {
         frameWidth: 125,
         frameHeight: 125
       }
-    );
+    )
     scene.load.spritesheet(
       "levelUp",
       levelUp,
@@ -102,15 +101,7 @@ export default class Hero {
         frameWidth: 64,
         frameHeight: 64
       }
-    );
-    scene.load.spritesheet(
-      "heroSword",
-      heroSword,
-      {
-        frameWidth: 64,
-        frameHeight: 64
-      }
-    );
+    )
     scene.load.spritesheet(
       "xpDust",
       xpDust,
@@ -118,7 +109,7 @@ export default class Hero {
         frameWidth: 52,
         frameHeight: 22
       }
-    );
+    )
   }
 
   static getLevelByXp(xp) {
@@ -209,8 +200,6 @@ export default class Hero {
     this.scene.cameras.main.startFollow(this.sprites.hero, true, 0.1, 0.1)
 
     this.sprites.levelUp = this.scene.matter.add.sprite(x, y, "levelUp", 0).setDepth(6);
-    this.sprites.sword = this.scene.matter.add.sprite(x, y, "heroSword", 0).setDepth(6);
-    this.setSwordHitBox('down')
   }
 
   jumpTo(x, y) {
@@ -222,7 +211,6 @@ export default class Hero {
     if (!direction) {
       direction = this.lastDirection
     }
-    this.setSwordHitBox(direction)
     let slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
     this.sprites.hero.anims.play('idle-' + direction + slowmo, true)
   }
@@ -231,7 +219,6 @@ export default class Hero {
     if (!direction) {
       direction = this.lastDirection
     }
-    this.setSwordHitBox(direction)
     let slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
     this.sprites.hero.anims.play('walk-' + direction + slowmo, true)
   }
@@ -240,7 +227,6 @@ export default class Hero {
     if (!direction) {
       direction = this.lastDirection
     }
-    this.setSwordHitBox(direction)
     let slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
     this.sprites.hero.anims.play('run-' + direction + slowmo, true)
   }
@@ -307,26 +293,6 @@ export default class Hero {
 
   unfreeze() {
     this.sprites.hero.body.moves = true
-  }
-
-  setSwordHitBox(direction) {
-    // if (direction === 'down') {
-    //   this.sprites.sword.setSize(50, 30).setOffset(40, 87)
-    // } else if (direction === 'down-left') {
-    //   this.sprites.sword.setSize(50, 30).setOffset(25, 87)
-    // } else if (direction === 'down-right') {
-    //   this.sprites.sword.setSize(50, 30).setOffset(55, 87)
-    // } else if (direction === 'up') {
-    //   this.sprites.sword.setSize(50, 30).setOffset(40, 28)
-    // } else if (direction === 'up-left') {
-    //   this.sprites.sword.setSize(50, 30).setOffset(25, 28)
-    // } else if (direction === 'up-right') {
-    //   this.sprites.sword.setSize(50, 30).setOffset(55, 28)
-    // } else if (direction === 'left') {
-    //   this.sprites.sword.setSize(30, 50).setOffset(24, 47)
-    // } else if (direction === 'right') {
-    //   this.sprites.sword.setSize(30, 50).setOffset(76, 47)
-    // }
   }
 
   isDirectionKeyDown(direction) {
