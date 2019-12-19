@@ -21,7 +21,7 @@ export default class Enemy {
     if (this.type === 'deamon') {
       this.hp = 10
       this.xp = 10
-      this.sprite = this.dungeon.matter.add.sprite(x, y, 'deamon', 1)
+      this.sprite = this.dungeon.matter.add.sprite(x, y, 'deamon', 1).setFixedRotation()
       this.sprite.anims.play("deamon-idle")
       this.dungeon.lightManager.lights.push({
         sprite: this.sprite,
@@ -31,7 +31,7 @@ export default class Enemy {
     if (this.type === 'snake') {
       this.hp = 3
       this.xp = 3
-      this.sprite = this.dungeon.matter.add.sprite(x, y, "snake", 0)
+      this.sprite = this.dungeon.matter.add.sprite(x, y, "snake", 0).setFixedRotation()
       this.sprite.anims.play("snake-walk")
       this.dungeon.lightManager.lights.push({
         sprite: this.sprite,
