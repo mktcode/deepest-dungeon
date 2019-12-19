@@ -68,7 +68,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.registry.set('currentDungeon', this.dungeonNumber)
     this.interactionParticle = this.add.particles('particle').setDepth(7)
     this.fireParticle = this.add.particles('particle').setDepth(7)
-    // this.matter.world.createDebugGraphic()
+    this.matter.world.createDebugGraphic()
 
     this.prepareMap()
     this.prepareRooms()
@@ -794,7 +794,7 @@ export default class DungeonScene extends Phaser.Scene {
             }
           })
           this.heroParticles.startFollow(this.hero.sprites.hero)
-          this.startCountdown(60)
+          this.startCountdown(10)
         }
       })
 
@@ -920,7 +920,7 @@ export default class DungeonScene extends Phaser.Scene {
           this.tileToWorldY(tile[1]) + 8,
           "path",
           0
-        ).setDepth(6))
+        ).setDepth(5).setAlpha(0.5))
       })
       if (this.pathSprites.length) {
         this.scene.get('Gui').startPathfinderCooldown()
