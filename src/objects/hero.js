@@ -262,16 +262,6 @@ export default class Hero {
     this.scene.flashSprite(hero)
     this.scene.popupDamageNumber(damage, hero, '#CC0000')
 
-    if (hero.body.touching.up) {
-      hero.body.setVelocityY(300)
-    } else if (hero.body.touching.down) {
-      hero.body.setVelocityY(-300)
-    } else if (hero.body.touching.left) {
-      hero.body.setVelocityX(300)
-    } else if (hero.body.touching.right) {
-      hero.body.setVelocityX(-300)
-    }
-
     if (heroHp <= 0) {
       this.dead = true
       this.scene.cameras.main.fadeOut(1000, 0, 0, 0)
