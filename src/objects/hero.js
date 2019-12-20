@@ -181,9 +181,9 @@ export default class Hero {
     }
 
     const tiles = this.scene.stuffLayer.getTilesWithin(
-      this.scene.worldToTileX(this.sprites.hero.x) - 1,
-      this.scene.worldToTileY(this.sprites.hero.y) - 1,
-      3, 3
+      this.scene.worldToTileX(this.sprites.hero.x) - 2,
+      this.scene.worldToTileY(this.sprites.hero.y) - 2,
+      5, 5
     )
 
     return tiles.find(tile => tileNumbers.includes(tile.index))
