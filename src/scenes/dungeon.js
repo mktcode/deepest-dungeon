@@ -66,8 +66,9 @@ export default class DungeonScene extends Phaser.Scene {
     this.cameras.main.fadeIn(250, 0, 0, 0)
     this.narrator = new Narrator(this)
     this.registry.set('currentDungeon', this.dungeonNumber)
-    this.interactionParticle = this.add.particles('particle').setDepth(7)
+    this.interactionParticle = this.add.particles('particle').setDepth(5)
     this.fireParticle = this.add.particles('particle').setDepth(7)
+    this.fireParticleAbove = this.add.particles('particle').setDepth(10)
     // this.matter.world.createDebugGraphic()
 
     this.prepareMap()
@@ -144,7 +145,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.floorLayer = this.map.createBlankDynamicLayer("Floor", this.tileset).fill(TILES.BLANK).setDepth(1);
     this.wallLayer = this.map.createBlankDynamicLayer("Wall", this.tileset).fill(TILES.BLANK).setDepth(2);
     this.wallAboveLayer = this.map.createBlankDynamicLayer("WallAbove", this.tileset).fill(TILES.BLANK).setDepth(8);
-    this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset).setDepth(3);
+    this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset).setDepth(9);
     this.shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.SHADOW).setDepth(10);
     this.lightManager = new LightManager(this);
 
@@ -439,7 +440,12 @@ export default class DungeonScene extends Phaser.Scene {
   addFireTraps() {
     this.fireTraps = []
     if (this.dungeonNumber > 5) {
-      const allowedTiles = [TILES.WALL.TOP, TILES.WALL.BOTTOM, TILES.WALL.LEFT, TILES.WALL.RIGHT]
+      const allowedTiles = [
+        ...TILES.WALL.TOP[2].map(t => t.index),
+        ...TILES.WALL.BOTTOM.map(t => t.index),
+        ...TILES.WALL.LEFT[0].map(t => t.index),
+        ...TILES.WALL.RIGHT[0].map(t => t.index)
+      ]
       this.otherRooms.forEach((room, i) => {
         if (i % 3) return
         const count = this.dungeon.r.randomInteger(1, 4)
@@ -451,60 +457,64 @@ export default class DungeonScene extends Phaser.Scene {
 
         walls.forEach(wall => {
           let x, y, angle
+          let fireParticle = this.fireParticleAbove
           if (wall === 'top') {
-            const tiles = this.wallLayer.getTilesWithin(room.left, room.top, room.width, 1).filter(t => allowedTiles.includes(t.index))
+            const tiles = this.wallLayer.getTilesWithin(room.left, room.top + 2, room.width, 1).filter(t => allowedTiles.includes(t.index))
             if (tiles.length) {
               const tile = tiles[this.dungeon.r.randomInteger(0, tiles.length -1)]
               x = this.tileToWorldX(tile.x) + this.tileSize / 2
-              y = this.tileToWorldY(tile.y) + this.tileSize / 2
+              y = this.tileToWorldY(tile.y) + this.tileSize / 2 - 3
               angle = { min: 80, max: 100}
+              this.stuffLayer.putTilesAt(TILES.PILLAR.TOP, tile.x - 1, tile.y - 2)
             }
           } else if (wall === 'bottom') {
-            const tiles = this.wallLayer.getTilesWithin(room.left, room.bottom, room.width, 1).filter(t => allowedTiles.includes(t.index))
+            const tiles = this.wallAboveLayer.getTilesWithin(room.left, room.bottom, room.width, 1).filter(t => allowedTiles.includes(t.index))
             if (tiles.length) {
               const tile = tiles[this.dungeon.r.randomInteger(0, tiles.length -1)]
               x = this.tileToWorldX(tile.x) + this.tileSize / 2
               y = this.tileToWorldY(tile.y) + this.tileSize / 2
               angle = { min: -80, max: -100}
+              fireParticle = this.fireParticle
+              this.stuffLayer.putTilesAt(TILES.PILLAR.BOTTOM, tile.x, tile.y - 1)
             }
           } else if (wall === 'left') {
-            const tiles = this.wallLayer.getTilesWithin(room.left, room.top, 1, room.height).filter(t => allowedTiles.includes(t.index))
+            const tiles = this.wallAboveLayer.getTilesWithin(room.left, room.top + 4, 1, room.height - 4).filter(t => allowedTiles.includes(t.index))
             if (tiles.length) {
               const tile = tiles[this.dungeon.r.randomInteger(0, tiles.length -1)]
-              x = this.tileToWorldX(tile.x) + this.tileSize / 2
-              y = this.tileToWorldY(tile.y) + this.tileSize / 2
+              x = this.tileToWorldX(tile.x) + this.tileSize * 1.5 - 3
+              y = this.tileToWorldY(tile.y) + this.tileSize / 2 - 3
               angle = { min: -10, max: 10}
+              this.stuffLayer.putTilesAt(TILES.PILLAR.LEFT, tile.x, tile.y - 2)
             }
           } else if (wall === 'right') {
-            const tiles = this.wallLayer.getTilesWithin(room.right, room.top, 1, room.height).filter(t => allowedTiles.includes(t.index))
+            const tiles = this.wallAboveLayer.getTilesWithin(room.right, room.top + 4, 1, room.height - 4).filter(t => allowedTiles.includes(t.index))
             if (tiles.length) {
               const tile = tiles[this.dungeon.r.randomInteger(0, tiles.length -1)]
-              x = this.tileToWorldX(tile.x) + this.tileSize / 2
-              y = this.tileToWorldY(tile.y) + this.tileSize / 2
+              x = this.tileToWorldX(tile.x) - this.tileSize / 2 + 3
+              y = this.tileToWorldY(tile.y) + this.tileSize / 2 - 3
               angle = { min: -190, max: -170}
+              this.stuffLayer.putTilesAt(TILES.PILLAR.RIGHT, tile.x - 1, tile.y - 2)
             }
           }
 
-          this.add.rectangle(x, y, 8, 8, 0x000000).setDepth(6)
-
           let lightsCount = 0
-          const fireTrap = this.fireParticle.createEmitter({
+          const fireTrap = fireParticle.createEmitter({
             x: x,
             y: y,
             on: false,
             tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
             blendMode: 'SCREEN',
-            scale: { start: 1, end: 3 },
+            scale: { start: 0.3, end: 2 },
             alpha: { start: 1, end: 0 },
             rotate: { min: 0, max: 180 },
             speed: 150,
-            quantity: 9,
-            frequency: 60,
-            lifespan: 1000,
+            quantity: 18,
+            frequency: 30,
+            lifespan: { min: 500, max: 1000 },
             angle: angle,
             emitCallback: (particle) => {
               // max 10 lights, at more or less random positions
-              if (lightsCount < 10 && !(Phaser.Math.Between(1, 10) % 4)) {
+              if (lightsCount < 3 && !(Phaser.Math.Between(1, 10) % 4)) {
                 lightsCount++
                 this.lightManager.lights.push({
                   sprite: particle,
@@ -520,11 +530,13 @@ export default class DungeonScene extends Phaser.Scene {
             }
           })
 
+          const interval = 1000 * this.dungeon.r.randomInteger(2, 5)
+          const duration = Math.min(interval, 1000 * this.dungeon.r.randomInteger(2, 5)) - 1000
           this.time.addEvent({
-            delay: 2000 * this.dungeon.r.randomInteger(1, 5),
+            delay: interval,
             callback: () => {
               fireTrap.start()
-              this.time.delayedCall(1000, () => {
+              this.time.delayedCall(duration, () => {
                 fireTrap.stop()
               })
             },
@@ -809,7 +821,7 @@ export default class DungeonScene extends Phaser.Scene {
     const distance = vector.distance({x: this.hero.sprites.hero.body.x, y: this.hero.sprites.hero.body.y})
     if (this.currentRoom === this.safeRoom) {
       this.timebombFollows = false
-      this.timebomb.body.setVelocity(0)
+      this.timebomb.setVelocity(0)
     } else if (this.timebombRoom === this.currentRoom && distance < 200) {
       this.timebombFollows = true
     }
