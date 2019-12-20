@@ -74,6 +74,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.prepareMap()
     this.prepareRooms()
     this.addStairs()
+    this.addShrine()
     this.addHero()
     this.addEnemies()
     this.addItems()
@@ -145,7 +146,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.floorLayer = this.map.createBlankDynamicLayer("Floor", this.tileset).fill(TILES.BLANK).setDepth(1);
     this.wallLayer = this.map.createBlankDynamicLayer("Wall", this.tileset).fill(TILES.BLANK).setDepth(2);
     this.wallAboveLayer = this.map.createBlankDynamicLayer("WallAbove", this.tileset).fill(TILES.BLANK).setDepth(8);
-    this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset).setDepth(9);
+    this.stuffLayer = this.map.createBlankDynamicLayer("Stuff", this.tileset).setDepth(5);
+    this.stuffLayerAbove = this.map.createBlankDynamicLayer("StuffAbove", this.tileset).setDepth(9);
     this.shadowLayer = this.map.createBlankDynamicLayer("Shadow", this.tileset).fill(TILES.SHADOW).setDepth(10);
     this.lightManager = new LightManager(this);
 
@@ -380,6 +382,77 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
+  addShrine() {
+    if (this.safeRoom) {
+      const x = this.tileToWorldX(this.safeRoom.centerX)
+      const y = this.tileToWorldY(this.safeRoom.centerY + 1) + this.tileSize / 2 - 4
+      const width = this.tileSize * 2 + 10
+      const height = this.tileSize * 2 + 9
+
+      this.stuffLayer.putTilesAt(TILES.SHRINE, this.safeRoom.centerX - 1, this.safeRoom.centerY)
+      this.matter.add.rectangle(x, y, width, height + 10, this.isStatic)
+
+      // particle emitter
+      let lightsCount = 0
+      this.shrineParticles = this.interactionParticle.createEmitter({
+        on: false,
+        x: x - width / 2 - this.tileSize / 2,
+        y: y + 5,
+        blendMode: 'SCREEN',
+        scale: { start: 0, end: 0.75 },
+        alpha: { start: 1, end: 0 },
+        speed: 10,
+        quantity: 40,
+        frequency: 200,
+        lifespan: 500,
+        emitZone: {
+          source: new Phaser.Geom.Rectangle(0, 0, width, height / 2),
+          type: 'edge',
+          quantity: 40
+        },
+        emitCallback: (particle) => {
+          // max 10 lights, at more or less random positions
+          if (lightsCount < 10 && !(Phaser.Math.Between(1, 10) % 4)) {
+            lightsCount++
+            this.lightManager.lights.push({
+              sprite: particle,
+              intensity: () => 1
+            })
+          }
+        },
+        deathCallback: (particle) => {
+          this.time.delayedCall(1000, () => {
+            lightsCount = Math.max(0, lightsCount - 1)
+            this.lightManager.removeLight(particle)
+          })
+        }
+      })
+    }
+  }
+
+  updateShrineParticles() {
+    const tile = this.hero.isNear([
+      TILES.STAIRS.OPEN,
+      ...TILES.SHRINE[0],
+      ...TILES.SHRINE[1],
+      ...TILES.SHRINE[2]
+    ])
+    if (tile) {
+      if (this.shrineParticles.on === false) {
+        this.shrineParticles.start()
+      }
+    } else {
+      this.shrineParticles.stop()
+    }
+  }
+
+  activateSafeRoom() {
+    if (!this.safeRoomActivated) {
+      this.safeRoomActivated = true
+      this.registry.set('minDungeon', this.scene.dungeonNumber)
+    }
+  }
+
   getDimensionsByVertices(vertices) {
     const xValues = vertices.filter((v, i) => !(i % 2))
     const yValues = vertices.filter((v, i) => i % 2)
@@ -475,7 +548,7 @@ export default class DungeonScene extends Phaser.Scene {
               y = this.tileToWorldY(tile.y) + this.tileSize / 2
               angle = { min: -80, max: -100}
               fireParticle = this.fireParticle
-              this.stuffLayer.putTilesAt(TILES.PILLAR.BOTTOM, tile.x, tile.y - 1)
+              this.stuffLayerAbove.putTilesAt(TILES.PILLAR.BOTTOM, tile.x, tile.y - 1)
             }
           } else if (wall === 'left') {
             const tiles = this.wallAboveLayer.getTilesWithin(room.left, room.top + 4, 1, room.height - 4).filter(t => allowedTiles.includes(t.index))
@@ -720,27 +793,6 @@ export default class DungeonScene extends Phaser.Scene {
     });
   }
 
-  updateShrineParticles() {
-    const tile = this.hero.isNear([
-      TILES.STAIRS.OPEN,
-      TILES.SHRINE.TOP[0],
-      TILES.SHRINE.BOTTOM[0],
-      TILES.SHRINE.LEFT[0],
-      TILES.SHRINE.RIGHT[0]
-    ])
-    if (tile) {
-      if (this.interactionParticles.on === false) {
-        this.interactionParticles.setPosition(
-          this.tileToWorldX(tile.x),
-          this.tileToWorldY(tile.y)
-        )
-        this.interactionParticles.start()
-      }
-    } else {
-      this.interactionParticles.stop()
-    }
-  }
-
   addTimebomb() {
     if (this.dungeonNumber >= 11) {
       this.timebombRoom = this.dungeon.r.randomPick(this.otherRooms)
@@ -816,7 +868,6 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   updateTimebomb() {
-    console.log(this.lightManager.getLightsByRoom(this.currentRoom).length)
     if (!this.timebomb || !this.timebomb.active) return
     const vector = new Phaser.Math.Vector2(this.timebomb.x, this.timebomb.y);
     const distance = vector.distance({x: this.hero.sprites.hero.body.x, y: this.hero.sprites.hero.body.y})
@@ -1008,6 +1059,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.enemies.forEach(e => e.update())
     this.setCurrentRoom()
     this.updateStairParticles()
+    this.updateShrineParticles()
     this.lightManager.update()
     this.checkFireTrapCollision()
     this.checkHeroParticlesCollision()

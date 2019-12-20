@@ -22,6 +22,7 @@ export default {
       [{ index: 135, weight: 1 }, { index: 136, weight: 1 }],
       [{ index: 413, weight: 1 }, { index: 414, weight: 1 }, { index: 415, weight: 1 }]
     ],
+    TOP_SAFEROOM_ACTIVATED: 31,
     LEFT: [
       [{ index: 126, weight: 1 }, { index: 237, weight: 5 }],
       [312, [{ index: 238, weight: 1 }, { index: 275, weight: 1 }]]
@@ -76,13 +77,11 @@ export default {
     {index: 1519, weight: 1},
     {index: 1520, weight: 5}
   ],
-  FLOOR_LIGHT: 97,
-  SHRINE: {
-    TOP: [11, 17],
-    BOTTOM: [29, 23],
-    LEFT: [30, 31],
-    RIGHT: [37, 36]
-  },
+  SHRINE: [
+    [1398, 1400],
+    [1435, 1437],
+    [1546, 1548]
+  ],
   DOOR: {
     TOP: [
       [274, 201, -1, 190, 265],

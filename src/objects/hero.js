@@ -159,9 +159,8 @@ export default class Hero {
   }
 
   useShrine() {
-    if (this.isNear([TILES.SHRINE.TOP[0], TILES.SHRINE.BOTTOM[0], TILES.SHRINE.LEFT[0], TILES.SHRINE.RIGHT[0]])) {
-      this.scene.safeRoomActivated = true
-      this.scene.registry.set('minDungeon', this.scene.dungeonNumber)
+    if (this.isNear([...TILES.SHRINE[0], ...TILES.SHRINE[1], ...TILES.SHRINE[2]])) {
+      this.scene.activateSafeRoom()
       this.scene.scene.run('Character')
       this.scene.scene.bringToTop('Character')
     }
@@ -193,7 +192,7 @@ export default class Hero {
   addToScene(x, y) {
     this.sprites.hero = this.scene.matter.add
       .sprite(x, y, 'hero', 132)
-      .setRectangle(16, 16)
+      .setRectangle(16, 24)
       .setFixedRotation()
       .setOrigin(0.5, 0.55)
       .setDepth(6);
