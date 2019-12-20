@@ -204,7 +204,6 @@ export default class Hero {
 
   jumpTo(x, y) {
     this.sprites.hero.setX(x).setY(y)
-    this.sprites.sword.setX(x + 9).setY(y + 6)
   }
 
   idle(direction) {
