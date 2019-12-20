@@ -8,55 +8,56 @@ export default class Animations {
     });
 
     [0, 1].forEach((slowmo) => {
+      const idleFrameRate = slowmo ? 3 : 12
       const moveFrameRate = slowmo ? 6 : 25
-      const attackFrameRate = slowmo ? 6 : 25
+      const attackFrameRate = slowmo ? 9 : 32
       const slowmoString = slowmo ? '-slowmo' : ''
       anims.create({
         key: "idle-up" + slowmoString,
         frames: anims.generateFrameNumbers("hero", { start: 306, end: 319 }),
-        frameRate: moveFrameRate,
+        frameRate: idleFrameRate,
         repeat: -1
       });
       anims.create({
         key: "idle-up-left" + slowmoString,
         frames: anims.generateFrameNumbers("hero", { start: 289, end: 302 }),
-        frameRate: moveFrameRate,
+        frameRate: idleFrameRate,
         repeat: -1
       });
       anims.create({
         key: "idle-up-right" + slowmoString,
         frames: anims.generateFrameNumbers("hero", { start: 272, end: 285 }),
-        frameRate: moveFrameRate,
+        frameRate: idleFrameRate,
         repeat: -1
       });
       anims.create({
         key: "idle-down" + slowmoString,
         frames: anims.generateFrameNumbers("hero", { start: 391, end: 404 }),
-        frameRate: moveFrameRate,
+        frameRate: idleFrameRate,
         repeat: -1
       });
       anims.create({
         key: "idle-down-left" + slowmoString,
         frames: anims.generateFrameNumbers("hero", { start: 374, end: 387 }),
-        frameRate: moveFrameRate,
+        frameRate: idleFrameRate,
         repeat: -1
       });
       anims.create({
         key: "idle-down-right" + slowmoString,
         frames: anims.generateFrameNumbers("hero", { start: 357, end: 370 }),
-        frameRate: moveFrameRate,
+        frameRate: idleFrameRate,
         repeat: -1
       });
       anims.create({
         key: "idle-left" + slowmoString,
         frames: anims.generateFrameNumbers("hero", { start: 340, end: 353 }),
-        frameRate: moveFrameRate,
+        frameRate: idleFrameRate,
         repeat: -1
       });
       anims.create({
         key: "idle-right" + slowmoString,
         frames: anims.generateFrameNumbers("hero", { start: 323, end: 336 }),
-        frameRate: moveFrameRate,
+        frameRate: idleFrameRate,
         repeat: -1
       });
       anims.create({
