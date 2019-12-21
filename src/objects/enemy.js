@@ -16,12 +16,12 @@ export default class Enemy {
     this.dieCallback = dieCallback
 
     const x = this.dungeon.tileToWorldX(Phaser.Math.Between(room.left + 2, room.right - 2))
-    const y = this.dungeon.tileToWorldY(Phaser.Math.Between(room.top + 2, room.bottom - 2))
+    const y = this.dungeon.tileToWorldY(Phaser.Math.Between(room.top + 4, room.bottom - 2))
 
     if (this.type === 'deamon') {
       this.hp = 10
       this.xp = 10
-      this.sprite = this.dungeon.matter.add.sprite(x, y, 'deamon', 1).setFixedRotation()
+      this.sprite = this.dungeon.matter.add.sprite(x, y, 'deamon', 1, { collisionFilter: { group: -1 } }).setFixedRotation()
       this.sprite.anims.play("deamon-idle")
       this.dungeon.lightManager.lights.push({
         sprite: this.sprite,
@@ -31,7 +31,7 @@ export default class Enemy {
     if (this.type === 'snake') {
       this.hp = 3
       this.xp = 3
-      this.sprite = this.dungeon.matter.add.sprite(x, y, "snake", 0).setFixedRotation()
+      this.sprite = this.dungeon.matter.add.sprite(x, y, "snake", 0, { collisionFilter: { group: -1 } }).setFixedRotation()
       this.sprite.anims.play("snake-walk")
       this.dungeon.lightManager.lights.push({
         sprite: this.sprite,
@@ -48,6 +48,20 @@ export default class Enemy {
           this.dungeon.cameras.main.shake(500, .002)
           this.dungeon.hero.underAttack = true
           this.dungeon.hero.takeDamage(1)
+        }
+      }
+    })
+
+    this.dungeon.matterCollision.addOnCollideStart({
+      objectA: this.dungeon.walls,
+      objectB: this.sprite,
+      callback: (event) => {
+        const bounds = event.bodyA.bounds
+        const dimensions = this.dungeon.getDimensionsByVertices([bounds.max.x, bounds.max.y, bounds.min.x, bounds.min.y])
+        if (dimensions.width > dimensions.height) {
+          this.directionY = this.directionY === 'up' ? 'down' : 'up'
+        } else {
+          this.directionX = this.directionX === 'right' ? 'left' : 'right'
         }
       }
     })
@@ -118,15 +132,14 @@ export default class Enemy {
       } else {
         const speed = 1;
 
-        sprite.setVelocity(0);
-
+        sprite.setVelocity(0)
         if (this.room.left + 1 >= this.dungeon.worldToTileX(this.sprite.x)) {
           this.directionX = 'right'
         }
         if (this.room.right - 1 <= this.dungeon.worldToTileX(this.sprite.x)) {
           this.directionX = 'left'
         }
-        if (this.room.top + 1 >= this.dungeon.worldToTileY(this.sprite.y)) {
+        if (this.room.top + 3 >= this.dungeon.worldToTileY(this.sprite.y)) {
           this.directionY = 'down'
         }
         if (this.room.bottom - 1 <= this.dungeon.worldToTileY(this.sprite.y)) {
@@ -135,26 +148,26 @@ export default class Enemy {
 
         // horizontal movement
         if (this.directionX === 'left') {
-          sprite.setVelocityX(-speed);
-          sprite.setFlipX(true);
+          sprite.setVelocityX(-speed)
+          sprite.setFlipX(true)
         }
         if (this.directionX === 'right') {
-          sprite.setVelocityX(speed);
-          sprite.setFlipX(false);
+          sprite.setVelocityX(speed)
+          sprite.setFlipX(false)
         }
 
         // vertical movement
         if (this.directionY === 'up') {
-          sprite.setVelocityY(-speed);
+          sprite.setVelocityY(-speed)
         }
         if (this.directionY === 'down') {
-          sprite.setVelocityY(speed);
+          sprite.setVelocityY(speed)
         }
 
         // Normalize and scale the velocity so that sprite can't move faster along a diagonal
         const vector = new Phaser.Math.Vector2(sprite.body.velocity)
         vector.normalize().scale(speed)
-        sprite.setVelocity(vector.x, vector.y);
+        sprite.setVelocity(vector.x, vector.y)
       }
     }
   }

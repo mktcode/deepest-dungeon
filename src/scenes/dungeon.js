@@ -155,6 +155,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   prepareRooms() {
+    this.walls = []
     // Use the array of rooms generated to place tiles in the map
     this.dungeon.rooms.forEach(room => {
       const { x, y, width, height, left, right, top, bottom } = room;
@@ -244,14 +245,14 @@ export default class DungeonScene extends Phaser.Scene {
         if (door.y === 0) {
           const topDoorLeft = this.tileToWorldX(left + door.x) - 10
           const topDoorRight = this.tileToWorldX(left + door.x) + 26
-          this.matter.add.rectangle(topDoorLeft - 2, worldTop - 20, 5, 40, this.isStatic)
-          this.matter.add.rectangle(topDoorRight + 2, worldTop - 20, 5, 40, this.isStatic)
+          this.walls.push(this.matter.add.rectangle(topDoorLeft - 2, worldTop - 20, 5, 40, this.isStatic))
+          this.walls.push(this.matter.add.rectangle(topDoorRight + 2, worldTop - 20, 5, 40, this.isStatic))
         }
         if (door.x === 0) {
           const leftDoorTop = this.tileToWorldY(top + door.y) + 22
           const leftDoorBottom = this.tileToWorldY(top + door.y) + 62
-          this.matter.add.rectangle(worldLeft - 16, leftDoorTop, 40, 5, this.isStatic)
-          this.matter.add.rectangle(worldLeft - 16, leftDoorBottom, 40, 5, this.isStatic)
+          this.walls.push(this.matter.add.rectangle(worldLeft - 16, leftDoorTop, 40, 5, this.isStatic))
+          this.walls.push(this.matter.add.rectangle(worldLeft - 16, leftDoorBottom, 40, 5, this.isStatic))
         }
       })
 
@@ -296,7 +297,7 @@ export default class DungeonScene extends Phaser.Scene {
         const x = i ? wallColliders[i - 1][2] : worldLeft
         const rect = Phaser.Physics.Matter.Matter.Vertices.clockwiseSort([{ x: part[0], y: part[1] }, { x: part[2], y: part[3] }, { x: part[4], y: part[5] }, { x: part[6], y: part[7] }])
         const center = Phaser.Physics.Matter.Matter.Vertices.centre(rect)
-        this.matter.add.fromVertices(worldLeft + center.x, worldTop + center.y, rect, this.isStatic)
+        this.walls.push(this.matter.add.fromVertices(worldLeft + center.x, worldTop + center.y, rect, this.isStatic))
       }
     })
   }
