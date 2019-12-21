@@ -305,6 +305,9 @@ export default class Hero {
       const runOrWalk = this.keys.shift.isDown ? 'run' : 'walk'
       this.baseSpeed = runOrWalk === 'run' ? 2.5 : 1.5
       if (this.attacking) this.baseSpeed *= 0.1
+      if (this.scene.narrator.slowmo) {
+        this.baseSpeed *= this.scene.dungeonNumber === 1 ? 0 : 0.3
+      }
 
       if (this.joystick.force >= this.joystick.touchCursor.forceMin) {
         // this.scene.physics.velocityFromRotation(
