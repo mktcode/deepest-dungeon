@@ -198,7 +198,7 @@ export default class Hero {
       .setDepth(6);
     this.scene.cameras.main.startFollow(this.sprites.hero, true, 0.1, 0.1)
 
-    this.sprites.levelUp = this.scene.matter.add.sprite(x, y, "levelUp", 0).setDepth(6);
+    this.sprites.levelUp = this.scene.add.sprite(x, y, "levelUp", 0).setDepth(6);
   }
 
   jumpTo(x, y) {
