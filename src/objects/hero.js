@@ -244,7 +244,7 @@ export default class Hero {
     heroHp -= damage
     this.scene.registry.set('health', heroHp)
     this.scene.flashSprite(hero)
-    this.scene.popupDamageNumber(damage, hero, '#CC0000')
+    this.scene.popupDamageNumber(damage, hero.body.position.x, hero.body.position.y, '#CC0000')
 
     if (heroHp <= 0) {
       this.dead = true
@@ -276,9 +276,6 @@ export default class Hero {
       })
     }
 
-    this.scene.time.delayedCall(300, () => {
-      this.cantMove = false
-    })
     this.scene.time.delayedCall(1500, () => {
       this.underAttack = false
       this.burning = false
@@ -298,7 +295,7 @@ export default class Hero {
   }
 
   update() {
-    if (!this.cantMove) {
+    if (!this.dead) {
       // Stop any previous movement from the last frame
       this.sprites.hero.setVelocity(0);
 

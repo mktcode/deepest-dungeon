@@ -1015,15 +1015,15 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
-  popupDamageNumber(damage, sprite, color) {
-    const damageText = this.add.text(sprite.body.x, sprite.body.y, '-' + damage, {
+  popupDamageNumber(damage, x, y, color) {
+    const damageText = this.add.text(x, y, '-' + damage, {
       font: '8px monospace',
       fill: color
     }).setDepth(10)
     this.tweens.add({
       targets: damageText,
       alpha: { start: 0, from: 1, to: 0 },
-      scale: { from: 1.5, to: 2 },
+      scale: { from: 1, to: 1.5 },
       duration: 2500,
       ease: 'Cubic',
       y: '-=50'
