@@ -283,11 +283,11 @@ export default class Hero {
   }
 
   freeze() {
-    this.sprites.hero.body.moves = false
+    this.sprites.hero.body.isStatic = true
   }
 
   unfreeze() {
-    this.sprites.hero.body.moves = true
+    this.sprites.hero.body.isStatic = false
   }
 
   isDirectionKeyDown(direction) {
