@@ -40,7 +40,7 @@ export default class Enemy {
     }
     this.sprite.setDepth(6)
 
-    this.dungeon.matterCollision.addOnCollideStart({
+    this.dungeon.matterCollision.addOnCollideActive({
       objectA: this.dungeon.hero.sprites.hero,
       objectB: this.sprite,
       callback: () => {
