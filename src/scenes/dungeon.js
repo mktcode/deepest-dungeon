@@ -879,10 +879,8 @@ export default class DungeonScene extends Phaser.Scene {
   updateTimebomb() {
     if (!this.timebomb || !this.timebomb.active) return
     const vector = new Phaser.Math.Vector2(this.timebomb.x, this.timebomb.y)
-    const heroVector = new Phaser.Math.Vector2(this.hero.sprites.hero.x, this.hero.sprites.hero.y)
-    const distance = vector.distance(heroVector)
+    const distance = vector.distance({ x: this.hero.sprites.hero.x, y: this.hero.sprites.hero.y })
     const speedFactor = (distance + 100) / 200
-    const diffVector = heroVector.clone().subtract(vector).normalize().scale(speedFactor)
     this.timebomb.setVelocity(0)
     if (this.currentRoom === this.safeRoom) {
       this.timebombFollows = false
@@ -894,7 +892,7 @@ export default class DungeonScene extends Phaser.Scene {
       const tileY = this.worldToTileY(this.timebomb.y)
       this.timebombRoom = this.dungeon.getRoomAt(tileX, tileY)
       if (this.timebombRoom === this.currentRoom && tileX > this.timebombRoom.left && tileX < this.timebombRoom.right && tileY > this.timebombRoom.top + 3 && tileY < this.timebombRoom.bottom) {
-        this.timebomb.setVelocity(diffVector.x, diffVector.y)
+        this.moveToObject(this.timebomb, this.hero.sprites.hero, speedFactor)
       } else {
         const finder = new PathFinder.AStarFinder({ allowDiagonal: true, dontCrossCorners: true })
         const path = PathFinder.Util.compressPath(finder.findPath(
@@ -906,11 +904,18 @@ export default class DungeonScene extends Phaser.Scene {
         ))
         if (path.length > 1) {
           const pathVector = new Phaser.Math.Vector2(this.tileToWorldX(path[1][0]) + this.tileSize / 2, this.tileToWorldY(path[1][1]) + this.tileSize / 2)
-          const pathDiffVector = pathVector.subtract(vector).normalize().scale(speedFactor)
-          this.timebomb.setVelocity(pathDiffVector.x, pathDiffVector.y)
+          this.moveToObject(this.timebomb, pathVector, speedFactor)
         }
       }
     }
+  }
+
+  moveToObject(moving, target, speed) {
+    const movingVector = new Phaser.Math.Vector2(moving.x, moving.y)
+    const targetVector = new Phaser.Math.Vector2(target.x, target.y)
+    const movementVector = targetVector.subtract(movingVector).normalize().scale(speed)
+
+    moving.setVelocity(movementVector.x, movementVector.y)
   }
 
   checkHeroParticlesCollision() {
