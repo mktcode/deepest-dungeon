@@ -244,14 +244,14 @@ export default class Hero {
     heroHp -= damage
     this.scene.registry.set('health', heroHp)
     this.scene.flashSprite(hero)
-    this.scene.popupDamageNumber(damage, hero.body.position.x, hero.body.position.y, '#CC0000')
+    this.scene.popupDamageNumber(damage, hero.x, hero.y, '#CC0000')
 
     if (heroHp <= 0) {
       this.dead = true
       this.scene.cameras.main.fadeOut(1000, 0, 0, 0)
       this.scene.time.delayedCall(600, () => {
-        const x = this.sprites.hero.body.x
-        const y = this.sprites.hero.body.y
+        const x = hero.x
+        const y = hero.y
         if (this.hasItem('sword')) {
           this.scene.addSword(x + Phaser.Math.Between(-15, 15), y + Phaser.Math.Between(-15, 15))
         }
