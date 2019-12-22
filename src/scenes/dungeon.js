@@ -941,11 +941,21 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   startCountdown(seconds) {
-    this.countdown = new Date().getTime() / 1000 + seconds
-    this.countdownText = this.add.text(25, 25, '1:00', {
-      font: "15px monospace",
+    this.countdownText = this.add.text(this.game.scale.width / 2 - 10, 175, '1:00', {
+      font: "12px monospace",
       fill: "#FFFFFF"
-    }).setDepth(11).setScrollFactor(0)
+    }).setDepth(11).setScrollFactor(0).setAlpha(0)
+    const tween = this.tweens.add({
+      targets: this.countdownText,
+      duration: 2000,
+      scale: { from: 3, to: 1},
+      alpha: { from: 0, to: 1 },
+      ease: 'Cubic',
+      onComplete: () => {
+        this.countdown = new Date().getTime() / 1000 + seconds
+        tween.remove()
+      }
+    })
   }
 
   updateCountdown() {
@@ -954,7 +964,7 @@ export default class DungeonScene extends Phaser.Scene {
       const diff = this.countdown - currentTime
       const minutes = Math.floor(diff / 60)
       const seconds = Math.floor(diff % 60)
-      this.countdownText.setText(minutes + ':' + seconds)
+      this.countdownText.setText(minutes + ':' + (seconds < 10 ? '0' : '') + seconds)
       if (minutes === 0 && seconds === 0) {
         this.countdown = null
         this.countdownText.destroy()
