@@ -884,7 +884,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.timebomb.setVelocity(0)
     if (this.currentRoom === this.safeRoom) {
       this.timebombFollows = false
-    } else if (this.timebombRoom === this.currentRoom && distance < 200) {
+    } else if (this.timebombRoom === this.currentRoom && distance < 100) {
       this.timebombFollows = true
     }
     if (this.timebombFollows) {
