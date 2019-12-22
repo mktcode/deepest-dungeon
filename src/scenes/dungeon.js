@@ -799,7 +799,13 @@ export default class DungeonScene extends Phaser.Scene {
   addTimebomb() {
     if (this.dungeonNumber >= 11) {
       this.timebombRoom = this.dungeon.r.randomPick(this.otherRooms)
-      this.timebomb = this.matter.add.image(this.tileToWorldX(this.timebombRoom.centerX), this.tileToWorldY(this.timebombRoom.centerY), 'particle', 0).setDepth(6)
+      this.timebomb = this.matter.add.image(
+        this.tileToWorldX(this.timebombRoom.centerX),
+        this.tileToWorldY(this.timebombRoom.centerY),
+        'particle',
+        0,
+        { collisionFilter: { group: -1 } }
+      ).setDepth(6)
       // this.physics.add.collider(this.timebomb, this.wallLayer)
       let particleCount = 0
       this.timebombParticles = this.interactionParticle.createEmitter({
@@ -872,11 +878,14 @@ export default class DungeonScene extends Phaser.Scene {
 
   updateTimebomb() {
     if (!this.timebomb || !this.timebomb.active) return
-    const vector = new Phaser.Math.Vector2(this.timebomb.x, this.timebomb.y);
-    const distance = vector.distance({x: this.hero.sprites.hero.body.x, y: this.hero.sprites.hero.body.y})
+    const vector = new Phaser.Math.Vector2(this.timebomb.x, this.timebomb.y)
+    const heroVector = new Phaser.Math.Vector2(this.hero.sprites.hero.x, this.hero.sprites.hero.y)
+    const distance = vector.distance(heroVector)
+    const speedFactor = (distance + 100) / 200
+    const diffVector = heroVector.clone().subtract(vector).normalize().scale(speedFactor)
+    this.timebomb.setVelocity(0)
     if (this.currentRoom === this.safeRoom) {
       this.timebombFollows = false
-      this.timebomb.setVelocity(0)
     } else if (this.timebombRoom === this.currentRoom && distance < 200) {
       this.timebombFollows = true
     }
@@ -884,9 +893,8 @@ export default class DungeonScene extends Phaser.Scene {
       const tileX = this.worldToTileX(this.timebomb.x)
       const tileY = this.worldToTileY(this.timebomb.y)
       this.timebombRoom = this.dungeon.getRoomAt(tileX, tileY)
-      const vector = new Phaser.Math.Vector2(this.timebomb.x, this.timebomb.y)
-      if (this.timebombRoom === this.currentRoom && tileX > this.timebombRoom.left && tileX < this.timebombRoom.right && tileY > this.timebombRoom.top && tileY < this.timebombRoom.bottom) {
-        this.timebomb.applyForce(vector.distance({ x: this.hero.sprites.hero.x, y: this.hero.sprites.hero.y }))
+      if (this.timebombRoom === this.currentRoom && tileX > this.timebombRoom.left && tileX < this.timebombRoom.right && tileY > this.timebombRoom.top + 3 && tileY < this.timebombRoom.bottom) {
+        this.timebomb.setVelocity(diffVector.x, diffVector.y)
       } else {
         const finder = new PathFinder.AStarFinder({ allowDiagonal: true, dontCrossCorners: true })
         const path = PathFinder.Util.compressPath(finder.findPath(
@@ -894,14 +902,12 @@ export default class DungeonScene extends Phaser.Scene {
           this.worldToTileY(this.timebomb.y),
           this.worldToTileX(this.hero.sprites.hero.x),
           this.worldToTileY(this.hero.sprites.hero.y),
-          new PathFinder.Grid(
-            this.dungeon.tiles.map(
-              row => row.map(field => field === 2 || field === 3 ? 0 : 1)
-            )
-          )
+          this.getPathGrid()
         ))
         if (path.length > 1) {
-          this.timebomb.applyForce(vector.distance({ x: this.tileToWorldX(path[1][0]) + 24, y: this.tileToWorldY(path[1][1]) + 24 }))
+          const pathVector = new Phaser.Math.Vector2(this.tileToWorldX(path[1][0]) + this.tileSize / 2, this.tileToWorldY(path[1][1]) + this.tileSize / 2)
+          const pathDiffVector = pathVector.subtract(vector).normalize().scale(speedFactor)
+          this.timebomb.setVelocity(pathDiffVector.x, pathDiffVector.y)
         }
       }
     }
@@ -954,27 +960,32 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
+  getPathGrid() {
+    const grid = this.dungeon.tiles.map(row => row.map(field => field === 2 || field === 3 ? 0 : 1))
+    // remove tiles that are part of top wall
+    this.wallLayer.forEachTile(tile => {
+      if (![-1, TILES.BLANK].includes(tile.index)) {
+        grid[tile.y][tile.x] = 1
+      }
+    })
+    this.wallAboveLayer.forEachTile(tile => {
+      if ([6, 15].includes(tile.index)) {
+        grid[tile.y][tile.x] = 0
+      }
+    })
+
+    return new PathFinder.Grid(grid)
+  }
+
   showPath() {
     if (!this.pathSprites.length) {
       const finder = new PathFinder.AStarFinder()
-      const grid = this.dungeon.tiles.map(row => row.map(field => field === 2 || field === 3 ? 0 : 1))
-      // remove tiles that are part of top wall
-      this.wallLayer.forEachTile(tile => {
-        if (![-1, TILES.BLANK].includes(tile.index)) {
-          grid[tile.y][tile.x] = 1
-        }
-      })
-      this.wallAboveLayer.forEachTile(tile => {
-        if ([6, 15].includes(tile.index)) {
-          grid[tile.y][tile.x] = 0
-        }
-      })
       const path = finder.findPath(
         this.worldToTileX(this.hero.sprites.hero.x),
         this.worldToTileY(this.hero.sprites.hero.y),
         this.endRoom.centerX + 1,
         this.endRoom.centerY + 2,
-        new PathFinder.Grid(grid)
+        this.getPathGrid()
       )
 
       // remove first and last point
