@@ -679,7 +679,7 @@ export default class DungeonScene extends Phaser.Scene {
       y = this.tileToWorldY(swordRoom.centerY)
     }
 
-    this.sword = this.matter.add.sprite(x, y, 'sword', 0, this.isStatic).setDepth(8)
+    this.sword = this.matter.add.sprite(x, y, 'sword', 0, { isStatic: true, collisionFilter: { group: -1 } }).setDepth(8)
     const tween = this.tweens.add({
       targets: this.sword,
       yoyo: true,
@@ -708,7 +708,7 @@ export default class DungeonScene extends Phaser.Scene {
       x = this.tileToWorldX(Phaser.Utils.Array.GetRandom([torchRoom.left + 3, torchRoom.right - 2])) + 4
       y = this.tileToWorldY(Phaser.Utils.Array.GetRandom([torchRoom.top + 5, torchRoom.bottom - 2])) + 9
     }
-    this.torch = this.matter.add.sprite(x, y, 'torch', 0, this.isStatic).setSize(8, 24).setDepth(7)
+    this.torch = this.matter.add.sprite(x, y, 'torch', 0, { isStatic: true, collisionFilter: { group: -1 } }).setSize(8, 24).setDepth(7)
     const tween = this.tweens.add({
       targets: this.torch,
       yoyo: true,
@@ -743,7 +743,7 @@ export default class DungeonScene extends Phaser.Scene {
       x = this.tileToWorldX(Phaser.Utils.Array.GetRandom([pathFinderRoom.left + 3, pathFinderRoom.right - 2])) + 12
       y = this.tileToWorldY(Phaser.Utils.Array.GetRandom([pathFinderRoom.top + 5, pathFinderRoom.bottom - 2])) + 12
     }
-    this.pathfinder = this.matter.add.sprite(x, y, 'pathfinder', 0, this.isStatic).setSize(24, 24).setDepth(8)
+    this.pathfinder = this.matter.add.sprite(x, y, 'pathfinder', 0, { isStatic: true, collisionFilter: { group: -1 } }).setSize(24, 24).setDepth(8)
     const tween = this.tweens.add({
       targets: this.pathfinder,
       yoyo: true,
@@ -772,7 +772,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   addXpDust(x, y, xp, points) {
-    this.xpDust = this.matter.add.sprite(x, y, 'xpDust', 0, this.isStatic).setSize(52, 22).setDepth(7)
+    this.xpDust = this.matter.add.sprite(x, y, 'xpDust', 0, { isStatic: true, collisionFilter: { group: -1 } }).setSize(52, 22).setDepth(7)
     this.lightManager.lights.push({
       sprite: this.xpDust,
       intensity: () => 1
