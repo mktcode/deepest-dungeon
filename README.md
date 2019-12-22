@@ -18,6 +18,7 @@
 - [ ] use seeds as sharable "sessions" and saved games
 - [ ] more enemies/traps
 - [ ] better display of countdown (near to character)
+- [ ] stamina for running (and attacking)
 
 # phaser-electron-typescript-parcel [![Build Status](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel.svg?branch=master)](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel)
 
