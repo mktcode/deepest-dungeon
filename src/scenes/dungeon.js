@@ -65,6 +65,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.cameras.main.setZoom(2)
     this.cameras.main.fadeIn(250, 0, 0, 0)
     this.narrator = new Narrator(this)
+    this.music = this.registry.get('music')
+    this.music.setRate(1)
     this.registry.set('currentDungeon', this.dungeonNumber)
     this.interactionParticle = this.add.particles('particle').setDepth(5)
     this.fireParticle = this.add.particles('particle').setDepth(7)
@@ -83,6 +85,7 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.events.on('wake', () => {
       this.cameras.main.fadeIn(250, 0, 0, 0)
+      this.music.setRate(1)
       this.registry.set('currentDungeon', this.dungeonNumber)
 
       // keyboard bug workaround
@@ -908,6 +911,8 @@ export default class DungeonScene extends Phaser.Scene {
         callback: () => {
           this.timebomb.destroy()
           this.timebombParticles.stop()
+          this.music.setSeek(40)
+          this.music.setRate(1.5)
           this.heroParticles = this.interactionParticle.createEmitter({
             tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
             blendMode: 'SCREEN',
