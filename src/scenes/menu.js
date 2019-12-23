@@ -5,7 +5,6 @@ import CharacterScene from "../scenes/character.js"
 import Hero from "../objects/hero.js"
 
 // assets
-import themeMp3 from "../assets/audio/kai-engel-downfall.mp3"
 import tileset from "../assets/dungeon-extruded.png";
 import introGround from "../assets/intro-ground.png";
 
@@ -16,19 +15,20 @@ export default class MenuScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.fadeIn(250, 0, 0, 0);
-    this.sound.play("ambientMusik", { volume: 0.3, loop: true })
+    this.music = this.sound.add('ambientMusik', { volume: 0.3, loop: true  });
+    this.music.play()
 
     this.centerX = this.game.scale.width / 2
     this.centerY = this.game.scale.height / 2
 
     this.setRegistryDefaults()
     this.addTitle()
-    this.addLogoAnimation()
     this.addDisableNarratorButton()
     this.addNewGameButton()
   }
 
   setRegistryDefaults() {
+    this.registry.set('music', this.music)
     this.registry.set('currentDungeon', 1)
     this.registry.set('minDungeon', 1)
     this.registry.set('deepestDungeon', 25)
@@ -52,26 +52,6 @@ export default class MenuScene extends Phaser.Scene {
     this.add.text(this.centerX - 163, this.centerY - 170, 'Infinite Dungeons', {
       font: "30px monospace",
       fill: "#FFFFFF"
-    })
-  }
-
-  addLogoAnimation() {
-    const ground = this.add.sprite(this.centerX, this.centerY, "introGround")
-    ground.anims.play('intro-ground')
-    const hero = new Hero(this, this.centerX, this.centerY)
-    hero.walk('down')
-
-    const directions = ['down', 'left', 'right']
-    this.time.addEvent({
-      delay: 5000,
-      callback: () => {
-        const direction = directions.shift()
-        directions.push(direction)
-        hero.attack(direction).once('complete', () => {
-          hero.walk('down')
-        })
-      },
-      repeat: -1
     })
   }
 
