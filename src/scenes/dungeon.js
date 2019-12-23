@@ -10,7 +10,6 @@ import { Slice } from 'polyk'
 
 // assets
 import tileset from "../assets/dungeon-tileset-extruded.png";
-import tilesetMc from "../assets/dungeon-mc-extruded.png";
 import swordSprite from "../assets/sword.png";
 import torchSprite from "../assets/torch.png";
 import pathSprite from "../assets/path.png";
@@ -53,7 +52,6 @@ export default class DungeonScene extends Phaser.Scene {
 
   static preload(scene) {
     scene.load.image("tileset", tileset)
-    scene.load.image("tilesetMc", tilesetMc)
     scene.load.spritesheet('sword', swordSprite, { frameWidth: 16, frameHeight: 16 })
     scene.load.spritesheet('torch', torchSprite, { frameWidth: 8, frameHeight: 18 })
     scene.load.spritesheet('path', pathSprite, { frameWidth: 6, frameHeight: 6 })

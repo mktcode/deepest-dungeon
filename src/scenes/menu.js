@@ -4,10 +4,6 @@ import GuiScene from "../scenes/gui.js"
 import CharacterScene from "../scenes/character.js"
 import Hero from "../objects/hero.js"
 
-// assets
-import tileset from "../assets/dungeon-extruded.png";
-import introGround from "../assets/intro-ground.png";
-
 export default class MenuScene extends Phaser.Scene {
   constructor() {
     super("Menu")
