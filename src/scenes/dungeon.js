@@ -27,7 +27,7 @@ export default class DungeonScene extends Phaser.Scene {
       height: Math.min(200, 60 + this.dungeonNumber),
       doorPadding: 4,
       rooms: {
-        width: { min: 15, max: 31, onlyOdd: true },
+        width: { min: 17, max: 31, onlyOdd: true },
         height: { min: 15, max: 31, onlyOdd: true },
         maxArea: 961
       }
@@ -467,6 +467,32 @@ export default class DungeonScene extends Phaser.Scene {
         y: doorLightY2,
         intensity: () => 3
       })
+
+      // skills
+      const topAltTiles = TILES.WALL.TOP_ALT[1].map(t => t.index)
+      let xPositions = Phaser.Utils.Array.Shuffle(
+        this.wallLayer.getTilesWithin(
+          this.safeRoom.left,
+          this.safeRoom.top + 1,
+          this.safeRoom.width,
+          1
+        )
+          .filter(t => topAltTiles.includes(t.index))
+          .map(t => t.x)
+      )
+
+      this.skillShrinePositions = []
+      xPositions.forEach(x => {
+        if (xPositions.includes(x + 1) && !this.skillShrinePositions.includes(x) && !this.skillShrinePositions.includes(x + 1)) {
+          this.skillShrinePositions.push(x)
+          this.skillShrinePositions.push(x + 1)
+        }
+      })
+
+      this.skillShrinePositions = this.skillShrinePositions.filter((x, i) => !(i % 2)).slice(0, 3)
+      this.skillShrinePositions.forEach(x => {
+        this.stuffLayer.putTilesAt(TILES.SKILLBG.CLOSED, x, this.safeRoom.y + 1)
+      })
     }
   }
 
@@ -492,6 +518,9 @@ export default class DungeonScene extends Phaser.Scene {
     if (!this.safeRoomActivated) {
       this.safeRoomActivated = true
       this.registry.set('minDungeon', this.scene.dungeonNumber)
+      this.skillShrinePositions.forEach(x => {
+        this.stuffLayer.putTilesAt(TILES.SKILLBG.OPEN, x, this.safeRoom.y + 1)
+      })
     }
   }
 
