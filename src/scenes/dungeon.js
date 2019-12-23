@@ -73,8 +73,8 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.prepareMap()
     this.prepareRooms()
+    this.prepareSafeRoom()
     this.addStairs()
-    this.addShrine()
     this.addHero()
     this.addEnemies()
     this.addItems()
@@ -122,6 +122,8 @@ export default class DungeonScene extends Phaser.Scene {
 
   getSafeRoom() {
     if (!(this.dungeonNumber % 4)) {
+      if (this.safeRoom) return this.safeRoom
+
       const roomsWithOneDoor = this.otherRooms.filter(r => r.getDoorLocations().length === 1)
       const safeRoom = roomsWithOneDoor.sort((a, b) => a.width * a.height - b.width * b.height)[0]
       Phaser.Utils.Array.Remove(this.otherRooms, safeRoom)
@@ -383,8 +385,9 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
-  addShrine() {
+  prepareSafeRoom() {
     if (this.safeRoom) {
+      // shrine
       const x = this.tileToWorldX(this.safeRoom.centerX)
       const y = this.tileToWorldY(this.safeRoom.centerY + 1) + this.tileSize / 2 - 4
       const width = this.tileSize * 2 + 10
@@ -393,7 +396,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.stuffLayer.putTilesAt(TILES.SHRINE, this.safeRoom.centerX - 1, this.safeRoom.centerY)
       this.matter.add.rectangle(x, y, width, height + 10, this.isStatic)
 
-      // particle emitter
+      // shrine particle emitter
       let particleCount = 0
       this.shrineParticles = this.interactionParticle.createEmitter({
         on: false,
@@ -427,6 +430,42 @@ export default class DungeonScene extends Phaser.Scene {
             this.lightManager.removeLight(particle)
           })
         }
+      })
+
+      // lights
+      const doors = this.safeRoom.getDoorLocations()
+      let doorLightX1, doorLightY1, doorLightX2, doorLightY2
+      if (doors[0].x === 0) {
+        doorLightX1 = this.safeRoom.x
+        doorLightY1 = this.safeRoom.y + doors[0].y + 2
+        doorLightX2 = this.safeRoom.x - 1
+        doorLightY2 = this.safeRoom.y + doors[0].y + 2
+      } else if (doors[0].x === this.safeRoom.width - 1) {
+        doorLightX1 = this.safeRoom.x + doors[0].x
+        doorLightY1 = this.safeRoom.y + doors[0].y + 2
+        doorLightX2 = this.safeRoom.x + doors[0].x + 1
+        doorLightY2 = this.safeRoom.y + doors[0].y + 2
+      } else if (doors[0].y === 0) {
+        doorLightX1 = this.safeRoom.x + doors[0].x
+        doorLightY1 = this.safeRoom.y
+        doorLightX2 = this.safeRoom.x + doors[0].x
+        doorLightY2 = this.safeRoom.y - 1
+      } else if (doors[0].y === this.safeRoom.height - 1) {
+        doorLightX1 = this.safeRoom.x + doors[0].x
+        doorLightY1 = this.safeRoom.y + doors[0].y
+        doorLightX2 = this.safeRoom.x + doors[0].x
+        doorLightY2 = this.safeRoom.y + doors[0].y - 1
+      }
+
+      this.lightManager.lights.push({
+        x: doorLightX1,
+        y: doorLightY1,
+        intensity: () => 3
+      })
+      this.lightManager.lights.push({
+        x: doorLightX2,
+        y: doorLightY2,
+        intensity: () => 3
       })
     }
   }
@@ -941,6 +980,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   startCountdown(seconds) {
+    this.cameras.main.shake(1000, 0.001)
     this.countdownText = this.add.text(this.game.scale.width / 2 - 10, 175, '1:00', {
       font: "12px monospace",
       fill: "#FFFFFF"
@@ -965,6 +1005,13 @@ export default class DungeonScene extends Phaser.Scene {
       const minutes = Math.floor(diff / 60)
       const seconds = Math.floor(diff % 60)
       this.countdownText.setText(minutes + ':' + (seconds < 10 ? '0' : '') + seconds)
+
+      if (minutes === 0 && seconds === 30) {
+        this.cameras.main.shake(20000, 0.001)
+      }
+      if (minutes === 0 && seconds === 10) {
+        this.cameras.main.shake(10000, 0.005)
+      }
       if (minutes === 0 && seconds === 0) {
         this.countdown = null
         this.countdownText.destroy()
