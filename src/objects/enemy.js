@@ -95,27 +95,18 @@ export default class Enemy {
 
   takeDamage(damage) {
     this.hp -= damage
-    this.dungeon.popupDamageNumber(damage, this.sprite, '#CCCCCC')
-    if (this.hp > 0) {
-      this.dungeon.flashSprite(this.sprite)
-      if (this.dungeon.hero.lastDirection === 'up') {
-        this.sprite.setVelocityY(-300)
-      } else if (this.dungeon.hero.lastDirection === 'down') {
-        this.sprite.setVelocityY(300)
-      } else if (this.dungeon.hero.lastDirection === 'left') {
-        this.sprite.setVelocityX(-300)
-      } else if (this.dungeon.hero.lastDirection === 'right') {
-        this.sprite.setVelocityX(300)
-      }
-    } else {
+    this.dungeon.popupDamageNumber(damage, this.sprite.x, this.sprite.y, '#CCCCCC')
+    this.dungeon.flashSprite(this.sprite)
+    if (this.hp === 0) {
       this.dungeon.registry.set('xp', this.dungeon.registry.get('xp') + this.xp)
+      this.dungeon.lightManager.removeLight(this.sprite)
       this.sprite.destroy()
       if (this.dieCallback) {
         this.dieCallback(this)
       }
     }
 
-    this.dungeon.time.delayedCall(1500, () => {
+    this.dungeon.time.delayedCall(1000, () => {
       this.underAttack = false
       this.burning = false
     })

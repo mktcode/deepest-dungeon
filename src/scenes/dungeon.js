@@ -772,10 +772,10 @@ export default class DungeonScene extends Phaser.Scene {
     this.fireTraps.forEach(trap => {
       trap.forEachAlive((particle) => {
         if (
-          particle.x > this.hero.sprites.hero.body.left &&
-          particle.x < this.hero.sprites.hero.body.right &&
-          particle.y > this.hero.sprites.hero.body.top &&
-          particle.y < this.hero.sprites.hero.body.bottom &&
+          particle.x > this.hero.sprites.hero.body.bounds.min.x &&
+          particle.x < this.hero.sprites.hero.body.bounds.max.x &&
+          particle.y > this.hero.sprites.hero.body.bounds.min.y &&
+          particle.y < this.hero.sprites.hero.body.bounds.max.y &&
           !this.hero.burning
         ) {
           this.hero.burning = true
@@ -1083,17 +1083,14 @@ export default class DungeonScene extends Phaser.Scene {
       this.heroParticles.forEachAlive((particle) => {
         this.enemies.forEach((enemy) => {
           if (
-            particle.x > enemy.sprite.body.left &&
-            particle.x < enemy.sprite.body.right &&
-            particle.y > enemy.sprite.body.top &&
-            particle.y < enemy.sprite.body.bottom &&
+            particle.x > enemy.sprite.body.bounds.min.x &&
+            particle.x < enemy.sprite.body.bounds.max.x &&
+            particle.y > enemy.sprite.body.bounds.min.y &&
+            particle.y < enemy.sprite.body.bounds.max.y &&
             !enemy.burning
           ) {
             enemy.burning = true
             enemy.takeDamage(1)
-            this.time.delayedCall(1000, () => {
-              enemy.burning = false
-            })
           }
         })
       })
