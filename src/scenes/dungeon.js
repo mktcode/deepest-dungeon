@@ -81,6 +81,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.addItems()
     this.addFireTraps()
     this.addTimebomb()
+    this.addOverlayText()
 
     this.events.on('wake', () => {
       this.cameras.main.fadeIn(250, 0, 0, 0)
@@ -516,6 +517,54 @@ export default class DungeonScene extends Phaser.Scene {
           this.torchSkillParticles = this.interactionParticleAbove.createEmitter(particleConfig)
         }
       })
+
+      this.skillInteractionParticles = this.interactionParticleAbove.createEmitter({
+        on: false,
+        x: 0,
+        y: this.tileToWorldY(this.safeRoom.y + 3),
+        scale: { start: 0, end: 0.75 },
+        alpha: { start: 1, end: 0 },
+        speed: 10,
+        quantity: 20,
+        frequency: 200,
+        lifespan: 500,
+        emitZone: {
+          source: new Phaser.Geom.Rectangle(0, 0, this.tileSize * 2, 1),
+          type: 'edge',
+          quantity: 40
+        }
+      })
+    }
+  }
+
+  updateSkillInteractions() {
+    if (this.skillInteractionParticles) {
+      const tile = this.hero.isNear(TILES.SKILLBG.OPEN[1][0])
+      if (tile) {
+        this.skillInteractionParticles.setPosition(this.tileToWorldX(tile.x), this.tileToWorldY(this.safeRoom.y + 3))
+        if (this.skillInteractionParticles.on === false) {
+          this.skillInteractionParticles.start()
+        }
+        const xPosition = tile.x
+        this.overlayText.setPosition(this.tileToWorldX(xPosition) + this.tileSize - 75, this.tileToWorldY(this.safeRoom.y + 4))
+        const availableSkillPoints = '(Points: ' + (this.registry.get('skillPoints') - this.registry.get('skillPointsSpent')) + ')'
+        if (this.worldToTileX(this.healthSkillParticles.x.propertyValue) === xPosition + 1) {
+          const currentHealth = this.registry.get('maxHealth')
+          this.overlayText.setText('Health:' + "\n" + currentHealth + ' +1' + "\n" + availableSkillPoints)
+        }
+        if (this.worldToTileX(this.damageSkillParticles.x.propertyValue) === xPosition + 1) {
+          const currentDamage = this.registry.get('damage')
+          this.overlayText.setText('Damage:' + "\n" + currentDamage + ' +1' + "\n" + availableSkillPoints)
+        }
+        if (this.worldToTileX(this.torchSkillParticles.x.propertyValue) === xPosition + 1) {
+          const currentTorchDuration = this.registry.get('torchDuration')
+          this.overlayText.setText('Torch duration:' + "\n" + currentTorchDuration + ' +30' + "\n" + availableSkillPoints)
+        }
+      } else {
+        this.skillInteractionParticles.stop()
+        this.overlayText.setPosition(0, 0)
+        this.overlayText.setText('')
+      }
     }
   }
 
@@ -1006,6 +1055,21 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
+  addOverlayText() {
+    this.overlayText = this.add
+      .text(0, 0, '', {
+        font: "9px monospace",
+        fill: "#ffffff",
+        shadow: {
+          offsetX: 2,
+          offsetY: 2,
+          color: '#000',
+          blur: 0,
+          fill: '#000000'
+        }
+      }).setDepth(11).setAlign('center').setFixedSize(150, this.tileSize * 3)
+  }
+
   moveToObject(moving, target, speed) {
     const movingVector = new Phaser.Math.Vector2(moving.x, moving.y)
     const targetVector = new Phaser.Math.Vector2(target.x, target.y)
@@ -1198,5 +1262,6 @@ export default class DungeonScene extends Phaser.Scene {
     this.checkHeroParticlesCollision()
     this.updateCountdown()
     this.updateTimebomb()
+    this.updateSkillInteractions()
   }
 }

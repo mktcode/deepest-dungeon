@@ -1,7 +1,6 @@
 import Phaser from "phaser"
 import DungeonScene from "../scenes/dungeon.js"
 import GuiScene from "../scenes/gui.js"
-import CharacterScene from "../scenes/character.js"
 import Hero from "../objects/hero.js"
 
 export default class MenuScene extends Phaser.Scene {
@@ -81,7 +80,6 @@ export default class MenuScene extends Phaser.Scene {
       this.scene.sleep()
       this.scene.add('Dungeon1', new DungeonScene(this.registry.get('currentDungeon')), true)
       this.scene.add('Gui', new GuiScene(), true)
-      this.scene.add('Character', new CharacterScene())
     })
   }
 }

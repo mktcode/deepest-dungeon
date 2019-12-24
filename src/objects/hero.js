@@ -77,6 +77,7 @@ export default class Hero {
     this.scene.input.keyboard.on('keyup-E', () => {
       this.useStairs()
       this.useShrine()
+      this.improveSkill()
     });
 
     // show path
@@ -161,8 +162,30 @@ export default class Hero {
   useShrine() {
     if (this.isNear([...TILES.SHRINE[0], ...TILES.SHRINE[1], ...TILES.SHRINE[2]])) {
       this.scene.activateSafeRoom()
-      this.scene.scene.run('Character')
-      this.scene.scene.bringToTop('Character')
+      this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
+      this.scene.registry.set('mana', this.scene.registry.get('maxMana'))
+    }
+  }
+
+  improveSkill() {
+    const tile = this.isNear(TILES.SKILLBG.OPEN[1][0])
+    if (tile) {
+      const xPosition = tile.x
+      if (this.scene.registry.get('skillPoints') > this.scene.registry.get('skillPointsSpent')) {
+        if (this.scene.worldToTileX(this.scene.healthSkillParticles.x.propertyValue) === xPosition + 1) {
+          this.scene.registry.set('skillPointsSpent', this.scene.registry.get('skillPointsSpent') + 1)
+          this.scene.registry.set('maxHealth', this.scene.registry.get('maxHealth') + 1)
+          this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
+        }
+        if (this.scene.worldToTileX(this.scene.damageSkillParticles.x.propertyValue) === xPosition + 1) {
+          this.scene.registry.set('skillPointsSpent', this.scene.registry.get('skillPointsSpent') + 1)
+          this.scene.registry.set('damage', this.scene.registry.get('damage') + 1)
+        }
+        if (this.scene.worldToTileX(this.scene.torchSkillParticles.x.propertyValue) === xPosition + 1) {
+          this.scene.registry.set('skillPointsSpent', this.scene.registry.get('skillPointsSpent') + 1)
+          this.scene.registry.set('torchDuration', this.scene.registry.get('torchDuration') + 30)
+        }
+      }
     }
   }
 
