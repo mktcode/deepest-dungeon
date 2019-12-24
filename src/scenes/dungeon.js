@@ -948,7 +948,7 @@ export default class DungeonScene extends Phaser.Scene {
         'particle',
         0,
         { collisionFilter: { group: -1 } }
-      ).setDepth(6)
+      ).setDepth(6).setRectangle(10, 10)
       // this.physics.add.collider(this.timebomb, this.wallLayer)
       let particleCount = 0
       this.timebombParticles = this.interactionParticle.createEmitter({
