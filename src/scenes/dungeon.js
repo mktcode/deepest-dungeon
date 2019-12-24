@@ -589,7 +589,7 @@ export default class DungeonScene extends Phaser.Scene {
   activateSafeRoom() {
     if (!this.safeRoomActivated) {
       this.safeRoomActivated = true
-      this.registry.set('minDungeon', this.scene.dungeonNumber)
+      this.registry.set('minDungeon', this.dungeonNumber)
       this.skillShrinePositions.forEach(x => {
         this.stuffLayer.putTilesAt(TILES.SKILLBG.OPEN, x, this.safeRoom.y + 1)
       })
