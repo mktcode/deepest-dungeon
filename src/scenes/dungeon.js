@@ -67,6 +67,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.music.setRate(1)
     this.registry.set('currentDungeon', this.dungeonNumber)
     this.interactionParticle = this.add.particles('particle').setDepth(5)
+    this.interactionParticleAbove = this.add.particles('particle').setDepth(7)
     this.fireParticle = this.add.particles('particle').setDepth(7)
     this.fireParticleAbove = this.add.particles('particle').setDepth(10)
     // this.matter.world.createDebugGraphic()
@@ -490,8 +491,30 @@ export default class DungeonScene extends Phaser.Scene {
       })
 
       this.skillShrinePositions = this.skillShrinePositions.filter((x, i) => !(i % 2)).slice(0, 3)
-      this.skillShrinePositions.forEach(x => {
+      this.skillShrinePositions.forEach((x, i) => {
         this.stuffLayer.putTilesAt(TILES.SKILLBG.CLOSED, x, this.safeRoom.y + 1)
+        const particleConfig = {
+          on: false,
+          x: this.tileToWorldX(x + 1),
+          y: this.tileToWorldY(this.safeRoom.y + 2),
+          blendMode: 'SCREEN',
+          scale: { start: 1.5, end: 2 },
+          alpha: { start: 0.5, end: 0 },
+          speed: 5,
+          quantity: 1,
+          frequency: 300,
+          lifespan: 1000
+        }
+        if (i === 0) {
+          particleConfig.tint = 0xFF0000
+          this.healthSkillParticles = this.interactionParticleAbove.createEmitter(particleConfig)
+        } else if (i === 1) {
+          particleConfig.tint = 0xFFFFFF
+          this.damageSkillParticles = this.interactionParticleAbove.createEmitter(particleConfig)
+        } else if (i === 2) {
+          particleConfig.tint = [0x888800, 0xff8800, 0xff8800, 0xffffff, 0x880000, 0x880000]
+          this.torchSkillParticles = this.interactionParticleAbove.createEmitter(particleConfig)
+        }
       })
     }
   }
@@ -521,6 +544,9 @@ export default class DungeonScene extends Phaser.Scene {
       this.skillShrinePositions.forEach(x => {
         this.stuffLayer.putTilesAt(TILES.SKILLBG.OPEN, x, this.safeRoom.y + 1)
       })
+      this.healthSkillParticles.start()
+      this.damageSkillParticles.start()
+      this.torchSkillParticles.start()
     }
   }
 
