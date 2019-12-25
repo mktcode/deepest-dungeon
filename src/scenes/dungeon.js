@@ -460,13 +460,13 @@ export default class DungeonScene extends Phaser.Scene {
       }
 
       this.lightManager.lights.push({
-        x: doorLightX1,
-        y: doorLightY1,
+        x: () => doorLightX1,
+        y: () => doorLightY1,
         intensity: () => 3
       })
       this.lightManager.lights.push({
-        x: doorLightX2,
-        y: doorLightY2,
+        x: () => doorLightX2,
+        y: () => doorLightY2,
         intensity: () => 3
       })
 
