@@ -4,7 +4,6 @@ import TILES from "../tile-mapping.js";
 
 // assets
 import hero from "../assets/hero.png";
-import levelUp from "../assets/levelUp.png";
 import xpDust from "../assets/xp-dust.png";
 
 export default class Hero {
@@ -12,8 +11,7 @@ export default class Hero {
     this.scene = scene
     this.sprites = {
       hero: null,
-      sword: null,
-      levelUp: null
+      sword: null
     }
     this.keys = this.scene.input.keyboard.createCursorKeys();
     this.wasdKeys = this.scene.input.keyboard.addKeys({
@@ -62,6 +60,7 @@ export default class Hero {
     this.lastDirection = 'down'
 
     this.addToScene(x, y)
+    this.prepareLevelUpAnimation()
 
     // attack
     this.keys.space.on('down', () => {
@@ -93,14 +92,6 @@ export default class Hero {
       {
         frameWidth: 125,
         frameHeight: 125
-      }
-    )
-    scene.load.spritesheet(
-      "levelUp",
-      levelUp,
-      {
-        frameWidth: 64,
-        frameHeight: 64
       }
     )
     scene.load.spritesheet(
@@ -220,8 +211,42 @@ export default class Hero {
       .setOrigin(0.5, 0.55)
       .setDepth(6);
     this.scene.cameras.main.startFollow(this.sprites.hero, true, 0.1, 0.1)
+  }
 
-    this.sprites.levelUp = this.scene.add.sprite(x, y, "levelUp", 0).setDepth(6);
+  prepareLevelUpAnimation() {
+    this.levelUpParticle = this.scene.add.particles('particle').setDepth(7)
+    this.levelUpParticleEmitter = this.levelUpParticle.createEmitter({
+      tint: [0xFF00FF, 0x0088FF],
+      on: false,
+      x: this.sprites.hero.x,
+      y: this.sprites.hero.y,
+      blendMode: 'SCREEN',
+      scale: { start: 0.5, end: 1 },
+      alpha: { start: 1, end: 0 },
+      speed: 60,
+      quantity: 10,
+      frequency: 50,
+      lifespan: 500,
+      emitZone: {
+        source: new Phaser.Geom.Circle(0, 0, 10),
+        type: 'edge',
+        quantity: 10
+      }
+    })
+  }
+
+  levelUpAnimation() {
+    this.levelUpParticleEmitter.start()
+    this.scene.lightManager.lights.push({
+      key: 'levelUp',
+      x: () => this.scene.worldToTileX(this.sprites.hero.x),
+      y: () => this.scene.worldToTileY(this.sprites.hero.y),
+      intensity: () => 0.5
+    })
+    this.scene.time.delayedCall(800, () => {
+      this.levelUpParticleEmitter.stop()
+      this.scene.lightManager.removeLightByKey('levelUp')
+    })
   }
 
   jumpTo(x, y) {
@@ -393,6 +418,6 @@ export default class Hero {
       }
     }
 
-    this.sprites.levelUp.setX(this.sprites.hero.x + 9).setY(this.sprites.hero.y + 6)
+    this.levelUpParticleEmitter.setPosition(this.sprites.hero.x, this.sprites.hero.y)
   }
 }

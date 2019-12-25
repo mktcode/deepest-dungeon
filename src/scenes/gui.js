@@ -172,11 +172,7 @@ export default class GuiScene extends Phaser.Scene {
       this.registry.set('level', xpBasedLevel)
       this.registry.set('skillPoints', this.registry.get('skillPoints') + 1)
       const currentDungeon = this.scene.get('Dungeon' + this.registry.get('currentDungeon'))
-      currentDungeon.hero.sprites.levelUp.anims.play('levelUp')
-      currentDungeon.lightManager.lights.push({
-        sprite: currentDungeon.hero.sprites.levelUp,
-        intensity: () => 1
-      })
+      currentDungeon.hero.levelUpAnimation()
       currentDungeon.time.delayedCall(1000, () => {
         currentDungeon.lightManager.removeLight(currentDungeon.hero.sprites.levelUp)
       })
