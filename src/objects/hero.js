@@ -393,6 +393,6 @@ export default class Hero {
       }
     }
 
-    this.sprites.levelUp.setX(this.sprites.hero.body.x + 9).setY(this.sprites.hero.body.y + 6)
+    this.sprites.levelUp.setX(this.sprites.hero.x + 9).setY(this.sprites.hero.y + 6)
   }
 }
