@@ -85,7 +85,7 @@ export default class Hero {
       this.usePathfinder()
     });
 
-    this.attackSound = this.scene.sound.add("attackSound", {volume: 0.3})
+    this.attackSound = this.scene.sound.add("attackSound", {volume: 0.2})
   }
 
   static preload(scene) {
