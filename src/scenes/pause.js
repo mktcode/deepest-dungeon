@@ -7,6 +7,9 @@ export default class PauseScene extends Phaser.Scene {
 
   create() {
     this.scene.bringToTop()
+
+    this.currentDungeon = this.scene.get('Dungeon' + this.registry.get('currentDungeon'))
+
     this.input.keyboard.on('keyup-ESC', () => {
       this.tweens.add({
         targets: this.overlay,
@@ -22,7 +25,8 @@ export default class PauseScene extends Phaser.Scene {
         x: '-=25',
         ease: 'Cubic',
         onComplete: () => {
-          this.scene.resume('Dungeon' + this.registry.get('currentDungeon'))
+          this.currentDungeon.narrator.playing.resume()
+          this.currentDungeon.scene.resume()
           this.scene.stop()
         }
       })

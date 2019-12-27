@@ -29,6 +29,7 @@ export default class Narrator {
     this.safeRoom = scene.sound.add("safeRoom")
     this.orientationLost = scene.sound.add("orientationLost")
     this.slowmo = false
+    this.playing = null
   }
 
   static preload(scene) {
@@ -52,8 +53,9 @@ export default class Narrator {
       if (this.scene.registry.get('disableNarrator')) {
         resolve()
       } else {
-        this[key].play({delay: delay || 0})
-        this[key].once('complete', () => {
+        this.playing = this[key]
+        this.playing.play({delay: delay || 0})
+        this.playing.once('complete', () => {
           resolve()
         })
       }

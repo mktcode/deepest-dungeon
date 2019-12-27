@@ -124,6 +124,7 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.input.keyboard.on('keyup-ESC', () => {
       this.scene.pause()
+      this.narrator.playing.pause()
       this.scene.run('Pause')
     })
   }
