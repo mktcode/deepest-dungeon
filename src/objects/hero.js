@@ -347,8 +347,8 @@ export default class Hero {
       // Stop any previous movement from the last frame
       this.sprites.hero.setVelocity(0);
 
-      const runOrWalk = this.keys.shift.isDown ? 'run' : 'walk'
-      this.baseSpeed = runOrWalk === 'run' ? 2.5 : 1.5
+      const runOrWalk = this.keys.shift.isDown ? 'walk' : 'run'
+      this.baseSpeed = runOrWalk === 'run' ? 2 : 1
       if (this.attacking) this.baseSpeed *= 0.1
       if (this.scene.narrator.slowmo) {
         this.baseSpeed *= this.scene.dungeonNumber === 1 ? 0 : 0.3
