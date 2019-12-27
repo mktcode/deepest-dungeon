@@ -1,6 +1,6 @@
-import MenuScene from './scenes/menu.js';
-import PreloadScene from './scenes/preload.js';
-import VirtualJoyStickPlugin from './plugins/rexvirtualjoystickplugin.min.js';
+import MenuScene from './scenes/menu.js'
+import PreloadScene from './scenes/preload.js'
+import VirtualJoyStickPlugin from './plugins/rexvirtualjoystickplugin.min.js'
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin'
 
 const config: GameConfig = {
@@ -38,6 +38,6 @@ const config: GameConfig = {
       }
     ]
   }
-};
+}
 
-const game = new Phaser.Game(config);
+const game = new Phaser.Game(config)
