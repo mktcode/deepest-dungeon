@@ -1,9 +1,6 @@
 # TODO
 
-- [ ] Bugfix: character.js:78
 - [ ] Bugfix: when died, xp/points disappear, some weird tween/animation moves them away
-- [ ] Bugfix: enemies stuck in corners due to new wall avoidance
-- [ ] better gui for skill menu
 - [ ] trapdoors: random tiles change after standing on them too long, instant death
 - [ ] ingame instructions
 - [ ] adjust/expand narrator
@@ -14,10 +11,8 @@
 - [ ] animate cooldowns in item slots
 - [ ] make torches usable on demand
 - [ ] subtitles for the narrator
-- [ ] let people create the "deepest dungeon"
 - [ ] use seeds as sharable "sessions" and saved games
 - [ ] more enemies/traps
-- [ ] better display of countdown (near to character)
 - [ ] stamina for running (and attacking)
 
 # phaser-electron-typescript-parcel [![Build Status](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel.svg?branch=master)](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel)
