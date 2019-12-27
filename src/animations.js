@@ -10,7 +10,7 @@ export default class Animations {
     [0, 1].forEach((slowmo) => {
       const idleFrameRate = slowmo ? 3 : 12
       const moveFrameRate = slowmo ? 6 : 25
-      const attackFrameRate = slowmo ? 9 : 32
+      const attackFrameRate = slowmo ? 6 : 25
       const slowmoString = slowmo ? '-slowmo' : ''
       anims.create({
         key: "idle-up" + slowmoString,
