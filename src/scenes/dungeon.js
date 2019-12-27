@@ -121,6 +121,11 @@ export default class DungeonScene extends Phaser.Scene {
       this.dungeonNumber,
       this.startRoom.getDoorLocations().length
     )
+
+    this.input.keyboard.on('keyup-ESC', () => {
+      this.scene.pause()
+      this.scene.run('Pause')
+    })
   }
 
   getSafeRoom() {
