@@ -112,8 +112,8 @@ export default class Enemy {
       "deamon",
       deamonSprite,
       {
-        frameWidth: 122,
-        frameHeight: 118
+        frameWidth: 61,
+        frameHeight: 59
       }
     );
   }
