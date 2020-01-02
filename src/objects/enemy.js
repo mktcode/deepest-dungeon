@@ -40,11 +40,12 @@ export default class Enemy {
     }
     this.sprite.setDepth(6)
 
+    // enemy touches hero
     this.dungeon.matterCollision.addOnCollideActive({
       objectA: this.dungeon.hero.sprites.hero,
       objectB: this.sprite,
-      callback: () => {
-        if (!this.dungeon.hero.underAttack && !this.dungeon.hero.dead) {
+      callback: (collision) => {
+        if (!this.dungeon.hero.underAttack && !this.dungeon.hero.dead && !collision.bodyA.isSensor) {
           this.dungeon.cameras.main.shake(500, .002)
           this.dungeon.hero.underAttack = true
           this.dungeon.hero.takeDamage(1)
@@ -52,11 +53,12 @@ export default class Enemy {
       }
     })
 
+    // enemy bounces off of wall
     this.dungeon.matterCollision.addOnCollideStart({
       objectA: this.dungeon.walls,
       objectB: this.sprite,
-      callback: (event) => {
-        const bounds = event.bodyA.bounds
+      callback: (collision) => {
+        const bounds = collision.bodyA.bounds
         const dimensions = this.dungeon.getDimensionsByVertices([bounds.max.x, bounds.max.y, bounds.min.x, bounds.min.y])
         if (dimensions.width > dimensions.height) {
           this.directionY = this.directionY === 'up' ? 'down' : 'up'
@@ -65,13 +67,36 @@ export default class Enemy {
         }
       }
     })
-    // this.dungeon.physics.add.overlap(this.dungeon.hero.sprites.sword, this.sprite, (hero, enemy) => {
-    //   if (this.dungeon.hero.attacking && !this.underAttack && !this.dungeon.hero.dead) {
-    //     this.dungeon.cameras.main.shake(500, .002)
-    //     this.underAttack = true
-    //     this.takeDamage(this.dungeon.registry.get('damage'))
-    //   }
-    // });
+
+    // hero attacks enemy
+    const damagingFrames = [
+      418, 419, 420, 421, 422, 423, 424,
+      435, 436, 437, 438, 439, 440, 441,
+      452, 453, 454, 455, 456, 457, 458,
+      469, 470, 471, 472, 473, 474, 475,
+      486, 487, 488, 489, 490, 491, 492,
+      503, 504, 505, 506, 507, 508, 509,
+      520, 521, 522, 523, 524, 525, 526,
+      537, 538, 539, 540, 541, 542, 543
+    ]
+    this.dungeon.matterCollision.addOnCollideActive({
+      objectA: this.dungeon.hero.sprites.hero,
+      objectB: this.sprite,
+      callback: (collision) => {
+        if (
+          this.dungeon.hero.attacking &&
+          !this.underAttack &&
+          !this.dungeon.hero.dead &&
+          collision.bodyA.isSensor &&
+          damagingFrames.includes(this.dungeon.hero.sprites.hero.anims.currentFrame.textureFrame) &&
+          this.dungeon.hero.lastDirection === collision.bodyA.label
+        ) {
+          this.dungeon.cameras.main.shake(500, .002)
+          this.underAttack = true
+          this.takeDamage(this.dungeon.registry.get('damage'))
+        }
+      }
+    })
   }
 
   static preload(scene) {
@@ -97,7 +122,8 @@ export default class Enemy {
     this.hp -= damage
     this.dungeon.popupDamageNumber(damage, this.sprite.x, this.sprite.y, '#CCCCCC')
     this.dungeon.flashSprite(this.sprite)
-    if (this.hp === 0) {
+    this.sprite.setVelocity(0)
+    if (this.hp <= 0) {
       this.dungeon.registry.set('xp', this.dungeon.registry.get('xp') + this.xp)
       this.dungeon.lightManager.removeLight(this.sprite)
       this.sprite.destroy()
@@ -106,7 +132,7 @@ export default class Enemy {
       }
     }
 
-    this.dungeon.time.delayedCall(1000, () => {
+    this.dungeon.time.delayedCall(500, () => {
       this.underAttack = false
       this.burning = false
     })
@@ -121,7 +147,7 @@ export default class Enemy {
         this.dungeon.moveToObject(this.sprite, this.dungeon.hero.sprites.hero, 1)
         sprite.setFlipX(sprite.body.velocity.x < 0)
       } else {
-        const speed = 1;
+        const speed = 0.5;
 
         sprite.setVelocity(0)
         if (this.room.left + 1 >= this.dungeon.worldToTileX(this.sprite.x)) {

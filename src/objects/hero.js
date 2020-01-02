@@ -208,12 +208,36 @@ export default class Hero {
   }
 
   addToScene(x, y) {
-    this.sprites.hero = this.scene.matter.add
-      .sprite(x, y, 'hero', 132)
-      .setRectangle(16, 24)
+    this.sprites.hero = this.scene.matter.add.sprite(x, y, 'hero', 0)
+
+    const { Body, Bodies } = Phaser.Physics.Matter.Matter
+    const mainBody = Bodies.rectangle(0, 0, 16, 24, { chamfer: { radius: 2 } })
+    this.sensors = {
+      top: Bodies.rectangle(0, -28, 16, 30, { isSensor: true, label: 'up' }),
+      bottom: Bodies.rectangle(0, 28, 16, 30, { isSensor: true, label: 'down' }),
+      left: Bodies.rectangle(-32, 4, 45, 16, { isSensor: true, label: 'left' }),
+      right: Bodies.rectangle(32, 4, 45, 16, { isSensor: true, label: 'right' }),
+      topLeft: Bodies.rectangle(-24, -10, 45, 16, { isSensor: true, angle: -2.5, label: 'up-left' }),
+      topRight: Bodies.rectangle(24, -10, 45, 16, { isSensor: true, angle: 2.5, label: 'up-right' }),
+      bottomLeft: Bodies.rectangle(-24, 20, 45, 16, { isSensor: true, angle: 2.5, label: 'down-left' }),
+      bottomRight: Bodies.rectangle(24, 20, 45, 16, { isSensor: true, angle: -2.5, label: 'down-right' })
+    }
+    const compoundBody = Body.create({ parts: [
+      mainBody,
+      this.sensors.top,
+      this.sensors.bottom,
+      this.sensors.left,
+      this.sensors.right,
+      this.sensors.topLeft,
+      this.sensors.topRight,
+      this.sensors.bottomLeft,
+      this.sensors.bottomRight
+    ] })
+    this.sprites.hero
+      .setExistingBody(compoundBody)
       .setFixedRotation()
-      .setOrigin(0.5, 0.55)
-      .setDepth(6);
+      .setPosition(x, y)
+      .setDepth(6)
     this.scene.cameras.main.startFollow(this.sprites.hero, true, 0.1, 0.1)
   }
 

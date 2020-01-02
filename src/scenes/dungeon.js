@@ -778,10 +778,10 @@ export default class DungeonScene extends Phaser.Scene {
     this.fireTraps.forEach(trap => {
       trap.forEachAlive((particle) => {
         if (
-          particle.x > this.hero.sprites.hero.body.bounds.min.x &&
-          particle.x < this.hero.sprites.hero.body.bounds.max.x &&
-          particle.y > this.hero.sprites.hero.body.bounds.min.y &&
-          particle.y < this.hero.sprites.hero.body.bounds.max.y &&
+          particle.x > this.hero.sprites.hero.body.parts[1].bounds.min.x &&
+          particle.x < this.hero.sprites.hero.body.parts[1].bounds.max.x &&
+          particle.y > this.hero.sprites.hero.body.parts[1].bounds.min.y &&
+          particle.y < this.hero.sprites.hero.body.parts[1].bounds.max.y &&
           !this.hero.burning
         ) {
           this.hero.burning = true
@@ -838,8 +838,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.matterCollision.addOnCollideStart({
       objectA: this.hero.sprites.hero,
       objectB: this.sword,
-      callback: () => {
-        if (this.hero.dead) return
+      callback: (collision) => {
+        if (this.hero.dead || collision.bodyA.isSensor) return
 
         this.registry.set('weapon', 'sword')
         const items = this.registry.get('items')
@@ -873,8 +873,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.matterCollision.addOnCollideStart({
       objectA: this.hero.sprites.hero,
       objectB: this.torch,
-      callback: () => {
-        if (this.hero.dead) return
+      callback: (collision) => {
+        if (this.hero.dead || collision.bodyA.isSensor) return
         const items = this.registry.get('items')
         items.push('torch')
         this.registry.set('items', items)
@@ -908,8 +908,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.matterCollision.addOnCollideStart({
       objectA: this.hero.sprites.hero,
       objectB: this.pathfinder,
-      callback: () => {
-        if (this.hero.dead) return
+      callback: (collision) => {
+        if (this.hero.dead || collision.bodyA.isSensor) return
         const items = this.registry.get('items')
         items.push('pathfinder')
         this.registry.set('items', items)
@@ -931,8 +931,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.matterCollision.addOnCollideStart({
       objectA: this.hero.sprites.hero,
       objectB: this.xpDust,
-      callback: () => {
-        if (this.hero.dead) return
+      callback: (collision) => {
+        if (this.hero.dead || collision.bodyA.isSensor) return
         this.xpDust.destroy()
         this.lightManager.removeLight(this.xpDust)
         if (xp) {
@@ -984,9 +984,10 @@ export default class DungeonScene extends Phaser.Scene {
       })
 
       this.matterCollision.addOnCollideStart({
-        objectA: this.timebomb,
-        objectB: this.hero.sprites.hero,
-        callback: () => {
+        objectA: this.hero.sprites.hero,
+        objectB: this.timebomb,
+        callback: (collision) => {
+          if (this.hero.dead || collision.bodyA.isSensor) return
           this.timebomb.destroy()
           this.timebombParticles.stop()
           this.music.setSeek(40)
