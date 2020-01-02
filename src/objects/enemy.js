@@ -144,7 +144,7 @@ export default class Enemy {
       const vector = new Phaser.Math.Vector2(sprite.x, sprite.y);
       const distance = vector.distance({x: this.dungeon.hero.sprites.hero.x, y: this.dungeon.hero.sprites.hero.y})
       if (this.room === this.dungeon.currentRoom && distance < 50 && this.dungeon.dungeonNumber > 5) {
-        this.dungeon.moveToObject(this.sprite, this.dungeon.hero.sprites.hero, 1)
+        this.dungeon.moveToObject(this.sprite, this.dungeon.hero.sprites.hero, 0.6)
         sprite.setFlipX(sprite.body.velocity.x < 0)
       } else {
         const speed = 0.5;
