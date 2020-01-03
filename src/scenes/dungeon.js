@@ -1106,14 +1106,14 @@ export default class DungeonScene extends Phaser.Scene {
 
   startCountdown(seconds) {
     this.cameras.main.shake(1000, 0.001)
-    this.countdownText = this.add.text(this.game.scale.width / 2 - 10, 175, '1:00', {
+    this.countdownText = this.scene.get('Gui').add.text(this.game.scale.width / 2, 50, '1:00', {
       font: "12px monospace",
       fill: "#FFFFFF"
     }).setDepth(11).setScrollFactor(0).setAlpha(0)
     const tween = this.tweens.add({
       targets: this.countdownText,
       duration: 2000,
-      scale: { from: 3, to: 1},
+      scale: { from: 6, to: 2},
       alpha: { from: 0, to: 1 },
       ease: 'Cubic',
       onComplete: () => {
