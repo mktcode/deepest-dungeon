@@ -3,9 +3,9 @@ import DungeonScene from "../scenes/dungeon.js"
 import TILES from "../tile-mapping.js";
 
 // assets
-import hero from "../assets/hero.png";
 import xpDust from "../assets/xp-dust.png";
 import attackSound from "../assets/audio/attack.mp3";
+import attackPunchSound from "../assets/audio/attack-punch.mp3";
 
 export default class Hero {
   constructor(scene, x, y) {
@@ -65,7 +65,7 @@ export default class Hero {
 
     // attack
     this.keys.space.on('down', () => {
-      if (this.scene.registry.get('weapon') && !this.attacking) {
+      if (!this.attacking) {
         this.attacking = true
         this.attack(this.lastDirection).once('complete', () => {
           this.attacking = false
@@ -86,17 +86,10 @@ export default class Hero {
     });
 
     this.attackSound = this.scene.sound.add("attackSound", {volume: 0.2})
+    this.attackPunchSound = this.scene.sound.add("attackPunchSound", {volume: 0.2})
   }
 
   static preload(scene) {
-    scene.load.spritesheet(
-      "hero",
-      hero,
-      {
-        frameWidth: 125,
-        frameHeight: 125
-      }
-    )
     scene.load.spritesheet(
       "xpDust",
       xpDust,
@@ -106,6 +99,7 @@ export default class Hero {
       }
     )
     scene.load.audio("attackSound", attackSound)
+    scene.load.audio("attackPunchSound", attackPunchSound)
   }
 
   static getLevelByXp(xp) {
@@ -208,30 +202,30 @@ export default class Hero {
   }
 
   addToScene(x, y) {
-    this.sprites.hero = this.scene.matter.add.sprite(x, y, 'hero', 0)
+    this.sprites.hero = this.scene.matter.add.sprite(x, y, 'sprites', 'hero/with-weapon/walk/down/1')
 
     const { Body, Bodies } = Phaser.Physics.Matter.Matter
     const mainBody = Bodies.rectangle(0, 0, 16, 24, { chamfer: { radius: 2 } })
-    this.sensors = {
-      top: Bodies.rectangle(0, -28, 16, 30, { isSensor: true, label: 'up' }),
-      bottom: Bodies.rectangle(0, 28, 16, 30, { isSensor: true, label: 'down' }),
-      left: Bodies.rectangle(-32, 4, 45, 16, { isSensor: true, label: 'left' }),
-      right: Bodies.rectangle(32, 4, 45, 16, { isSensor: true, label: 'right' }),
-      topLeft: Bodies.rectangle(-24, -10, 45, 16, { isSensor: true, angle: -2.5, label: 'up-left' }),
-      topRight: Bodies.rectangle(24, -10, 45, 16, { isSensor: true, angle: 2.5, label: 'up-right' }),
-      bottomLeft: Bodies.rectangle(-24, 20, 45, 16, { isSensor: true, angle: 2.5, label: 'down-left' }),
-      bottomRight: Bodies.rectangle(24, 20, 45, 16, { isSensor: true, angle: -2.5, label: 'down-right' })
-    }
     const compoundBody = Body.create({ parts: [
       mainBody,
-      this.sensors.top,
-      this.sensors.bottom,
-      this.sensors.left,
-      this.sensors.right,
-      this.sensors.topLeft,
-      this.sensors.topRight,
-      this.sensors.bottomLeft,
-      this.sensors.bottomRight
+      // sword
+      Bodies.rectangle(0, -28, 16, 30, { isSensor: true, label: 'up' }),
+      Bodies.rectangle(0, 28, 16, 30, { isSensor: true, label: 'down' }),
+      Bodies.rectangle(-32, 4, 45, 16, { isSensor: true, label: 'left' }),
+      Bodies.rectangle(32, 4, 45, 16, { isSensor: true, label: 'right' }),
+      Bodies.rectangle(-24, -10, 45, 16, { isSensor: true, angle: -2.5, label: 'up-left' }),
+      Bodies.rectangle(24, -10, 45, 16, { isSensor: true, angle: 2.5, label: 'up-right' }),
+      Bodies.rectangle(-24, 20, 45, 16, { isSensor: true, angle: 2.5, label: 'down-left' }),
+      Bodies.rectangle(24, 20, 45, 16, { isSensor: true, angle: -2.5, label: 'down-right' }),
+      // punch
+      Bodies.rectangle(0, -20, 16, 16, { isSensor: true, label: 'punch-up' }),
+      Bodies.rectangle(0, 20, 16, 16, { isSensor: true, label: 'punch-down' }),
+      Bodies.rectangle(-22, 4, 24, 16, { isSensor: true, label: 'punch-left' }),
+      Bodies.rectangle(22, 4, 24, 16, { isSensor: true, label: 'punch-right' }),
+      Bodies.rectangle(-16, -12, 24, 16, { isSensor: true, angle: -2.5, label: 'punch-up-left' }),
+      Bodies.rectangle(16, -12, 24, 16, { isSensor: true, angle: 2.5, label: 'punch-up-right' }),
+      Bodies.rectangle(-16, 12, 24, 16, { isSensor: true, angle: 2.5, label: 'punch-down-left' }),
+      Bodies.rectangle(16, 12, 24, 16, { isSensor: true, angle: -2.5, label: 'punch-down-right' })
     ] })
     this.sprites.hero
       .setExistingBody(compoundBody)
@@ -281,38 +275,32 @@ export default class Hero {
     this.sprites.hero.setX(x).setY(y)
   }
 
-  idle(direction) {
+  playAnim(name, direction) {
     if (!direction) {
       direction = this.lastDirection
     }
-    let slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
-    this.sprites.hero.anims.play('idle-' + direction + slowmo, true)
+    const slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
+    const withSword = this.scene.registry.get('weapon') ? 'with-sword-': ''
+
+    this.sprites.hero.anims.play(name + '-' + withSword + direction + slowmo, true)
+    return this.scene.anims.get(name + '-' + withSword + direction + slowmo)
+  }
+
+  idle(direction) {
+    return this.playAnim('idle', direction)
   }
 
   walk(direction) {
-    if (!direction) {
-      direction = this.lastDirection
-    }
-    let slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
-    this.sprites.hero.anims.play('walk-' + direction + slowmo, true)
+    return this.playAnim('walk', direction)
   }
 
   run(direction) {
-    if (!direction) {
-      direction = this.lastDirection
-    }
-    let slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
-    this.sprites.hero.anims.play('run-' + direction + slowmo, true)
+    return this.playAnim('run', direction)
   }
 
   attack(direction) {
-    this.attackSound.play()
-    if (!direction) {
-      direction = this.lastDirection
-    }
-    let slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
-    this.sprites.hero.anims.play('attack-' + direction + slowmo, true)
-    return this.scene.anims.get('attack-' + direction + slowmo)
+    this.scene.registry.get('weapon') ? this.attackSound.play() : this.attackPunchSound.play()
+    return this.playAnim('attack', direction)
   }
 
   takeDamage(damage) {

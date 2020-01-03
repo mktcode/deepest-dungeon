@@ -7,9 +7,10 @@ import Narrator from "../narrator.js"
 import Animations from "../animations.js"
 
 // assets
+import spriteAtlas from "../assets/spriteatlas.json"
+import spriteAtlasImage from "../assets/spriteatlas.png"
 import themeMp3 from "../assets/audio/kai-engel-downfall.mp3"
-import introGround from "../assets/intro-ground.png";
-import ui from "../assets/ui.png";
+import ui from "../assets/ui.png"
 
 export default class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -17,15 +18,8 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
+    this.load.atlas('sprites', spriteAtlasImage, spriteAtlas)
     this.load.audio("ambientMusik", themeMp3)
-    this.load.spritesheet(
-      "intro-ground",
-      introGround,
-      {
-        frameWidth: 192,
-        frameHeight: 192
-      }
-    );
     this.load.spritesheet(
       "ui",
       ui,
@@ -78,6 +72,6 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   create() {
-    Animations.create(this.anims)
+    new Animations(this)
   }
 }

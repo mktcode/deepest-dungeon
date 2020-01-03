@@ -69,27 +69,18 @@ export default class Enemy {
     })
 
     // hero attacks enemy
-    const damagingFrames = [
-      418, 419, 420, 421, 422, 423, 424,
-      435, 436, 437, 438, 439, 440, 441,
-      452, 453, 454, 455, 456, 457, 458,
-      469, 470, 471, 472, 473, 474, 475,
-      486, 487, 488, 489, 490, 491, 492,
-      503, 504, 505, 506, 507, 508, 509,
-      520, 521, 522, 523, 524, 525, 526,
-      537, 538, 539, 540, 541, 542, 543
-    ]
     this.dungeon.matterCollision.addOnCollideActive({
       objectA: this.dungeon.hero.sprites.hero,
       objectB: this.sprite,
       callback: (collision) => {
+        const damagingFrames = this.dungeon.registry.get('weapon') ? [12, 13, 14, 15, 16, 17, 18] : [5, 6, 7, 8]
         if (
           this.dungeon.hero.attacking &&
           !this.underAttack &&
           !this.dungeon.hero.dead &&
           collision.bodyA.isSensor &&
-          damagingFrames.includes(this.dungeon.hero.sprites.hero.anims.currentFrame.textureFrame) &&
-          this.dungeon.hero.lastDirection === collision.bodyA.label
+          damagingFrames.includes(this.dungeon.hero.sprites.hero.anims.currentFrame.index) &&
+          (this.dungeon.registry.get('weapon') ? '' : 'punch-') + this.dungeon.hero.lastDirection === collision.bodyA.label
         ) {
           this.dungeon.cameras.main.shake(500, .002)
           this.underAttack = true
