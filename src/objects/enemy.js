@@ -84,7 +84,11 @@ export default class Enemy {
         ) {
           this.dungeon.cameras.main.shake(500, .002)
           this.underAttack = true
-          this.takeDamage(this.dungeon.registry.get('damage'))
+          this.takeDamage(
+            this.dungeon.registry.get('weapon')
+              ? this.dungeon.registry.get('damage') * 2
+              : this.dungeon.registry.get('damage')
+          )
         }
       }
     })
