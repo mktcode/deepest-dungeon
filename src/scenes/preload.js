@@ -7,8 +7,8 @@ import Narrator from "../narrator.js"
 import Animations from "../animations.js"
 
 // assets
-import spriteAtlas from "../assets/spriteatlas.json"
-import spriteAtlasImage from "../assets/spriteatlas.png"
+import spriteAtlas from "../assets/spriteatlas/spriteatlas.json"
+import spriteAtlasImage from "../assets/spriteatlas/spriteatlas.png"
 import themeMp3 from "../assets/audio/kai-engel-downfall.mp3"
 import ui from "../assets/ui.png"
 
