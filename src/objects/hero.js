@@ -304,6 +304,10 @@ export default class Hero {
     return this.playAnim('attack', direction)
   }
 
+  die(direction) {
+    return this.playAnim('die', direction)
+  }
+
   takeDamage(damage) {
     const hero = this.sprites.hero
     let heroHp = this.scene.registry.get('health')
@@ -313,9 +317,11 @@ export default class Hero {
     this.scene.popupDamageNumber(damage, hero.x, hero.y, '#CC0000')
 
     if (heroHp <= 0) {
+      this.die()
+      this.freeze()
       this.dead = true
-      this.scene.cameras.main.fadeOut(1000, 0, 0, 0)
-      this.scene.time.delayedCall(600, () => {
+      this.scene.cameras.main.fadeOut(2000, 0, 0, 0)
+      this.scene.time.delayedCall(2000, () => {
         const x = hero.x
         const y = hero.y
         if (this.hasItem('sword')) {
@@ -336,7 +342,6 @@ export default class Hero {
 
         this.scene.registry.set('xp', lastLevelXp)
         this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
-        this.scene.hero.freeze()
         this.scene.scene.sleep()
         this.scene.scene.wake('Dungeon' + this.scene.registry.get('minDungeon'))
       })

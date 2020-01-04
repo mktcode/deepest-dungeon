@@ -7,6 +7,7 @@ export default class Animations {
     this.createHeroAnim('walk', 25)
     this.createHeroAnim('run', 25)
     this.createHeroAnim('attack', 25)
+    this.createHeroAnim('die', 25)
 
     this.anims.create({
       key: "snake-walk",
