@@ -22,21 +22,19 @@ export default class DungeonScene extends Phaser.Scene {
     this.dungeonNumber = dungeonNumber
     this.dungeon = new Dungeon({
       randomSeed: 'Dungeon' + this.dungeonNumber,
-      width: Math.min(200, 60 + this.dungeonNumber),
-      height: Math.min(200, 60 + this.dungeonNumber),
+      width: Math.min(200, 65 + this.dungeonNumber),
+      height: Math.min(200, 65 + this.dungeonNumber),
       doorPadding: 4,
       rooms: {
-        width: { min: 17, max: 31, onlyOdd: true },
-        height: { min: 15, max: 31, onlyOdd: true },
+        width: { min: 17, max: 27, onlyOdd: true },
+        height: { min: 15, max: 27, onlyOdd: true },
         maxArea: 961
       }
     })
     const rooms = this.dungeon.rooms.slice()
-    this.startRoom = rooms.shift()
-    // add end room (must not have door in the top cause the exit will go there)
-    this.endRoom = rooms.splice(rooms.findIndex(room => !room.getDoorLocations().find(d => d.y === 0)), 1)[0]
     this.otherRooms = rooms
-    // add rest room every 5 dungeons (smallest room with only one door)
+    this.startRoom = this.getStartRoom()
+    this.endRoom = this.getEndRoom()
     this.safeRoom = this.getSafeRoom()
     this.currentRoom = this.startRoom
     this.visitedRooms = [this.startRoom]
@@ -127,6 +125,20 @@ export default class DungeonScene extends Phaser.Scene {
       this.narrator.playing.pause()
       this.scene.run('Pause')
     })
+  }
+
+  getStartRoom() {
+    if (this.startRoom) return this.startRoom
+    return this.otherRooms.shift()
+  }
+
+  getEndRoom() {
+    if (this.endRoom) return this.endRoom
+
+    const roomsWithOneDoor = this.otherRooms.filter(r => r.getDoorLocations().length === 1)
+    const endRoom = roomsWithOneDoor.sort((a, b) => a.width * a.height - b.width * b.height)[0]
+    Phaser.Utils.Array.Remove(this.otherRooms, endRoom)
+    return endRoom
   }
 
   getSafeRoom() {
