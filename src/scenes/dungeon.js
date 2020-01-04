@@ -745,20 +745,19 @@ export default class DungeonScene extends Phaser.Scene {
             alpha: { start: 1, end: 0 },
             rotate: { min: 0, max: 180 },
             speed: 100,
-            quantity: 18,
-            frequency: 30,
+            quantity: 10,
+            frequency: 50,
             lifespan: { min: 500, max: 1000 },
             angle: angle,
             emitCallback: (particle) => {
-              // only every 25 particles get a light
-              particleCount++
-              if (!(particleCount % 300)) {
-                particleCount = 300
+              // only every 100 particles get a light
+              if (!(particleCount % 50)) {
                 this.lightManager.lights.push({
                   sprite: particle,
                   intensity: () => 1
                 })
               }
+              particleCount++
             },
             deathCallback: (particle) => {
               this.time.delayedCall(1000, () => {
