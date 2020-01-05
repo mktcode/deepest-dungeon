@@ -9,12 +9,9 @@ export default class Animations {
     this.createHeroAnim('attack', 25)
     this.createHeroAnim('die', 25)
 
-    this.anims.create({
-      key: "snake-walk",
-      frames: this.anims.generateFrameNumbers("snake", { start: 0, end: 3 }),
-      frameRate: 4,
-      repeat: -1
-    });
+    this.createZombiAnim('walk', 25)
+    this.createZombiAnim('die', 25)
+
     this.anims.create({
       key: "deamon-idle",
       frames: this.anims.generateFrameNumbers("deamon", { start: 0, end: 5 }),
@@ -75,6 +72,29 @@ export default class Animations {
         key: name + '-' + direction + '-slowmo',
         frames: this.anims.generateFrameNames('sprites', { start: 1, end: numberOfFramesWithoutWeapon, prefix: withoutWeaponPrefix }),
         frameRate: numberOfFramesWithoutWeapon * 1.5 / 3,
+        repeat: 0
+      })
+    })
+  }
+
+  createZombiAnim(name, frameRate) {
+    ['up', 'down', 'left', 'right', 'up-left', 'up-right', 'down-left', 'down-right'].forEach(direction => {
+      const prefix = 'enemies/zombie/' + name + '/' + direction + '/'
+      const allFrames = Object.keys(this.textures.list.sprites.frames)
+      const numberOfFrames = allFrames.filter(key => key.startsWith(prefix)).length
+
+      // normal speed
+      this.anims.create({
+        key: 'zombie-' + name + '-' + direction,
+        frames: this.anims.generateFrameNames('sprites', { start: 1, end: numberOfFrames, prefix: prefix }),
+        frameRate: numberOfFrames * 1.5,
+        repeat: 0
+      })
+      // slowmo
+      this.anims.create({
+        key: 'zombie-' + name + '-' + direction + '-slowmo',
+        frames: this.anims.generateFrameNames('sprites', { start: 1, end: numberOfFrames, prefix: prefix }),
+        frameRate: numberOfFrames * 1.5 / 3,
         repeat: 0
       })
     })

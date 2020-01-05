@@ -181,6 +181,148 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">enemies/zombie/die/down-left/1.png</key>
+            <key type="filename">enemies/zombie/die/down-left/2.png</key>
+            <key type="filename">enemies/zombie/die/down-left/3.png</key>
+            <key type="filename">enemies/zombie/die/down-left/4.png</key>
+            <key type="filename">enemies/zombie/die/down-left/5.png</key>
+            <key type="filename">enemies/zombie/die/down-left/6.png</key>
+            <key type="filename">enemies/zombie/die/down-left/7.png</key>
+            <key type="filename">enemies/zombie/die/down-left/8.png</key>
+            <key type="filename">enemies/zombie/die/down-right/1.png</key>
+            <key type="filename">enemies/zombie/die/down-right/2.png</key>
+            <key type="filename">enemies/zombie/die/down-right/3.png</key>
+            <key type="filename">enemies/zombie/die/down-right/4.png</key>
+            <key type="filename">enemies/zombie/die/down-right/5.png</key>
+            <key type="filename">enemies/zombie/die/down-right/6.png</key>
+            <key type="filename">enemies/zombie/die/down-right/7.png</key>
+            <key type="filename">enemies/zombie/die/down-right/8.png</key>
+            <key type="filename">enemies/zombie/die/down/1.png</key>
+            <key type="filename">enemies/zombie/die/down/2.png</key>
+            <key type="filename">enemies/zombie/die/down/3.png</key>
+            <key type="filename">enemies/zombie/die/down/4.png</key>
+            <key type="filename">enemies/zombie/die/down/5.png</key>
+            <key type="filename">enemies/zombie/die/down/6.png</key>
+            <key type="filename">enemies/zombie/die/down/7.png</key>
+            <key type="filename">enemies/zombie/die/down/8.png</key>
+            <key type="filename">enemies/zombie/die/left/1.png</key>
+            <key type="filename">enemies/zombie/die/left/2.png</key>
+            <key type="filename">enemies/zombie/die/left/3.png</key>
+            <key type="filename">enemies/zombie/die/left/4.png</key>
+            <key type="filename">enemies/zombie/die/left/5.png</key>
+            <key type="filename">enemies/zombie/die/left/6.png</key>
+            <key type="filename">enemies/zombie/die/left/7.png</key>
+            <key type="filename">enemies/zombie/die/left/8.png</key>
+            <key type="filename">enemies/zombie/die/right/1.png</key>
+            <key type="filename">enemies/zombie/die/right/2.png</key>
+            <key type="filename">enemies/zombie/die/right/3.png</key>
+            <key type="filename">enemies/zombie/die/right/4.png</key>
+            <key type="filename">enemies/zombie/die/right/5.png</key>
+            <key type="filename">enemies/zombie/die/right/6.png</key>
+            <key type="filename">enemies/zombie/die/right/7.png</key>
+            <key type="filename">enemies/zombie/die/right/8.png</key>
+            <key type="filename">enemies/zombie/die/up-left/1.png</key>
+            <key type="filename">enemies/zombie/die/up-left/2.png</key>
+            <key type="filename">enemies/zombie/die/up-left/3.png</key>
+            <key type="filename">enemies/zombie/die/up-left/4.png</key>
+            <key type="filename">enemies/zombie/die/up-left/5.png</key>
+            <key type="filename">enemies/zombie/die/up-left/6.png</key>
+            <key type="filename">enemies/zombie/die/up-left/7.png</key>
+            <key type="filename">enemies/zombie/die/up-left/8.png</key>
+            <key type="filename">enemies/zombie/die/up-right/1.png</key>
+            <key type="filename">enemies/zombie/die/up-right/2.png</key>
+            <key type="filename">enemies/zombie/die/up-right/3.png</key>
+            <key type="filename">enemies/zombie/die/up-right/4.png</key>
+            <key type="filename">enemies/zombie/die/up-right/5.png</key>
+            <key type="filename">enemies/zombie/die/up-right/6.png</key>
+            <key type="filename">enemies/zombie/die/up-right/7.png</key>
+            <key type="filename">enemies/zombie/die/up-right/8.png</key>
+            <key type="filename">enemies/zombie/die/up/1.png</key>
+            <key type="filename">enemies/zombie/die/up/2.png</key>
+            <key type="filename">enemies/zombie/die/up/3.png</key>
+            <key type="filename">enemies/zombie/die/up/4.png</key>
+            <key type="filename">enemies/zombie/die/up/5.png</key>
+            <key type="filename">enemies/zombie/die/up/6.png</key>
+            <key type="filename">enemies/zombie/die/up/7.png</key>
+            <key type="filename">enemies/zombie/die/up/8.png</key>
+            <key type="filename">enemies/zombie/walk/down-left/1.png</key>
+            <key type="filename">enemies/zombie/walk/down-left/2.png</key>
+            <key type="filename">enemies/zombie/walk/down-left/3.png</key>
+            <key type="filename">enemies/zombie/walk/down-left/4.png</key>
+            <key type="filename">enemies/zombie/walk/down-left/5.png</key>
+            <key type="filename">enemies/zombie/walk/down-left/6.png</key>
+            <key type="filename">enemies/zombie/walk/down-left/7.png</key>
+            <key type="filename">enemies/zombie/walk/down-left/8.png</key>
+            <key type="filename">enemies/zombie/walk/down-right/1.png</key>
+            <key type="filename">enemies/zombie/walk/down-right/2.png</key>
+            <key type="filename">enemies/zombie/walk/down-right/3.png</key>
+            <key type="filename">enemies/zombie/walk/down-right/4.png</key>
+            <key type="filename">enemies/zombie/walk/down-right/5.png</key>
+            <key type="filename">enemies/zombie/walk/down-right/6.png</key>
+            <key type="filename">enemies/zombie/walk/down-right/7.png</key>
+            <key type="filename">enemies/zombie/walk/down-right/8.png</key>
+            <key type="filename">enemies/zombie/walk/down/1.png</key>
+            <key type="filename">enemies/zombie/walk/down/2.png</key>
+            <key type="filename">enemies/zombie/walk/down/3.png</key>
+            <key type="filename">enemies/zombie/walk/down/4.png</key>
+            <key type="filename">enemies/zombie/walk/down/5.png</key>
+            <key type="filename">enemies/zombie/walk/down/6.png</key>
+            <key type="filename">enemies/zombie/walk/down/7.png</key>
+            <key type="filename">enemies/zombie/walk/down/8.png</key>
+            <key type="filename">enemies/zombie/walk/left/1.png</key>
+            <key type="filename">enemies/zombie/walk/left/2.png</key>
+            <key type="filename">enemies/zombie/walk/left/3.png</key>
+            <key type="filename">enemies/zombie/walk/left/4.png</key>
+            <key type="filename">enemies/zombie/walk/left/5.png</key>
+            <key type="filename">enemies/zombie/walk/left/6.png</key>
+            <key type="filename">enemies/zombie/walk/left/7.png</key>
+            <key type="filename">enemies/zombie/walk/left/8.png</key>
+            <key type="filename">enemies/zombie/walk/right/1.png</key>
+            <key type="filename">enemies/zombie/walk/right/2.png</key>
+            <key type="filename">enemies/zombie/walk/right/3.png</key>
+            <key type="filename">enemies/zombie/walk/right/4.png</key>
+            <key type="filename">enemies/zombie/walk/right/5.png</key>
+            <key type="filename">enemies/zombie/walk/right/6.png</key>
+            <key type="filename">enemies/zombie/walk/right/7.png</key>
+            <key type="filename">enemies/zombie/walk/right/8.png</key>
+            <key type="filename">enemies/zombie/walk/up-left/1.png</key>
+            <key type="filename">enemies/zombie/walk/up-left/2.png</key>
+            <key type="filename">enemies/zombie/walk/up-left/3.png</key>
+            <key type="filename">enemies/zombie/walk/up-left/4.png</key>
+            <key type="filename">enemies/zombie/walk/up-left/5.png</key>
+            <key type="filename">enemies/zombie/walk/up-left/6.png</key>
+            <key type="filename">enemies/zombie/walk/up-left/7.png</key>
+            <key type="filename">enemies/zombie/walk/up-left/8.png</key>
+            <key type="filename">enemies/zombie/walk/up-right/1.png</key>
+            <key type="filename">enemies/zombie/walk/up-right/2.png</key>
+            <key type="filename">enemies/zombie/walk/up-right/3.png</key>
+            <key type="filename">enemies/zombie/walk/up-right/4.png</key>
+            <key type="filename">enemies/zombie/walk/up-right/5.png</key>
+            <key type="filename">enemies/zombie/walk/up-right/6.png</key>
+            <key type="filename">enemies/zombie/walk/up-right/7.png</key>
+            <key type="filename">enemies/zombie/walk/up-right/8.png</key>
+            <key type="filename">enemies/zombie/walk/up/1.png</key>
+            <key type="filename">enemies/zombie/walk/up/2.png</key>
+            <key type="filename">enemies/zombie/walk/up/3.png</key>
+            <key type="filename">enemies/zombie/walk/up/4.png</key>
+            <key type="filename">enemies/zombie/walk/up/5.png</key>
+            <key type="filename">enemies/zombie/walk/up/6.png</key>
+            <key type="filename">enemies/zombie/walk/up/7.png</key>
+            <key type="filename">enemies/zombie/walk/up/8.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>19,19,37,37</rect>
+                <key>scale9Paddings</key>
+                <rect>19,19,37,37</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">hero/with-weapon/attack/down-left/1.png</key>
             <key type="filename">hero/with-weapon/attack/down-left/10.png</key>
             <key type="filename">hero/with-weapon/attack/down-left/11.png</key>
@@ -1303,6 +1445,7 @@
         <key>fileList</key>
         <array>
             <filename>hero</filename>
+            <filename>enemies</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

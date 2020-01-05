@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import Dungeon from "@mikewesthad/dungeon";
 import Hero from "../objects/hero.js";
 import Enemy from "../objects/enemy.js";
+import Zombie from "../objects/enemies/zombie.js";
 import TILES from "../tile-mapping.js";
 import LightManager from "../light-manager.js";
 import Narrator from '../narrator.js'
@@ -654,7 +655,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.otherRooms.forEach(room => {
         const num = this.dungeon.r.randomInteger(1, maxEnemies)
         for (let i = 1; i <= num; i++) {
-          this.enemies.push(new Enemy(this, room, 'snake', (enemy) => {
+          this.enemies.push(new Zombie(this, room, (enemy) => {
             Phaser.Utils.Array.Remove(this.enemies, enemy)
           }));
         }
