@@ -130,6 +130,7 @@ export default class Hero {
   }
 
   useStairs() {
+    if (this.scene.narrator.playing) return
     if (this.isNear([
       ...TILES.STAIRS.OPEN[0],
       ...TILES.STAIRS.OPEN[1],
@@ -370,11 +371,14 @@ export default class Hero {
       // Stop any previous movement from the last frame
       this.sprites.hero.setVelocity(0);
 
-      const runOrWalk = this.keys.shift.isDown ? 'walk' : 'run'
+      const runOrWalk = this.keys.shift.isDown || this.scene.narrator.forceWalk ? 'walk' : 'run'
       this.baseSpeed = runOrWalk === 'run' ? 2 : 1
       if (this.attacking) this.baseSpeed *= 0.1
       if (this.scene.narrator.slowmo) {
-        this.baseSpeed *= this.scene.dungeonNumber === 1 ? 0 : 0.3
+        this.baseSpeed *= 0.3
+      }
+      if (this.scene.narrator.freeze) {
+        this.baseSpeed *= 0
       }
 
       if (this.joystick.force >= this.joystick.touchCursor.forceMin) {

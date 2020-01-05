@@ -1265,6 +1265,15 @@ export default class DungeonScene extends Phaser.Scene {
       this.currentRoom = currentRoom
       if (!this.visitedRooms.includes(this.currentRoom)) {
         this.visitedRooms.push(this.currentRoom)
+
+        if (this.dungeonNumber === 1 && this.currentRoom === this.endRoom) {
+          this.narrator.slowmoStart()
+          this.narrator.forceWalk = true
+          this.narrator.sayOnce('horribleJourney').then(() => {
+            this.narrator.slowmoEnd()
+            this.narrator.forceWalk = false
+          })
+        }
       }
     }
   }

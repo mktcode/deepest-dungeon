@@ -29,6 +29,8 @@ export default class Narrator {
     this.safeRoom = scene.sound.add("safeRoom")
     this.orientationLost = scene.sound.add("orientationLost")
     this.slowmo = false
+    this.freeze = false
+    this.forceWalk = false
     this.playing = null
   }
 
@@ -56,6 +58,7 @@ export default class Narrator {
         this.playing = this[key]
         this.playing.play({delay: delay || 0})
         this.playing.once('complete', () => {
+          this.playing = null
           resolve()
         })
       }
@@ -81,7 +84,7 @@ export default class Narrator {
     return new Promise((resolve) => {
       if (dungeonNumber === 1) {
         this.scene.time.delayedCall(delay * 1000, () => {
-          this.slowmoStart()
+          this.freezeStart()
           this.scene.hero.freeze()
         })
         this.sayOnce('emptyRoom', delay).then((saidSth) => {
@@ -89,7 +92,7 @@ export default class Narrator {
             this.say('Door' + doorCount, 0).then(() => {
               this.sayOnce("although", 0).then(() => {
                 resolve()
-                this.slowmoEnd()
+                this.freezeEnd()
                 this.scene.hero.unfreeze()
               });
             })
@@ -134,6 +137,14 @@ export default class Narrator {
   }
   slowmoEnd() {
     this.slowmo = false
+    this.scene.cameras.main.zoomTo(2)
+  }
+  freezeStart() {
+    this.freeze = true
+    this.scene.cameras.main.zoomTo(3)
+  }
+  freezeEnd() {
+    this.freeze = false
     this.scene.cameras.main.zoomTo(2)
   }
 }
