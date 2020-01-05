@@ -4,8 +4,6 @@ import TILES from "../tile-mapping.js";
 
 // assets
 import xpDust from "../assets/xp-dust.png";
-import attackSound from "../assets/audio/attack.mp3";
-import attackPunchSound from "../assets/audio/attack-punch.mp3";
 
 export default class Hero {
   constructor(scene, x, y) {
@@ -84,9 +82,6 @@ export default class Hero {
     this.scene.input.keyboard.on('keyup-Q', () => {
       this.usePathfinder()
     });
-
-    this.attackSound = this.scene.sound.add("attackSound", {volume: 0.2})
-    this.attackPunchSound = this.scene.sound.add("attackPunchSound", {volume: 0.2})
   }
 
   static preload(scene) {
@@ -98,8 +93,6 @@ export default class Hero {
         frameHeight: 22
       }
     )
-    scene.load.audio("attackSound", attackSound)
-    scene.load.audio("attackPunchSound", attackPunchSound)
   }
 
   static getLevelByXp(xp) {
@@ -301,7 +294,7 @@ export default class Hero {
   }
 
   attack(direction) {
-    this.scene.registry.get('weapon') ? this.attackSound.play() : this.attackPunchSound.play()
+    this.scene.registry.get('weapon') ? this.scene.sounds.play('attackSound') : this.scene.sounds.play('attackPunchSound')
     return this.playAnim('attack', direction)
   }
 
