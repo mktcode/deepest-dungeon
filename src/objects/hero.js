@@ -407,34 +407,38 @@ export default class Hero {
       // Update the animation last and give left/right/down animations precedence over up animations
       // Do nothing if slashing animation is playing
       if (!this.attacking) {
-        if (this.isDirectionKeyDown('up')) {
-          this.lastDirection = 'up'
-          if (this.isDirectionKeyDown('left')) {
-            this.lastDirection = 'up-left'
-            this[runOrWalk]("up-left")
+        if (!this.sprites.hero.body.isStatic) {
+          if (this.isDirectionKeyDown('up')) {
+            this.lastDirection = 'up'
+            if (this.isDirectionKeyDown('left')) {
+              this.lastDirection = 'up-left'
+              this[runOrWalk]("up-left")
+            } else if (this.isDirectionKeyDown('right')) {
+              this.lastDirection = 'up-right'
+              this[runOrWalk]("up-right")
+            } else {
+              this[runOrWalk]("up")
+            }
+          } else if (this.isDirectionKeyDown('down')) {
+            this.lastDirection = 'down'
+            if (this.isDirectionKeyDown('left')) {
+              this.lastDirection = 'down-left'
+              this[runOrWalk]("down-left")
+            } else if (this.isDirectionKeyDown('right')) {
+              this.lastDirection = 'down-right'
+              this[runOrWalk]("down-right")
+            } else {
+              this[runOrWalk]("down")
+            }
+          } else if (this.isDirectionKeyDown('left')) {
+            this.lastDirection = 'left'
+            this[runOrWalk]("left")
           } else if (this.isDirectionKeyDown('right')) {
-            this.lastDirection = 'up-right'
-            this[runOrWalk]("up-right")
+            this.lastDirection = 'right'
+            this[runOrWalk]("right")
           } else {
-            this[runOrWalk]("up")
+            this.idle()
           }
-        } else if (this.isDirectionKeyDown('down')) {
-          this.lastDirection = 'down'
-          if (this.isDirectionKeyDown('left')) {
-            this.lastDirection = 'down-left'
-            this[runOrWalk]("down-left")
-          } else if (this.isDirectionKeyDown('right')) {
-            this.lastDirection = 'down-right'
-            this[runOrWalk]("down-right")
-          } else {
-            this[runOrWalk]("down")
-          }
-        } else if (this.isDirectionKeyDown('left')) {
-          this.lastDirection = 'left'
-          this[runOrWalk]("left")
-        } else if (this.isDirectionKeyDown('right')) {
-          this.lastDirection = 'right'
-          this[runOrWalk]("right")
         } else {
           this.idle()
         }
