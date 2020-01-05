@@ -6,6 +6,7 @@ import Zombie from "../objects/enemies/zombie.js";
 import TILES from "../tile-mapping.js";
 import LightManager from "../light-manager.js";
 import Narrator from '../narrator.js'
+import Sounds from '../sounds.js'
 import PathFinder from 'pathfinding'
 import { Slice } from 'polyk'
 
@@ -62,6 +63,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.cameras.main.setZoom(2)
     this.cameras.main.fadeIn(250, 0, 0, 0)
     this.narrator = new Narrator(this)
+    this.sounds = new Sounds(this)
     this.music = this.registry.get('music')
     this.music.setRate(1)
     this.registry.set('currentDungeon', this.dungeonNumber)
@@ -620,6 +622,7 @@ export default class DungeonScene extends Phaser.Scene {
 
   activateSafeRoom() {
     if (!this.safeRoomActivated) {
+      this.sounds.play('activateSafeRoom')
       this.safeRoomActivated = true
       this.registry.set('minDungeon', this.dungeonNumber)
       this.skillShrinePositions.forEach(x => {
