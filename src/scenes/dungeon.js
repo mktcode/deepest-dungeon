@@ -35,10 +35,10 @@ export default class DungeonScene extends Phaser.Scene {
     const rooms = this.dungeon.rooms.slice()
     this.otherRooms = rooms
     this.startRoom = this.getStartRoom()
+    this.visitedRooms = [this.startRoom]
+    this.currentRoom = this.startRoom
     this.endRoom = this.getEndRoom()
     this.safeRoom = this.getSafeRoom()
-    this.currentRoom = this.startRoom
-    this.visitedRooms = [this.startRoom]
 
     this.sword = null
     this.torch = null
@@ -136,10 +136,19 @@ export default class DungeonScene extends Phaser.Scene {
   getEndRoom() {
     if (this.endRoom) return this.endRoom
 
-    const roomsWithOneDoor = this.otherRooms.filter(r => r.getDoorLocations().length === 1)
-    const endRoom = roomsWithOneDoor.sort((a, b) => a.width * a.height - b.width * b.height)[0]
-    Phaser.Utils.Array.Remove(this.otherRooms, endRoom)
-    return endRoom
+    // for the first level the endroom will be the last one that is entered
+    if (this.dungeonNumber === 1) {
+      if (this.visitedRooms.length === this.dungeon.rooms.length - 1) {
+        this.endRoom = this.otherRooms.find(r => !this.visitedRooms.includes(r))
+        this.addStairs()
+      }
+      return null
+    } else {
+      const roomsWithOneDoor = this.otherRooms.filter(r => r.getDoorLocations().length === 1)
+      const endRoom = roomsWithOneDoor.sort((a, b) => a.width * a.height - b.width * b.height)[0]
+      Phaser.Utils.Array.Remove(this.otherRooms, endRoom)
+      return endRoom
+    }
   }
 
   getSafeRoom() {
@@ -326,83 +335,87 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   addStairs() {
-    const x = this.tileToWorldX(this.endRoom.centerX) + this.tileSize / 2
-    const y = this.tileToWorldY(this.endRoom.centerY + 2) + this.tileSize / 2
-    const width = this.tileSize * 3.5
-    const height = width
+    if (this.endRoom) {
+      const x = this.tileToWorldX(this.endRoom.centerX) + this.tileSize / 2
+      const y = this.tileToWorldY(this.endRoom.centerY + 2) + this.tileSize / 2
+      const width = this.tileSize * 3.5
+      const height = width
 
-    // tiles
-    this.stuffLayer.putTilesAt(
-      TILES.STAIRS.OPEN,
-      this.endRoom.centerX - 2,
-      this.endRoom.centerY
-    )
-    // collision
-    this.matter.add.rectangle(x, y, width, height, this.isStatic)
-    // particle emitter
-    let particleCount = 0
-    this.stairParticles = this.interactionParticle.createEmitter({
-      on: false,
-      x: x - width / 2 - 4,
-      y: y - height / 2 - 4,
-      blendMode: 'SCREEN',
-      scale: { start: 0, end: 0.75 },
-      alpha: { start: 1, end: 0 },
-      speed: 10,
-      quantity: 40,
-      frequency: 200,
-      lifespan: 500,
-      emitZone: {
-        source: new Phaser.Geom.Rectangle(0, 0, width + 8, height + 8),
-        type: 'edge',
-        quantity: 40
-      },
-      emitCallback: (particle) => {
-        // only every 25 particles get a light
-        particleCount++
-        if (!(particleCount % 25)) {
-          particleCount = 25
-          this.lightManager.lights.push({
-            sprite: particle,
-            intensity: () => 1
+      // tiles
+      this.stuffLayer.putTilesAt(
+        TILES.STAIRS.OPEN,
+        this.endRoom.centerX - 2,
+        this.endRoom.centerY
+      )
+      // collision
+      this.matter.add.rectangle(x, y, width, height, this.isStatic)
+      // particle emitter
+      let particleCount = 0
+      this.stairParticles = this.interactionParticle.createEmitter({
+        on: false,
+        x: x - width / 2 - 4,
+        y: y - height / 2 - 4,
+        blendMode: 'SCREEN',
+        scale: { start: 0, end: 0.75 },
+        alpha: { start: 1, end: 0 },
+        speed: 10,
+        quantity: 40,
+        frequency: 200,
+        lifespan: 500,
+        emitZone: {
+          source: new Phaser.Geom.Rectangle(0, 0, width + 8, height + 8),
+          type: 'edge',
+          quantity: 40
+        },
+        emitCallback: (particle) => {
+          // only every 25 particles get a light
+          particleCount++
+          if (!(particleCount % 25)) {
+            particleCount = 25
+            this.lightManager.lights.push({
+              sprite: particle,
+              intensity: () => 1
+            })
+          }
+        },
+        deathCallback: (particle) => {
+          this.time.delayedCall(1000, () => {
+            this.lightManager.removeLight(particle)
           })
         }
-      },
-      deathCallback: (particle) => {
-        this.time.delayedCall(1000, () => {
-          this.lightManager.removeLight(particle)
-        })
-      }
-    })
+      })
 
-    this.input.on('pointerup', (pointer) => {
-      const tile = this.stuffLayer.getTileAtWorldXY(pointer.worldX, pointer.worldY)
-      if (tile && [
+      this.input.on('pointerup', (pointer) => {
+        const tile = this.stuffLayer.getTileAtWorldXY(pointer.worldX, pointer.worldY)
+        if (tile && [
+          ...TILES.STAIRS.OPEN[0],
+          ...TILES.STAIRS.OPEN[1],
+          ...TILES.STAIRS.OPEN[2],
+          ...TILES.STAIRS.OPEN[3],
+          ...TILES.STAIRS.OPEN[4]
+        ].includes(tile.index)) {
+          this.hero.useStairs()
+        }
+      })
+    }
+  }
+
+  updateStairParticles() {
+    if (this.stairParticles) {
+      const tile = this.hero.isNear([
         ...TILES.STAIRS.OPEN[0],
         ...TILES.STAIRS.OPEN[1],
         ...TILES.STAIRS.OPEN[2],
         ...TILES.STAIRS.OPEN[3],
         ...TILES.STAIRS.OPEN[4]
-      ].includes(tile.index)) {
-        this.hero.useStairs()
+      ])
+      if (tile) {
+        if (this.stairParticles.on === false) {
+          this.stairParticles.start()
+        }
+      } else {
+        this.stairParticles.stop()
       }
-    })
-  }
-
-  updateStairParticles() {
-    const tile = this.hero.isNear([
-      ...TILES.STAIRS.OPEN[0],
-      ...TILES.STAIRS.OPEN[1],
-      ...TILES.STAIRS.OPEN[2],
-      ...TILES.STAIRS.OPEN[3],
-      ...TILES.STAIRS.OPEN[4]
-    ])
-    if (tile) {
-      if (this.stairParticles.on === false) {
-        this.stairParticles.start()
-      }
-    } else {
-      this.stairParticles.stop()
     }
   }
 
@@ -1244,11 +1257,16 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   setCurrentRoom() {
-    this.currentRoom = this.dungeon.getRoomAt(
+    const currentRoom = this.dungeon.getRoomAt(
       this.worldToTileX(this.hero.sprites.hero.x),
       this.worldToTileY(this.hero.sprites.hero.y)
     )
-    this.visitedRooms.push(this.currentRoom)
+    if (this.currentRoom !== currentRoom) {
+      this.currentRoom = currentRoom
+      if (!this.visitedRooms.includes(this.currentRoom)) {
+        this.visitedRooms.push(this.currentRoom)
+      }
+    }
   }
 
   tileToWorldX(x) {
@@ -1268,6 +1286,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   update() {
+    this.getEndRoom()
     this.hero.update()
     this.enemies.forEach(e => e.update())
     this.setCurrentRoom()
