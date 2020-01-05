@@ -3,14 +3,14 @@ export default class Animations {
     this.anims = scene.anims
     this.textures = scene.textures
 
-    this.createHeroAnim('idle', 12)
-    this.createHeroAnim('walk', 25)
-    this.createHeroAnim('run', 25)
-    this.createHeroAnim('attack', 25)
-    this.createHeroAnim('die', 25)
+    this.createHeroAnim('idle', 0.7)
+    this.createHeroAnim('walk', 1.5)
+    this.createHeroAnim('run', 1.5)
+    this.createHeroAnim('attack', 1.5)
+    this.createHeroAnim('die', 1.5)
 
-    this.createZombiAnim('walk', 25)
-    this.createZombiAnim('die', 25)
+    this.createZombiAnim('walk', 1.5)
+    this.createZombiAnim('die', 1.5)
 
     this.anims.create({
       key: "deamon-idle",
@@ -40,7 +40,7 @@ export default class Animations {
     });
   }
 
-  createHeroAnim(name, frameRate) {
+  createHeroAnim(name, frameRateMod) {
     ['up', 'down', 'left', 'right', 'up-left', 'up-right', 'down-left', 'down-right'].forEach(direction => {
       const withWeaponPrefix = 'hero/with-weapon/' + name + '/' + direction + '/'
       const withoutWeaponPrefix = 'hero/without-weapon/' + name + '/' + direction + '/'
@@ -52,26 +52,26 @@ export default class Animations {
       this.anims.create({
         key: name + '-with-sword-' + direction,
         frames: this.anims.generateFrameNames('sprites', { start: 1, end: numberOfFramesWithWeapon, prefix: withWeaponPrefix }),
-        frameRate: numberOfFramesWithWeapon * 1.5,
+        frameRate: numberOfFramesWithWeapon * frameRateMod,
         repeat: 0
       })
       this.anims.create({
         key: name + '-' + direction,
         frames: this.anims.generateFrameNames('sprites', { start: 1, end: numberOfFramesWithoutWeapon, prefix: withoutWeaponPrefix }),
-        frameRate: numberOfFramesWithoutWeapon * 1.5,
+        frameRate: numberOfFramesWithoutWeapon * frameRateMod,
         repeat: 0
       })
       // slowmo
       this.anims.create({
         key: name + '-with-sword' + direction + '-slowmo',
         frames: this.anims.generateFrameNames('sprites', { start: 1, end: numberOfFramesWithWeapon, prefix: withWeaponPrefix }),
-        frameRate: numberOfFramesWithWeapon * 1.5 / 3,
+        frameRate: numberOfFramesWithWeapon * frameRateMod / 3,
         repeat: 0
       })
       this.anims.create({
         key: name + '-' + direction + '-slowmo',
         frames: this.anims.generateFrameNames('sprites', { start: 1, end: numberOfFramesWithoutWeapon, prefix: withoutWeaponPrefix }),
-        frameRate: numberOfFramesWithoutWeapon * 1.5 / 3,
+        frameRate: numberOfFramesWithoutWeapon * frameRateMod / 3,
         repeat: 0
       })
     })
