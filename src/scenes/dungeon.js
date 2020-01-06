@@ -1298,7 +1298,7 @@ export default class DungeonScene extends Phaser.Scene {
           })
         }
 
-        if (this.safeRoom && this.currentRoom === this.safeRoom) {
+        if (this.safeRoom && this.currentRoom === this.safeRoom && !this.registry.get('narratorSaid').includes('thisRoomWasDifferent')) {
           this.narrator.slowmoStart()
           this.narrator.sayOnce('thisRoomWasDifferent').then(() => {
             this.narrator.slowmoEnd()
