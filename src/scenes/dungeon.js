@@ -1292,11 +1292,9 @@ export default class DungeonScene extends Phaser.Scene {
         }
 
         if (this.timebombRoom && this.currentRoom === this.timebombRoom) {
-          this.time.delayedCall(200, () => {
-            this.narrator.freezeStart()
-            this.narrator.sayOnce('aTimeeater').then(() => {
-              this.narrator.freezeEnd()
-            })
+          this.narrator.slowmoStart()
+          this.narrator.sayOnce('aTimeeater').then(() => {
+            this.narrator.slowmoEnd()
           })
         }
 
