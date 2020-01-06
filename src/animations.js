@@ -63,7 +63,7 @@ export default class Animations {
       })
       // slowmo
       this.anims.create({
-        key: name + '-with-sword' + direction + '-slowmo',
+        key: name + '-with-sword-' + direction + '-slowmo',
         frames: this.anims.generateFrameNames('sprites', { start: 1, end: numberOfFramesWithWeapon, prefix: withWeaponPrefix }),
         frameRate: numberOfFramesWithWeapon * frameRateMod / 3,
         repeat: 0
