@@ -1299,6 +1299,13 @@ export default class DungeonScene extends Phaser.Scene {
             })
           })
         }
+
+        if (this.safeRoom && this.currentRoom === this.safeRoom) {
+          this.narrator.slowmoStart()
+          this.narrator.sayOnce('thisRoomWasDifferent').then(() => {
+            this.narrator.slowmoEnd()
+          })
+        }
       }
     }
   }
