@@ -52,7 +52,7 @@ export default class DungeonScene extends Phaser.Scene {
 
   static preload(scene) {
     scene.load.image("tileset", tileset)
-    scene.load.spritesheet('sword', swordSprite, { frameWidth: 16, frameHeight: 16 })
+    scene.load.spritesheet('sword', swordSprite, { frameWidth: 31, frameHeight: 31 })
     scene.load.spritesheet('torch', torchSprite, { frameWidth: 8, frameHeight: 18 })
     scene.load.spritesheet('path', pathSprite, { frameWidth: 6, frameHeight: 6 })
     scene.load.spritesheet('pathfinder', pathfinderSprite, { frameWidth: 24, frameHeight: 24 })
