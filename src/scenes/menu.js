@@ -11,7 +11,7 @@ export default class MenuScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.fadeIn(250, 0, 0, 0);
-    this.music = this.sound.add('ambientMusik', { volume: 0.3, loop: true  });
+    this.music = this.sound.add('ambientMusik', { volume: 0.25, loop: true  });
     this.music.play()
 
     this.centerX = this.game.scale.width / 2
@@ -42,6 +42,7 @@ export default class MenuScene extends Phaser.Scene {
     this.registry.set('xp', 0)
     this.registry.set('skillPoints', 0)
     this.registry.set('skillPointsSpent', 0)
+    this.registry.set('enemiesKilled', 0)
   }
 
   addTitle() {

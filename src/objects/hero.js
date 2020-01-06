@@ -406,7 +406,7 @@ export default class Hero {
       // Update the animation last and give left/right/down animations precedence over up animations
       // Do nothing if slashing animation is playing
       if (!this.attacking) {
-        if (!this.sprites.hero.body.isStatic) {
+        if (!this.sprites.hero.body.isStatic && !this.scene.narrator.freeze) {
           if (this.isDirectionKeyDown('up')) {
             this.lastDirection = 'up'
             if (this.isDirectionKeyDown('left')) {

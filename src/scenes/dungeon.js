@@ -118,10 +118,10 @@ export default class DungeonScene extends Phaser.Scene {
       }
     })
 
-    this.narrator.dungeonIntro(
-      this.dungeonNumber,
-      this.startRoom.getDoorLocations().length
-    )
+    if (this.dungeonNumber === 1) {
+      this.narrator.freezeStart()
+      this.narrator.sayOnce('whereAmI', 1).then(() => this.narrator.freezeEnd())
+    }
 
     this.input.keyboard.on('keyup-ESC', () => {
       this.scene.pause()
@@ -836,7 +836,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   addItems() {
-    if (this.dungeonNumber >= 2 && !this.hero.hasItem('sword')) {
+    if (this.dungeonNumber >= 3 && !this.hero.hasItem('sword')) {
       this.addSword()
     }
 
@@ -1272,10 +1272,18 @@ export default class DungeonScene extends Phaser.Scene {
         if (this.dungeonNumber === 1 && this.currentRoom === this.endRoom) {
           this.narrator.slowmoStart()
           this.narrator.forceWalk = true
-          this.narrator.sayOnce('horribleJourney').then(() => {
+          this.narrator.sayOnce('finallySomeStairs').then(() => {
             this.narrator.slowmoEnd()
             this.narrator.forceWalk = false
           })
+        }
+
+        if (this.dungeonNumber === 1 && this.visitedRooms.length > this.dungeon.rooms.length / 2) {
+          this.narrator.sayOnce('whatWasThisAbout')
+        }
+
+        if (this.dungeonNumber === 2 && this.enemies.find(e => e.room === this.currentRoom)) {
+          this.narrator.sayOnce('undeadCreatures')
         }
       }
     }

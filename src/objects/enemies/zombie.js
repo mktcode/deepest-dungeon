@@ -74,6 +74,19 @@ export default class Zombie {
         }
       }
     })
+
+    // sounds
+    this.dungeon.time.delayedCall(Phaser.Math.Between(0, 10000), () => {
+      this.sound = this.dungeon.time.addEvent({
+        delay: 10000,
+        callback: () => {
+          if (this.dungeon.currentRoom === this.room) {
+            this.dungeon.sounds.play('zombie' + Phaser.Math.Between(1, 2))
+          }
+        },
+        loop: true
+      })
+    })
   }
 
   playAnim(name, direction) {
@@ -101,6 +114,11 @@ export default class Zombie {
       this.dungeon.flashSprite(this.sprite)
       this.sprite.setVelocity(0)
       if (this.hp <= 0) {
+        this.sound.remove()
+        this.dungeon.registry.set('enemiesKilled', this.dungeon.registry.get('enemiesKilled') + 1)
+        if (this.dungeon.registry.get('enemiesKilled') === 3) {
+          this.dungeon.narrator.sayOnce('killingAllTheseEnemies')
+        }
         this.dead = true
         this.die()
         this.dungeon.registry.set('xp', this.dungeon.registry.get('xp') + this.xp)
