@@ -76,7 +76,7 @@ export default class Zombie {
     })
 
     // sounds
-    this.dungeon.time.delayedCall(Phaser.Math.Between(0, 10000), () => {
+    this.dungeon.time.delayedCall(Phaser.Math.Between(0, 5000), () => {
       this.sound = this.dungeon.time.addEvent({
         delay: 10000,
         callback: () => {
