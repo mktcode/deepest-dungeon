@@ -851,9 +851,9 @@ export default class DungeonScene extends Phaser.Scene {
 
   addSword(x, y) {
     if (!x && !y) {
-      const swordRoom = this.dungeon.r.randomPick(this.otherRooms)
-      x = this.tileToWorldX(swordRoom.centerX)
-      y = this.tileToWorldY(swordRoom.centerY)
+      this.swordRoom = this.dungeon.r.randomPick(this.otherRooms)
+      x = this.tileToWorldX(this.swordRoom.centerX)
+      y = this.tileToWorldY(this.swordRoom.centerY)
     }
 
     this.sword = this.matter.add.sprite(x, y, 'sword', 0, { isStatic: true, collisionFilter: { group: -1 } }).setDepth(8)
@@ -1284,6 +1284,10 @@ export default class DungeonScene extends Phaser.Scene {
 
         if (this.dungeonNumber === 2 && this.enemies.find(e => e.room === this.currentRoom)) {
           this.narrator.sayOnce('undeadCreatures')
+        }
+
+        if (this.swordRoom && this.currentRoom === this.swordRoom) {
+          this.narrator.sayOnce('thereItWasASword')
         }
       }
     }

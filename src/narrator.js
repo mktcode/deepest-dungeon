@@ -3,6 +3,7 @@ import whatWasThisAbout from "./assets/audio/narrator/02-what-was-this-about.mp3
 import finallySomeStairs from "./assets/audio/narrator/03-finally-some-stairs.mp3"
 import undeadCreatures from "./assets/audio/narrator/04-undead-creatures.mp3"
 import killingAllTheseEnemies from "./assets/audio/narrator/05-killing-all-these-enemies.mp3"
+import thereItWasASword from "./assets/audio/narrator/06-there-it-was-a-sword.mp3"
 
 export default class Narrator {
   constructor(scene) {
@@ -13,6 +14,7 @@ export default class Narrator {
     this.finallySomeStairs = scene.sound.add('finallySomeStairs')
     this.undeadCreatures = scene.sound.add('undeadCreatures')
     this.killingAllTheseEnemies = scene.sound.add('killingAllTheseEnemies')
+    this.thereItWasASword = scene.sound.add('thereItWasASword')
 
     this.slowmo = false
     this.freeze = false
@@ -26,6 +28,7 @@ export default class Narrator {
     scene.load.audio('finallySomeStairs', finallySomeStairs)
     scene.load.audio('undeadCreatures', undeadCreatures)
     scene.load.audio('killingAllTheseEnemies', killingAllTheseEnemies)
+    scene.load.audio('thereItWasASword', thereItWasASword)
   }
 
   say(key, delay) {
