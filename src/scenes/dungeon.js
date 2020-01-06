@@ -986,6 +986,7 @@ export default class DungeonScene extends Phaser.Scene {
       // this.physics.add.collider(this.timebomb, this.wallLayer)
       let particleCount = 0
       this.timebombParticles = this.interactionParticle.createEmitter({
+        tint: [0xFFFFFF, 0x7777FF],
         blendMode: 'SCREEN',
         scale: { start: 0.3, end: 1 },
         alpha: { start: 1, end: 0 },
