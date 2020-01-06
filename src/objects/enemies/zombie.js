@@ -114,9 +114,9 @@ export default class Zombie {
       this.dungeon.flashSprite(this.sprite)
       this.sprite.setVelocity(0)
       if (this.hp <= 0) {
-        this.sound.remove()
+        if (this.sound) this.sound.remove()
         this.dungeon.registry.set('enemiesKilled', this.dungeon.registry.get('enemiesKilled') + 1)
-        if (this.dungeon.registry.get('enemiesKilled') === 3) {
+        if (this.dungeon.registry.get('enemiesKilled') === 3 && !this.dungeon.registry.get('items').includes('sword')) {
           this.dungeon.narrator.sayOnce('killingAllTheseEnemies')
         }
         this.dead = true
