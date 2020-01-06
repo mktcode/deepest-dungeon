@@ -17,10 +17,10 @@ export default class Sounds {
     scene.load.audio('attackPunchSound', attackPunchSound)
   }
 
-  play(key, delay) {
+  play(key, delay, slowmo) {
     return new Promise((resolve) => {
       this.playing = this[key]
-      this.playing.play({delay: delay || 0})
+      this.playing.play({ rate: slowmo ? 0.3 : 1, delay: delay || 0 })
       this.playing.once('complete', () => {
         this.playing = null
         resolve()

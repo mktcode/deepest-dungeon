@@ -294,7 +294,9 @@ export default class Hero {
   }
 
   attack(direction) {
-    this.scene.registry.get('weapon') ? this.scene.sounds.play('attackSound') : this.scene.sounds.play('attackPunchSound')
+    this.scene.registry.get('weapon')
+      ? this.scene.sounds.play('attackSound', 0, this.scene.narrator.slowmo)
+      : this.scene.sounds.play('attackPunchSound', 0, this.scene.narrator.slowmo)
     return this.playAnim('attack', direction)
   }
 
