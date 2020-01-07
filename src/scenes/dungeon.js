@@ -816,7 +816,8 @@ export default class DungeonScene extends Phaser.Scene {
           particle.x < this.hero.sprites.hero.body.parts[1].bounds.max.x &&
           particle.y > this.hero.sprites.hero.body.parts[1].bounds.min.y &&
           particle.y < this.hero.sprites.hero.body.parts[1].bounds.max.y &&
-          !this.hero.burning
+          !this.hero.burning &&
+          !this.hero.dead
         ) {
           this.hero.burning = true
           this.hero.takeDamage(1)
