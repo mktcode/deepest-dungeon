@@ -1,11 +1,10 @@
 # TODO
 
 - [ ] Bugfix: when died, xp/points disappear, some weird tween/animation moves them away
+- [ ] Bugfix: sometimes enemies are contantly walking against wall
 - [ ] trapdoors: random tiles change after standing on them too long, instant death
 - [ ] ingame instructions
 - [ ] adjust/expand narrator
-- [ ] pause
-- [ ] add sound for sword and hero when attacking
 - [ ] implement global high score
 - [ ] implement mana and spell attack
 - [ ] animate cooldowns in item slots
@@ -14,6 +13,7 @@
 - [ ] use seeds as sharable "sessions" and saved games
 - [ ] more enemies/traps
 - [ ] stamina for running (and attacking)
+- [ ] disabled slowmo if narrator is disabled
 
 # phaser-electron-typescript-parcel [![Build Status](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel.svg?branch=master)](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel)
 
