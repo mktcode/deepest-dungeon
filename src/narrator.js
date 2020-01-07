@@ -7,6 +7,8 @@ import thereItWasASword from "./assets/audio/narrator/06-there-it-was-a-sword.mp
 import thisRoomWasDifferent from "./assets/audio/narrator/07-this-room-was-different.mp3"
 import theDeeperHeWent from "./assets/audio/narrator/08-the-deeper-he-went.mp3"
 import aTimeeater from "./assets/audio/narrator/09-a-timeeater.mp3"
+import timeeaterQuickNow from "./assets/audio/narrator/10-timeeater-quick-now.mp3"
+import dungeonStartedToQuake from "./assets/audio/narrator/11-dungeon-started-to-quake.mp3"
 
 export default class Narrator {
   constructor(scene) {
@@ -21,6 +23,8 @@ export default class Narrator {
     this.thisRoomWasDifferent = scene.sound.add('thisRoomWasDifferent')
     this.theDeeperHeWent = scene.sound.add('theDeeperHeWent')
     this.aTimeeater = scene.sound.add('aTimeeater')
+    this.timeeaterQuickNow = scene.sound.add('timeeaterQuickNow')
+    this.dungeonStartedToQuake = scene.sound.add('dungeonStartedToQuake')
 
     this.slowmo = false
     this.freeze = false
@@ -38,6 +42,8 @@ export default class Narrator {
     scene.load.audio('thisRoomWasDifferent', thisRoomWasDifferent)
     scene.load.audio('theDeeperHeWent', theDeeperHeWent)
     scene.load.audio('aTimeeater', aTimeeater)
+    scene.load.audio('timeeaterQuickNow', timeeaterQuickNow)
+    scene.load.audio('dungeonStartedToQuake', dungeonStartedToQuake)
   }
 
   say(key, delay) {

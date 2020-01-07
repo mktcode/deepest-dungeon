@@ -3,6 +3,8 @@ import attackSound from './assets/audio/sounds/attack.mp3';
 import attackPunchSound from './assets/audio/sounds/attack-punch.mp3';
 import zombie1 from './assets/audio/sounds/zombie1.mp3';
 import zombie2 from './assets/audio/sounds/zombie2.mp3';
+import ticking from './assets/audio/sounds/ticking.mp3';
+import tickingFast from './assets/audio/sounds/ticking-fast.mp3';
 
 export default class Sounds {
   constructor(scene) {
@@ -12,6 +14,8 @@ export default class Sounds {
     this.attackPunchSound = scene.sound.add('attackPunchSound', { volume: 0.25 })
     this.zombie1 = scene.sound.add('zombie1')
     this.zombie2 = scene.sound.add('zombie2')
+    this.ticking = scene.sound.add('ticking')
+    this.tickingFast = scene.sound.add('tickingFast')
     this.playing = null
   }
 
@@ -21,16 +25,22 @@ export default class Sounds {
     scene.load.audio('attackPunchSound', attackPunchSound)
     scene.load.audio('zombie1', zombie1)
     scene.load.audio('zombie2', zombie2)
+    scene.load.audio('ticking', ticking)
+    scene.load.audio('tickingFast', tickingFast)
   }
 
-  play(key, delay, slowmo) {
+  play(key, delay, slowmo, loop) {
     return new Promise((resolve) => {
       this.playing = this[key]
-      this.playing.play({ rate: slowmo ? 0.3 : 1, delay: delay || 0 })
+      this.playing.play({ rate: slowmo ? 0.3 : 1, delay: delay || 0, loop: loop || false })
       this.playing.once('complete', () => {
         this.playing = null
         resolve()
       })
     })
+  }
+
+  stop(key) {
+    this[key].stop()
   }
 }

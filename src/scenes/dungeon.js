@@ -110,6 +110,8 @@ export default class DungeonScene extends Phaser.Scene {
     })
 
     this.events.on('sleep', () => {
+      this.sounds.stop('ticking')
+      this.sounds.stop('tickingFast')
       this.countdown = null
       if (this.countdownText) {
         this.countdownText.destroy()
@@ -1025,6 +1027,8 @@ export default class DungeonScene extends Phaser.Scene {
           this.timebombParticles.stop()
           this.music.setSeek(40)
           this.music.setRate(1.5)
+          this.sounds.play('ticking', 1.5, false, true)
+          this.narrator.sayOnce('timeeaterQuickNow', 1)
           this.heroParticles = this.interactionParticle.createEmitter({
             tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
             blendMode: 'SCREEN',
@@ -1166,6 +1170,9 @@ export default class DungeonScene extends Phaser.Scene {
 
       if (minutes === 0 && seconds === 30) {
         this.cameras.main.shake(20000, 0.001)
+        this.sounds.stop('ticking')
+        this.sounds.play('tickingFast', 0.1, false, true)
+        this.narrator.sayOnce('dungeonStartedToQuake')
       }
       if (minutes === 0 && seconds === 10) {
         this.cameras.main.shake(10000, 0.005)
