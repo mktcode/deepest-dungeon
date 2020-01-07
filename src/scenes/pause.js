@@ -25,7 +25,7 @@ export default class PauseScene extends Phaser.Scene {
         x: '-=25',
         ease: 'Cubic',
         onComplete: () => {
-          this.currentDungeon.narrator.playing.resume()
+          if (this.currentDungeon.narrator.playing) this.currentDungeon.narrator.playing.resume()
           this.currentDungeon.scene.resume()
           this.scene.stop()
         }
