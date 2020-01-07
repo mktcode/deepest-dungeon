@@ -10,6 +10,7 @@ import torchPerfect from "./assets/audio/narrator/torch-perfect.mp3"
 import aTimeeater from "./assets/audio/narrator/a-timeeater.mp3"
 import timeeaterQuickNow from "./assets/audio/narrator/timeeater-quick-now.mp3"
 import dungeonStartedToQuake from "./assets/audio/narrator/dungeon-started-to-quake.mp3"
+import itsGettingHot from "./assets/audio/narrator/its-getting-hot.mp3"
 
 export default class Narrator {
   constructor(scene) {
@@ -27,6 +28,7 @@ export default class Narrator {
     this.aTimeeater = scene.sound.add('aTimeeater')
     this.timeeaterQuickNow = scene.sound.add('timeeaterQuickNow')
     this.dungeonStartedToQuake = scene.sound.add('dungeonStartedToQuake')
+    this.itsGettingHot = scene.sound.add('itsGettingHot')
 
     this.slowmo = false
     this.freeze = false
@@ -47,6 +49,7 @@ export default class Narrator {
     scene.load.audio('aTimeeater', aTimeeater)
     scene.load.audio('timeeaterQuickNow', timeeaterQuickNow)
     scene.load.audio('dungeonStartedToQuake', dungeonStartedToQuake)
+    scene.load.audio('itsGettingHot', itsGettingHot)
   }
 
   say(key, delay) {

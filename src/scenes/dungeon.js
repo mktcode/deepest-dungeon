@@ -711,6 +711,7 @@ export default class DungeonScene extends Phaser.Scene {
       ]
       this.otherRooms.forEach((room, i) => {
         if (i % 3) return
+        room.hasFireTraps = true
         const count = this.dungeon.r.randomInteger(1, 4)
         const walls = []
         const availableWalls = ['top', 'bottom', 'left', 'right']
@@ -1319,6 +1320,10 @@ export default class DungeonScene extends Phaser.Scene {
 
         if (this.torchRoom && this.currentRoom === this.torchRoom) {
           this.narrator.sayOnce('torchPerfect')
+        }
+
+        if (this.currentRoom.hasFireTraps) {
+          this.narrator.sayOnce('itsGettingHot')
         }
       }
     }
