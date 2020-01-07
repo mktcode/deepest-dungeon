@@ -601,7 +601,7 @@ export default class DungeonScene extends Phaser.Scene {
         if (this.worldToTileX(this.torchSkillParticles.x.propertyValue) === xPosition + 1) {
           const currentTorchDuration = this.registry.get('torchDuration')
           const currentTorchIntensity = this.registry.get('torchIntensity')
-          this.overlayText.setText('Torch duration:' + "\n" + currentTorchDuration + ' +30' + "\n" + 'Intensity: ' + "\n" + currentTorchIntensity + ' +1' + "\n" + availableSkillPoints)
+          this.overlayText.setText('Torch duration:' + "\n" + currentTorchDuration + 's +30s' + "\n" + 'Intensity: ' + "\n" + currentTorchIntensity + ' +1' + "\n" + availableSkillPoints)
         }
       } else {
         this.skillInteractionParticles.stop()
