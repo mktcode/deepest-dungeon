@@ -952,7 +952,7 @@ export default class DungeonScene extends Phaser.Scene {
     });
   }
 
-  addXpDust(x, y, xp, points) {
+  addXpDust(x, y, xp) {
     this.xpDust = this.matter.add.sprite(x, y, 'xpDust', 0, { isStatic: true, collisionFilter: { group: -1 } }).setSize(52, 22).setDepth(7)
     this.lightManager.lights.push({
       sprite: this.xpDust,
@@ -969,9 +969,6 @@ export default class DungeonScene extends Phaser.Scene {
         this.lightManager.removeLight(this.xpDust)
         if (xp) {
           this.registry.set('xp', this.registry.get('xp') + xp)
-        }
-        if (points) {
-          this.registry.set('skillPoints', this.registry.get('skillPoints') + points)
         }
       }
     });

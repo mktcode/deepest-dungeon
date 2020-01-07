@@ -330,10 +330,8 @@ export default class Hero {
         this.scene.registry.set('weapon', null)
         const lastLevelXp = this.constructor.getXpForLevelUp(this.scene.registry.get('level'))
         const lostXp = this.scene.registry.get('xp') - lastLevelXp
-        const lostSkillPoints = this.scene.registry.get('skillPoints') - this.scene.registry.get('skillPointsSpent')
-        this.scene.registry.set('skillPoints', this.scene.registry.get('skillPointsSpent'))
-        if (lostXp || lostSkillPoints) {
-          this.scene.addXpDust(x + Phaser.Math.Between(-15, 15), y + Phaser.Math.Between(-15, 15), lostXp, lostSkillPoints)
+        if (lostXp) {
+          this.scene.addXpDust(x + Phaser.Math.Between(-15, 15), y + Phaser.Math.Between(-15, 15), lostXp)
         }
 
         this.scene.registry.set('xp', lastLevelXp)
