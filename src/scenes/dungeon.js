@@ -600,7 +600,8 @@ export default class DungeonScene extends Phaser.Scene {
         }
         if (this.worldToTileX(this.torchSkillParticles.x.propertyValue) === xPosition + 1) {
           const currentTorchDuration = this.registry.get('torchDuration')
-          this.overlayText.setText('Torch duration:' + "\n" + currentTorchDuration + ' +30' + "\n" + availableSkillPoints)
+          const currentTorchIntensity = this.registry.get('torchIntensity')
+          this.overlayText.setText('Torch duration:' + "\n" + currentTorchDuration + ' +30' + "\n" + 'Intensity: ' + "\n" + currentTorchIntensity + ' +1' + "\n" + availableSkillPoints)
         }
       } else {
         this.skillInteractionParticles.stop()
@@ -665,7 +666,7 @@ export default class DungeonScene extends Phaser.Scene {
         const torches = this.registry.get('items').filter(item => item === 'torch')
 
         if (torches && torches.length) {
-          return torches.length - 1 + LightManager.flickering()
+          return LightManager.flickering((this.registry.get('torchIntensity') - 1) / 2 + torches.length - 1)
         }
         return 0
       }
@@ -903,7 +904,7 @@ export default class DungeonScene extends Phaser.Scene {
     })
     this.lightManager.lights.push({
       sprite: this.torch,
-      intensity: () => LightManager.flickering()
+      intensity: () => LightManager.flickering(0)
     })
     this.torch.anims.play('torch', true)
 

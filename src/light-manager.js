@@ -39,9 +39,9 @@ export default class LightManager {
     return this.scene.shadowLayer.getTilesWithin(room.x, room.y, room.width, room.height)
   }
 
-  static flickering() {
+  static flickering(intensity) {
     const time = new Date()
-    return [0.5, 0.5, 0.4, 0.4, 0.5, 0.6, 0.5, 0.5, 0.6, 0.7][time.getTime().toString()[time.getTime().toString().length - 3]]
+    return (intensity || 0) + [0.5, 0.5, 0.4, 0.4, 0.5, 0.6, 0.5, 0.5, 0.6, 0.7][time.getTime().toString()[time.getTime().toString().length - 3]]
   }
 
   // Helper to set the alpha on all tiles

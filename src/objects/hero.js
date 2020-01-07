@@ -167,6 +167,7 @@ export default class Hero {
         if (this.scene.worldToTileX(this.scene.torchSkillParticles.x.propertyValue) === xPosition + 1) {
           this.scene.registry.set('skillPointsSpent', this.scene.registry.get('skillPointsSpent') + 1)
           this.scene.registry.set('torchDuration', this.scene.registry.get('torchDuration') + 30)
+          this.scene.registry.set('torchIntensity', this.scene.registry.get('torchIntensity') + 1)
         }
       }
     }

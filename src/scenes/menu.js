@@ -34,6 +34,7 @@ export default class MenuScene extends Phaser.Scene {
     this.registry.set('weapon', null)
     this.registry.set('items', [])
     this.registry.set('torchDuration', 60)
+    this.registry.set('torchIntensity', 1)
     this.registry.set('damage', 1)
     this.registry.set('health', 3)
     this.registry.set('maxHealth', 3)
