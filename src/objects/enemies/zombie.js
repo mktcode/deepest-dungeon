@@ -150,7 +150,7 @@ export default class Zombie {
       if (this.dungeon.narrator.freeze) {
         speed *= 0
       }
-      if (this.room === this.dungeon.currentRoom && distance < 100 && this.dungeon.dungeonNumber > 5) {
+      if (this.room === this.dungeon.currentRoom && distance < 100 && this.dungeon.dungeonNumber > 4) {
         this.dungeon.moveToObject(this.sprite, this.dungeon.hero.sprites.hero, speed)
         if (this.sprite.body.velocity.y < 0 && Math.abs(this.sprite.body.velocity.x) < this.sprite.body.velocity.y * -1 / 2) {
           this.walk('up')
