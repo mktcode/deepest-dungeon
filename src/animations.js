@@ -20,6 +20,13 @@ export default class Animations {
     });
 
     this.anims.create({
+      key: "poro-idle",
+      frames: this.anims.generateFrameNumbers("poro", { start: 0, end: 5 }),
+      frameRate: 4,
+      repeat: -1
+    });
+
+    this.anims.create({
       key: "torch",
       frames: this.anims.generateFrameNumbers("torch", { start: 0, end: 3 }),
       frameRate: 8,

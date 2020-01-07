@@ -4,6 +4,7 @@ import TILES from '../tile-mapping.js'
 // assets
 import snakeSprite from '../assets/snake.png'
 import deamonSprite from "../assets/deamon.png";
+import poroSprite from "../assets/poro.png";
 
 export default class Enemy {
   constructor(dungeon, room, type, dieCallback) {
@@ -19,10 +20,11 @@ export default class Enemy {
     const y = this.dungeon.tileToWorldY(Phaser.Math.Between(room.top + 4, room.bottom - 2))
 
     if (this.type === 'deamon') {
+      const sprite = this.dungeon.dungeonNumber === 16 ? 'poro' : 'deamon'
       this.hp = 10
       this.xp = 10
-      this.sprite = this.dungeon.matter.add.sprite(x, y, 'deamon', 1, { collisionFilter: { group: -1 } }).setFixedRotation()
-      this.sprite.anims.play("deamon-idle")
+      this.sprite = this.dungeon.matter.add.sprite(x, y, sprite, 1, { collisionFilter: { group: -1 } }).setFixedRotation()
+      this.sprite.anims.play(sprite + "-idle")
       this.dungeon.lightManager.lights.push({
         sprite: this.sprite,
         intensity: () => 2
@@ -110,7 +112,15 @@ export default class Enemy {
         frameWidth: 61,
         frameHeight: 59
       }
-    );
+    )
+    scene.load.spritesheet(
+      "poro",
+      poroSprite,
+      {
+        frameWidth: 61,
+        frameHeight: 59
+      }
+    )
   }
 
   takeDamage(damage) {
