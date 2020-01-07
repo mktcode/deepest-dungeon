@@ -115,5 +115,9 @@ export default class MenuScene extends Phaser.Scene {
       font: "13px monospace",
       fill: "#FFFFFF"
     })
+    this.add.text(this.centerX - 75, this.centerY + 185, 'Pause:      Esc', {
+      font: "13px monospace",
+      fill: "#FFFFFF"
+    })
   }
 }
