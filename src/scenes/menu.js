@@ -95,27 +95,27 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   addInstructions() {
-    this.add.text(this.centerX - 75, this.centerY + 110, 'Run:        WASD/Arrows', {
+    this.add.text(this.centerX - 75, this.centerY + 110, 'Run:         WASD/Arrows', {
       font: "13px monospace",
       fill: "#FFFFFF"
     })
-    this.add.text(this.centerX - 75, this.centerY + 125, 'Walk:       Hold Shift', {
+    this.add.text(this.centerX - 75, this.centerY + 125, 'Walk:        Hold Shift', {
       font: "13px monospace",
       fill: "#FFFFFF"
     })
-    this.add.text(this.centerX - 75, this.centerY + 140, 'Attack:     Space', {
+    this.add.text(this.centerX - 75, this.centerY + 140, 'Attack:      Space', {
       font: "13px monospace",
       fill: "#FFFFFF"
     })
-    this.add.text(this.centerX - 75, this.centerY + 155, 'Use:        E', {
+    this.add.text(this.centerX - 75, this.centerY + 155, 'Use:         E', {
       font: "13px monospace",
       fill: "#FFFFFF"
     })
-    this.add.text(this.centerX - 75, this.centerY + 170, 'Pathfinder: Q', {
+    this.add.text(this.centerX - 75, this.centerY + 170, 'Scout\'s Eye: Q', {
       font: "13px monospace",
       fill: "#FFFFFF"
     })
-    this.add.text(this.centerX - 75, this.centerY + 185, 'Pause:      Esc', {
+    this.add.text(this.centerX - 75, this.centerY + 185, 'Pause:       Esc', {
       font: "13px monospace",
       fill: "#FFFFFF"
     })

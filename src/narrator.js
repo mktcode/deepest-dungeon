@@ -11,6 +11,7 @@ import aTimeeater from "./assets/audio/narrator/a-timeeater.mp3"
 import timeeaterQuickNow from "./assets/audio/narrator/timeeater-quick-now.mp3"
 import dungeonStartedToQuake from "./assets/audio/narrator/dungeon-started-to-quake.mp3"
 import itsGettingHot from "./assets/audio/narrator/its-getting-hot.mp3"
+import aScoutsEye from "./assets/audio/narrator/a-scouts-eye.mp3"
 
 export default class Narrator {
   constructor(scene) {
@@ -29,6 +30,7 @@ export default class Narrator {
     this.timeeaterQuickNow = scene.sound.add('timeeaterQuickNow')
     this.dungeonStartedToQuake = scene.sound.add('dungeonStartedToQuake')
     this.itsGettingHot = scene.sound.add('itsGettingHot')
+    this.aScoutsEye = scene.sound.add('aScoutsEye')
 
     this.slowmo = false
     this.freeze = false
@@ -50,6 +52,7 @@ export default class Narrator {
     scene.load.audio('timeeaterQuickNow', timeeaterQuickNow)
     scene.load.audio('dungeonStartedToQuake', dungeonStartedToQuake)
     scene.load.audio('itsGettingHot', itsGettingHot)
+    scene.load.audio('aScoutsEye', aScoutsEye)
   }
 
   say(key, delay) {

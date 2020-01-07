@@ -927,9 +927,9 @@ export default class DungeonScene extends Phaser.Scene {
 
   addPathfinder(x, y) {
     if (!x && !y) {
-      const pathFinderRoom = this.dungeon.r.randomPick(this.otherRooms)
-      x = this.tileToWorldX(Phaser.Utils.Array.GetRandom([pathFinderRoom.left + 3, pathFinderRoom.right - 2])) + 12
-      y = this.tileToWorldY(Phaser.Utils.Array.GetRandom([pathFinderRoom.top + 5, pathFinderRoom.bottom - 2])) + 12
+      this.pathFinderRoom = this.dungeon.r.randomPick(this.otherRooms)
+      x = this.tileToWorldX(Phaser.Utils.Array.GetRandom([this.pathFinderRoom.left + 3, this.pathFinderRoom.right - 2])) + 12
+      y = this.tileToWorldY(Phaser.Utils.Array.GetRandom([this.pathFinderRoom.top + 5, this.pathFinderRoom.bottom - 2])) + 12
     }
     this.pathfinder = this.matter.add.sprite(x, y, 'pathfinder', 0, { isStatic: true, collisionFilter: { group: -1 } }).setSize(24, 24).setDepth(8)
     const tween = this.tweens.add({
@@ -1324,6 +1324,10 @@ export default class DungeonScene extends Phaser.Scene {
 
         if (this.currentRoom.hasFireTraps) {
           this.narrator.sayOnce('itsGettingHot')
+        }
+
+        if (this.pathFinderRoom && this.currentRoom === this.pathFinderRoom) {
+          this.narrator.sayOnce('aScoutsEye')
         }
       }
     }
