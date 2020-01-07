@@ -5,7 +5,8 @@ import undeadCreatures from "./assets/audio/narrator/04-undead-creatures.mp3"
 import killingAllTheseEnemies from "./assets/audio/narrator/05-killing-all-these-enemies.mp3"
 import thereItWasASword from "./assets/audio/narrator/06-there-it-was-a-sword.mp3"
 import thisRoomWasDifferent from "./assets/audio/narrator/07-this-room-was-different.mp3"
-import aTimeeater from "./assets/audio/narrator/08-a-timeeater.mp3"
+import theDeeperHeWent from "./assets/audio/narrator/08-the-deeper-he-went.mp3"
+import aTimeeater from "./assets/audio/narrator/09-a-timeeater.mp3"
 
 export default class Narrator {
   constructor(scene) {
@@ -18,6 +19,7 @@ export default class Narrator {
     this.killingAllTheseEnemies = scene.sound.add('killingAllTheseEnemies')
     this.thereItWasASword = scene.sound.add('thereItWasASword')
     this.thisRoomWasDifferent = scene.sound.add('thisRoomWasDifferent')
+    this.theDeeperHeWent = scene.sound.add('theDeeperHeWent')
     this.aTimeeater = scene.sound.add('aTimeeater')
 
     this.slowmo = false
@@ -34,6 +36,7 @@ export default class Narrator {
     scene.load.audio('killingAllTheseEnemies', killingAllTheseEnemies)
     scene.load.audio('thereItWasASword', thereItWasASword)
     scene.load.audio('thisRoomWasDifferent', thisRoomWasDifferent)
+    scene.load.audio('theDeeperHeWent', theDeeperHeWent)
     scene.load.audio('aTimeeater', aTimeeater)
   }
 

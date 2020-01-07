@@ -123,6 +123,10 @@ export default class DungeonScene extends Phaser.Scene {
       this.narrator.sayOnce('whereAmI', 1).then(() => this.narrator.freezeEnd())
     }
 
+    if (this.dungeonNumber === 5) {
+      this.narrator.sayOnce('theDeeperHeWent', 1)
+    }
+
     this.input.keyboard.on('keyup-ESC', () => {
       this.scene.pause()
       if (this.narrator.playing) this.narrator.playing.pause()
