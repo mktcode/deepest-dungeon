@@ -21,6 +21,7 @@ export default class MenuScene extends Phaser.Scene {
     this.addTitle()
     this.addDisableNarratorButton()
     this.addNewGameButton()
+    this.addInstructions()
   }
 
   setRegistryDefaults() {
@@ -46,18 +47,22 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   addTitle() {
-    this.add.text(this.centerX - 163, this.centerY - 170, 'Infinite Dungeons', {
+    this.add.text(this.centerX - 163, this.centerY - 110, 'Something Dungeons', {
       font: "30px monospace",
+      fill: "#FFFFFF"
+    })
+    this.add.text(this.centerX - 50, this.centerY - 70, '(Prototype)', {
+      font: "15px monospace",
       fill: "#FFFFFF"
     })
   }
 
   addDisableNarratorButton() {
-    this.disableNarratorText = this.add.text(this.centerX - 65, this.centerY + 150, 'Disable Narrator', {
+    this.disableNarratorText = this.add.text(this.centerX - 65, this.centerY + 60, 'Disable Narrator', {
       font: "16px monospace",
       fill: "#FFFFFF"
     }).setInteractive()
-    this.disableNarratorCheckbox = this.add.sprite(this.centerX - 81, this.centerY + 160, "ui", 0).setInteractive()
+    this.disableNarratorCheckbox = this.add.sprite(this.centerX - 81, this.centerY + 70, "ui", 0).setInteractive()
     this.disableNarratorText.on("pointerup", this.disableNarrator, this)
     this.disableNarratorCheckbox.on("pointerup", this.disableNarrator, this)
   }
@@ -73,9 +78,11 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   addNewGameButton() {
-    const newGame = this.add.text(this.centerX - 55, this.centerY + 110, 'New Game', {
+    const newGame = this.add.text(this.centerX - 75, this.centerY - 10, 'New Game', {
       font: "24px monospace",
-      fill: "#FFFFFF"
+      fill: "#000000",
+      backgroundColor: "#FFFFFF",
+      padding: { x: 20, y: 10 },
     }).setInteractive()
 
     newGame.on('pointerup', () => {
@@ -83,6 +90,29 @@ export default class MenuScene extends Phaser.Scene {
       this.scene.add('Dungeon1', new DungeonScene(this.registry.get('currentDungeon')), true)
       this.scene.add('Gui', new GuiScene(), true)
       this.scene.add('Pause', new PauseScene())
+    })
+  }
+
+  addInstructions() {
+    this.add.text(this.centerX - 75, this.centerY + 110, 'Run:        WASD/Arrows', {
+      font: "13px monospace",
+      fill: "#FFFFFF"
+    })
+    this.add.text(this.centerX - 75, this.centerY + 125, 'Walk:       Hold Shift', {
+      font: "13px monospace",
+      fill: "#FFFFFF"
+    })
+    this.add.text(this.centerX - 75, this.centerY + 140, 'Attack:     Space', {
+      font: "13px monospace",
+      fill: "#FFFFFF"
+    })
+    this.add.text(this.centerX - 75, this.centerY + 155, 'Use:        E', {
+      font: "13px monospace",
+      fill: "#FFFFFF"
+    })
+    this.add.text(this.centerX - 75, this.centerY + 170, 'Pathfinder: Q', {
+      font: "13px monospace",
+      fill: "#FFFFFF"
     })
   }
 }
