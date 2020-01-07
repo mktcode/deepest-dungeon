@@ -15,6 +15,7 @@
 - [ ] stamina for running (and attacking)
 - [ ] disabled slowmo if narrator is disabled
 - [ ] death animation doesn't trigger sometimes
+- [ ] add instructions to pause screen
 
 # phaser-electron-typescript-parcel [![Build Status](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel.svg?branch=master)](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel)
 
