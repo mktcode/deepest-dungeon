@@ -124,7 +124,8 @@ export default class DungeonScene extends Phaser.Scene {
     }
 
     if (this.dungeonNumber === 5) {
-      this.narrator.sayOnce('theDeeperHeWent', 1)
+      this.narrator.slowmoStart()
+      this.narrator.sayOnce('theDeeperHeWent', 1).then(() => this.narrator.slowmoEnd())
     }
 
     this.input.keyboard.on('keyup-ESC', () => {
