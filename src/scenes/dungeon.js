@@ -890,9 +890,9 @@ export default class DungeonScene extends Phaser.Scene {
 
   addTorch(x, y) {
     if (!x && !y) {
-      const torchRoom = this.dungeon.r.randomPick(this.otherRooms)
-      x = this.tileToWorldX(Phaser.Utils.Array.GetRandom([torchRoom.left + 3, torchRoom.right - 2])) + 4
-      y = this.tileToWorldY(Phaser.Utils.Array.GetRandom([torchRoom.top + 5, torchRoom.bottom - 2])) + 9
+      this.torchRoom = this.dungeon.r.randomPick(this.otherRooms)
+      x = this.tileToWorldX(Phaser.Utils.Array.GetRandom([this.torchRoom.left + 3, this.torchRoom.right - 2])) + 4
+      y = this.tileToWorldY(Phaser.Utils.Array.GetRandom([this.torchRoom.top + 5, this.torchRoom.bottom - 2])) + 9
     }
     this.torch = this.matter.add.sprite(x, y, 'torch', 0, { isStatic: true, collisionFilter: { group: -1 } }).setSize(8, 24).setDepth(7)
     const tween = this.tweens.add({
@@ -1314,6 +1314,10 @@ export default class DungeonScene extends Phaser.Scene {
           this.narrator.sayOnce('thisRoomWasDifferent').then(() => {
             this.narrator.slowmoEnd()
           })
+        }
+
+        if (this.torchRoom && this.currentRoom === this.torchRoom) {
+          this.narrator.sayOnce('torchPerfect')
         }
       }
     }

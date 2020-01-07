@@ -6,6 +6,7 @@ import killingAllTheseEnemies from "./assets/audio/narrator/05-killing-all-these
 import thereItWasASword from "./assets/audio/narrator/06-there-it-was-a-sword.mp3"
 import thisRoomWasDifferent from "./assets/audio/narrator/07-this-room-was-different.mp3"
 import theDeeperHeWent from "./assets/audio/narrator/08-the-deeper-he-went.mp3"
+import torchPerfect from "./assets/audio/narrator/081-torch-perfect.mp3"
 import aTimeeater from "./assets/audio/narrator/09-a-timeeater.mp3"
 import timeeaterQuickNow from "./assets/audio/narrator/10-timeeater-quick-now.mp3"
 import dungeonStartedToQuake from "./assets/audio/narrator/11-dungeon-started-to-quake.mp3"
@@ -22,6 +23,7 @@ export default class Narrator {
     this.thereItWasASword = scene.sound.add('thereItWasASword')
     this.thisRoomWasDifferent = scene.sound.add('thisRoomWasDifferent')
     this.theDeeperHeWent = scene.sound.add('theDeeperHeWent')
+    this.torchPerfect = scene.sound.add('torchPerfect')
     this.aTimeeater = scene.sound.add('aTimeeater')
     this.timeeaterQuickNow = scene.sound.add('timeeaterQuickNow')
     this.dungeonStartedToQuake = scene.sound.add('dungeonStartedToQuake')
@@ -41,6 +43,7 @@ export default class Narrator {
     scene.load.audio('thereItWasASword', thereItWasASword)
     scene.load.audio('thisRoomWasDifferent', thisRoomWasDifferent)
     scene.load.audio('theDeeperHeWent', theDeeperHeWent)
+    scene.load.audio('torchPerfect', torchPerfect)
     scene.load.audio('aTimeeater', aTimeeater)
     scene.load.audio('timeeaterQuickNow', timeeaterQuickNow)
     scene.load.audio('dungeonStartedToQuake', dungeonStartedToQuake)
