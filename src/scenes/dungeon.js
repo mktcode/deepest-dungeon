@@ -1035,7 +1035,7 @@ export default class DungeonScene extends Phaser.Scene {
           this.music.setSeek(40)
           this.music.setRate(1.5)
           this.sounds.play('ticking', 1.5, false, true)
-          this.narrator.sayOnce('timeeaterQuickNow', 1)
+          this.time.delayedCall(2000, () => this.narrator.sayOnce('timeeaterQuickNow'))
           this.heroParticles = this.interactionParticle.createEmitter({
             tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
             blendMode: 'SCREEN',
