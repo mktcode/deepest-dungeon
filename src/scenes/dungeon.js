@@ -855,7 +855,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.addTorch()
     }
 
-    if (this.dungeonNumber >= 8 && !this.hero.hasItem('pathfinder')) {
+    if (this.dungeonNumber >= 7 && !this.hero.hasItem('pathfinder')) {
       this.addPathfinder()
     }
   }
@@ -982,7 +982,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   addTimebomb() {
-    if (this.dungeonNumber >= 11) {
+    if (this.dungeonNumber >= 9) {
       this.timebombRoom = this.otherRooms.sort((a, b) => b.width * b.height - a.width * a.height)[0]
       this.timebomb = this.matter.add.image(
         this.tileToWorldX(this.timebombRoom.centerX),
