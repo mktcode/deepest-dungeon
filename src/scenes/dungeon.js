@@ -1324,14 +1324,14 @@ export default class DungeonScene extends Phaser.Scene {
           this.narrator.sayOnce('thereItWasASword')
         }
 
-        if (this.timebombRoom && this.currentRoom === this.timebombRoom && !this.registry.get('narratorSaid').includes('aTimeeater')) {
+        if (this.timebombRoom && this.currentRoom === this.timebombRoom) {
           this.narrator.slowmoStart()
           this.narrator.sayOnce('aTimeeater').then(() => {
             this.narrator.slowmoEnd()
           })
         }
 
-        if (this.safeRoom && this.currentRoom === this.safeRoom && !this.registry.get('narratorSaid').includes('thisRoomWasDifferent')) {
+        if (this.safeRoom && this.currentRoom === this.safeRoom) {
           this.narrator.slowmoStart()
           this.narrator.sayOnce('thisRoomWasDifferent').then(() => {
             this.narrator.slowmoEnd()
