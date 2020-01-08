@@ -13,6 +13,16 @@ import dungeonStartedToQuake from "./assets/audio/narrator/dungeon-started-to-qu
 import itsGettingHot from "./assets/audio/narrator/its-getting-hot.mp3"
 import aScoutsEye from "./assets/audio/narrator/a-scouts-eye.mp3"
 import maybeAboutDecisions from "./assets/audio/narrator/maybe-about-decisions.mp3"
+import slowlyHeBeganToQuestion from "./assets/audio/narrator/slowly-he-began-to-question.mp3"
+import theEnd from "./assets/audio/narrator/the-end.mp3"
+import stopPlaying from "./assets/audio/narrator/stop-playing.mp3"
+
+import outtake1 from "./assets/audio/outtakes/1.mp3"
+import outtake2 from "./assets/audio/outtakes/2.mp3"
+import outtake3 from "./assets/audio/outtakes/3.mp3"
+import outtake4 from "./assets/audio/outtakes/4.mp3"
+import outtake5 from "./assets/audio/outtakes/5.mp3"
+import outtake6 from "./assets/audio/outtakes/6.mp3"
 
 export default class Narrator {
   constructor(scene) {
@@ -33,6 +43,16 @@ export default class Narrator {
     this.itsGettingHot = scene.sound.add('itsGettingHot')
     this.aScoutsEye = scene.sound.add('aScoutsEye')
     this.maybeAboutDecisions = scene.sound.add('maybeAboutDecisions')
+    this.slowlyHeBeganToQuestion = scene.sound.add('slowlyHeBeganToQuestion')
+    this.theEnd = scene.sound.add('theEnd')
+    this.stopPlaying = scene.sound.add('stopPlaying')
+
+    this.outtake1 = scene.sound.add('outtake1')
+    this.outtake2 = scene.sound.add('outtake2')
+    this.outtake3 = scene.sound.add('outtake3')
+    this.outtake4 = scene.sound.add('outtake4')
+    this.outtake5 = scene.sound.add('outtake5')
+    this.outtake6 = scene.sound.add('outtake6')
 
     this.slowmo = false
     this.freeze = false
@@ -56,15 +76,26 @@ export default class Narrator {
     scene.load.audio('itsGettingHot', itsGettingHot)
     scene.load.audio('aScoutsEye', aScoutsEye)
     scene.load.audio('maybeAboutDecisions', maybeAboutDecisions)
+    scene.load.audio('slowlyHeBeganToQuestion', slowlyHeBeganToQuestion)
+    scene.load.audio('theEnd', theEnd)
+    scene.load.audio('stopPlaying', stopPlaying)
+
+    scene.load.audio('outtake1', outtake1)
+    scene.load.audio('outtake2', outtake2)
+    scene.load.audio('outtake3', outtake3)
+    scene.load.audio('outtake4', outtake4)
+    scene.load.audio('outtake5', outtake5)
+    scene.load.audio('outtake6', outtake6)
   }
 
-  say(key, delay) {
+  say(key, delay, volume) {
+    volume = volume || 1
     return new Promise((resolve) => {
       if (this.scene.registry.get('disableNarrator')) {
         resolve()
       } else {
         this.playing = this[key]
-        this.playing.play({delay: delay || 0})
+        this.playing.play({delay: delay || 0, volume: volume})
         this.playing.once('complete', () => {
           this.playing = null
           resolve()
@@ -73,14 +104,14 @@ export default class Narrator {
     })
   }
 
-  sayOnce(key, delay) {
+  sayOnce(key, delay, volume) {
     const narratorSaid = this.scene.registry.get('narratorSaid')
     return new Promise((resolve) => {
       if (!narratorSaid.includes(key)) {
         this.scene.registry.get('music').setVolume(0.1)
         narratorSaid.push(key)
         this.scene.registry.set('narratorSaid', narratorSaid)
-        this.say(key, delay).then(() => {
+        this.say(key, delay, volume).then(() => {
           this.scene.registry.get('music').setVolume(0.25)
           resolve(true)
         })

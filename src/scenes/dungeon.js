@@ -48,6 +48,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.safeRoomActivated = false
 
     this.isStatic = { isStatic: true }
+
+    this.nextOuttake = 1
   }
 
   static preload(scene) {
@@ -134,6 +136,19 @@ export default class DungeonScene extends Phaser.Scene {
     if (this.dungeonNumber === 5) {
       this.narrator.slowmoStart()
       this.narrator.sayOnce('theDeeperHeWent', 1).then(() => this.narrator.slowmoEnd())
+    }
+
+    if (this.dungeonNumber === 11) {
+      this.narrator.sayOnce('slowlyHeBeganToQuestion', 1)
+    }
+
+    if (this.dungeonNumber === 12) {
+      this.narrator.freezeStart()
+      this.narrator.sayOnce('theEnd', 1).then(() => this.narrator.freezeEnd())
+    }
+
+    if (this.dungeonNumber === 13) {
+      this.narrator.sayOnce('stopPlaying', 1)
     }
 
     this.input.keyboard.on('keyup-ESC', () => {
@@ -1333,6 +1348,14 @@ export default class DungeonScene extends Phaser.Scene {
 
         if (this.pathFinderRoom && this.currentRoom === this.pathFinderRoom) {
           this.narrator.sayOnce('aScoutsEye')
+        }
+
+        if (this.dungeonNumber === 12 && this.nextOuttake <= 6) {
+          this.narrator.slowmoStart()
+          this.narrator.sayOnce('outtake' + this.nextOuttake, 0, 1).then(() => {
+            this.nextOuttake++
+            this.narrator.slowmoEnd()
+          })
         }
       }
     }
