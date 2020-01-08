@@ -17,6 +17,9 @@
 - [ ] death animation doesn't trigger sometimes
 - [ ] add instructions to pause screen
 - [ ] fix bouncy hero collision (leading to leaving a room unintended)
+- [ ] adjust volume of all sounds/narrative
+- [ ] sound for skilling
+- [ ] timeeater countdown doesn't stop when pausing the game
 
 # phaser-electron-typescript-parcel [![Build Status](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel.svg?branch=master)](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel)
 
