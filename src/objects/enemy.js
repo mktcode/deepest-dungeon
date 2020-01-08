@@ -20,7 +20,7 @@ export default class Enemy {
     const y = this.dungeon.tileToWorldY(Phaser.Math.Between(room.top + 4, room.bottom - 2))
 
     if (this.type === 'deamon') {
-      const sprite = this.dungeon.dungeonNumber === 16 ? 'poro' : 'deamon'
+      const sprite = this.dungeon.dungeonNumber === 12 ? 'poro' : 'deamon'
       this.hp = 10
       this.xp = 10
       this.sprite = this.dungeon.matter.add.sprite(x, y, sprite, 1, { collisionFilter: { group: -1 } }).setFixedRotation()
