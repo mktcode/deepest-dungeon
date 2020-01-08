@@ -28,7 +28,7 @@ export default class MenuScene extends Phaser.Scene {
     this.registry.set('music', this.music)
     this.registry.set('currentDungeon', 1)
     this.registry.set('minDungeon', 1)
-    this.registry.set('deepestDungeon', 25)
+    this.registry.set('deepestDungeon', 12)
     this.registry.set('narratorSaid', [])
     this.registry.set('disableNarrator', false)
     this.registry.set('weapon', null)
