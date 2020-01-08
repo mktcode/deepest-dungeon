@@ -139,7 +139,8 @@ export default class DungeonScene extends Phaser.Scene {
     }
 
     if (this.dungeonNumber === 11) {
-      this.narrator.sayOnce('slowlyHeBeganToQuestion', 1)
+      this.narrator.slowmoStart()
+      this.narrator.sayOnce('slowlyHeBeganToQuestion', 1).then(() => this.narrator.slowmoEnd())
     }
 
     if (this.dungeonNumber === 12) {
