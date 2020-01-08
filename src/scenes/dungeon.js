@@ -146,7 +146,9 @@ export default class DungeonScene extends Phaser.Scene {
     if (this.dungeonNumber === 12) {
       this.narrator.freezeStart()
       this.narrator.sayOnce('theEnd', 1).then(() => this.narrator.freezeEnd())
+    }
 
+    if (this.dungeonNumber >= 12) {
       this.dungeon.r.randomInteger(0, 1)
       this.dungeon.r.randomInteger(0, 1)
       const patreonLinkRoom = this.dungeon.r.randomPick(this.otherRooms)
