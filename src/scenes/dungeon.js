@@ -145,6 +145,19 @@ export default class DungeonScene extends Phaser.Scene {
     if (this.dungeonNumber === 12) {
       this.narrator.freezeStart()
       this.narrator.sayOnce('theEnd', 1).then(() => this.narrator.freezeEnd())
+
+      this.dungeon.r.randomInteger(0, 1)
+      this.dungeon.r.randomInteger(0, 1)
+      const patreonLinkRoom = this.dungeon.r.randomPick(this.otherRooms)
+      this.add.text(
+        this.tileToWorldX(patreonLinkRoom.centerX) - 25,
+        this.tileToWorldY(patreonLinkRoom.centerY),
+        'patreon.com/mkt' + "\n" + ';)',
+        {
+          font: "10px monospace",
+          fill: "#FFFFFF"
+        }
+      ).setDepth(5).setAlpha(0.5).setAlign('center')
     }
 
     if (this.dungeonNumber === 13) {
