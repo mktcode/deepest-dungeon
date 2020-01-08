@@ -126,6 +126,11 @@ export default class DungeonScene extends Phaser.Scene {
       this.narrator.sayOnce('whereAmI', 1).then(() => this.narrator.freezeEnd())
     }
 
+    if (this.dungeonNumber === 3) {
+      this.narrator.slowmoStart()
+      this.narrator.sayOnce('maybeAboutDecisions', 1).then(() => this.narrator.slowmoEnd())
+    }
+
     if (this.dungeonNumber === 5) {
       this.narrator.slowmoStart()
       this.narrator.sayOnce('theDeeperHeWent', 1).then(() => this.narrator.slowmoEnd())

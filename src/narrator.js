@@ -12,6 +12,7 @@ import timeeaterQuickNow from "./assets/audio/narrator/timeeater-quick-now.mp3"
 import dungeonStartedToQuake from "./assets/audio/narrator/dungeon-started-to-quake.mp3"
 import itsGettingHot from "./assets/audio/narrator/its-getting-hot.mp3"
 import aScoutsEye from "./assets/audio/narrator/a-scouts-eye.mp3"
+import maybeAboutDecisions from "./assets/audio/narrator/maybe-about-decisions.mp3"
 
 export default class Narrator {
   constructor(scene) {
@@ -31,6 +32,7 @@ export default class Narrator {
     this.dungeonStartedToQuake = scene.sound.add('dungeonStartedToQuake')
     this.itsGettingHot = scene.sound.add('itsGettingHot')
     this.aScoutsEye = scene.sound.add('aScoutsEye')
+    this.maybeAboutDecisions = scene.sound.add('maybeAboutDecisions')
 
     this.slowmo = false
     this.freeze = false
@@ -53,6 +55,7 @@ export default class Narrator {
     scene.load.audio('dungeonStartedToQuake', dungeonStartedToQuake)
     scene.load.audio('itsGettingHot', itsGettingHot)
     scene.load.audio('aScoutsEye', aScoutsEye)
+    scene.load.audio('maybeAboutDecisions', maybeAboutDecisions)
   }
 
   say(key, delay) {
