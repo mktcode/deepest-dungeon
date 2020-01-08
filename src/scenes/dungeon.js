@@ -1342,7 +1342,7 @@ export default class DungeonScene extends Phaser.Scene {
           this.narrator.sayOnce('torchPerfect')
         }
 
-        if (this.currentRoom.hasFireTraps) {
+        if (this.currentRoom && this.currentRoom.hasFireTraps) {
           this.narrator.sayOnce('itsGettingHot')
         }
 
