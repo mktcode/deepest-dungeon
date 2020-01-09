@@ -21,6 +21,7 @@
 - [ ] sound for skilling
 - [ ] timeeater countdown doesn't stop when pausing the game
 - [ ] add credits
+- [ ] Bug: when dieing multiple times without picking up your stuff... xp dust can't be picked up anymore, instead gives more and more xp when touching it
 
 # phaser-electron-typescript-parcel [![Build Status](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel.svg?branch=master)](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel)
 
