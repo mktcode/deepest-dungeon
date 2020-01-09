@@ -30,6 +30,19 @@ export default class PauseScene extends Phaser.Scene {
           this.scene.stop()
         }
       })
+      this.tweens.add({
+        targets: this.instructions,
+        duration: 500,
+        scale: { from: 1, to: 1.5},
+        alpha: { from: 1, to: 0 },
+        x: '-=25',
+        ease: 'Cubic',
+        onComplete: () => {
+          if (this.currentDungeon.narrator.playing) this.currentDungeon.narrator.playing.resume()
+          this.currentDungeon.scene.resume()
+          this.scene.stop()
+        }
+      })
     })
 
     const width = this.game.scale.width
@@ -53,6 +66,30 @@ export default class PauseScene extends Phaser.Scene {
       targets: this.text,
       duration: 500,
       scale: { from: 3, to: 2},
+      alpha: { from: 0, to: 1 },
+      x: '+=25',
+      ease: 'Cubic'
+    })
+
+    this.instructions = this.add.text(
+      centerX - 100,
+      centerY + 50,
+      'Run:         WASD/Arrows' + "\n" +
+      'Walk:        Hold Shift' + "\n" +
+      'Attack:      Space' + "\n" +
+      'Use:         E' + "\n" +
+      'Scout\'s Eye: Q' + "\n" +
+      'Pause:       Esc',
+      {
+        font: "13px monospace",
+        fill: "#FFFFFF"
+      }
+    )
+
+    this.tweens.add({
+      targets: this.instructions,
+      duration: 500,
+      scale: { from: 1.5, to: 1},
       alpha: { from: 0, to: 1 },
       x: '+=25',
       ease: 'Cubic'
