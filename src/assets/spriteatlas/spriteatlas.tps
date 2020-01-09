@@ -181,6 +181,148 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">enemies/spider/die/down-left/1.png</key>
+            <key type="filename">enemies/spider/die/down-left/2.png</key>
+            <key type="filename">enemies/spider/die/down-left/3.png</key>
+            <key type="filename">enemies/spider/die/down-left/4.png</key>
+            <key type="filename">enemies/spider/die/down-left/5.png</key>
+            <key type="filename">enemies/spider/die/down-left/6.png</key>
+            <key type="filename">enemies/spider/die/down-left/7.png</key>
+            <key type="filename">enemies/spider/die/down-left/8.png</key>
+            <key type="filename">enemies/spider/die/down-right/1.png</key>
+            <key type="filename">enemies/spider/die/down-right/2.png</key>
+            <key type="filename">enemies/spider/die/down-right/3.png</key>
+            <key type="filename">enemies/spider/die/down-right/4.png</key>
+            <key type="filename">enemies/spider/die/down-right/5.png</key>
+            <key type="filename">enemies/spider/die/down-right/6.png</key>
+            <key type="filename">enemies/spider/die/down-right/7.png</key>
+            <key type="filename">enemies/spider/die/down-right/8.png</key>
+            <key type="filename">enemies/spider/die/down/1.png</key>
+            <key type="filename">enemies/spider/die/down/2.png</key>
+            <key type="filename">enemies/spider/die/down/3.png</key>
+            <key type="filename">enemies/spider/die/down/4.png</key>
+            <key type="filename">enemies/spider/die/down/5.png</key>
+            <key type="filename">enemies/spider/die/down/6.png</key>
+            <key type="filename">enemies/spider/die/down/7.png</key>
+            <key type="filename">enemies/spider/die/down/8.png</key>
+            <key type="filename">enemies/spider/die/left/1.png</key>
+            <key type="filename">enemies/spider/die/left/2.png</key>
+            <key type="filename">enemies/spider/die/left/3.png</key>
+            <key type="filename">enemies/spider/die/left/4.png</key>
+            <key type="filename">enemies/spider/die/left/5.png</key>
+            <key type="filename">enemies/spider/die/left/6.png</key>
+            <key type="filename">enemies/spider/die/left/7.png</key>
+            <key type="filename">enemies/spider/die/left/8.png</key>
+            <key type="filename">enemies/spider/die/right/1.png</key>
+            <key type="filename">enemies/spider/die/right/2.png</key>
+            <key type="filename">enemies/spider/die/right/3.png</key>
+            <key type="filename">enemies/spider/die/right/4.png</key>
+            <key type="filename">enemies/spider/die/right/5.png</key>
+            <key type="filename">enemies/spider/die/right/6.png</key>
+            <key type="filename">enemies/spider/die/right/7.png</key>
+            <key type="filename">enemies/spider/die/right/8.png</key>
+            <key type="filename">enemies/spider/die/up-left/1.png</key>
+            <key type="filename">enemies/spider/die/up-left/2.png</key>
+            <key type="filename">enemies/spider/die/up-left/3.png</key>
+            <key type="filename">enemies/spider/die/up-left/4.png</key>
+            <key type="filename">enemies/spider/die/up-left/5.png</key>
+            <key type="filename">enemies/spider/die/up-left/6.png</key>
+            <key type="filename">enemies/spider/die/up-left/7.png</key>
+            <key type="filename">enemies/spider/die/up-left/8.png</key>
+            <key type="filename">enemies/spider/die/up-right/1.png</key>
+            <key type="filename">enemies/spider/die/up-right/2.png</key>
+            <key type="filename">enemies/spider/die/up-right/3.png</key>
+            <key type="filename">enemies/spider/die/up-right/4.png</key>
+            <key type="filename">enemies/spider/die/up-right/5.png</key>
+            <key type="filename">enemies/spider/die/up-right/6.png</key>
+            <key type="filename">enemies/spider/die/up-right/7.png</key>
+            <key type="filename">enemies/spider/die/up-right/8.png</key>
+            <key type="filename">enemies/spider/die/up/1.png</key>
+            <key type="filename">enemies/spider/die/up/2.png</key>
+            <key type="filename">enemies/spider/die/up/3.png</key>
+            <key type="filename">enemies/spider/die/up/4.png</key>
+            <key type="filename">enemies/spider/die/up/5.png</key>
+            <key type="filename">enemies/spider/die/up/6.png</key>
+            <key type="filename">enemies/spider/die/up/7.png</key>
+            <key type="filename">enemies/spider/die/up/8.png</key>
+            <key type="filename">enemies/spider/walk/down-left/1.png</key>
+            <key type="filename">enemies/spider/walk/down-left/2.png</key>
+            <key type="filename">enemies/spider/walk/down-left/3.png</key>
+            <key type="filename">enemies/spider/walk/down-left/4.png</key>
+            <key type="filename">enemies/spider/walk/down-left/5.png</key>
+            <key type="filename">enemies/spider/walk/down-left/6.png</key>
+            <key type="filename">enemies/spider/walk/down-left/7.png</key>
+            <key type="filename">enemies/spider/walk/down-left/8.png</key>
+            <key type="filename">enemies/spider/walk/down-right/1.png</key>
+            <key type="filename">enemies/spider/walk/down-right/2.png</key>
+            <key type="filename">enemies/spider/walk/down-right/3.png</key>
+            <key type="filename">enemies/spider/walk/down-right/4.png</key>
+            <key type="filename">enemies/spider/walk/down-right/5.png</key>
+            <key type="filename">enemies/spider/walk/down-right/6.png</key>
+            <key type="filename">enemies/spider/walk/down-right/7.png</key>
+            <key type="filename">enemies/spider/walk/down-right/8.png</key>
+            <key type="filename">enemies/spider/walk/down/1.png</key>
+            <key type="filename">enemies/spider/walk/down/2.png</key>
+            <key type="filename">enemies/spider/walk/down/3.png</key>
+            <key type="filename">enemies/spider/walk/down/4.png</key>
+            <key type="filename">enemies/spider/walk/down/5.png</key>
+            <key type="filename">enemies/spider/walk/down/6.png</key>
+            <key type="filename">enemies/spider/walk/down/7.png</key>
+            <key type="filename">enemies/spider/walk/down/8.png</key>
+            <key type="filename">enemies/spider/walk/left/1.png</key>
+            <key type="filename">enemies/spider/walk/left/2.png</key>
+            <key type="filename">enemies/spider/walk/left/3.png</key>
+            <key type="filename">enemies/spider/walk/left/4.png</key>
+            <key type="filename">enemies/spider/walk/left/5.png</key>
+            <key type="filename">enemies/spider/walk/left/6.png</key>
+            <key type="filename">enemies/spider/walk/left/7.png</key>
+            <key type="filename">enemies/spider/walk/left/8.png</key>
+            <key type="filename">enemies/spider/walk/right/1.png</key>
+            <key type="filename">enemies/spider/walk/right/2.png</key>
+            <key type="filename">enemies/spider/walk/right/3.png</key>
+            <key type="filename">enemies/spider/walk/right/4.png</key>
+            <key type="filename">enemies/spider/walk/right/5.png</key>
+            <key type="filename">enemies/spider/walk/right/6.png</key>
+            <key type="filename">enemies/spider/walk/right/7.png</key>
+            <key type="filename">enemies/spider/walk/right/8.png</key>
+            <key type="filename">enemies/spider/walk/up-left/1.png</key>
+            <key type="filename">enemies/spider/walk/up-left/2.png</key>
+            <key type="filename">enemies/spider/walk/up-left/3.png</key>
+            <key type="filename">enemies/spider/walk/up-left/4.png</key>
+            <key type="filename">enemies/spider/walk/up-left/5.png</key>
+            <key type="filename">enemies/spider/walk/up-left/6.png</key>
+            <key type="filename">enemies/spider/walk/up-left/7.png</key>
+            <key type="filename">enemies/spider/walk/up-left/8.png</key>
+            <key type="filename">enemies/spider/walk/up-right/1.png</key>
+            <key type="filename">enemies/spider/walk/up-right/2.png</key>
+            <key type="filename">enemies/spider/walk/up-right/3.png</key>
+            <key type="filename">enemies/spider/walk/up-right/4.png</key>
+            <key type="filename">enemies/spider/walk/up-right/5.png</key>
+            <key type="filename">enemies/spider/walk/up-right/6.png</key>
+            <key type="filename">enemies/spider/walk/up-right/7.png</key>
+            <key type="filename">enemies/spider/walk/up-right/8.png</key>
+            <key type="filename">enemies/spider/walk/up/1.png</key>
+            <key type="filename">enemies/spider/walk/up/2.png</key>
+            <key type="filename">enemies/spider/walk/up/3.png</key>
+            <key type="filename">enemies/spider/walk/up/4.png</key>
+            <key type="filename">enemies/spider/walk/up/5.png</key>
+            <key type="filename">enemies/spider/walk/up/6.png</key>
+            <key type="filename">enemies/spider/walk/up/7.png</key>
+            <key type="filename">enemies/spider/walk/up/8.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>32,32,64,64</rect>
+                <key>scale9Paddings</key>
+                <rect>32,32,64,64</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">enemies/zombie/die/down-left/1.png</key>
             <key type="filename">enemies/zombie/die/down-left/2.png</key>
             <key type="filename">enemies/zombie/die/down-left/3.png</key>
@@ -701,7 +843,6 @@
             <key type="filename">hero/with-weapon/idle/up/9.png</key>
             <key type="filename">hero/with-weapon/run/down-left/1.png</key>
             <key type="filename">hero/with-weapon/run/down-left/10.png</key>
-            <key type="filename">hero/with-weapon/run/down-left/11.png</key>
             <key type="filename">hero/with-weapon/run/down-left/2.png</key>
             <key type="filename">hero/with-weapon/run/down-left/3.png</key>
             <key type="filename">hero/with-weapon/run/down-left/4.png</key>
@@ -712,7 +853,6 @@
             <key type="filename">hero/with-weapon/run/down-left/9.png</key>
             <key type="filename">hero/with-weapon/run/down-right/1.png</key>
             <key type="filename">hero/with-weapon/run/down-right/10.png</key>
-            <key type="filename">hero/with-weapon/run/down-right/11.png</key>
             <key type="filename">hero/with-weapon/run/down-right/2.png</key>
             <key type="filename">hero/with-weapon/run/down-right/3.png</key>
             <key type="filename">hero/with-weapon/run/down-right/4.png</key>
@@ -723,7 +863,6 @@
             <key type="filename">hero/with-weapon/run/down-right/9.png</key>
             <key type="filename">hero/with-weapon/run/down/1.png</key>
             <key type="filename">hero/with-weapon/run/down/10.png</key>
-            <key type="filename">hero/with-weapon/run/down/11.png</key>
             <key type="filename">hero/with-weapon/run/down/2.png</key>
             <key type="filename">hero/with-weapon/run/down/3.png</key>
             <key type="filename">hero/with-weapon/run/down/4.png</key>
@@ -734,7 +873,6 @@
             <key type="filename">hero/with-weapon/run/down/9.png</key>
             <key type="filename">hero/with-weapon/run/left/1.png</key>
             <key type="filename">hero/with-weapon/run/left/10.png</key>
-            <key type="filename">hero/with-weapon/run/left/11.png</key>
             <key type="filename">hero/with-weapon/run/left/2.png</key>
             <key type="filename">hero/with-weapon/run/left/3.png</key>
             <key type="filename">hero/with-weapon/run/left/4.png</key>
@@ -745,7 +883,6 @@
             <key type="filename">hero/with-weapon/run/left/9.png</key>
             <key type="filename">hero/with-weapon/run/right/1.png</key>
             <key type="filename">hero/with-weapon/run/right/10.png</key>
-            <key type="filename">hero/with-weapon/run/right/11.png</key>
             <key type="filename">hero/with-weapon/run/right/2.png</key>
             <key type="filename">hero/with-weapon/run/right/3.png</key>
             <key type="filename">hero/with-weapon/run/right/4.png</key>
@@ -756,7 +893,6 @@
             <key type="filename">hero/with-weapon/run/right/9.png</key>
             <key type="filename">hero/with-weapon/run/up-left/1.png</key>
             <key type="filename">hero/with-weapon/run/up-left/10.png</key>
-            <key type="filename">hero/with-weapon/run/up-left/11.png</key>
             <key type="filename">hero/with-weapon/run/up-left/2.png</key>
             <key type="filename">hero/with-weapon/run/up-left/3.png</key>
             <key type="filename">hero/with-weapon/run/up-left/4.png</key>
@@ -767,7 +903,6 @@
             <key type="filename">hero/with-weapon/run/up-left/9.png</key>
             <key type="filename">hero/with-weapon/run/up-right/1.png</key>
             <key type="filename">hero/with-weapon/run/up-right/10.png</key>
-            <key type="filename">hero/with-weapon/run/up-right/11.png</key>
             <key type="filename">hero/with-weapon/run/up-right/2.png</key>
             <key type="filename">hero/with-weapon/run/up-right/3.png</key>
             <key type="filename">hero/with-weapon/run/up-right/4.png</key>
@@ -778,7 +913,6 @@
             <key type="filename">hero/with-weapon/run/up-right/9.png</key>
             <key type="filename">hero/with-weapon/run/up/1.png</key>
             <key type="filename">hero/with-weapon/run/up/10.png</key>
-            <key type="filename">hero/with-weapon/run/up/11.png</key>
             <key type="filename">hero/with-weapon/run/up/2.png</key>
             <key type="filename">hero/with-weapon/run/up/3.png</key>
             <key type="filename">hero/with-weapon/run/up/4.png</key>
@@ -794,7 +928,6 @@
             <key type="filename">hero/with-weapon/walk/down-left/13.png</key>
             <key type="filename">hero/with-weapon/walk/down-left/14.png</key>
             <key type="filename">hero/with-weapon/walk/down-left/15.png</key>
-            <key type="filename">hero/with-weapon/walk/down-left/16.png</key>
             <key type="filename">hero/with-weapon/walk/down-left/2.png</key>
             <key type="filename">hero/with-weapon/walk/down-left/3.png</key>
             <key type="filename">hero/with-weapon/walk/down-left/4.png</key>
@@ -810,7 +943,6 @@
             <key type="filename">hero/with-weapon/walk/down-right/13.png</key>
             <key type="filename">hero/with-weapon/walk/down-right/14.png</key>
             <key type="filename">hero/with-weapon/walk/down-right/15.png</key>
-            <key type="filename">hero/with-weapon/walk/down-right/16.png</key>
             <key type="filename">hero/with-weapon/walk/down-right/2.png</key>
             <key type="filename">hero/with-weapon/walk/down-right/3.png</key>
             <key type="filename">hero/with-weapon/walk/down-right/4.png</key>
@@ -826,7 +958,6 @@
             <key type="filename">hero/with-weapon/walk/down/13.png</key>
             <key type="filename">hero/with-weapon/walk/down/14.png</key>
             <key type="filename">hero/with-weapon/walk/down/15.png</key>
-            <key type="filename">hero/with-weapon/walk/down/16.png</key>
             <key type="filename">hero/with-weapon/walk/down/2.png</key>
             <key type="filename">hero/with-weapon/walk/down/3.png</key>
             <key type="filename">hero/with-weapon/walk/down/4.png</key>
@@ -842,7 +973,6 @@
             <key type="filename">hero/with-weapon/walk/left/13.png</key>
             <key type="filename">hero/with-weapon/walk/left/14.png</key>
             <key type="filename">hero/with-weapon/walk/left/15.png</key>
-            <key type="filename">hero/with-weapon/walk/left/16.png</key>
             <key type="filename">hero/with-weapon/walk/left/2.png</key>
             <key type="filename">hero/with-weapon/walk/left/3.png</key>
             <key type="filename">hero/with-weapon/walk/left/4.png</key>
@@ -858,7 +988,6 @@
             <key type="filename">hero/with-weapon/walk/right/13.png</key>
             <key type="filename">hero/with-weapon/walk/right/14.png</key>
             <key type="filename">hero/with-weapon/walk/right/15.png</key>
-            <key type="filename">hero/with-weapon/walk/right/16.png</key>
             <key type="filename">hero/with-weapon/walk/right/2.png</key>
             <key type="filename">hero/with-weapon/walk/right/3.png</key>
             <key type="filename">hero/with-weapon/walk/right/4.png</key>
@@ -874,7 +1003,6 @@
             <key type="filename">hero/with-weapon/walk/up-left/13.png</key>
             <key type="filename">hero/with-weapon/walk/up-left/14.png</key>
             <key type="filename">hero/with-weapon/walk/up-left/15.png</key>
-            <key type="filename">hero/with-weapon/walk/up-left/16.png</key>
             <key type="filename">hero/with-weapon/walk/up-left/2.png</key>
             <key type="filename">hero/with-weapon/walk/up-left/3.png</key>
             <key type="filename">hero/with-weapon/walk/up-left/4.png</key>
@@ -890,7 +1018,6 @@
             <key type="filename">hero/with-weapon/walk/up-right/13.png</key>
             <key type="filename">hero/with-weapon/walk/up-right/14.png</key>
             <key type="filename">hero/with-weapon/walk/up-right/15.png</key>
-            <key type="filename">hero/with-weapon/walk/up-right/16.png</key>
             <key type="filename">hero/with-weapon/walk/up-right/2.png</key>
             <key type="filename">hero/with-weapon/walk/up-right/3.png</key>
             <key type="filename">hero/with-weapon/walk/up-right/4.png</key>
@@ -906,7 +1033,6 @@
             <key type="filename">hero/with-weapon/walk/up/13.png</key>
             <key type="filename">hero/with-weapon/walk/up/14.png</key>
             <key type="filename">hero/with-weapon/walk/up/15.png</key>
-            <key type="filename">hero/with-weapon/walk/up/16.png</key>
             <key type="filename">hero/with-weapon/walk/up/2.png</key>
             <key type="filename">hero/with-weapon/walk/up/3.png</key>
             <key type="filename">hero/with-weapon/walk/up/4.png</key>
@@ -1213,7 +1339,6 @@
             <key type="filename">hero/without-weapon/idle/up/9.png</key>
             <key type="filename">hero/without-weapon/run/down-left/1.png</key>
             <key type="filename">hero/without-weapon/run/down-left/10.png</key>
-            <key type="filename">hero/without-weapon/run/down-left/11.png</key>
             <key type="filename">hero/without-weapon/run/down-left/2.png</key>
             <key type="filename">hero/without-weapon/run/down-left/3.png</key>
             <key type="filename">hero/without-weapon/run/down-left/4.png</key>
@@ -1224,7 +1349,6 @@
             <key type="filename">hero/without-weapon/run/down-left/9.png</key>
             <key type="filename">hero/without-weapon/run/down-right/1.png</key>
             <key type="filename">hero/without-weapon/run/down-right/10.png</key>
-            <key type="filename">hero/without-weapon/run/down-right/11.png</key>
             <key type="filename">hero/without-weapon/run/down-right/2.png</key>
             <key type="filename">hero/without-weapon/run/down-right/3.png</key>
             <key type="filename">hero/without-weapon/run/down-right/4.png</key>
@@ -1235,7 +1359,6 @@
             <key type="filename">hero/without-weapon/run/down-right/9.png</key>
             <key type="filename">hero/without-weapon/run/down/1.png</key>
             <key type="filename">hero/without-weapon/run/down/10.png</key>
-            <key type="filename">hero/without-weapon/run/down/11.png</key>
             <key type="filename">hero/without-weapon/run/down/2.png</key>
             <key type="filename">hero/without-weapon/run/down/3.png</key>
             <key type="filename">hero/without-weapon/run/down/4.png</key>
@@ -1246,7 +1369,6 @@
             <key type="filename">hero/without-weapon/run/down/9.png</key>
             <key type="filename">hero/without-weapon/run/left/1.png</key>
             <key type="filename">hero/without-weapon/run/left/10.png</key>
-            <key type="filename">hero/without-weapon/run/left/11.png</key>
             <key type="filename">hero/without-weapon/run/left/2.png</key>
             <key type="filename">hero/without-weapon/run/left/3.png</key>
             <key type="filename">hero/without-weapon/run/left/4.png</key>
@@ -1257,7 +1379,6 @@
             <key type="filename">hero/without-weapon/run/left/9.png</key>
             <key type="filename">hero/without-weapon/run/right/1.png</key>
             <key type="filename">hero/without-weapon/run/right/10.png</key>
-            <key type="filename">hero/without-weapon/run/right/11.png</key>
             <key type="filename">hero/without-weapon/run/right/2.png</key>
             <key type="filename">hero/without-weapon/run/right/3.png</key>
             <key type="filename">hero/without-weapon/run/right/4.png</key>
@@ -1268,7 +1389,6 @@
             <key type="filename">hero/without-weapon/run/right/9.png</key>
             <key type="filename">hero/without-weapon/run/up-left/1.png</key>
             <key type="filename">hero/without-weapon/run/up-left/10.png</key>
-            <key type="filename">hero/without-weapon/run/up-left/11.png</key>
             <key type="filename">hero/without-weapon/run/up-left/2.png</key>
             <key type="filename">hero/without-weapon/run/up-left/3.png</key>
             <key type="filename">hero/without-weapon/run/up-left/4.png</key>
@@ -1279,7 +1399,6 @@
             <key type="filename">hero/without-weapon/run/up-left/9.png</key>
             <key type="filename">hero/without-weapon/run/up-right/1.png</key>
             <key type="filename">hero/without-weapon/run/up-right/10.png</key>
-            <key type="filename">hero/without-weapon/run/up-right/11.png</key>
             <key type="filename">hero/without-weapon/run/up-right/2.png</key>
             <key type="filename">hero/without-weapon/run/up-right/3.png</key>
             <key type="filename">hero/without-weapon/run/up-right/4.png</key>
@@ -1290,7 +1409,6 @@
             <key type="filename">hero/without-weapon/run/up-right/9.png</key>
             <key type="filename">hero/without-weapon/run/up/1.png</key>
             <key type="filename">hero/without-weapon/run/up/10.png</key>
-            <key type="filename">hero/without-weapon/run/up/11.png</key>
             <key type="filename">hero/without-weapon/run/up/2.png</key>
             <key type="filename">hero/without-weapon/run/up/3.png</key>
             <key type="filename">hero/without-weapon/run/up/4.png</key>
@@ -1306,7 +1424,6 @@
             <key type="filename">hero/without-weapon/walk/down-left/13.png</key>
             <key type="filename">hero/without-weapon/walk/down-left/14.png</key>
             <key type="filename">hero/without-weapon/walk/down-left/15.png</key>
-            <key type="filename">hero/without-weapon/walk/down-left/16.png</key>
             <key type="filename">hero/without-weapon/walk/down-left/2.png</key>
             <key type="filename">hero/without-weapon/walk/down-left/3.png</key>
             <key type="filename">hero/without-weapon/walk/down-left/4.png</key>
@@ -1322,7 +1439,6 @@
             <key type="filename">hero/without-weapon/walk/down-right/13.png</key>
             <key type="filename">hero/without-weapon/walk/down-right/14.png</key>
             <key type="filename">hero/without-weapon/walk/down-right/15.png</key>
-            <key type="filename">hero/without-weapon/walk/down-right/16.png</key>
             <key type="filename">hero/without-weapon/walk/down-right/2.png</key>
             <key type="filename">hero/without-weapon/walk/down-right/3.png</key>
             <key type="filename">hero/without-weapon/walk/down-right/4.png</key>
@@ -1338,7 +1454,6 @@
             <key type="filename">hero/without-weapon/walk/down/13.png</key>
             <key type="filename">hero/without-weapon/walk/down/14.png</key>
             <key type="filename">hero/without-weapon/walk/down/15.png</key>
-            <key type="filename">hero/without-weapon/walk/down/16.png</key>
             <key type="filename">hero/without-weapon/walk/down/2.png</key>
             <key type="filename">hero/without-weapon/walk/down/3.png</key>
             <key type="filename">hero/without-weapon/walk/down/4.png</key>
@@ -1354,7 +1469,6 @@
             <key type="filename">hero/without-weapon/walk/left/13.png</key>
             <key type="filename">hero/without-weapon/walk/left/14.png</key>
             <key type="filename">hero/without-weapon/walk/left/15.png</key>
-            <key type="filename">hero/without-weapon/walk/left/16.png</key>
             <key type="filename">hero/without-weapon/walk/left/2.png</key>
             <key type="filename">hero/without-weapon/walk/left/3.png</key>
             <key type="filename">hero/without-weapon/walk/left/4.png</key>
@@ -1370,7 +1484,6 @@
             <key type="filename">hero/without-weapon/walk/right/13.png</key>
             <key type="filename">hero/without-weapon/walk/right/14.png</key>
             <key type="filename">hero/without-weapon/walk/right/15.png</key>
-            <key type="filename">hero/without-weapon/walk/right/16.png</key>
             <key type="filename">hero/without-weapon/walk/right/2.png</key>
             <key type="filename">hero/without-weapon/walk/right/3.png</key>
             <key type="filename">hero/without-weapon/walk/right/4.png</key>
@@ -1386,7 +1499,6 @@
             <key type="filename">hero/without-weapon/walk/up-left/13.png</key>
             <key type="filename">hero/without-weapon/walk/up-left/14.png</key>
             <key type="filename">hero/without-weapon/walk/up-left/15.png</key>
-            <key type="filename">hero/without-weapon/walk/up-left/16.png</key>
             <key type="filename">hero/without-weapon/walk/up-left/2.png</key>
             <key type="filename">hero/without-weapon/walk/up-left/3.png</key>
             <key type="filename">hero/without-weapon/walk/up-left/4.png</key>
@@ -1402,7 +1514,6 @@
             <key type="filename">hero/without-weapon/walk/up-right/13.png</key>
             <key type="filename">hero/without-weapon/walk/up-right/14.png</key>
             <key type="filename">hero/without-weapon/walk/up-right/15.png</key>
-            <key type="filename">hero/without-weapon/walk/up-right/16.png</key>
             <key type="filename">hero/without-weapon/walk/up-right/2.png</key>
             <key type="filename">hero/without-weapon/walk/up-right/3.png</key>
             <key type="filename">hero/without-weapon/walk/up-right/4.png</key>
@@ -1418,7 +1529,6 @@
             <key type="filename">hero/without-weapon/walk/up/13.png</key>
             <key type="filename">hero/without-weapon/walk/up/14.png</key>
             <key type="filename">hero/without-weapon/walk/up/15.png</key>
-            <key type="filename">hero/without-weapon/walk/up/16.png</key>
             <key type="filename">hero/without-weapon/walk/up/2.png</key>
             <key type="filename">hero/without-weapon/walk/up/3.png</key>
             <key type="filename">hero/without-weapon/walk/up/4.png</key>
