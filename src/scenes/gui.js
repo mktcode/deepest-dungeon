@@ -112,6 +112,8 @@ export default class GuiScene extends Phaser.Scene {
     this.addHealthAnimation()
     this.addManaAnimation()
 
+    this.addLowHealthAnimation()
+
     // listen to changes
     this.registry.events.on('changedata', this.update, this)
     this.update()
@@ -182,6 +184,43 @@ export default class GuiScene extends Phaser.Scene {
     animation.start()
     this.time.delayedCall(250, () => {
       animation.stop()
+    })
+  }
+
+  addLowHealthAnimation() {
+    this.lowHealthAnimationParticle = this.add.particles('particle').setDepth(-1)
+    this.lowHealthAnimation = this.lowHealthAnimationParticle.createEmitter({
+      tint: [0x330000],
+      on: false,
+      x: -4,
+      y: 10,
+      blendMode: 'SCREEN',
+      scale: { start: 2, end: 1 },
+      alpha: { start: 1, end: 0 },
+      speed: 70,
+      quantity: 200,
+      frequency: 200,
+      lifespan: 2000,
+      emitZone: {
+        source: new Phaser.Geom.Line(0, this.game.scale.height, this.game.scale.width, this.game.scale.height),
+        type: 'edge',
+        quantity: 200
+      }
+    })
+
+    this.time.addEvent({
+      delay: 3000,
+      callback: () => {
+        const currentDungeon = this.scene.get('Dungeon' + this.registry.get('currentDungeon'))
+        if (this.registry.get('health') <= this.registry.get('maxHealth') / 3 && !currentDungeon.hero.dead) {
+          currentDungeon.sounds.play('heartBeat')
+          this.lowHealthAnimation.start()
+          this.time.delayedCall(250, () => {
+            this.lowHealthAnimation.stop()
+          })
+        }
+      },
+      loop: true
     })
   }
 

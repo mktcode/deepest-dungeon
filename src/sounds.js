@@ -11,6 +11,7 @@ import ticking from './assets/audio/sounds/ticking.mp3';
 import tickingFast from './assets/audio/sounds/ticking-fast.mp3';
 import levelUp from './assets/audio/sounds/level-up.mp3';
 import skillUp from './assets/audio/sounds/skill-up.mp3';
+import heartBeat from './assets/audio/sounds/heart-beat.mp3';
 
 export default class Sounds {
   constructor(scene) {
@@ -28,6 +29,7 @@ export default class Sounds {
     this.tickingFast = scene.sound.add('tickingFast')
     this.levelUp = scene.sound.add('levelUp', { volume: 0.7 })
     this.skillUp = scene.sound.add('skillUp')
+    this.heartBeat = scene.sound.add('heartBeat')
     this.playing = null
   }
 
@@ -45,6 +47,7 @@ export default class Sounds {
     scene.load.audio('tickingFast', tickingFast)
     scene.load.audio('levelUp', levelUp)
     scene.load.audio('skillUp', skillUp)
+    scene.load.audio('heartBeat', heartBeat)
   }
 
   play(key, delay, slowmo, loop) {
