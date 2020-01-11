@@ -238,23 +238,25 @@ export default class Hero {
   prepareLevelUpAnimation() {
     this.levelUpParticle = this.scene.add.particles('particle').setDepth(7)
     this.levelUpParticleEmitter = this.levelUpParticle.createEmitter({
-      tint: [0xFF00FF, 0x0088FF],
+      tint: [0xFF00FF, 0x0088FF, 0xFF00FF, 0x0088FF, 0xFFFFFF],
       on: false,
       x: this.sprites.hero.x,
       y: this.sprites.hero.y,
       blendMode: 'SCREEN',
       scale: { start: 0.5, end: 1 },
       alpha: { start: 1, end: 0 },
-      speed: 60,
+      speed: 50,
       quantity: 10,
-      frequency: 50,
-      lifespan: 500,
-      emitZone: {
-        source: new Phaser.Geom.Circle(0, 0, 10),
-        type: 'edge',
-        quantity: 10
-      }
+      frequency: 100,
+      lifespan: 1000,
     })
+    this.levelUpParticleWell = this.levelUpParticle.createGravityWell({
+        x: this.sprites.hero.x,
+        y: this.sprites.hero.y - 20,
+        power: 1,
+        epsilon: 100,
+        gravity: 50
+    });
   }
 
   levelUpAnimation() {
@@ -264,9 +266,9 @@ export default class Hero {
       key: 'levelUp',
       x: () => this.scene.worldToTileX(this.sprites.hero.x),
       y: () => this.scene.worldToTileY(this.sprites.hero.y),
-      intensity: () => 0.5
+      intensity: () => 1
     })
-    this.scene.time.delayedCall(800, () => {
+    this.scene.time.delayedCall(1000, () => {
       this.levelUpParticleEmitter.stop()
       this.scene.lightManager.removeLightByKey('levelUp')
     })
@@ -460,5 +462,7 @@ export default class Hero {
     }
 
     this.levelUpParticleEmitter.setPosition(this.sprites.hero.x, this.sprites.hero.y)
+    this.levelUpParticleWell.x = this.sprites.hero.x
+    this.levelUpParticleWell.y = this.sprites.hero.y - 20
   }
 }
