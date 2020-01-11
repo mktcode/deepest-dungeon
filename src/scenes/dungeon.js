@@ -64,7 +64,7 @@ export default class DungeonScene extends Phaser.Scene {
 
   create() {
     this.cameras.main.setZoom(2)
-    this.cameras.main.fadeIn(250, 0, 0, 0)
+    this.cameras.main.fadeIn(1000, 0, 0, 0)
     this.narrator = new Narrator(this)
     this.sounds = new Sounds(this)
     this.music = this.registry.get('music')
@@ -88,7 +88,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.addOverlayText()
 
     this.events.on('wake', () => {
-      this.cameras.main.fadeIn(250, 0, 0, 0)
+      this.cameras.main.fadeIn(1000, 0, 0, 0)
       this.cameras.main.shake(1000, 0, true) // interrupt shake if dungeon was shaking when leaving it
       this.music.setRate(1)
       this.registry.set('currentDungeon', this.dungeonNumber)

@@ -132,13 +132,17 @@ export default class Hero {
       ...TILES.STAIRS.OPEN[4]
     ])) {
       const nextDungeon = this.scene.dungeonNumber + 1
-      this.scene.scene.sleep()
-      if (this.scene.scene.get('Dungeon' + nextDungeon)) {
-        this.scene.scene.wake('Dungeon' + nextDungeon)
-      } else {
-        this.scene.scene.add('Dungeon' + nextDungeon, new DungeonScene(nextDungeon), true)
-        this.scene.scene.swapPosition('Gui', 'Dungeon' + nextDungeon);
-      }
+      this.scene.cameras.main.fadeOut(1000, 0, 0, 0, (camera, progress) => {
+        if (progress === 1) {
+          this.scene.scene.sleep()
+          if (this.scene.scene.get('Dungeon' + nextDungeon)) {
+            this.scene.scene.wake('Dungeon' + nextDungeon)
+          } else {
+            this.scene.scene.add('Dungeon' + nextDungeon, new DungeonScene(nextDungeon), true)
+            this.scene.scene.swapPosition('Gui', 'Dungeon' + nextDungeon);
+          }
+        }
+      })
     }
   }
 
