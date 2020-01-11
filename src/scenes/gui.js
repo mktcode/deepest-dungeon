@@ -54,10 +54,10 @@ export default class GuiScene extends Phaser.Scene {
   create() {
     this.scale.on('resize', this.resize, this)
 
-    const centerX = this.game.scale.width / 2
-    const centerY = this.game.scale.height - 46
+    this.centerX = this.game.scale.width / 2
+    this.centerY = this.game.scale.height - 46
 
-    this.container = this.add.container(centerX, centerY)
+    this.container = this.add.container(this.centerX, this.centerY)
     this.frame = this.add.image(0, 0, "gui-frame").setInteractive()
     this.healthFill = this.add.sprite(-193, 0, "gui-orbs", 0)
     this.manaFill = this.add.sprite(193, 0, "gui-orbs", 1)
@@ -109,6 +109,9 @@ export default class GuiScene extends Phaser.Scene {
       this.selectedItem
     ])
 
+    this.addHealthAnimation()
+    this.addManaAnimation()
+
     // listen to changes
     this.registry.events.on('changedata', this.update, this)
     this.update()
@@ -121,6 +124,65 @@ export default class GuiScene extends Phaser.Scene {
     this.updateXp()
     this.updateSelectedItem()
     this.updateItems()
+  }
+
+  addHealthAnimation() {
+    this.healthAnimationParticle = this.add.particles('particle').setDepth(-1)
+    this.healthAnimation = this.healthAnimationParticle.createEmitter({
+      tint: [0xCC0000],
+      on: false,
+      x: this.centerX - 193,
+      y: this.centerY,
+      blendMode: 'SCREEN',
+      scale: { start: 1, end: 2 },
+      alpha: { start: 1, end: 0 },
+      speed: 30,
+      quantity: 40,
+      frequency: 200,
+      lifespan: 500,
+      emitZone: {
+        source: new Phaser.Geom.Circle(0, 0, 45),
+        type: 'edge',
+        quantity: 40
+      }
+    })
+  }
+
+  addManaAnimation() {
+    this.manaAnimationParticle = this.add.particles('particle').setDepth(-1)
+    this.manaAnimation = this.manaAnimationParticle.createEmitter({
+      tint: [0x0000FF],
+      on: false,
+      x: this.centerX + 193,
+      y: this.centerY,
+      blendMode: 'SCREEN',
+      scale: { start: 1, end: 2 },
+      alpha: { start: 1, end: 0 },
+      speed: 30,
+      quantity: 40,
+      frequency: 200,
+      lifespan: 500,
+      emitZone: {
+        source: new Phaser.Geom.Circle(0, 0, 45),
+        type: 'edge',
+        quantity: 40
+      }
+    })
+  }
+
+  playHealthAnimation() {
+    this.playOrbAnimation(this.healthAnimation)
+  }
+
+  playManaAnimation() {
+    this.playOrbAnimation(this.manaAnimation)
+  }
+
+  playOrbAnimation(animation) {
+    animation.start()
+    this.time.delayedCall(250, () => {
+      animation.stop()
+    })
   }
 
   removeTorchDelayed() {
@@ -218,8 +280,6 @@ export default class GuiScene extends Phaser.Scene {
   }
 
   resize() {
-    const centerX = this.game.scale.width / 2
-    const centerY = this.game.scale.height - 46
-    this.container.setPosition(centerX, centerY)
+    this.container.setPosition(this.centerX, this.centerY)
   }
 }

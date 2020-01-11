@@ -330,6 +330,7 @@ export default class Hero {
     this.scene.registry.set('health', heroHp)
     this.scene.flashSprite(hero)
     this.scene.popupDamageNumber(damage, hero.x, hero.y, '#CC0000')
+    this.scene.scene.get('Gui').playHealthAnimation()
 
     if (heroHp <= 0) {
       this.die()

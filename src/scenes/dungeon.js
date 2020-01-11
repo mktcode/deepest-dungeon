@@ -1323,13 +1323,19 @@ export default class DungeonScene extends Phaser.Scene {
     }).setDepth(10)
     this.tweens.add({
       targets: damageText,
-      alpha: { start: 0, from: 1, to: 0 },
-      scale: { from: 1, to: 1.5 },
-      duration: 2500,
-      ease: 'Cubic',
-      y: '-=50'
+      alpha: { from: 0, to: 1 },
+      scale: { from: 1, to: 2 },
+      duration: 1000,
+      ease: 'Back'
     }).on('complete', () => {
-      damageText.destroy()
+      this.tweens.add({
+        targets: damageText,
+        alpha: { from: 1, to: 0 },
+        scale: { from: 2, to: 1.5 },
+        duration: 1000
+      }).on('complete', () => {
+        damageText.destroy()
+      })
     })
   }
 
