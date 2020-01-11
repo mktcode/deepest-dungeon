@@ -29,7 +29,7 @@ export default class Sounds {
     this.tickingFast = scene.sound.add('tickingFast')
     this.levelUp = scene.sound.add('levelUp', { volume: 0.7 })
     this.skillUp = scene.sound.add('skillUp')
-    this.heartBeat = scene.sound.add('heartBeat')
+    this.heartBeat = scene.sound.add('heartBeat', { volume: 0.5 })
     this.playing = null
   }
 
