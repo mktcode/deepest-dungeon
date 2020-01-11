@@ -156,15 +156,18 @@ export default class Hero {
       const xPosition = tile.x
       if (this.scene.registry.get('skillPoints') > this.scene.registry.get('skillPointsSpent')) {
         if (this.scene.worldToTileX(this.scene.healthSkillParticles.x.propertyValue) === xPosition + 1) {
+          this.scene.sounds.play('skillUp')
           this.scene.registry.set('skillPointsSpent', this.scene.registry.get('skillPointsSpent') + 1)
           this.scene.registry.set('maxHealth', this.scene.registry.get('maxHealth') + 1)
           this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
         }
         if (this.scene.worldToTileX(this.scene.damageSkillParticles.x.propertyValue) === xPosition + 1) {
+          this.scene.sounds.play('skillUp')
           this.scene.registry.set('skillPointsSpent', this.scene.registry.get('skillPointsSpent') + 1)
           this.scene.registry.set('damage', this.scene.registry.get('damage') + 1)
         }
         if (this.scene.worldToTileX(this.scene.torchSkillParticles.x.propertyValue) === xPosition + 1) {
+          this.scene.sounds.play('skillUp')
           this.scene.registry.set('skillPointsSpent', this.scene.registry.get('skillPointsSpent') + 1)
           this.scene.registry.set('torchDuration', this.scene.registry.get('torchDuration') + 30)
           this.scene.registry.set('torchIntensity', this.scene.registry.get('torchIntensity') + 1)
@@ -255,6 +258,7 @@ export default class Hero {
   }
 
   levelUpAnimation() {
+    this.scene.sounds.play('levelUp')
     this.levelUpParticleEmitter.start()
     this.scene.lightManager.lights.push({
       key: 'levelUp',

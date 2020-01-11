@@ -9,6 +9,8 @@ import spider1 from './assets/audio/sounds/spider1.mp3';
 import spider2 from './assets/audio/sounds/spider2.mp3';
 import ticking from './assets/audio/sounds/ticking.mp3';
 import tickingFast from './assets/audio/sounds/ticking-fast.mp3';
+import levelUp from './assets/audio/sounds/level-up.mp3';
+import skillUp from './assets/audio/sounds/skill-up.mp3';
 
 export default class Sounds {
   constructor(scene) {
@@ -24,6 +26,8 @@ export default class Sounds {
     this.spider2 = scene.sound.add('spider2')
     this.ticking = scene.sound.add('ticking')
     this.tickingFast = scene.sound.add('tickingFast')
+    this.levelUp = scene.sound.add('levelUp', { volume: 0.7 })
+    this.skillUp = scene.sound.add('skillUp')
     this.playing = null
   }
 
@@ -39,6 +43,8 @@ export default class Sounds {
     scene.load.audio('spider2', spider2)
     scene.load.audio('ticking', ticking)
     scene.load.audio('tickingFast', tickingFast)
+    scene.load.audio('levelUp', levelUp)
+    scene.load.audio('skillUp', skillUp)
   }
 
   play(key, delay, slowmo, loop) {
