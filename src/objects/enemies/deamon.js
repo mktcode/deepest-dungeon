@@ -1,16 +1,13 @@
 import Phaser from 'phaser'
-import TILES from '../tile-mapping.js'
 
 // assets
-import snakeSprite from '../assets/snake.png'
-import deamonSprite from "../assets/deamon.png";
-import poroSprite from "../assets/poro.png";
+import deamonSprite from "../../assets/deamon.png";
+import poroSprite from "../../assets/poro.png";
 
-export default class Enemy {
-  constructor(dungeon, room, type, dieCallback) {
+export default class Deamon {
+  constructor(dungeon, room, dieCallback) {
     this.dungeon = dungeon
     this.room = room
-    this.type = type
     this.directionX = ['left', 'right'][Phaser.Math.Between(0, 1)]
     this.directionY = ['up', 'down'][Phaser.Math.Between(0, 1)]
     this.underAttack = false
@@ -19,27 +16,15 @@ export default class Enemy {
     const x = this.dungeon.tileToWorldX(Phaser.Math.Between(room.left + 2, room.right - 2))
     const y = this.dungeon.tileToWorldY(Phaser.Math.Between(room.top + 4, room.bottom - 2))
 
-    if (this.type === 'deamon') {
-      const sprite = this.dungeon.dungeonNumber === 12 ? 'poro' : 'deamon'
-      this.hp = 12
-      this.xp = 12
-      this.sprite = this.dungeon.matter.add.sprite(x, y, sprite, 1, { collisionFilter: { group: -1 } }).setFixedRotation()
-      this.sprite.anims.play(sprite + "-idle")
-      this.dungeon.lightManager.lights.push({
-        sprite: this.sprite,
-        intensity: () => 2
-      })
-    }
-    if (this.type === 'snake') {
-      this.hp = 3
-      this.xp = 3
-      this.sprite = this.dungeon.matter.add.sprite(x, y, "snake", 0, { collisionFilter: { group: -1 } }).setFixedRotation()
-      this.sprite.anims.play("snake-walk")
-      this.dungeon.lightManager.lights.push({
-        sprite: this.sprite,
-        intensity: () => 0.04
-      })
-    }
+    const sprite = this.dungeon.dungeonNumber === 12 ? 'poro' : 'deamon'
+    this.hp = 12
+    this.xp = 12
+    this.sprite = this.dungeon.matter.add.sprite(x, y, sprite, 1, { collisionFilter: { group: -1 } }).setFixedRotation()
+    this.sprite.anims.play(sprite + "-idle")
+    this.dungeon.lightManager.lights.push({
+      sprite: this.sprite,
+      intensity: () => 2
+    })
     this.sprite.setDepth(6)
 
     // enemy touches hero
@@ -97,14 +82,6 @@ export default class Enemy {
   }
 
   static preload(scene) {
-    scene.load.spritesheet(
-      "snake",
-      snakeSprite,
-      {
-        frameWidth: 18,
-        frameHeight: 15
-      }
-    );
     scene.load.spritesheet(
       "deamon",
       deamonSprite,

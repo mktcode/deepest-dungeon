@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import Dungeon from "@mikewesthad/dungeon";
 import Hero from "../objects/hero.js";
-import Enemy from "../objects/enemy.js";
+import Deamon from "../objects/enemies/deamon.js";
 import Zombie from "../objects/enemies/zombie.js";
 import Spider from "../objects/enemies/spider.js";
 import TILES from "../tile-mapping.js";
@@ -747,7 +747,7 @@ export default class DungeonScene extends Phaser.Scene {
       })
 
       if (this.safeRoom) {
-        this.enemies.push(new Enemy(this, this.endRoom, 'deamon', (enemy) => {
+        this.enemies.push(new Deamon(this, this.endRoom, (enemy) => {
           this.lightManager.removeLight(enemy.sprite)
           Phaser.Utils.Array.Remove(this.enemies, enemy)
           this.stuffLayer.putTileAt(
