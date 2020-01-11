@@ -1,5 +1,6 @@
 import activateSafeRoomMp3 from './assets/audio/sounds/activate-safe-room.mp3'
 import attackSound from './assets/audio/sounds/attack.mp3';
+import attackHitSound from './assets/audio/sounds/attack-hit.mp3';
 import attackPunchSound from './assets/audio/sounds/attack-punch.mp3';
 import attackPunchHitSound from './assets/audio/sounds/attack-punch-hit.mp3';
 import zombie1 from './assets/audio/sounds/zombie1.mp3';
@@ -14,6 +15,7 @@ export default class Sounds {
     this.scene = scene
     this.activateSafeRoom = scene.sound.add('activateSafeRoom')
     this.attackSound = scene.sound.add('attackSound', { volume: 0.25 })
+    this.attackHitSound = scene.sound.add('attackHitSound', { volume: 0.5 })
     this.attackPunchSound = scene.sound.add('attackPunchSound', { volume: 0.25 })
     this.attackPunchHitSound = scene.sound.add('attackPunchHitSound', { volume: 0.3 })
     this.zombie1 = scene.sound.add('zombie1')
@@ -28,6 +30,7 @@ export default class Sounds {
   static preload(scene) {
     scene.load.audio('activateSafeRoom', activateSafeRoomMp3)
     scene.load.audio('attackSound', attackSound)
+    scene.load.audio('attackHitSound', attackHitSound)
     scene.load.audio('attackPunchSound', attackPunchSound)
     scene.load.audio('attackPunchHitSound', attackPunchHitSound)
     scene.load.audio('zombie1', zombie1)

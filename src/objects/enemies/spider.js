@@ -65,7 +65,7 @@ export default class Spider {
         ) {
           this.dungeon.cameras.main.shake(500, .002)
           this.underAttack = true
-          this.dungeon.sounds.play('attackPunchHitSound', 0, this.dungeon.narrator.slowmo)
+          this.dungeon.hero.playHitSound()
           this.takeDamage(
             this.dungeon.registry.get('weapon')
               ? this.dungeon.registry.get('damage') * 2

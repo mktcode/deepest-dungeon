@@ -302,12 +302,19 @@ export default class Hero {
     return this.playAnim('attack', direction)
   }
 
+  playHitSound() {
+    this.scene.sounds.play(
+      this.scene.registry.get('weapon') ? 'attackHitSound' : 'attackPunchHitSound',
+      0,
+      this.scene.narrator.slowmo)
+  }
+
   die(direction) {
     return this.playAnim('die', direction)
   }
 
   getDamagingAttackFrames() {
-    return this.scene.registry.get('weapon') ? [12, 13, 14, 15, 16, 17, 18] : [5, 6]
+    return this.scene.registry.get('weapon') ? [12, 13, 14, 15, 16] : [5, 6]
   }
 
   takeDamage(damage) {
