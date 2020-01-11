@@ -55,17 +55,17 @@ export default class Zombie {
       objectA: this.dungeon.hero.sprites.hero,
       objectB: this.sprite,
       callback: (collision) => {
-        const damagingFrames = this.dungeon.registry.get('weapon') ? [12, 13, 14, 15, 16, 17, 18] : [5, 6, 7, 8]
         if (
           this.dungeon.hero.attacking &&
           !this.underAttack &&
           !this.dungeon.hero.dead &&
           collision.bodyA.isSensor &&
-          damagingFrames.includes(this.dungeon.hero.sprites.hero.anims.currentFrame.index) &&
+          this.dungeon.hero.getDamagingAttackFrames().includes(this.dungeon.hero.sprites.hero.anims.currentFrame.index) &&
           (this.dungeon.registry.get('weapon') ? '' : 'punch-') + this.dungeon.hero.lastDirection === collision.bodyA.label
         ) {
           this.dungeon.cameras.main.shake(500, .002)
           this.underAttack = true
+          this.dungeon.sounds.play('attackPunchHitSound', 0, this.dungeon.narrator.slowmo)
           this.takeDamage(
             this.dungeon.registry.get('weapon')
               ? this.dungeon.registry.get('damage') * 2

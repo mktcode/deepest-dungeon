@@ -306,6 +306,10 @@ export default class Hero {
     return this.playAnim('die', direction)
   }
 
+  getDamagingAttackFrames() {
+    return this.scene.registry.get('weapon') ? [12, 13, 14, 15, 16, 17, 18] : [5, 6]
+  }
+
   takeDamage(damage) {
     const hero = this.sprites.hero
     let heroHp = this.scene.registry.get('health')
