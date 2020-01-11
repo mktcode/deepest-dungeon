@@ -13,8 +13,8 @@ export default class Spider {
     const y = this.dungeon.tileToWorldY(Phaser.Math.Between(room.top + 4, room.bottom - 2))
 
     this.dead = false
-    this.hp = 3
-    this.xp = 3
+    this.hp = 6
+    this.xp = 6
     this.sprite = this.dungeon.matter.add.sprite(x, y, 'sprites', 0, { collisionFilter: { group: -1 } })
       .setRectangle(12, 16)
       .setOrigin(0.5, 0.6)
