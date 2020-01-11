@@ -200,7 +200,7 @@ export default class Hero {
     this.sprites.hero = this.scene.matter.add.sprite(x, y, 'sprites', 'hero/with-weapon/walk/down/1')
 
     const { Body, Bodies } = Phaser.Physics.Matter.Matter
-    const mainBody = Bodies.rectangle(0, 0, 16, 24, { chamfer: { radius: 10 } })
+    const mainBody = Bodies.rectangle(0, 0, 16, 16, { chamfer: { radius: 10 } })
     const compoundBody = Body.create({ parts: [
       mainBody,
       // sword
@@ -224,6 +224,7 @@ export default class Hero {
     ] })
     this.sprites.hero
       .setExistingBody(compoundBody)
+      .setOrigin(0.5, 0.6)
       .setFixedRotation()
       .setFriction(20)
       .setPosition(x, y)
