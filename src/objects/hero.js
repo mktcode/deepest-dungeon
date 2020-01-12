@@ -82,6 +82,9 @@ export default class Hero {
     this.scene.input.keyboard.on('keyup-Q', () => {
       this.usePathfinder()
     });
+
+    this.scene.sounds.play('running', 0, false, true)
+    this.scene.sounds.play('walking', 0, false, true)
   }
 
   static preload(scene) {
@@ -381,7 +384,9 @@ export default class Hero {
   update() {
     if (!this.dead) {
       // Stop any previous movement from the last frame
-      this.sprites.hero.setVelocity(0);
+      this.sprites.hero.setVelocity(0)
+      this.scene.sounds.running.setVolume(0)
+      this.scene.sounds.walking.setVolume(0)
 
       const runOrWalk = this.keys.shift.isDown || this.scene.narrator.forceWalk ? 'walk' : 'run'
       this.baseSpeed = runOrWalk === 'run' ? 2 : 1
@@ -393,32 +398,29 @@ export default class Hero {
         this.baseSpeed *= 0
       }
 
-      if (this.joystick.force >= this.joystick.touchCursor.forceMin) {
-        // this.scene.physics.velocityFromRotation(
-        //   this.joystick.rotation,
-        //   Math.min(this.baseSpeed, this.baseSpeed * (this.joystick.force / 50)),
-        //   this.sprites.hero.body.velocity
-        // )
-      } else {
-        // Horizontal movement
-        if (this.isDirectionKeyDown('left')) {
-          this.sprites.hero.setVelocityX(-this.baseSpeed);
-        } else if (this.isDirectionKeyDown('right')) {
-          this.sprites.hero.setVelocityX(this.baseSpeed);
-        }
-
-        // Vertical movement
-        if (this.isDirectionKeyDown('up')) {
-          this.sprites.hero.setVelocityY(-this.baseSpeed);
-        } else if (this.isDirectionKeyDown('down')) {
-          this.sprites.hero.setVelocityY(this.baseSpeed);
-        }
-
-        // Normalize and scale the velocity so that sprite can't move faster along a diagonal
-        const vector = new Phaser.Math.Vector2(this.sprites.hero.body.velocity)
-        vector.normalize().scale(this.baseSpeed)
-        this.sprites.hero.setVelocity(vector.x, vector.y);
+      // Horizontal movement
+      const sound = runOrWalk === 'run' ? this.scene.sounds.running : this.scene.sounds.walking
+      if (this.isDirectionKeyDown('left')) {
+        sound.setVolume(0.15)
+        this.sprites.hero.setVelocityX(-this.baseSpeed);
+      } else if (this.isDirectionKeyDown('right')) {
+        sound.setVolume(0.15)
+        this.sprites.hero.setVelocityX(this.baseSpeed);
       }
+
+      // Vertical movement
+      if (this.isDirectionKeyDown('up')) {
+        sound.setVolume(0.15)
+        this.sprites.hero.setVelocityY(-this.baseSpeed);
+      } else if (this.isDirectionKeyDown('down')) {
+        sound.setVolume(0.15)
+        this.sprites.hero.setVelocityY(this.baseSpeed);
+      }
+
+      // Normalize and scale the velocity so that sprite can't move faster along a diagonal
+      const vector = new Phaser.Math.Vector2(this.sprites.hero.body.velocity)
+      vector.normalize().scale(this.baseSpeed)
+      this.sprites.hero.setVelocity(vector.x, vector.y);
 
       // Update the animation last and give left/right/down animations precedence over up animations
       // Do nothing if slashing animation is playing
