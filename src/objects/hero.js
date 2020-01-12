@@ -403,20 +403,26 @@ export default class Hero {
       // Horizontal movement
       const sound = runOrWalk === 'run' ? this.scene.sounds.running : this.scene.sounds.walking
       if (this.isDirectionKeyDown('left')) {
-        sound.setVolume(0.15)
         this.sprites.hero.setVelocityX(-this.baseSpeed);
       } else if (this.isDirectionKeyDown('right')) {
-        sound.setVolume(0.15)
         this.sprites.hero.setVelocityX(this.baseSpeed);
       }
 
       // Vertical movement
       if (this.isDirectionKeyDown('up')) {
-        sound.setVolume(0.15)
         this.sprites.hero.setVelocityY(-this.baseSpeed);
       } else if (this.isDirectionKeyDown('down')) {
-        sound.setVolume(0.15)
         this.sprites.hero.setVelocityY(this.baseSpeed);
+      }
+
+      // movement sound
+      if (
+        this.isDirectionKeyDown('left') ||
+        this.isDirectionKeyDown('right') ||
+        this.isDirectionKeyDown('up') ||
+        this.isDirectionKeyDown('down')
+      ) {
+        sound.setVolume(this.baseSpeed ? 0.15 : 0)
       }
 
       // Normalize and scale the velocity so that sprite can't move faster along a diagonal
