@@ -14,7 +14,7 @@ export default class Deamon {
     this.dieCallback = dieCallback
 
     const x = this.dungeon.tileToWorldX(Phaser.Math.Between(room.left + 2, room.right - 2))
-    const y = this.dungeon.tileToWorldY(Phaser.Math.Between(room.top + 4, room.bottom - 2))
+    const y = this.dungeon.tileToWorldY(Phaser.Math.Between(room.top + 5, room.bottom - 2))
 
     const sprite = this.dungeon.dungeonNumber === 12 ? 'poro' : 'deamon'
     this.hp = 12
@@ -132,16 +132,16 @@ export default class Deamon {
         const speed = 0.5;
 
         sprite.setVelocity(0)
-        if (this.room.left + 1 >= this.dungeon.worldToTileX(this.sprite.x)) {
+        if (this.room.left + 2 >= this.dungeon.worldToTileX(this.sprite.x)) {
           this.directionX = 'right'
         }
-        if (this.room.right - 1 <= this.dungeon.worldToTileX(this.sprite.x)) {
+        if (this.room.right - 2 <= this.dungeon.worldToTileX(this.sprite.x)) {
           this.directionX = 'left'
         }
-        if (this.room.top + 3 >= this.dungeon.worldToTileY(this.sprite.y)) {
+        if (this.room.top + 5 >= this.dungeon.worldToTileY(this.sprite.y)) {
           this.directionY = 'down'
         }
-        if (this.room.bottom - 1 <= this.dungeon.worldToTileY(this.sprite.y)) {
+        if (this.room.bottom - 2 <= this.dungeon.worldToTileY(this.sprite.y)) {
           this.directionY = 'up'
         }
 
