@@ -48,6 +48,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.pathSprites = []
     this.safeRoomActivated = false
 
+    this.enemies = [];
+
     this.isStatic = { isStatic: true }
 
     this.nextOuttake = 1
@@ -92,6 +94,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.cameras.main.shake(1000, 0, true) // interrupt shake if dungeon was shaking when leaving it
       this.music.setRate(1)
       this.registry.set('currentDungeon', this.dungeonNumber)
+      this.addEnemies(true)
 
       // keyboard bug workaround
       this.hero.resetKeys()
@@ -721,8 +724,7 @@ export default class DungeonScene extends Phaser.Scene {
     })
   }
 
-  addEnemies() {
-    this.enemies = [];
+  addEnemies(revisit) {
     const maxEnemies = Math.min(10, this.dungeonNumber - 1)
     if (this.dungeonNumber > 1) {
       this.otherRooms.forEach(room => {
@@ -746,7 +748,7 @@ export default class DungeonScene extends Phaser.Scene {
         }
       })
 
-      if (this.safeRoom) {
+      if (this.safeRoom && !revisit) {
         this.enemies.push(new Deamon(this, this.endRoom, (enemy) => {
           this.lightManager.removeLight(enemy.sprite)
           Phaser.Utils.Array.Remove(this.enemies, enemy)
