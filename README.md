@@ -3,7 +3,6 @@
 - [ ] Bugfix: when died, xp/points disappear, some weird tween/animation moves them away
 - [ ] Bugfix: sometimes enemies are contantly walking against wall
 - [ ] trapdoors: random tiles change after standing on them too long, instant death
-- [ ] ingame instructions
 - [ ] adjust/expand narrator
 - [ ] implement global high score
 - [ ] implement mana and spell attack
@@ -13,29 +12,23 @@
 - [ ] use seeds as sharable "sessions" and saved games
 - [ ] more enemies/traps
 - [ ] stamina for running (and attacking)
-- [ ] disabled slowmo if narrator is disabled
 - [ ] death animation doesn't trigger sometimes
-- [ ] add instructions to pause screen
 - [ ] fix bouncy hero collision (leading to leaving a room unintended)
 - [ ] adjust volume of all sounds/narrative
-- [ ] sound for skilling
 - [ ] timeeater countdown doesn't stop when pausing the game
 - [ ] add credits
 - [ ] Bug: when dieing multiple times without picking up your stuff... xp dust can't be picked up anymore, instead gives more and more xp when touching it
 - [ ] polishing
   - [ ] make character slide/speed up/down a bit
-  - [ ] Collisions (Doors)
   - [ ] Narrative
-    - [ ] Volumne
+    - [ ] adjust volumes
     - [ ] Revisiting Dungeons after death: (spawning new monsters) When the dangers became too overwhelming for him, he didn't die, he traveled back in time. As if he had to learn a lesson. The extra portion of experience might be worth the time, he said to himself... and moved on.
     - [ ] freeze char after idling 20s, when trying to move again: Frozen in fear, he didn't dare to move, for a far too long time. (unfreeze, slowmo) He gathered all his courage and slowly he began to move, to continue his journey. (normal speed)
     - [ ] (lvl 13) By now it was obvious to him, that these dungeons must be infinite
-  - [ ] add missing sounds
-    - [ ] death of character/enemies
+  - [ ] add/improve sounds
+    - [ ] going down stairs
     - [ ] skilling
-    - [ ] going down staris
   - [ ] new (animated) boss enemy
-  - [ ] animated health/mana orbs
   - [ ] animated experience points
   - [ ] fill up health animation when using shrine
   - [ ] put the time eater as far away from the doors as possible
