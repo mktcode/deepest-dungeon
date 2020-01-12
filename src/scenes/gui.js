@@ -197,10 +197,10 @@ export default class GuiScene extends Phaser.Scene {
       blendMode: 'SCREEN',
       scale: { start: 2, end: 1 },
       alpha: { start: 1, end: 0 },
-      speed: 70,
+      speed: 100,
       quantity: 200,
       frequency: 200,
-      lifespan: 2000,
+      lifespan: 2300,
       emitZone: {
         source: new Phaser.Geom.Line(0, this.game.scale.height, this.game.scale.width, this.game.scale.height),
         type: 'edge',
