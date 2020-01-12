@@ -93,6 +93,8 @@ export default class DungeonScene extends Phaser.Scene {
       this.cameras.main.fadeIn(1000, 0, 0, 0)
       this.cameras.main.shake(1000, 0, true) // interrupt shake if dungeon was shaking when leaving it
       this.music.setRate(1)
+      this.sounds.running.setVolume(0)
+      this.sounds.walking.setVolume(0)
       this.registry.set('currentDungeon', this.dungeonNumber)
       this.addEnemies(true)
 
@@ -118,6 +120,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.events.on('sleep', () => {
       this.sounds.stop('ticking')
       this.sounds.stop('tickingFast')
+      this.sounds.running.setVolume(0)
+      this.sounds.walking.setVolume(0)
       this.countdown = null
       if (this.countdownText) {
         this.countdownText.destroy()

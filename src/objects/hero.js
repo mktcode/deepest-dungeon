@@ -342,6 +342,8 @@ export default class Hero {
     if (heroHp <= 0) {
       this.die()
       this.scene.sounds.play('die')
+      this.scene.sounds.running.setVolume(0)
+      this.scene.sounds.walking.setVolume(0)
       this.freeze()
       this.dead = true
       this.scene.cameras.main.fadeOut(2000, 0, 0, 0)
