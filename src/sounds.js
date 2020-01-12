@@ -16,6 +16,14 @@ import takeHit from './assets/audio/sounds/take-hit.mp3';
 import die from './assets/audio/sounds/die.mp3';
 import running from './assets/audio/sounds/running.mp3';
 import walking from './assets/audio/sounds/walking.mp3';
+import xpPing1 from './assets/audio/sounds/xp-ping1.mp3';
+import xpPing2 from './assets/audio/sounds/xp-ping2.mp3';
+import xpPing3 from './assets/audio/sounds/xp-ping3.mp3';
+import xpPing4 from './assets/audio/sounds/xp-ping4.mp3';
+import xpPing5 from './assets/audio/sounds/xp-ping5.mp3';
+import xpPing6 from './assets/audio/sounds/xp-ping6.mp3';
+import xpPing7 from './assets/audio/sounds/xp-ping7.mp3';
+import xpPing8 from './assets/audio/sounds/xp-ping8.mp3';
 
 export default class Sounds {
   constructor(scene) {
@@ -38,6 +46,14 @@ export default class Sounds {
     this.die = scene.sound.add('die', { volume: 0.3 })
     this.running = scene.sound.add('running', { volume: 0 })
     this.walking = scene.sound.add('walking', { volume: 0 })
+    this.xpPing1 = scene.sound.add('xpPing1')
+    this.xpPing2 = scene.sound.add('xpPing2')
+    this.xpPing3 = scene.sound.add('xpPing3')
+    this.xpPing4 = scene.sound.add('xpPing4')
+    this.xpPing5 = scene.sound.add('xpPing5')
+    this.xpPing6 = scene.sound.add('xpPing6')
+    this.xpPing7 = scene.sound.add('xpPing7')
+    this.xpPing8 = scene.sound.add('xpPing8')
     this.playing = null
   }
 
@@ -60,6 +76,14 @@ export default class Sounds {
     scene.load.audio('die', die)
     scene.load.audio('running', running)
     scene.load.audio('walking', walking)
+    scene.load.audio('xpPing1', xpPing1)
+    scene.load.audio('xpPing2', xpPing2)
+    scene.load.audio('xpPing3', xpPing3)
+    scene.load.audio('xpPing4', xpPing4)
+    scene.load.audio('xpPing5', xpPing5)
+    scene.load.audio('xpPing6', xpPing6)
+    scene.load.audio('xpPing7', xpPing7)
+    scene.load.audio('xpPing8', xpPing8)
   }
 
   play(key, delay, slowmo, loop) {

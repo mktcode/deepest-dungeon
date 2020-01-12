@@ -106,7 +106,9 @@ export default class Deamon {
     this.dungeon.flashSprite(this.sprite)
     this.sprite.setVelocity(0)
     if (this.hp <= 0) {
-      this.dungeon.registry.set('xp', this.dungeon.registry.get('xp') + this.xp)
+      for (let i = 0; i < this.xp; i++) {
+        this.dungeon.emitXpOrb(this.sprite.x, this.sprite.y)
+      }
       this.dungeon.lightManager.removeLight(this.sprite)
       this.sprite.destroy()
       if (this.dieCallback) {

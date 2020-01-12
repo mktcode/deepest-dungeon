@@ -48,11 +48,15 @@ export default class DungeonScene extends Phaser.Scene {
     this.pathSprites = []
     this.safeRoomActivated = false
 
-    this.enemies = [];
+    this.enemies = []
+    this.xpOrbs = []
 
     this.isStatic = { isStatic: true }
 
     this.nextOuttake = 1
+
+    this.xpOrbSound = 1
+    this.xpOrbSoundResetTimeout = null
   }
 
   static preload(scene) {
@@ -76,6 +80,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.interactionParticleAbove = this.add.particles('particle').setDepth(7)
     this.fireParticle = this.add.particles('particle').setDepth(7)
     this.fireParticleAbove = this.add.particles('particle').setDepth(10)
+    this.xpParticle = this.add.particles('particle').setDepth(7)
     // this.matter.world.createDebugGraphic()
 
     this.prepareMap()
@@ -766,6 +771,83 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
+  emitXpOrb(x, y) {
+    let particleCount = 0
+    const xpOrb = this.matter.add
+      .image(
+        x + Phaser.Math.Between(-10, 10),
+        y + Phaser.Math.Between(-10, 10),
+        'particle',
+        0,
+        { collisionFilter: { group: -1 } }
+      ).setDepth(6).setRectangle(2, 2)
+    const xpOrbParticles = this.xpParticle.createEmitter({
+      tint: [0xFF00FF, 0x0088FF, 0xFF00FF, 0x0088FF, 0xFFFFFF],
+      blendMode: 'SCREEN',
+      scale: { start: 0.3, end: 1 },
+      alpha: { start: 1, end: 0 },
+      speed: 10,
+      quantity: 3,
+      frequency: 100,
+      lifespan: 500,
+      emitCallback: (particle) => {
+        // only every 10 particles get a light
+        particleCount++
+        if (!(particleCount % 10)) {
+          particleCount = 10
+          this.lightManager.lights.push({
+            sprite: particle,
+            intensity: () => Math.max(0, particle.alpha - 0.5)
+          })
+        }
+      },
+      deathCallback: (particle) => {
+        this.time.delayedCall(2000, () => {
+          this.lightManager.removeLight(particle)
+        })
+      }
+    })
+
+    xpOrbParticles.startFollow(xpOrb)
+    const tween = this.tweens.add({
+      duration: 500,
+      targets: xpOrb,
+      yoyo: true,
+      repeat: 0,
+      ease: 'Cubic',
+      y: '-=20',
+      onComplete: () => {
+        tween.remove()
+        this.xpOrbs.push(xpOrb)
+      }
+    })
+
+    this.matterCollision.addOnCollideStart({
+      objectA: this.hero.sprites.hero,
+      objectB: xpOrb,
+      callback: (collision) => {
+        if (this.hero.dead || collision.bodyA.isSensor) return
+        tween.remove()
+        Phaser.Utils.Array.Remove(this.xpOrbs, xpOrb)
+        xpOrb.destroy()
+        xpOrbParticles.stop()
+        this.registry.set('xp', this.registry.get('xp') + 1)
+        this.sounds.play('xpPing' + this.xpOrbSound)
+        this.xpOrbSound = Math.min(8, this.xpOrbSound + 1)
+        clearTimeout(this.xpOrbSoundResetTimeout)
+        this.xpOrbSoundResetTimeout = setTimeout(() => {
+          this.xpOrbSound = 1
+        }, 3000)
+      }
+    })
+  }
+
+  updateXpOrbs() {
+    this.xpOrbs.forEach(orb => {
+      this.moveToObject(orb, this.hero.sprites.hero, 1)
+    })
+  }
+
   addFireTraps() {
     this.fireTraps = []
     if (this.dungeonNumber > 5) {
@@ -1442,5 +1524,6 @@ export default class DungeonScene extends Phaser.Scene {
     this.updateCountdown()
     this.updateTimebomb()
     this.updateSkillInteractions()
+    this.updateXpOrbs()
   }
 }

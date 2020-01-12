@@ -121,7 +121,9 @@ export default class Spider {
         }
         this.dead = true
         this.die()
-        this.dungeon.registry.set('xp', this.dungeon.registry.get('xp') + this.xp)
+        for (let i = 0; i < this.xp; i++) {
+          this.dungeon.emitXpOrb(this.sprite.x, this.sprite.y)
+        }
         this.dungeon.time.delayedCall(1000, () => {
           this.dungeon.lightManager.removeLight(this.sprite)
           this.sprite.destroy()
