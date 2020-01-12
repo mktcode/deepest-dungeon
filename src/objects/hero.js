@@ -344,14 +344,6 @@ export default class Hero {
       this.scene.time.delayedCall(2000, () => {
         const x = hero.x
         const y = hero.y
-        if (this.hasItem('sword')) {
-          this.scene.addSword(x + Phaser.Math.Between(-15, 15), y + Phaser.Math.Between(-15, 15))
-        }
-        if (this.hasItem('pathfinder')) {
-          this.scene.addPathfinder(x + Phaser.Math.Between(-15, 15), y + Phaser.Math.Between(-15, 15))
-        }
-        this.scene.registry.set('items', [])
-        this.scene.registry.set('weapon', null)
         const lastLevelXp = this.constructor.getXpForLevelUp(this.scene.registry.get('level'))
         const lostXp = this.scene.registry.get('xp') - lastLevelXp
         if (lostXp) {
