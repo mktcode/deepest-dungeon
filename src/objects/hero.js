@@ -338,6 +338,7 @@ export default class Hero {
 
     if (heroHp <= 0) {
       this.die()
+      this.scene.sounds.play('die')
       this.freeze()
       this.dead = true
       this.scene.cameras.main.fadeOut(2000, 0, 0, 0)
@@ -355,6 +356,8 @@ export default class Hero {
         this.scene.scene.sleep()
         this.scene.scene.wake('Dungeon' + this.scene.registry.get('minDungeon'))
       })
+    } else {
+      this.scene.sounds.play('takeHit')
     }
 
     this.scene.time.delayedCall(1500, () => {
