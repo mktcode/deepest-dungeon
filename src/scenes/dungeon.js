@@ -173,22 +173,11 @@ export default class DungeonScene extends Phaser.Scene {
     }
 
     if (this.dungeonNumber >= 12) {
-      this.dungeon.r.randomInteger(0, 1)
-      this.dungeon.r.randomInteger(0, 1)
-      const patreonLinkRoom = this.dungeon.r.randomPick(this.otherRooms)
-      this.add.text(
-        this.tileToWorldX(patreonLinkRoom.centerX) - 25,
-        this.tileToWorldY(patreonLinkRoom.centerY),
-        'patreon.com/mkt' + "\n" + ';)',
-        {
-          font: "10px monospace",
-          fill: "#FFFFFF"
-        }
-      ).setDepth(5).setAlpha(0.5).setAlign('center')
-    }
-
-    if (this.dungeonNumber === 13) {
-      this.narrator.sayOnce('stopPlaying', 1)
+      this.addCreditsToRandomRoom('Support me!' + "\n" + 'patreon.com/mkt' + "\n" + '...or below the game! ;)')
+      this.addCreditsToRandomRoom('Music:' + "\n" + 'Kai Engel' + "\n" +  'kai-engel.com')
+      this.addCreditsToRandomRoom('Dungeon Design:' + "\n" + 'Szadi art.' + "\n" +  'szadiart.itch.io')
+      this.addCreditsToRandomRoom('Character Design:' + "\n" + 'Robert Ramsay' + "\n" +  'robertramsay.co.uk')
+      this.addCreditsToRandomRoom('Other Stuff:' + "\n" + 'opengameart.org' + "\n" +  'freesound.org')
     }
 
     this.input.keyboard.on('keyup-ESC', () => {
@@ -196,6 +185,20 @@ export default class DungeonScene extends Phaser.Scene {
       if (this.narrator.playing) this.narrator.playing.pause()
       this.scene.run('Pause')
     })
+  }
+
+  addCreditsToRandomRoom(text) {
+    const room = this.dungeon.r.randomPick(this.otherRooms)
+    Phaser.Utils.Array.Remove(this.otherRooms, room)
+    this.add.text(
+      this.tileToWorldX(room.centerX) - 25,
+      this.tileToWorldY(room.centerY),
+      text,
+      {
+        font: "10px monospace",
+        fill: "#FFFFFF"
+      }
+    ).setDepth(5).setAlpha(0.5).setAlign('center')
   }
 
   getStartRoom() {
@@ -1420,7 +1423,7 @@ export default class DungeonScene extends Phaser.Scene {
           this.narrator.sayOnce('aScoutsEye')
         }
 
-        if (this.dungeonNumber === 12 && this.nextOuttake <= 6) {
+        if (this.dungeonNumber >= 12 && this.nextOuttake <= 6) {
           this.narrator.slowmoStart()
           this.narrator.sayOnce('outtake' + this.nextOuttake, 0, 1).then(() => {
             this.nextOuttake++

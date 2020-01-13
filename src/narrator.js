@@ -15,7 +15,6 @@ import aScoutsEye from "./assets/audio/narrator/a-scouts-eye.mp3"
 import maybeAboutDecisions from "./assets/audio/narrator/maybe-about-decisions.mp3"
 import slowlyHeBeganToQuestion from "./assets/audio/narrator/slowly-he-began-to-question.mp3"
 import theEnd from "./assets/audio/narrator/the-end.mp3"
-import stopPlaying from "./assets/audio/narrator/stop-playing.mp3"
 
 import outtake1 from "./assets/audio/outtakes/1.mp3"
 import outtake2 from "./assets/audio/outtakes/2.mp3"
@@ -45,7 +44,6 @@ export default class Narrator {
     this.maybeAboutDecisions = scene.sound.add('maybeAboutDecisions')
     this.slowlyHeBeganToQuestion = scene.sound.add('slowlyHeBeganToQuestion')
     this.theEnd = scene.sound.add('theEnd')
-    this.stopPlaying = scene.sound.add('stopPlaying')
 
     this.outtake1 = scene.sound.add('outtake1')
     this.outtake2 = scene.sound.add('outtake2')
@@ -78,7 +76,6 @@ export default class Narrator {
     scene.load.audio('maybeAboutDecisions', maybeAboutDecisions)
     scene.load.audio('slowlyHeBeganToQuestion', slowlyHeBeganToQuestion)
     scene.load.audio('theEnd', theEnd)
-    scene.load.audio('stopPlaying', stopPlaying)
 
     scene.load.audio('outtake1', outtake1)
     scene.load.audio('outtake2', outtake2)
