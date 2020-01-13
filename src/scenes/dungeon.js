@@ -728,7 +728,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.otherRooms.forEach(room => {
         const num = this.dungeon.r.randomInteger(1, maxEnemies)
         for (let i = 1; i <= num; i++) {
-          if (this.dungeonNumber > 8) {
+          if (this.dungeonNumber > 6) {
             if (Phaser.Math.Between(0, 2)) {
               this.enemies.push(new Zombie(this, room, (enemy) => {
                 Phaser.Utils.Array.Remove(this.enemies, enemy)
