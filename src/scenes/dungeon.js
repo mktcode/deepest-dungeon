@@ -844,7 +844,7 @@ export default class DungeonScene extends Phaser.Scene {
 
   updateXpOrbs() {
     this.xpOrbs.forEach(orb => {
-      this.moveToObject(orb, this.hero.sprites.hero, 1)
+      this.moveToObject(orb, this.hero.sprites.hero, 2.5)
     })
   }
 
