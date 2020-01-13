@@ -19,6 +19,7 @@ export default class Deamon {
     const sprite = this.dungeon.dungeonNumber === 12 ? 'poro' : 'deamon'
     this.hp = 12
     this.xp = 12
+    this.damage = 3
     this.sprite = this.dungeon.matter.add.sprite(x, y, sprite, 1)
       .setCollisionGroup(-1)
       .setFixedRotation()
@@ -37,7 +38,7 @@ export default class Deamon {
         if (!this.dungeon.hero.underAttack && !this.dungeon.hero.dead && !collision.bodyA.isSensor) {
           this.dungeon.cameras.main.shake(500, .002)
           this.dungeon.hero.underAttack = true
-          this.dungeon.hero.takeDamage(1)
+          this.dungeon.hero.takeDamage(this.damage)
         }
       }
     })

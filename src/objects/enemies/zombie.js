@@ -15,6 +15,7 @@ export default class Zombie {
     this.dead = false
     this.hp = 3
     this.xp = 3
+    this.damage = 1
     this.sprite = this.dungeon.matter.add.sprite(x, y, 'sprites', 0)
       .setRectangle(12, 16)
       .setCollisionGroup(-1)
@@ -31,7 +32,7 @@ export default class Zombie {
         if (!this.dungeon.hero.underAttack && !this.dungeon.hero.dead && !this.dead && !collision.bodyA.isSensor) {
           this.dungeon.cameras.main.shake(500, .002)
           this.dungeon.hero.underAttack = true
-          this.dungeon.hero.takeDamage(1)
+          this.dungeon.hero.takeDamage(this.damage)
         }
       }
     })

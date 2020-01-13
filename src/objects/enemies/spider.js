@@ -15,6 +15,7 @@ export default class Spider {
     this.dead = false
     this.hp = 6
     this.xp = 6
+    this.damage = 2
     this.sprite = this.dungeon.matter.add.sprite(x, y, 'sprites', 0)
       .setRectangle(12, 16)
       .setCollisionGroup(-1)
@@ -31,7 +32,7 @@ export default class Spider {
         if (!this.dungeon.hero.underAttack && !this.dungeon.hero.dead && !this.dead && !collision.bodyA.isSensor) {
           this.dungeon.cameras.main.shake(500, .002)
           this.dungeon.hero.underAttack = true
-          this.dungeon.hero.takeDamage(1)
+          this.dungeon.hero.takeDamage(this.damage)
         }
       }
     })
