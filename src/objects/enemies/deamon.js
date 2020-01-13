@@ -19,13 +19,15 @@ export default class Deamon {
     const sprite = this.dungeon.dungeonNumber === 12 ? 'poro' : 'deamon'
     this.hp = 12
     this.xp = 12
-    this.sprite = this.dungeon.matter.add.sprite(x, y, sprite, 1, { collisionFilter: { group: -1 } }).setFixedRotation()
+    this.sprite = this.dungeon.matter.add.sprite(x, y, sprite, 1)
+      .setCollisionGroup(-1)
+      .setFixedRotation()
+      .setDepth(6)
     this.sprite.anims.play(sprite + "-idle")
     this.dungeon.lightManager.lights.push({
       sprite: this.sprite,
       intensity: () => 2
     })
-    this.sprite.setDepth(6)
 
     // enemy touches hero
     this.dungeon.matterCollision.addOnCollideActive({

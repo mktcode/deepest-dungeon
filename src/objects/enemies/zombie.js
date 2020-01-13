@@ -15,8 +15,9 @@ export default class Zombie {
     this.dead = false
     this.hp = 3
     this.xp = 3
-    this.sprite = this.dungeon.matter.add.sprite(x, y, 'sprites', 0, { collisionFilter: { group: -1 } })
+    this.sprite = this.dungeon.matter.add.sprite(x, y, 'sprites', 0)
       .setRectangle(12, 16)
+      .setCollisionGroup(-1)
       .setOrigin(0.5, 0.6)
       .setFixedRotation()
       .setDepth(6)

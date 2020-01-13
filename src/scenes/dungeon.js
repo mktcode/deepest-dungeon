@@ -759,14 +759,12 @@ export default class DungeonScene extends Phaser.Scene {
 
   emitXpOrb(x, y) {
     let particleCount = 0
-    const xpOrb = this.matter.add
-      .image(
-        x + Phaser.Math.Between(-10, 10),
-        y + Phaser.Math.Between(-10, 10),
-        'particle',
-        0,
-        { collisionFilter: { group: -1 } }
-      ).setDepth(6).setRectangle(2, 2)
+    const xpOrb = this.matter.add.image(
+      x + Phaser.Math.Between(-10, 10),
+      y + Phaser.Math.Between(-10, 10),
+      'particle',
+      0
+    ).setDepth(6).setRectangle(5, 5).setSensor(true)
     const xpOrbParticles = this.xpParticle.createEmitter({
       tint: [0xFF00FF, 0x0088FF, 0xFF00FF, 0x0088FF, 0xFFFFFF],
       blendMode: 'SCREEN',
@@ -1095,9 +1093,8 @@ export default class DungeonScene extends Phaser.Scene {
         this.tileToWorldX(this.timebombRoom.centerX),
         this.tileToWorldY(this.timebombRoom.centerY),
         'particle',
-        0,
-        { collisionFilter: { group: -1 } }
-      ).setDepth(6).setRectangle(10, 10)
+        0
+      ).setDepth(6).setRectangle(10, 10).setCollisionGroup(-1)
       // this.physics.add.collider(this.timebomb, this.wallLayer)
       let particleCount = 0
       this.timebombParticles = this.interactionParticle.createEmitter({
