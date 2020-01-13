@@ -759,12 +759,9 @@ export default class DungeonScene extends Phaser.Scene {
 
   emitXpOrb(x, y) {
     let particleCount = 0
-    const xpOrb = this.matter.add.image(
-      x + Phaser.Math.Between(-10, 10),
-      y + Phaser.Math.Between(-10, 10),
-      'particle',
-      0
-    ).setDepth(6).setRectangle(5, 5).setSensor(true)
+    x += Phaser.Math.Between(-10, 10)
+    y += Phaser.Math.Between(-10, 10)
+    const xpOrb = this.matter.add.image(x, y, 'particle', 0).setDepth(6).setRectangle(5, 5).setSensor(true)
     const xpOrbParticles = this.xpParticle.createEmitter({
       tint: [0xFF00FF, 0x0088FF, 0xFF00FF, 0x0088FF, 0xFFFFFF],
       blendMode: 'SCREEN',
@@ -779,7 +776,7 @@ export default class DungeonScene extends Phaser.Scene {
     })
 
     xpOrbParticles.startFollow(xpOrb)
-    const tween = this.tweens.add({
+    const tween1 = this.tweens.add({
       duration: 500,
       targets: xpOrb,
       yoyo: true,
@@ -787,8 +784,18 @@ export default class DungeonScene extends Phaser.Scene {
       ease: 'Cubic',
       y: '-=20',
       onComplete: () => {
-        tween.remove()
+        tween1.remove()
         this.xpOrbs.push(xpOrb)
+      }
+    })
+    const tween2 = this.tweens.add({
+      duration: 1000,
+      targets: xpOrb,
+      repeat: 0,
+      ease: 'Linear',
+      x: x + Phaser.Math.Between(-50, 50),
+      onComplete: () => {
+        tween2.remove()
       }
     })
 
@@ -797,7 +804,8 @@ export default class DungeonScene extends Phaser.Scene {
       objectB: xpOrb,
       callback: (collision) => {
         if (this.hero.dead || collision.bodyA.isSensor) return
-        tween.remove()
+        tween1.remove()
+        tween2.remove()
         Phaser.Utils.Array.Remove(this.xpOrbs, xpOrb)
         xpOrb.destroy()
         xpOrbParticles.stop()
