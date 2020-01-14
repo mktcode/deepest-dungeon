@@ -93,6 +93,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.addFireTraps()
     this.addTimebomb()
     this.addOverlayText()
+    this.startIdleTimer()
 
     this.events.on('wake', () => {
       this.cameras.main.fadeIn(1000, 0, 0, 0)
@@ -105,6 +106,9 @@ export default class DungeonScene extends Phaser.Scene {
 
       // keyboard bug workaround
       this.hero.resetKeys()
+
+      // reset idle timer
+      this.startIdleTimer()
 
       if (this.dungeonNumber === 1) {
         if (this.registry.get('narratorSaid').includes('whenHeWasDefeated')) {
@@ -191,6 +195,36 @@ export default class DungeonScene extends Phaser.Scene {
       if (this.narrator.playing) this.narrator.playing.pause()
       this.scene.run('Pause')
     })
+  }
+
+  startIdleTimer() {
+    this.idleTimer = new Date().getTime() / 1000
+  }
+
+  playIdleNarrative() {
+    const now = new Date().getTime() / 1000
+    if (
+      now - this.idleTimer > 10 &&
+      !this.narrator.playing &&
+      !this.registry.get('narratorSaid').includes('frozenInFear')
+    ) {
+      this.narrator.freezeStart()
+      this.narrator.sayOnce('frozenInFear').then(() => {
+        this.narrator.freezeEnd()
+      })
+    }
+  }
+
+  playIdleNarrativeFollowUp() {
+    if (
+      this.registry.get('narratorSaid').includes('frozenInFear') &&
+      !this.registry.get('narratorSaid').includes('startedToMoveAgain')
+    ) {
+      this.narrator.slowmoStart()
+      this.narrator.sayOnce('startedToMoveAgain').then(() => {
+        this.narrator.slowmoEnd()
+      })
+    }
   }
 
   addCreditsToRandomRoom(text) {
@@ -1462,5 +1496,6 @@ export default class DungeonScene extends Phaser.Scene {
     this.updateTimebomb()
     this.updateSkillInteractions()
     this.updateXpOrbs()
+    this.playIdleNarrative()
   }
 }

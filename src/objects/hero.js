@@ -288,18 +288,28 @@ export default class Hero {
   }
 
   walk(direction) {
+    this.scene.startIdleTimer()
+    this.scene.playIdleNarrativeFollowUp()
     return this.playAnim('walk', direction)
   }
 
   run(direction) {
+    this.scene.startIdleTimer()
+    this.scene.playIdleNarrativeFollowUp()
     return this.playAnim('run', direction)
   }
 
   attack(direction) {
+    this.scene.startIdleTimer()
     this.scene.registry.get('weapon')
       ? this.scene.sounds.play('attackSound', 0, this.scene.narrator.slowmo)
       : this.scene.sounds.play('attackPunchSound', 0, this.scene.narrator.slowmo)
     return this.playAnim('attack', direction)
+  }
+
+  die(direction) {
+    this.scene.startIdleTimer()
+    return this.playAnim('die', direction)
   }
 
   playHitSound() {
@@ -307,10 +317,6 @@ export default class Hero {
       this.scene.registry.get('weapon') ? 'attackHitSound' : 'attackPunchHitSound',
       0,
       this.scene.narrator.slowmo)
-  }
-
-  die(direction) {
-    return this.playAnim('die', direction)
   }
 
   getDamagingAttackFrames() {
