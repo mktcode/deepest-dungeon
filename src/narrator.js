@@ -22,6 +22,8 @@ import outtake3 from "./assets/audio/outtakes/3.mp3"
 import outtake4 from "./assets/audio/outtakes/4.mp3"
 import outtake5 from "./assets/audio/outtakes/5.mp3"
 import outtake6 from "./assets/audio/outtakes/6.mp3"
+import outtake7 from "./assets/audio/outtakes/7.mp3"
+import outtake8 from "./assets/audio/outtakes/8.mp3"
 
 export default class Narrator {
   constructor(scene) {
@@ -51,6 +53,8 @@ export default class Narrator {
     this.outtake4 = scene.sound.add('outtake4')
     this.outtake5 = scene.sound.add('outtake5')
     this.outtake6 = scene.sound.add('outtake6')
+    this.outtake7 = scene.sound.add('outtake7')
+    this.outtake8 = scene.sound.add('outtake8')
 
     this.slowmo = false
     this.freeze = false

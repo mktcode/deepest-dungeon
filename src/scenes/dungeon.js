@@ -1412,7 +1412,7 @@ export default class DungeonScene extends Phaser.Scene {
           this.narrator.sayOnce('aScoutsEye')
         }
 
-        if (this.dungeonNumber >= 12 && this.nextOuttake <= 6) {
+        if (this.dungeonNumber >= 12 && this.nextOuttake <= 8) {
           this.narrator.slowmoStart()
           this.narrator.sayOnce('outtake' + this.nextOuttake, 0, 1).then(() => {
             this.nextOuttake++
