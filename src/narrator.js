@@ -93,6 +93,8 @@ export default class Narrator {
     scene.load.audio('outtake4', outtake4)
     scene.load.audio('outtake5', outtake5)
     scene.load.audio('outtake6', outtake6)
+    scene.load.audio('outtake7', outtake7)
+    scene.load.audio('outtake8', outtake8)
   }
 
   say(key, delay, volume) {
