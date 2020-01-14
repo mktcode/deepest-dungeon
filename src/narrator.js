@@ -1,6 +1,8 @@
 import whereAmI from "./assets/audio/narrator/where-am-i.mp3"
 import whatWasThisAbout from "./assets/audio/narrator/what-was-this-about.mp3"
 import finallySomeStairs from "./assets/audio/narrator/finally-some-stairs.mp3"
+import whenHeWasDefeated from "./assets/audio/narrator/when-he-was-defeated.mp3"
+import againEmptiness from "./assets/audio/narrator/again-emptiness.mp3"
 import undeadCreatures from "./assets/audio/narrator/undead-creatures.mp3"
 import killingAllTheseEnemies from "./assets/audio/narrator/killing-all-these-enemies.mp3"
 import thereItWasASword from "./assets/audio/narrator/there-it-was-a-sword.mp3"
@@ -32,6 +34,8 @@ export default class Narrator {
     this.whereAmI = scene.sound.add('whereAmI')
     this.whatWasThisAbout = scene.sound.add('whatWasThisAbout')
     this.finallySomeStairs = scene.sound.add('finallySomeStairs')
+    this.whenHeWasDefeated = scene.sound.add('whenHeWasDefeated')
+    this.againEmptiness = scene.sound.add('againEmptiness')
     this.undeadCreatures = scene.sound.add('undeadCreatures')
     this.killingAllTheseEnemies = scene.sound.add('killingAllTheseEnemies')
     this.thereItWasASword = scene.sound.add('thereItWasASword')
@@ -66,6 +70,8 @@ export default class Narrator {
     scene.load.audio('whereAmI', whereAmI)
     scene.load.audio('whatWasThisAbout', whatWasThisAbout)
     scene.load.audio('finallySomeStairs', finallySomeStairs)
+    scene.load.audio('whenHeWasDefeated', whenHeWasDefeated)
+    scene.load.audio('againEmptiness', againEmptiness)
     scene.load.audio('undeadCreatures', undeadCreatures)
     scene.load.audio('killingAllTheseEnemies', killingAllTheseEnemies)
     scene.load.audio('thereItWasASword', thereItWasASword)

@@ -106,6 +106,14 @@ export default class DungeonScene extends Phaser.Scene {
       // keyboard bug workaround
       this.hero.resetKeys()
 
+      if (this.dungeonNumber === 1) {
+        if (this.registry.get('narratorSaid').includes('whenHeWasDefeated')) {
+          this.narrator.sayOnce('againEmptiness')
+        } else {
+          this.narrator.sayOnce('whenHeWasDefeated')
+        }
+      }
+
       // place hero
       this.hero.sprites.hero.visible = false
       this.hero.freeze()
