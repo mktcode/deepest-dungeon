@@ -118,8 +118,6 @@ export default class DungeonScene extends Phaser.Scene {
           this.tileToWorldY(this.safeRoom && this.safeRoomActivated ? this.safeRoom.centerY : this.startRoom.centerY)
         )
       })
-
-      this.hero.unfreeze()
     })
 
     this.events.on('sleep', () => {
