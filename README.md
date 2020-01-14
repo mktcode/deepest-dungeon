@@ -2,6 +2,8 @@
 
 - [ ] Bugfix: when died, xp/points disappear, some weird tween/animation moves them away
 - [ ] Bugfix: sometimes enemies are contantly walking against wall
+- [ ] Bugfix: safe room light not visible when safe room is to the tp
+- [ ] bottom-left corner wall tile should be above player
 - [ ] trapdoors: random tiles change after standing on them too long, instant death
 - [ ] adjust/expand narrator
 - [ ] implement global high score
@@ -23,11 +25,12 @@
   - [ ] Narrative
     - [ ] adjust volumes
     - [ ] Revisiting Dungeons after death: (spawning new monsters) When the dangers became too overwhelming for him, he didn't die, he traveled back in time. As if he had to learn a lesson. The extra portion of experience might be worth the time, he said to himself... and moved on.
+      - [ ] when no safe room was activated yet
     - [ ] freeze char after idling 20s, when trying to move again: Frozen in fear, he didn't dare to move, for a far too long time. (unfreeze, slowmo) He gathered all his courage and slowly he began to move, to continue his journey. (normal speed)
     - [ ] (lvl 13) By now it was obvious to him, that these dungeons must be infinite
   - [ ] add/improve sounds
     - [ ] going down stairs
-    - [ ] skilling
+    - [ ] walking/running when slowmo
   - [ ] new (animated) boss enemy
   - [ ] animated experience points
   - [ ] fill up health animation when using shrine
