@@ -339,9 +339,9 @@ export default class Hero {
         this.scene.emitXpOrb(hero.x, hero.y, false)
       }
       this.scene.registry.set('xp', lastLevelXp)
-      this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
       this.scene.cameras.main.fadeOut(2000, 0, 0, 0, (camera, progress) => {
         if (progress === 1) {
+          this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
           this.scene.scene.sleep()
           this.scene.scene.wake('Dungeon' + this.scene.registry.get('minDungeon'))
         }
