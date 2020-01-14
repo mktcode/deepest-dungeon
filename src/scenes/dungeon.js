@@ -1156,11 +1156,11 @@ export default class DungeonScene extends Phaser.Scene {
     if (!this.timebomb || !this.timebomb.active) return
     const vector = new Phaser.Math.Vector2(this.timebomb.x, this.timebomb.y)
     const distance = vector.distance({ x: this.hero.sprites.hero.x, y: this.hero.sprites.hero.y })
-    const speedFactor = (distance + 100) / 200
+    const speedFactor = (distance + 100) / 150
     this.timebomb.setVelocity(0)
     if (this.currentRoom === this.safeRoom) {
       this.timebombFollows = false
-    } else if (this.timebombRoom === this.currentRoom && distance < 100) {
+    } else if (this.timebombRoom === this.currentRoom && distance < 150) {
       this.timebombFollows = true
     }
     if (this.timebombFollows) {
