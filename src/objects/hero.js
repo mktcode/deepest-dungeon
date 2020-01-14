@@ -381,7 +381,7 @@ export default class Hero {
       if (this.scene.narrator.slowmo) {
         this.baseSpeed *= 0.3
       }
-      if (this.scene.narrator.freeze) {
+      if (this.scene.narrator.freeze || this.sprites.hero.body.isStatic) {
         this.baseSpeed *= 0
       }
 
