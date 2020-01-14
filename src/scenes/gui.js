@@ -190,21 +190,21 @@ export default class GuiScene extends Phaser.Scene {
   addLowHealthAnimation() {
     this.lowHealthAnimationParticle = this.add.particles('particle').setDepth(-1)
     this.lowHealthAnimation = this.lowHealthAnimationParticle.createEmitter({
-      tint: [0x330000],
+      tint: [0x220000],
       on: false,
       x: -4,
       y: 10,
       blendMode: 'SCREEN',
-      scale: { start: 2, end: 1 },
+      scale: { start: 10, end: 1 },
       alpha: { start: 1, end: 0 },
       speed: 100,
-      quantity: 200,
+      quantity: 30,
       frequency: 200,
       lifespan: 2300,
       emitZone: {
         source: new Phaser.Geom.Line(0, this.game.scale.height, this.game.scale.width, this.game.scale.height),
         type: 'edge',
-        quantity: 200
+        quantity: 30
       }
     })
 
