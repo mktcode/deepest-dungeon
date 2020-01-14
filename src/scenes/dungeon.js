@@ -762,8 +762,8 @@ export default class DungeonScene extends Phaser.Scene {
 
   emitXpOrb(x, y, following) {
     let particleCount = 0
-    x += Phaser.Math.Between(-10, 10)
-    y += Phaser.Math.Between(-10, 10)
+    x += Phaser.Math.Between(-25, 25)
+    y += Phaser.Math.Between(-25, 25)
     const xpOrb = this.matter.add.image(x, y, 'particle', 0).setDepth(6).setRectangle(5, 5).setSensor(true).setData('following', following)
     const xpOrbParticles = this.xpParticle.createEmitter({
       tint: [0xFF00FF, 0x0088FF, 0xFF00FF, 0x0088FF, 0xFFFFFF],
@@ -797,7 +797,7 @@ export default class DungeonScene extends Phaser.Scene {
       targets: xpOrb,
       repeat: 0,
       ease: 'Linear',
-      x: x + Phaser.Math.Between(-50, 50),
+      x: x + Phaser.Math.Between(-25, 25),
       onComplete: () => {
         tween2.remove()
       }
