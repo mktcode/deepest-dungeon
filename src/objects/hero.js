@@ -120,6 +120,7 @@ export default class Hero {
       ...TILES.STAIRS.OPEN[3],
       ...TILES.STAIRS.OPEN[4]
     ])) {
+      this.freeze()
       const nextDungeon = this.scene.dungeonNumber + 1
       this.scene.cameras.main.fadeOut(1000, 0, 0, 0, (camera, progress) => {
         if (progress === 1) {
