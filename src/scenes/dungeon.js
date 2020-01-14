@@ -78,6 +78,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.registry.set('currentDungeon', this.dungeonNumber)
     this.interactionParticle = this.add.particles('particle').setDepth(5)
     this.interactionParticleAbove = this.add.particles('particle').setDepth(7)
+    this.fogParticle = this.add.particles('particle').setDepth(9)
     this.fireParticle = this.add.particles('particle').setDepth(7)
     this.fireParticleAbove = this.add.particles('particle').setDepth(10)
     this.xpParticle = this.add.particles('particle').setDepth(7)
@@ -94,6 +95,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.addTimebomb()
     this.addOverlayText()
     this.startIdleTimer()
+    this.addFog()
 
     this.events.on('wake', () => {
       this.cameras.main.fadeIn(1000, 0, 0, 0)
@@ -194,6 +196,26 @@ export default class DungeonScene extends Phaser.Scene {
       this.scene.pause()
       if (this.narrator.playing) this.narrator.playing.pause()
       this.scene.run('Pause')
+    })
+  }
+
+  addFog() {
+    this.fogParticle.createEmitter({
+      x: 0,
+      y: 0,
+      tint: [0xFFFFFF],
+      blendMode: 'SCREEN',
+      scale: { start: 0.5, end: 0 },
+      alpha: { start: (Math.min(0.5, this.dungeonNumber / 10)), end: 0 },
+      speed: 5,
+      quantity: 5,
+      frequency: 50,
+      lifespan: 2000,
+      emitZone: {
+        source: new Phaser.Geom.Rectangle(0, 0, this.dungeon.width * this.tileSize, this.dungeon.height * this.tileSize),
+        type: 'random',
+        quantity: 40
+      }
     })
   }
 
