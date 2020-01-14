@@ -110,7 +110,7 @@ export default class Deamon {
     this.sprite.setVelocity(0)
     if (this.hp <= 0) {
       for (let i = 0; i < this.xp; i++) {
-        this.dungeon.emitXpOrb(this.sprite.x, this.sprite.y)
+        this.dungeon.emitXpOrb(this.sprite.x, this.sprite.y, true)
       }
       this.dungeon.lightManager.removeLight(this.sprite)
       this.sprite.destroy()

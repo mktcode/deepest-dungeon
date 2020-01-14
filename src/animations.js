@@ -41,13 +41,6 @@ export default class Animations {
       frameRate: 12,
       repeat: -1
     });
-
-    this.anims.create({
-      key: "xpDust",
-      frames: this.anims.generateFrameNumbers("xpDust", { start: 0, end: 2 }),
-      frameRate: 6,
-      repeat: -1
-    });
   }
 
   createHeroAnim(name, frameRateMod) {

@@ -2,9 +2,6 @@ import Phaser from "phaser"
 import DungeonScene from "../scenes/dungeon.js"
 import TILES from "../tile-mapping.js";
 
-// assets
-import xpDust from "../assets/xp-dust.png";
-
 export default class Hero {
   constructor(scene, x, y) {
     this.scene = scene
@@ -85,17 +82,6 @@ export default class Hero {
 
     this.scene.sounds.play('running', 0, false, true)
     this.scene.sounds.play('walking', 0, false, true)
-  }
-
-  static preload(scene) {
-    scene.load.spritesheet(
-      "xpDust",
-      xpDust,
-      {
-        frameWidth: 52,
-        frameHeight: 22
-      }
-    )
   }
 
   static getLevelByXp(xp) {
@@ -346,20 +332,18 @@ export default class Hero {
       this.scene.sounds.walking.setVolume(0)
       this.freeze()
       this.dead = true
-      this.scene.cameras.main.fadeOut(2000, 0, 0, 0)
-      this.scene.time.delayedCall(2000, () => {
-        const x = hero.x
-        const y = hero.y
-        const lastLevelXp = this.constructor.getXpForLevelUp(this.scene.registry.get('level'))
-        const lostXp = this.scene.registry.get('xp') - lastLevelXp
-        if (lostXp) {
-          this.scene.addXpDust(x + Phaser.Math.Between(-15, 15), y + Phaser.Math.Between(-15, 15), lostXp)
+      const lastLevelXp = this.constructor.getXpForLevelUp(this.scene.registry.get('level'))
+      const lostXp = this.scene.registry.get('xp') - lastLevelXp
+      for (let i = 0; i < lostXp; i++) {
+        this.scene.emitXpOrb(hero.x, hero.y, false)
+      }
+      this.scene.registry.set('xp', lastLevelXp)
+      this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
+      this.scene.cameras.main.fadeOut(2000, 0, 0, 0, (camera, progress) => {
+        if (progress === 1) {
+          this.scene.scene.sleep()
+          this.scene.scene.wake('Dungeon' + this.scene.registry.get('minDungeon'))
         }
-
-        this.scene.registry.set('xp', lastLevelXp)
-        this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
-        this.scene.scene.sleep()
-        this.scene.scene.wake('Dungeon' + this.scene.registry.get('minDungeon'))
       })
     } else {
       this.scene.sounds.play('takeHit')

@@ -760,11 +760,11 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
-  emitXpOrb(x, y) {
+  emitXpOrb(x, y, following) {
     let particleCount = 0
     x += Phaser.Math.Between(-10, 10)
     y += Phaser.Math.Between(-10, 10)
-    const xpOrb = this.matter.add.image(x, y, 'particle', 0).setDepth(6).setRectangle(5, 5).setSensor(true)
+    const xpOrb = this.matter.add.image(x, y, 'particle', 0).setDepth(6).setRectangle(5, 5).setSensor(true).setData('following', following)
     const xpOrbParticles = this.xpParticle.createEmitter({
       tint: [0xFF00FF, 0x0088FF, 0xFF00FF, 0x0088FF, 0xFFFFFF],
       blendMode: 'SCREEN',
@@ -775,7 +775,8 @@ export default class DungeonScene extends Phaser.Scene {
       frequency: 100,
       lifespan: 500,
       emitCallback: particle => this.particleEmitterAddLights(particle, 15),
-      deathCallback: particle => this.particleEmitterRemoveLights(particle)
+      deathCallback: particle => this.particleEmitterRemoveLights(particle),
+      following: following
     })
 
     xpOrbParticles.startFollow(xpOrb)
@@ -824,8 +825,18 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   updateXpOrbs() {
+    if (this.hero.dead) return
+
     this.xpOrbs.forEach(orb => {
-      this.moveToObject(orb, this.hero.sprites.hero, 2.5)
+      if (orb.getData('following')) {
+        this.moveToObject(orb, this.hero.sprites.hero, 2.5)
+      } else {
+        const vector = new Phaser.Math.Vector2(orb.x, orb.y)
+        const distance = vector.distance({ x: this.hero.sprites.hero.x, y: this.hero.sprites.hero.y })
+        if (distance < 25) {
+          this.moveToObject(orb, this.hero.sprites.hero, 2.5)
+        }
+      }
     })
   }
 
@@ -1071,28 +1082,6 @@ export default class DungeonScene extends Phaser.Scene {
         tween.remove()
         this.pathfinder.destroy()
         this.lightManager.removeLight(this.pathfinder)
-      }
-    });
-  }
-
-  addXpDust(x, y, xp) {
-    this.xpDust = this.matter.add.sprite(x, y, 'xpDust', 0, { isStatic: true, collisionFilter: { group: -1 } }).setSize(52, 22).setDepth(7)
-    this.lightManager.lights.push({
-      sprite: this.xpDust,
-      intensity: () => 1
-    })
-    this.xpDust.anims.play('xpDust', true)
-
-    this.matterCollision.addOnCollideStart({
-      objectA: this.hero.sprites.hero,
-      objectB: this.xpDust,
-      callback: (collision) => {
-        if (this.hero.dead || collision.bodyA.isSensor) return
-        this.xpDust.destroy()
-        this.lightManager.removeLight(this.xpDust)
-        if (xp) {
-          this.registry.set('xp', this.registry.get('xp') + xp)
-        }
       }
     });
   }
