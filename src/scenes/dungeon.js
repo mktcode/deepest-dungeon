@@ -771,6 +771,10 @@ export default class DungeonScene extends Phaser.Scene {
     x += Phaser.Math.Between(-25, 25)
     y += Phaser.Math.Between(-25, 25)
     const xpOrb = this.matter.add.image(x, y, 'particle', 0).setDepth(6).setRectangle(5, 5).setSensor(true).setData('following', following)
+    this.lightManager.lights.push({
+      sprite: xpOrb,
+      intensity: () => LightManager.flickering(0)
+    })
     const xpOrbParticles = this.xpParticle.createEmitter({
       tint: [0xFF00FF, 0x0088FF, 0xFF00FF, 0x0088FF, 0xFFFFFF],
       blendMode: 'SCREEN',
@@ -780,8 +784,6 @@ export default class DungeonScene extends Phaser.Scene {
       quantity: 3,
       frequency: 100,
       lifespan: 500,
-      emitCallback: particle => this.particleEmitterAddLights(particle, 15),
-      deathCallback: particle => this.particleEmitterRemoveLights(particle),
       following: following
     })
 
@@ -817,6 +819,7 @@ export default class DungeonScene extends Phaser.Scene {
         tween1.remove()
         tween2.remove()
         Phaser.Utils.Array.Remove(this.xpOrbs, xpOrb)
+        this.lightManager.removeLight(xpOrb)
         xpOrb.destroy()
         xpOrbParticles.stop()
         this.registry.set('xp', this.registry.get('xp') + 1)
