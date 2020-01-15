@@ -18,6 +18,7 @@ import torchSprite from "../assets/torch.png";
 import pathSprite from "../assets/path.png";
 import pathfinderSprite from "../assets/pathfinder.png";
 import particle from "../assets/particle.png";
+import fog from "../assets/fog.png";
 
 export default class DungeonScene extends Phaser.Scene {
   constructor(dungeonNumber) {
@@ -66,6 +67,7 @@ export default class DungeonScene extends Phaser.Scene {
     scene.load.spritesheet('path', pathSprite, { frameWidth: 6, frameHeight: 6 })
     scene.load.spritesheet('pathfinder', pathfinderSprite, { frameWidth: 24, frameHeight: 24 })
     scene.load.image('particle', particle)
+    scene.load.image('fog', fog)
   }
 
   create() {
@@ -78,7 +80,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.registry.set('currentDungeon', this.dungeonNumber)
     this.interactionParticle = this.add.particles('particle').setDepth(5)
     this.interactionParticleAbove = this.add.particles('particle').setDepth(7)
-    this.fogParticle = this.add.particles('particle').setDepth(9)
+    this.ambientParticle = this.add.particles('particle').setDepth(9)
+    this.fogParticle = this.add.particles('fog').setDepth(9)
     this.fireParticle = this.add.particles('particle').setDepth(7)
     this.fireParticleAbove = this.add.particles('particle').setDepth(10)
     this.xpParticle = this.add.particles('particle').setDepth(7)
@@ -95,6 +98,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.addTimebomb()
     this.addOverlayText()
     this.startIdleTimer()
+    this.addAmbientParticles()
     this.addFog()
 
     this.events.on('wake', () => {
@@ -199,8 +203,8 @@ export default class DungeonScene extends Phaser.Scene {
     })
   }
 
-  addFog() {
-    this.fogParticle.createEmitter({
+  addAmbientParticles() {
+    this.ambientParticle.createEmitter({
       x: 0,
       y: 0,
       tint: [0xFFFFFF],
@@ -217,6 +221,28 @@ export default class DungeonScene extends Phaser.Scene {
         quantity: 40
       }
     })
+  }
+
+  addFog() {
+    if (this.dungeonNumber > 2) {
+      this.fogParticle.createEmitter({
+        x: 0,
+        y: 0,
+        tint: [0xFFFFFF],
+        blendMode: 'SCREEN',
+        alpha: (particle, key, time, value) => time < 0.5 ? time : 1 - time,
+        angle: 0,
+        speed: 50,
+        quantity: 1,
+        frequency: 250,
+        lifespan: 6000,
+        emitZone: {
+          source: new Phaser.Geom.Rectangle(0, 0, this.dungeon.width * this.tileSize, this.dungeon.height * this.tileSize),
+          type: 'random',
+          quantity: 1
+        }
+      })
+    }
   }
 
   startIdleTimer() {
