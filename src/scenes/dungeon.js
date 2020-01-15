@@ -525,7 +525,6 @@ export default class DungeonScene extends Phaser.Scene {
       // collision
       this.matter.add.rectangle(x, y, width, height, this.isStatic)
       // particle emitter
-      let particleCount = 0
       this.stairParticles = this.interactionParticle.createEmitter({
         on: false,
         x: x - width / 2 - 4,
@@ -592,7 +591,6 @@ export default class DungeonScene extends Phaser.Scene {
       this.matter.add.rectangle(x, y, width, height + 10, this.isStatic)
 
       // shrine particle emitter
-      let particleCount = 0
       this.shrineParticles = this.interactionParticle.createEmitter({
         on: false,
         x: x - width / 2,
@@ -849,7 +847,6 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   emitXpOrb(x, y, following) {
-    let particleCount = 0
     x += Phaser.Math.Between(-25, 25)
     y += Phaser.Math.Between(-25, 25)
     const xpOrb = this.matter.add.image(x, y, 'particle', 0).setDepth(6).setRectangle(5, 5).setSensor(true).setData('following', following)
@@ -992,7 +989,6 @@ export default class DungeonScene extends Phaser.Scene {
             }
           }
 
-          let particleCount = 0
           const fireTrap = fireParticle.createEmitter({
             x: x,
             y: y,
@@ -1186,8 +1182,6 @@ export default class DungeonScene extends Phaser.Scene {
         'particle',
         0
       ).setDepth(6).setRectangle(10, 10).setCollisionGroup(-1)
-      // this.physics.add.collider(this.timebomb, this.wallLayer)
-      let particleCount = 0
       this.timebombParticles = this.interactionParticle.createEmitter({
         tint: [0xFFFFFF, 0x7777FF],
         blendMode: 'SCREEN',
