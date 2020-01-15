@@ -112,6 +112,9 @@ export default class Deamon {
       for (let i = 0; i < this.xp; i++) {
         this.dungeon.emitXpOrb(this.sprite.x, this.sprite.y, true)
       }
+      if (this.dungeon.registry.get('health') < this.dungeon.registry.get('maxHealth') && !Phaser.Math.Between(0, 15)) {
+        this.dungeon.emitHealthOrb(this.sprite.x, this.sprite.y, true)
+      }
       this.dungeon.lightManager.removeLight(this.sprite)
       this.sprite.destroy()
       if (this.dieCallback) {

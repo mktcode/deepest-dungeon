@@ -139,8 +139,16 @@ export default class Hero {
   useShrine() {
     if (this.isNear([...TILES.SHRINE[0], ...TILES.SHRINE[1], ...TILES.SHRINE[2]])) {
       this.scene.activateSafeRoom()
-      this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
-      this.scene.registry.set('mana', this.scene.registry.get('maxMana'))
+      const healthDiff = this.scene.registry.get('maxHealth') - this.scene.registry.get('health')
+      if (healthDiff) {
+        for (let i = 0; i < healthDiff; i++) {
+          this.scene.emitHealthOrb(
+            this.scene.tileToWorldX(this.scene.safeRoom.centerX),
+            this.scene.tileToWorldY(this.scene.safeRoom.centerY),
+            true
+          )
+        }
+      }
     }
   }
 

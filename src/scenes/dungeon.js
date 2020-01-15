@@ -50,14 +50,14 @@ export default class DungeonScene extends Phaser.Scene {
     this.safeRoomActivated = false
 
     this.enemies = []
+    this.healthOrbs = []
     this.xpOrbs = []
+    this.xpOrbSound = 1
+    this.xpOrbSoundResetTimeout = null
 
     this.isStatic = { isStatic: true }
 
     this.nextOuttake = 1
-
-    this.xpOrbSound = 1
-    this.xpOrbSoundResetTimeout = null
   }
 
   static preload(scene) {
@@ -84,7 +84,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.fogParticle = this.add.particles('fog').setDepth(9)
     this.fireParticle = this.add.particles('particle').setDepth(7)
     this.fireParticleAbove = this.add.particles('particle').setDepth(10)
-    this.xpParticle = this.add.particles('particle').setDepth(7)
+    this.orbParticle = this.add.particles('particle').setDepth(7)
     // this.matter.world.createDebugGraphic()
 
     this.prepareMap()
@@ -854,7 +854,7 @@ export default class DungeonScene extends Phaser.Scene {
       sprite: xpOrb,
       intensity: () => LightManager.flickering(0)
     })
-    const xpOrbParticles = this.xpParticle.createEmitter({
+    const xpOrbParticles = this.orbParticle.createEmitter({
       tint: [0xFF00FF, 0x0088FF, 0xFF00FF, 0x0088FF, 0xFFFFFF],
       blendMode: 'SCREEN',
       scale: { start: 0.3, end: 1 },
@@ -916,6 +916,83 @@ export default class DungeonScene extends Phaser.Scene {
     if (this.hero.dead) return
 
     this.xpOrbs.forEach(orb => {
+      if (orb.getData('following')) {
+        this.moveToObject(orb, this.hero.sprites.hero, 2.5)
+      } else {
+        const vector = new Phaser.Math.Vector2(orb.x, orb.y)
+        const distance = vector.distance({ x: this.hero.sprites.hero.x, y: this.hero.sprites.hero.y })
+        if (distance < 25) {
+          this.moveToObject(orb, this.hero.sprites.hero, 2.5)
+        }
+      }
+    })
+  }
+
+  emitHealthOrb(x, y, following) {
+    x += Phaser.Math.Between(-25, 25)
+    y += Phaser.Math.Between(-25, 25)
+    const orb = this.matter.add.image(x, y, 'particle', 0).setDepth(6).setRectangle(5, 5).setSensor(true).setData('following', following).setTint(0xFF0000)
+    this.lightManager.lights.push({
+      sprite: orb,
+      intensity: () => LightManager.flickering(0)
+    })
+    const particles = this.orbParticle.createEmitter({
+      tint: [0xFF0000],
+      blendMode: 'SCREEN',
+      scale: { start: 0.3, end: 1 },
+      alpha: { start: 1, end: 0 },
+      speed: 10,
+      quantity: 3,
+      frequency: 100,
+      lifespan: 500,
+      following: following
+    })
+
+    particles.startFollow(orb)
+    const tween1 = this.tweens.add({
+      duration: 500,
+      targets: orb,
+      yoyo: true,
+      repeat: 0,
+      ease: 'Cubic',
+      y: '-=20',
+      onComplete: () => {
+        tween1.remove()
+        this.healthOrbs.push(orb)
+      }
+    })
+    const tween2 = this.tweens.add({
+      duration: 1000,
+      targets: orb,
+      repeat: 0,
+      ease: 'Linear',
+      x: x + Phaser.Math.Between(-25, 25),
+      onComplete: () => {
+        tween2.remove()
+      }
+    })
+
+    this.matterCollision.addOnCollideStart({
+      objectA: this.hero.sprites.hero,
+      objectB: orb,
+      callback: (collision) => {
+        if (this.hero.dead || collision.bodyA.isSensor) return
+        tween1.remove()
+        tween2.remove()
+        Phaser.Utils.Array.Remove(this.healthOrbs, orb)
+        this.lightManager.removeLight(orb)
+        orb.destroy()
+        particles.stop()
+        this.registry.set('health', this.registry.get('health') + 1)
+        this.sounds.play('healthPing')
+      }
+    })
+  }
+
+  updateHealthOrbs() {
+    if (this.hero.dead) return
+
+    this.healthOrbs.forEach(orb => {
       if (orb.getData('following')) {
         this.moveToObject(orb, this.hero.sprites.hero, 2.5)
       } else {
@@ -1538,6 +1615,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.updateTimebomb()
     this.updateSkillInteractions()
     this.updateXpOrbs()
+    this.updateHealthOrbs()
     this.playIdleNarrative()
   }
 }
