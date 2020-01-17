@@ -417,6 +417,8 @@ export default class DungeonScene extends Phaser.Scene {
           TILES.WALL.RIGHT[0].find(t => t.index === tile.index) ||
           TILES.WALL.TOP_LEFT === tile.index ||
           TILES.WALL.TOP_RIGHT === tile.index ||
+          TILES.WALL.BOTTOM_LEFT === tile.index ||
+          TILES.WALL.BOTTOM_RIGHT === tile.index ||
           TILES.DOOR.TOP[0][0] === tile.index ||
           TILES.DOOR.TOP[0][4] === tile.index ||
           TILES.DOOR.BOTTOM[0] === tile.index ||
