@@ -1245,12 +1245,12 @@ export default class DungeonScene extends Phaser.Scene {
       this.addTorch()
     }
 
-    if (this.dungeonNumber >= 7 && !this.hero.hasItem('pathfinder')) {
-      this.addPathfinder()
+    if (this.dungeonNumber >= 7 && !this.hero.hasItem('shieldScroll')) {
+      this.addShieldScroll()
     }
 
-    if (this.dungeonNumber >= 9 && !this.hero.hasItem('shieldScroll')) {
-      this.addShieldScroll()
+    if (this.dungeonNumber >= 9 && !this.hero.hasItem('pathfinder')) {
+      this.addPathfinder()
     }
   }
 
