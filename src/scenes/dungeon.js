@@ -1262,6 +1262,10 @@ export default class DungeonScene extends Phaser.Scene {
       repeat: -1,
       y: '+=8'
     })
+    this.lightManager.lights.push({
+      sprite: this.sword,
+      intensity: () => LightManager.flickering(0)
+    })
     this.matterCollision.addOnCollideStart({
       objectA: this.hero.container,
       objectB: this.sword,
@@ -1274,6 +1278,7 @@ export default class DungeonScene extends Phaser.Scene {
         this.registry.set('items', items)
         tween.remove()
         this.sword.destroy()
+        this.lightManager.removeLight(this.sword)
       }
     })
   }
