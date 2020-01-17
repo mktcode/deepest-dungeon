@@ -137,6 +137,9 @@ export default class BaseEnemy {
         if (this.dungeon.registry.get('health') < this.dungeon.registry.get('maxHealth') && !Phaser.Math.Between(0, 15)) {
           this.dungeon.emitHealthOrb(this.sprite.x, this.sprite.y, true)
         }
+        if (this.dungeon.registry.get('mana') < this.dungeon.registry.get('maxMana') && !Phaser.Math.Between(0, 15)) {
+          this.dungeon.emitManaOrb(this.sprite.x, this.sprite.y, true)
+        }
         this.dungeon.time.delayedCall(1000, () => {
           this.dungeon.lightManager.removeLight(this.sprite)
           this.sprite.destroy()

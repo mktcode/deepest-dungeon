@@ -235,6 +235,16 @@ export default class Hero {
           )
         }
       }
+      const manaDiff = this.scene.registry.get('maxMana') - this.scene.registry.get('mana')
+      if (manaDiff) {
+        for (let i = 0; i < manaDiff; i++) {
+          this.scene.emitManaOrb(
+            this.scene.tileToWorldX(this.scene.safeRoom.centerX),
+            this.scene.tileToWorldY(this.scene.safeRoom.centerY),
+            true
+          )
+        }
+      }
     }
   }
 

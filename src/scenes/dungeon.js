@@ -51,6 +51,7 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.enemies = []
     this.healthOrbs = []
+    this.manaOrbs = []
     this.xpOrbs = []
     this.xpOrbSound = 1
     this.xpOrbSoundResetTimeout = null
@@ -997,6 +998,84 @@ export default class DungeonScene extends Phaser.Scene {
     })
   }
 
+  emitManaOrb(x, y, following) {
+    x += Phaser.Math.Between(-25, 25)
+    y += Phaser.Math.Between(-25, 25)
+    const orb = this.matter.add.image(x, y, 'particle', 0).setDepth(6).setRectangle(5, 5).setSensor(true).setData('following', following).setTint(0x0000FF)
+    this.lightManager.lights.push({
+      sprite: orb,
+      intensity: () => LightManager.flickering(0)
+    })
+    const particles = this.orbParticle.createEmitter({
+      tint: [0x0000FF, 0x0000FF, 0xFFFFFF],
+      blendMode: 'SCREEN',
+      scale: { start: 1, end: 0.2 },
+      alpha: { start: 0, end: 1 },
+      speed: 10,
+      quantity: 10,
+      frequency: 50,
+      lifespan: 250,
+      following: following
+    })
+
+    particles.startFollow(orb)
+    const tween1 = this.tweens.add({
+      duration: 500,
+      targets: orb,
+      yoyo: true,
+      repeat: 0,
+      ease: 'Cubic',
+      y: '-=20',
+      scale: { from: 1, to: 3 },
+      onComplete: () => {
+        tween1.remove()
+        this.manaOrbs.push(orb)
+      }
+    })
+    const tween2 = this.tweens.add({
+      duration: 1000,
+      targets: orb,
+      repeat: 0,
+      ease: 'Linear',
+      x: x + Phaser.Math.Between(-25, 25),
+      onComplete: () => {
+        tween2.remove()
+      }
+    })
+
+    this.matterCollision.addOnCollideStart({
+      objectA: this.hero.container,
+      objectB: orb,
+      callback: (collision) => {
+        if (this.hero.dead || collision.bodyA.isSensor) return
+        tween1.remove()
+        tween2.remove()
+        Phaser.Utils.Array.Remove(this.manaOrbs, orb)
+        this.lightManager.removeLight(orb)
+        orb.destroy()
+        particles.stop()
+        this.registry.set('mana', this.registry.get('mana') + 1)
+        this.sounds.play('healthPing')
+      }
+    })
+  }
+
+  updateManaOrbs() {
+    if (this.hero.dead) return
+
+    this.manaOrbs.forEach(orb => {
+      if (orb.getData('following')) {
+        this.moveToObject(orb, this.hero.container, 2.5)
+      } else {
+        const vector = new Phaser.Math.Vector2(orb.x, orb.y)
+        const distance = vector.distance({ x: this.hero.container.x, y: this.hero.container.y })
+        if (distance < 25) {
+          this.moveToObject(orb, this.hero.container, 2.5)
+        }
+      }
+    })
+  }
+
   addFireTraps() {
     this.fireTraps = []
     if (this.dungeonNumber > 5) {
@@ -1677,6 +1756,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.updateSkillInteractions()
     this.updateXpOrbs()
     this.updateHealthOrbs()
+    this.updateManaOrbs()
     this.playIdleNarrative()
   }
 }
