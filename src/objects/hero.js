@@ -355,8 +355,8 @@ export default class Hero {
     this.levelUpParticleEmitter.start()
     this.scene.lightManager.lights.push({
       key: 'levelUp',
-      x: () => this.scene.worldToTileX(this.sprites.hero.x),
-      y: () => this.scene.worldToTileY(this.sprites.hero.y),
+      x: () => this.scene.worldToTileX(this.container.x),
+      y: () => this.scene.worldToTileY(this.container.y),
       intensity: () => 1
     })
     this.scene.time.delayedCall(1000, () => {
