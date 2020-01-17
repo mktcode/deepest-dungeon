@@ -1,7 +1,6 @@
 import Phaser from "phaser"
 import GuiScene from "../scenes/gui.js"
 import DungeonScene from "../scenes/dungeon.js"
-import Deamon from "../objects/enemies/deamon.js"
 import Narrator from "../narrator.js"
 import Sounds from "../sounds.js"
 import Animations from "../animations.js"
@@ -29,7 +28,6 @@ export default class PreloadScene extends Phaser.Scene {
       }
     );
 
-    Deamon.preload(this)
     Narrator.preload(this)
     Sounds.preload(this)
     GuiScene.preload(this)

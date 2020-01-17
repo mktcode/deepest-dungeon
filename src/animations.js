@@ -16,13 +16,6 @@ export default class Animations {
     this.createSpiderAnim('die', 1.5)
 
     this.anims.create({
-      key: "deamon-idle",
-      frames: this.anims.generateFrameNumbers("deamon", { start: 0, end: 5 }),
-      frameRate: 4,
-      repeat: -1
-    });
-
-    this.anims.create({
       key: "poro-idle",
       frames: this.anims.generateFrameNumbers("poro", { start: 0, end: 5 }),
       frameRate: 4,
