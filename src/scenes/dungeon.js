@@ -1018,7 +1018,7 @@ export default class DungeonScene extends Phaser.Scene {
         }
 
         walls.forEach(wall => {
-          let x, y, angle
+          let x, y, angle, gravityX, gravityY
           let fireParticle = this.fireParticleAbove
           if (wall === 'top') {
             const tiles = this.wallLayer.getTilesWithin(room.left, room.top + 2, room.width, 1).filter(t => allowedTiles.includes(t.index))
@@ -1027,6 +1027,8 @@ export default class DungeonScene extends Phaser.Scene {
               x = this.tileToWorldX(tile.x) + this.tileSize / 2
               y = this.tileToWorldY(tile.y) + this.tileSize / 2 - 3
               angle = { min: 80, max: 100}
+              gravityX = 0
+              gravityY = 50
               this.stuffLayer.putTilesAt(TILES.PILLAR.TOP, tile.x - 1, tile.y - 2)
             }
           } else if (wall === 'bottom') {
@@ -1036,7 +1038,8 @@ export default class DungeonScene extends Phaser.Scene {
               x = this.tileToWorldX(tile.x) + this.tileSize / 2
               y = this.tileToWorldY(tile.y) + this.tileSize / 2
               angle = { min: -80, max: -100}
-              fireParticle = this.fireParticle
+              gravityX = 0
+              gravityY = -50
               this.stuffLayerAbove.putTilesAt(TILES.PILLAR.BOTTOM, tile.x, tile.y - 1)
             }
           } else if (wall === 'left') {
@@ -1046,6 +1049,8 @@ export default class DungeonScene extends Phaser.Scene {
               x = this.tileToWorldX(tile.x) + this.tileSize * 1.5 - 3
               y = this.tileToWorldY(tile.y) + this.tileSize / 2 - 3
               angle = { min: -10, max: 10}
+              gravityX = 50
+              gravityY = 0
               this.stuffLayer.putTilesAt(TILES.PILLAR.LEFT, tile.x, tile.y - 1)
             }
           } else if (wall === 'right') {
@@ -1055,11 +1060,13 @@ export default class DungeonScene extends Phaser.Scene {
               x = this.tileToWorldX(tile.x) - this.tileSize / 2 + 3
               y = this.tileToWorldY(tile.y) + this.tileSize / 2 - 3
               angle = { min: -190, max: -170}
+              gravityX = -50
+              gravityY = 0
               this.stuffLayer.putTilesAt(TILES.PILLAR.RIGHT, tile.x - 1, tile.y - 1)
             }
           }
 
-          const fireTrap = fireParticle.createEmitter({
+          const emitter1 = fireParticle.createEmitter({
             x: x,
             y: y,
             on: false,
@@ -1076,29 +1083,48 @@ export default class DungeonScene extends Phaser.Scene {
             emitCallback: particle => this.particleEmitterAddLights(particle, 30, 1),
             deathCallback: particle => this.particleEmitterRemoveLights(particle)
           })
+          const emitter2 = fireParticle.createEmitter({
+            x: x,
+            y: y,
+            on: false,
+            tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
+            blendMode: 'SCREEN',
+            scale: { start: 0.1, end: 0.3 },
+            alpha: { start: 0, end: 1 },
+            speed: 10,
+            quantity: 2,
+            frequency: 50,
+            lifespan: { min: 500, max: 2000 },
+            gravityX: gravityX,
+            gravityY: gravityY
+          })
 
           const interval = 1000 * this.dungeon.r.randomInteger(2, 5)
           const duration = Math.min(interval, 1000 * this.dungeon.r.randomInteger(2, 5)) - 1000
           this.time.addEvent({
             delay: interval,
             callback: () => {
-              fireTrap.start()
+              emitter1.start()
+              emitter2.start()
               this.time.delayedCall(duration, () => {
-                fireTrap.stop()
+                emitter1.stop()
+              })
+              this.time.delayedCall(duration - 500, () => {
+                emitter2.stop()
               })
             },
             loop: true
           })
 
-          this.fireTraps.push(fireTrap)
+          this.fireTraps.push(emitter1)
         })
       })
     }
   }
 
   checkFireTrapCollision() {
-    this.fireTraps.forEach(trap => {
-      trap.forEachAlive((particle) => {
+    this.fireTraps.forEach(emitter => {
+      emitter.forEachAlive((particle) => {
         if (
           particle.x > this.hero.container.body.parts[1].bounds.min.x &&
           particle.x < this.hero.container.body.parts[1].bounds.max.x &&
