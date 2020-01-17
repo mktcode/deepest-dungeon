@@ -19,6 +19,7 @@ import pathSprite from "../assets/path.png";
 import pathfinderSprite from "../assets/pathfinder.png";
 import particle from "../assets/particle.png";
 import fog from "../assets/fog.png";
+import scroll from "../assets/scroll.png";
 
 export default class DungeonScene extends Phaser.Scene {
   constructor(dungeonNumber) {
@@ -70,6 +71,7 @@ export default class DungeonScene extends Phaser.Scene {
     scene.load.spritesheet('pathfinder', pathfinderSprite, { frameWidth: 24, frameHeight: 24 })
     scene.load.image('particle', particle)
     scene.load.image('fog', fog)
+    scene.load.image('scroll', scroll)
   }
 
   create() {
@@ -1246,6 +1248,10 @@ export default class DungeonScene extends Phaser.Scene {
     if (this.dungeonNumber >= 7 && !this.hero.hasItem('pathfinder')) {
       this.addPathfinder()
     }
+
+    if (this.dungeonNumber >= 9 && !this.hero.hasItem('shieldScroll')) {
+      this.addShieldScroll()
+    }
   }
 
   addSword(x, y) {
@@ -1348,6 +1354,39 @@ export default class DungeonScene extends Phaser.Scene {
         tween.remove()
         this.pathfinder.destroy()
         this.lightManager.removeLight(this.pathfinder)
+      }
+    });
+  }
+
+  addShieldScroll(x, y) {
+    if (!x && !y) {
+      this.shieldScrollRoom = this.dungeon.r.randomPick(this.otherRooms)
+      x = this.tileToWorldX(Phaser.Utils.Array.GetRandom([this.shieldScrollRoom.left + 3, this.shieldScrollRoom.right - 2])) + 12
+      y = this.tileToWorldY(Phaser.Utils.Array.GetRandom([this.shieldScrollRoom.top + 5, this.shieldScrollRoom.bottom - 2])) + 12
+    }
+    this.shieldScroll = this.matter.add.sprite(x, y, 'scroll', 0, { isStatic: true, collisionFilter: { group: -1 } }).setSize(24, 24).setDepth(8)
+    const tween = this.tweens.add({
+      targets: this.shieldScroll,
+      yoyo: true,
+      repeat: -1,
+      y: '+=8'
+    })
+    this.lightManager.lights.push({
+      sprite: this.shieldScroll,
+      intensity: () => 1
+    })
+
+    this.matterCollision.addOnCollideStart({
+      objectA: this.hero.container,
+      objectB: this.shieldScroll,
+      callback: (collision) => {
+        if (this.hero.dead || collision.bodyA.isSensor) return
+        const items = this.registry.get('items')
+        items.push('shield')
+        this.registry.set('items', items)
+        tween.remove()
+        this.shieldScroll.destroy()
+        this.lightManager.removeLight(this.shieldScroll)
       }
     });
   }

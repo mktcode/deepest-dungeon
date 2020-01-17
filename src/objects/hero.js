@@ -177,7 +177,7 @@ export default class Hero {
 
   useShield() {
     const currentMana = this.scene.registry.get('mana')
-    if (this.scene.dungeonNumber > 4 && !this.shieldActive && currentMana) {
+    if (this.scene.registry.get('items').includes('shield') && !this.shieldActive && currentMana) {
       this.scene.registry.set('mana', currentMana - 1)
       this.shieldActive = true
       this.shieldParticles.start()
