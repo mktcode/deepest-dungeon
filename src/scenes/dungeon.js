@@ -1306,8 +1306,10 @@ export default class DungeonScene extends Phaser.Scene {
           this.lightManager.removeLightByKey('timebomb')
           emitter1.stop()
           emitter2.stop()
-          this.timebomb.destroy()
-          this.timebomb = null
+          this.time.delayedCall(2000, () => {
+            this.timebomb.destroy()
+            this.timebomb = null
+          })
           this.music.setSeek(40)
           this.music.setRate(1.5)
           this.sounds.play('ticking', 1.5, false, true)
