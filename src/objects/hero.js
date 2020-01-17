@@ -1,6 +1,8 @@
 import Phaser from "phaser"
 import DungeonScene from "../scenes/dungeon.js"
+import LightManager from "../light-manager.js";
 import TILES from "../tile-mapping.js";
+import COLLISION_CATEGORIES from "../collision-categories.js";
 
 export default class Hero {
   constructor(scene, x, y) {
@@ -54,9 +56,15 @@ export default class Hero {
     this.burning = false
     this.dead = false
     this.lastDirection = 'down'
+    this.shieldActive = false
 
     this.addToScene(x, y)
+    this.prepareShield()
     this.prepareLevelUpAnimation()
+
+    this.keys.shift.on('down', () => {
+      this.toggleShield()
+    })
 
     // attack
     this.keys.space.on('down', () => {
@@ -109,6 +117,83 @@ export default class Hero {
     this.wasdKeys.down.isDown = false
     this.wasdKeys.left.isDown = false
     this.wasdKeys.right.isDown = false
+  }
+
+  prepareShield() {
+    this.shieldParticle = this.scene.add.particles('particle')
+    this.container.add(this.shieldParticle)
+    this.shieldParticles = this.shieldParticle.createEmitter({
+      on: false,
+      y: 10,
+      tint: [0x0088FF, 0xFFFFFF],
+      blendMode: 'SCREEN',
+      scale: { start: 0.2, end: 0.5 },
+      alpha: (particle, key, time, value) => {
+        if (time > 0.5) {
+          particle.accelerationY = 50
+          if (particle.x < 0) {
+            particle.accelerationX = 100
+          } else {
+            particle.accelerationX = -100
+          }
+        } else {
+          particle.accelerationX = 0
+          particle.accelerationY = -100
+        }
+        return Math.min(1 - time)
+      },
+      frequency: 50,
+      speed: 20,
+      lifespan: 1000,
+      quantity: 20,
+      angle: { min: 180, max: 360 },
+      emitZone: {
+        source: new Phaser.Geom.Ellipse(0, 0, 100, 50),
+        type: 'edge',
+        quantity: 18
+      }
+    })
+    this.shieldParticle2 = this.scene.add.particles('particle')
+    this.container.add(this.shieldParticle2)
+    this.container.sendToBack(this.shieldParticle2)
+    this.shieldParticles2 = this.shieldParticle2.createEmitter({
+      on: false,
+      y: 10,
+      tint: [0x0088FF, 0xFFFFFF],
+      blendMode: 'SCREEN',
+      scale: { start: 0.2, end: 0.5 },
+      frequency: 50,
+      speed: 5,
+      lifespan: 500,
+      quantity: 40,
+      angle: { min: 180, max: 360 },
+      emitZone: {
+        source: new Phaser.Geom.Ellipse(0, 0, 100, 50),
+        type: 'edge',
+        quantity: 18
+      }
+    })
+  }
+
+  toggleShield() {
+    if (this.scene.dungeonNumber > 4) {
+      if (this.shieldActive) {
+        this.shieldActive = false
+        this.shieldParticles.stop()
+        this.shieldParticles2.stop()
+        this.scene.lightManager.removeLightByKey('shield')
+      } else {
+        this.shieldActive = true
+        this.shieldParticles.start()
+        this.shieldParticles2.start()
+        this.scene.lightManager.lights.push({
+          key: 'shield',
+          x: () => this.scene.worldToTileX(this.container.x),
+          y: () => this.scene.worldToTileX(this.container.y),
+          intensity: () => LightManager.flickering(1)
+        })
+      }
+    }
   }
 
   useStairs() {
@@ -193,8 +278,8 @@ export default class Hero {
     }
 
     const tiles = this.scene.stuffLayer.getTilesWithin(
-      this.scene.worldToTileX(this.sprites.hero.x) - 2,
-      this.scene.worldToTileY(this.sprites.hero.y) - 2,
+      this.scene.worldToTileX(this.container.x) - 2,
+      this.scene.worldToTileY(this.container.y) - 2,
       5, 5
     )
 
@@ -202,12 +287,16 @@ export default class Hero {
   }
 
   addToScene(x, y) {
-    this.sprites.hero = this.scene.matter.add.sprite(x, y, 'sprites', 'hero/with-weapon/walk/down/1')
+    this.container = this.scene.add.container(x, y).setDepth(6)
+    this.scene.matter.add.gameObject(this.container)
+
+    this.sprites.hero = this.scene.add.sprite(0, -10, 'sprites', 'hero/with-weapon/walk/down/1')
+    this.container.add(this.sprites.hero)
 
     const { Body, Bodies } = Phaser.Physics.Matter.Matter
-    const mainBody = Bodies.rectangle(0, 0, 16, 16, { chamfer: { radius: 10 } })
     const compoundBody = Body.create({ parts: [
-      mainBody,
+      // hero
+      Bodies.rectangle(0, 0, 16, 18, { chamfer: { radius: 10 }, collisionFilter: { category: COLLISION_CATEGORIES.HERO, mask: COLLISION_CATEGORIES.WALL & COLLISION_CATEGORIES.ENEMY } }),
       // sword
       Bodies.rectangle(0, -28, 16, 30, { isSensor: true, label: 'up' }),
       Bodies.rectangle(0, 28, 16, 30, { isSensor: true, label: 'down' }),
@@ -227,23 +316,23 @@ export default class Hero {
       Bodies.rectangle(-16, 12, 24, 16, { isSensor: true, angle: 2.5, label: 'punch-down-left' }),
       Bodies.rectangle(16, 12, 24, 16, { isSensor: true, angle: -2.5, label: 'punch-down-right' })
     ] })
-    this.sprites.hero
+    this.container
       .setExistingBody(compoundBody)
-      .setOrigin(0.5, 0.6)
       .setFixedRotation()
       .setFriction(20)
       .setPosition(x, y)
       .setDepth(6)
-    this.scene.cameras.main.startFollow(this.sprites.hero, true, 0.1, 0.1)
+    this.scene.cameras.main.startFollow(this.container, true, 0.1, 0.1)
   }
 
   prepareLevelUpAnimation() {
     this.levelUpParticle = this.scene.add.particles('particle').setDepth(7)
+    this.container.add(this.levelUpParticle)
     this.levelUpParticleEmitter = this.levelUpParticle.createEmitter({
       tint: [0xFF00FF, 0x0088FF, 0xFF00FF, 0x0088FF, 0xFFFFFF],
       on: false,
-      x: this.sprites.hero.x,
-      y: this.sprites.hero.y,
+      x: 0,
+      y: 0,
       blendMode: 'SCREEN',
       scale: { start: 0.5, end: 1 },
       alpha: { start: 1, end: 0 },
@@ -253,8 +342,8 @@ export default class Hero {
       lifespan: 1000,
     })
     this.levelUpParticleWell = this.levelUpParticle.createGravityWell({
-        x: this.sprites.hero.x,
-        y: this.sprites.hero.y - 20,
+        x: 0,
+        y: -20,
         power: 1,
         epsilon: 100,
         gravity: 50
@@ -277,7 +366,7 @@ export default class Hero {
   }
 
   jumpTo(x, y) {
-    this.sprites.hero.setX(x).setY(y)
+    this.container.setX(x).setY(y)
   }
 
   playAnim(name, direction) {
@@ -332,12 +421,11 @@ export default class Hero {
   }
 
   takeDamage(damage) {
-    const hero = this.sprites.hero
     let heroHp = this.scene.registry.get('health')
     heroHp -= damage
     this.scene.registry.set('health', heroHp)
-    this.scene.flashSprite(hero)
-    this.scene.popupDamageNumber(damage, hero.x, hero.y, '#CC0000')
+    this.scene.flashSprite(this.sprites.hero)
+    this.scene.popupDamageNumber(damage, this.container.x, this.container.y, '#CC0000')
     this.scene.scene.get('Gui').playHealthAnimation()
 
     if (heroHp <= 0) {
@@ -350,7 +438,7 @@ export default class Hero {
       const lastLevelXp = this.constructor.getXpForLevelUp(this.scene.registry.get('level'))
       const lostXp = this.scene.registry.get('xp') - lastLevelXp
       for (let i = 0; i < lostXp; i++) {
-        this.scene.emitXpOrb(hero.x, hero.y, false)
+        this.scene.emitXpOrb(this.container.x, this.container.y, false)
       }
       this.scene.registry.set('xp', lastLevelXp)
       this.scene.cameras.main.fadeOut(2000, 0, 0, 0, (camera, progress) => {
@@ -371,11 +459,11 @@ export default class Hero {
   }
 
   freeze() {
-    this.sprites.hero.body.isStatic = true
+    this.container.body.isStatic = true
   }
 
   unfreeze() {
-    this.sprites.hero.body.isStatic = false
+    this.container.body.isStatic = false
   }
 
   isDirectionKeyDown(direction) {
@@ -385,33 +473,33 @@ export default class Hero {
   update() {
     if (!this.dead) {
       // Stop any previous movement from the last frame
-      this.sprites.hero.setVelocity(0)
+      this.container.setVelocity(0)
       this.scene.sounds.running.setVolume(0)
       this.scene.sounds.walking.setVolume(0)
 
-      const runOrWalk = this.keys.shift.isDown || this.scene.narrator.forceWalk ? 'walk' : 'run'
+      const runOrWalk = this.scene.narrator.forceWalk ? 'walk' : 'run'
       this.baseSpeed = runOrWalk === 'run' ? 2 : 1
       if (this.attacking) this.baseSpeed *= 0.1
       if (this.scene.narrator.slowmo) {
         this.baseSpeed *= 0.3
       }
-      if (this.scene.narrator.freeze || this.sprites.hero.body.isStatic) {
+      if (this.scene.narrator.freeze || this.container.body.isStatic) {
         this.baseSpeed *= 0
       }
 
       // Horizontal movement
       const sound = runOrWalk === 'run' ? this.scene.sounds.running : this.scene.sounds.walking
       if (this.isDirectionKeyDown('left')) {
-        this.sprites.hero.setVelocityX(-this.baseSpeed);
+        this.container.setVelocityX(-this.baseSpeed);
       } else if (this.isDirectionKeyDown('right')) {
-        this.sprites.hero.setVelocityX(this.baseSpeed);
+        this.container.setVelocityX(this.baseSpeed);
       }
 
       // Vertical movement
       if (this.isDirectionKeyDown('up')) {
-        this.sprites.hero.setVelocityY(-this.baseSpeed);
+        this.container.setVelocityY(-this.baseSpeed);
       } else if (this.isDirectionKeyDown('down')) {
-        this.sprites.hero.setVelocityY(this.baseSpeed);
+        this.container.setVelocityY(this.baseSpeed);
       }
 
       // movement sound
@@ -425,14 +513,14 @@ export default class Hero {
       }
 
       // Normalize and scale the velocity so that sprite can't move faster along a diagonal
-      const vector = new Phaser.Math.Vector2(this.sprites.hero.body.velocity)
+      const vector = new Phaser.Math.Vector2(this.container.body.velocity)
       vector.normalize().scale(this.baseSpeed)
-      this.sprites.hero.setVelocity(vector.x, vector.y);
+      this.container.setVelocity(vector.x, vector.y);
 
       // Update the animation last and give left/right/down animations precedence over up animations
       // Do nothing if slashing animation is playing
       if (!this.attacking) {
-        if (!this.sprites.hero.body.isStatic && !this.scene.narrator.freeze) {
+        if (!this.container.body.isStatic && !this.scene.narrator.freeze) {
           if (this.isDirectionKeyDown('up')) {
             this.lastDirection = 'up'
             if (this.isDirectionKeyDown('left')) {
@@ -469,9 +557,5 @@ export default class Hero {
         }
       }
     }
-
-    this.levelUpParticleEmitter.setPosition(this.sprites.hero.x, this.sprites.hero.y)
-    this.levelUpParticleWell.x = this.sprites.hero.x
-    this.levelUpParticleWell.y = this.sprites.hero.y - 20
   }
 }

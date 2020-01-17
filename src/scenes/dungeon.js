@@ -4,6 +4,7 @@ import Hero from "../objects/hero.js";
 import Zombie from "../objects/enemies/zombie.js";
 import Spider from "../objects/enemies/spider.js";
 import TILES from "../tile-mapping.js";
+import COLLISION_CATEGORIES from "../collision-categories.js";
 import LightManager from "../light-manager.js";
 import Narrator from '../narrator.js'
 import Sounds from '../sounds.js'
@@ -55,6 +56,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.xpOrbSoundResetTimeout = null
 
     this.isStatic = { isStatic: true }
+    this.wallPhysics = { isStatic: true, collisionFilter: { category: COLLISION_CATEGORIES.WALL } }
 
     this.nextOuttake = 1
   }
@@ -114,6 +116,9 @@ export default class DungeonScene extends Phaser.Scene {
 
       // reset idle timer
       this.startIdleTimer()
+
+      // disable shield
+      if (this.hero.shieldActive) this.hero.toggleShield()
 
       if (this.dungeonNumber === 1) {
         if (this.registry.get('narratorSaid').includes('whenHeWasDefeated')) {
@@ -437,14 +442,14 @@ export default class DungeonScene extends Phaser.Scene {
         if (door.y === 0) {
           const topDoorLeft = this.tileToWorldX(left + door.x) - 10
           const topDoorRight = this.tileToWorldX(left + door.x) + 26
-          this.walls.push(this.matter.add.rectangle(topDoorLeft - 2, worldTop - 20, 5, 40, this.isStatic))
-          this.walls.push(this.matter.add.rectangle(topDoorRight + 2, worldTop - 20, 5, 40, this.isStatic))
+          this.walls.push(this.matter.add.rectangle(topDoorLeft - 2, worldTop - 20, 5, 40, this.wallPhysics))
+          this.walls.push(this.matter.add.rectangle(topDoorRight + 2, worldTop - 20, 5, 40, this.wallPhysics))
         }
         if (door.x === 0) {
           const leftDoorTop = this.tileToWorldY(top + door.y) + 22
           const leftDoorBottom = this.tileToWorldY(top + door.y) + 62
-          this.walls.push(this.matter.add.rectangle(worldLeft - 16, leftDoorTop, 40, 5, this.isStatic))
-          this.walls.push(this.matter.add.rectangle(worldLeft - 16, leftDoorBottom, 40, 5, this.isStatic))
+          this.walls.push(this.matter.add.rectangle(worldLeft - 16, leftDoorTop, 40, 5, this.wallPhysics))
+          this.walls.push(this.matter.add.rectangle(worldLeft - 16, leftDoorBottom, 40, 5, this.wallPhysics))
         }
       })
 
@@ -489,7 +494,7 @@ export default class DungeonScene extends Phaser.Scene {
         const x = i ? wallColliders[i - 1][2] : worldLeft
         const rect = Phaser.Physics.Matter.Matter.Vertices.clockwiseSort([{ x: part[0], y: part[1] }, { x: part[2], y: part[3] }, { x: part[4], y: part[5] }, { x: part[6], y: part[7] }])
         const center = Phaser.Physics.Matter.Matter.Vertices.centre(rect)
-        this.walls.push(this.matter.add.fromVertices(worldLeft + center.x, worldTop + center.y, rect, this.isStatic))
+        this.walls.push(this.matter.add.fromVertices(worldLeft + center.x, worldTop + center.y, rect, this.wallPhysics))
       }
     })
   }
@@ -795,7 +800,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.tileToWorldY(this.startRoom.centerY) + 19
     );
     this.lightManager.lights.push({
-      sprite: this.hero.sprites.hero,
+      sprite: this.hero.container,
       intensity: () => {
         const torches = this.registry.get('items').filter(item => item === 'torch')
 
@@ -878,7 +883,7 @@ export default class DungeonScene extends Phaser.Scene {
     })
 
     this.matterCollision.addOnCollideStart({
-      objectA: this.hero.sprites.hero,
+      objectA: this.hero.container,
       objectB: xpOrb,
       callback: (collision) => {
         if (this.hero.dead || collision.bodyA.isSensor) return
@@ -904,12 +909,12 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.xpOrbs.forEach(orb => {
       if (orb.getData('following')) {
-        this.moveToObject(orb, this.hero.sprites.hero, 2.5)
+        this.moveToObject(orb, this.hero.container, 2.5)
       } else {
         const vector = new Phaser.Math.Vector2(orb.x, orb.y)
-        const distance = vector.distance({ x: this.hero.sprites.hero.x, y: this.hero.sprites.hero.y })
+        const distance = vector.distance({ x: this.hero.container.x, y: this.hero.container.y })
         if (distance < 25) {
-          this.moveToObject(orb, this.hero.sprites.hero, 2.5)
+          this.moveToObject(orb, this.hero.container, 2.5)
         }
       }
     })
@@ -960,7 +965,7 @@ export default class DungeonScene extends Phaser.Scene {
     })
 
     this.matterCollision.addOnCollideStart({
-      objectA: this.hero.sprites.hero,
+      objectA: this.hero.container,
       objectB: orb,
       callback: (collision) => {
         if (this.hero.dead || collision.bodyA.isSensor) return
@@ -981,12 +986,12 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.healthOrbs.forEach(orb => {
       if (orb.getData('following')) {
-        this.moveToObject(orb, this.hero.sprites.hero, 2.5)
+        this.moveToObject(orb, this.hero.container, 2.5)
       } else {
         const vector = new Phaser.Math.Vector2(orb.x, orb.y)
-        const distance = vector.distance({ x: this.hero.sprites.hero.x, y: this.hero.sprites.hero.y })
+        const distance = vector.distance({ x: this.hero.container.x, y: this.hero.container.y })
         if (distance < 25) {
-          this.moveToObject(orb, this.hero.sprites.hero, 2.5)
+          this.moveToObject(orb, this.hero.container, 2.5)
         }
       }
     })
@@ -1094,10 +1099,10 @@ export default class DungeonScene extends Phaser.Scene {
     this.fireTraps.forEach(trap => {
       trap.forEachAlive((particle) => {
         if (
-          particle.x > this.hero.sprites.hero.body.parts[1].bounds.min.x &&
-          particle.x < this.hero.sprites.hero.body.parts[1].bounds.max.x &&
-          particle.y > this.hero.sprites.hero.body.parts[1].bounds.min.y &&
-          particle.y < this.hero.sprites.hero.body.parts[1].bounds.max.y &&
+          particle.x > this.hero.container.body.parts[1].bounds.min.x &&
+          particle.x < this.hero.container.body.parts[1].bounds.max.x &&
+          particle.y > this.hero.container.body.parts[1].bounds.min.y &&
+          particle.y < this.hero.container.body.parts[1].bounds.max.y &&
           !this.hero.burning &&
           !this.hero.dead
         ) {
@@ -1153,7 +1158,7 @@ export default class DungeonScene extends Phaser.Scene {
       y: '+=8'
     })
     this.matterCollision.addOnCollideStart({
-      objectA: this.hero.sprites.hero,
+      objectA: this.hero.container,
       objectB: this.sword,
       callback: (collision) => {
         if (this.hero.dead || collision.bodyA.isSensor) return
@@ -1188,7 +1193,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.torch.anims.play('torch', true)
 
     this.matterCollision.addOnCollideStart({
-      objectA: this.hero.sprites.hero,
+      objectA: this.hero.container,
       objectB: this.torch,
       callback: (collision) => {
         if (this.hero.dead || collision.bodyA.isSensor) return
@@ -1223,7 +1228,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.pathfinder.anims.play('pathfinder', true)
 
     this.matterCollision.addOnCollideStart({
-      objectA: this.hero.sprites.hero,
+      objectA: this.hero.container,
       objectB: this.pathfinder,
       callback: (collision) => {
         if (this.hero.dead || collision.bodyA.isSensor) return
@@ -1260,7 +1265,7 @@ export default class DungeonScene extends Phaser.Scene {
       })
 
       this.matterCollision.addOnCollideStart({
-        objectA: this.hero.sprites.hero,
+        objectA: this.hero.container,
         objectB: this.timebomb,
         callback: (collision) => {
           if (this.hero.dead || collision.bodyA.isSensor) return
@@ -1282,7 +1287,7 @@ export default class DungeonScene extends Phaser.Scene {
             emitCallback: particle => this.particleEmitterAddLights(particle, 15),
             deathCallback: particle => this.particleEmitterRemoveLights(particle)
           })
-          this.heroParticles.startFollow(this.hero.sprites.hero)
+          this.heroParticles.startFollow(this.hero.container)
           this.startCountdown(60)
         }
       })
@@ -1295,7 +1300,7 @@ export default class DungeonScene extends Phaser.Scene {
   updateTimebomb() {
     if (!this.timebomb || !this.timebomb.active) return
     const vector = new Phaser.Math.Vector2(this.timebomb.x, this.timebomb.y)
-    const distance = vector.distance({ x: this.hero.sprites.hero.x, y: this.hero.sprites.hero.y })
+    const distance = vector.distance({ x: this.hero.container.x, y: this.hero.container.y })
     const speedFactor = (distance + 100) / 150
     this.timebomb.setVelocity(0)
     if (this.currentRoom === this.safeRoom) {
@@ -1308,14 +1313,14 @@ export default class DungeonScene extends Phaser.Scene {
       const tileY = this.worldToTileY(this.timebomb.y)
       this.timebombRoom = this.dungeon.getRoomAt(tileX, tileY)
       if (this.timebombRoom === this.currentRoom && tileX > this.timebombRoom.left && tileX < this.timebombRoom.right && tileY > this.timebombRoom.top + 3 && tileY < this.timebombRoom.bottom) {
-        this.moveToObject(this.timebomb, this.hero.sprites.hero, speedFactor)
+        this.moveToObject(this.timebomb, this.hero.container, speedFactor)
       } else {
         const finder = new PathFinder.AStarFinder({ allowDiagonal: true, dontCrossCorners: true })
         const path = PathFinder.Util.compressPath(finder.findPath(
           this.worldToTileX(this.timebomb.x),
           this.worldToTileY(this.timebomb.y),
-          this.worldToTileX(this.hero.sprites.hero.x),
-          this.worldToTileY(this.hero.sprites.hero.y),
+          this.worldToTileX(this.hero.container.x),
+          this.worldToTileY(this.hero.container.y),
           this.getPathGrid()
         ))
         if (path.length > 1) {
@@ -1435,8 +1440,8 @@ export default class DungeonScene extends Phaser.Scene {
     if (!this.pathSprites.length) {
       const finder = new PathFinder.AStarFinder()
       const path = finder.findPath(
-        this.worldToTileX(this.hero.sprites.hero.x),
-        this.worldToTileY(this.hero.sprites.hero.y),
+        this.worldToTileX(this.hero.container.x),
+        this.worldToTileY(this.hero.container.y),
         this.endRoom.centerX + 1,
         this.endRoom.centerY + 2,
         this.getPathGrid()
@@ -1506,8 +1511,8 @@ export default class DungeonScene extends Phaser.Scene {
 
   setCurrentRoom() {
     const currentRoom = this.dungeon.getRoomAt(
-      this.worldToTileX(this.hero.sprites.hero.x),
-      this.worldToTileY(this.hero.sprites.hero.y)
+      this.worldToTileX(this.hero.container.x),
+      this.worldToTileY(this.hero.container.y)
     )
     if (this.currentRoom !== currentRoom) {
       this.currentRoom = currentRoom
