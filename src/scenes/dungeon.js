@@ -1252,6 +1252,8 @@ export default class DungeonScene extends Phaser.Scene {
       this.timebomb
         .setDepth(6)
         .setRectangle(10, 10)
+        .setFixedRotation()
+        .setRotation(0)
         .setCollisionCategory(COLLISION_CATEGORIES.TIMEBOMB)
         .setCollidesWith([COLLISION_CATEGORIES.HERO, COLLISION_CATEGORIES.WALL])
 
@@ -1340,6 +1342,7 @@ export default class DungeonScene extends Phaser.Scene {
 
   updateTimebomb() {
     if (!this.timebomb || !this.timebombActive) return
+    this.timebomb.setRotation(this.timebomb.rotation + 0.05)
     const vector = new Phaser.Math.Vector2(this.timebomb.x, this.timebomb.y)
     const distance = vector.distance({ x: this.hero.container.x, y: this.hero.container.y })
     const speedFactor = (distance + 100) / 150
