@@ -841,7 +841,7 @@ export default class DungeonScene extends Phaser.Scene {
   emitXpOrb(x, y, following) {
     x += Phaser.Math.Between(-25, 25)
     y += Phaser.Math.Between(-25, 25)
-    const xpOrb = this.matter.add.image(x, y, 'particle', 0).setDepth(6).setRectangle(5, 5).setSensor(true).setData('following', following)
+    const xpOrb = this.matter.add.image(x, y, 'particle', 0).setScale(0.7).setDepth(6).setRectangle(5, 5).setSensor(true).setData('following', following)
     this.lightManager.lights.push({
       sprite: xpOrb,
       intensity: () => LightManager.flickering(0)
@@ -849,12 +849,12 @@ export default class DungeonScene extends Phaser.Scene {
     const xpOrbParticles = this.orbParticle.createEmitter({
       tint: [0xFF00FF, 0x0088FF, 0xFF00FF, 0x0088FF, 0xFFFFFF],
       blendMode: 'SCREEN',
-      scale: { start: 0.3, end: 1 },
+      scale: { start: 0.3, end: 0.6 },
       alpha: { start: 1, end: 0 },
       speed: 10,
-      quantity: 3,
-      frequency: 100,
-      lifespan: 500,
+      quantity: 10,
+      frequency: 50,
+      lifespan: 250,
       following: following
     })
 
@@ -929,14 +929,14 @@ export default class DungeonScene extends Phaser.Scene {
       intensity: () => LightManager.flickering(0)
     })
     const particles = this.orbParticle.createEmitter({
-      tint: [0xFF0000],
+      tint: [0xFF0000, 0xFF0000, 0xFFFFFF],
       blendMode: 'SCREEN',
-      scale: { start: 0.3, end: 1 },
-      alpha: { start: 1, end: 0 },
+      scale: { start: 1, end: 0.2 },
+      alpha: { start: 0, end: 1 },
       speed: 10,
-      quantity: 3,
-      frequency: 100,
-      lifespan: 500,
+      quantity: 10,
+      frequency: 50,
+      lifespan: 250,
       following: following
     })
 
@@ -948,6 +948,7 @@ export default class DungeonScene extends Phaser.Scene {
       repeat: 0,
       ease: 'Cubic',
       y: '-=20',
+      scale: { from: 1, to: 3 },
       onComplete: () => {
         tween1.remove()
         this.healthOrbs.push(orb)
