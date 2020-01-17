@@ -332,21 +332,21 @@ export default class Hero {
       tint: [0xFF00FF, 0x0088FF, 0xFF00FF, 0x0088FF, 0xFFFFFF],
       on: false,
       x: 0,
-      y: 0,
+      y: 5,
       blendMode: 'SCREEN',
-      scale: { start: 0.5, end: 1 },
+      scale: { start: 0.2, end: 0.5 },
       alpha: { start: 1, end: 0 },
-      speed: 50,
-      quantity: 10,
+      speed: 60,
+      quantity: 40,
       frequency: 100,
-      lifespan: 1000,
+      lifespan: 1800,
     })
     this.levelUpParticleWell = this.levelUpParticle.createGravityWell({
         x: 0,
         y: -20,
         power: 1,
         epsilon: 100,
-        gravity: 50
+        gravity: 40
     });
   }
 
@@ -357,11 +357,13 @@ export default class Hero {
       key: 'levelUp',
       x: () => this.scene.worldToTileX(this.container.x),
       y: () => this.scene.worldToTileY(this.container.y),
-      intensity: () => 1
+      intensity: () => LightManager.flickering(1)
     })
-    this.scene.time.delayedCall(1000, () => {
+    this.scene.time.delayedCall(2000, () => {
       this.levelUpParticleEmitter.stop()
-      this.scene.lightManager.removeLightByKey('levelUp')
+      this.scene.time.delayedCall(1000, () => {
+        this.scene.lightManager.removeLightByKey('levelUp')
+      })
     })
   }
 
