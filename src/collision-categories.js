@@ -1,6 +1,7 @@
 export default {
-  WALL: 0x0001,
-  HERO: 0x0002,
-  ENEMY: 0x0004,
-  SHIELD: 0x0008
+  WALL: 1,
+  HERO: 2,
+  ENEMY: 4,
+  SHIELD: 8,
+  TIMEBOMB: 16,
 }
