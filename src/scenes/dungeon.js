@@ -117,9 +117,6 @@ export default class DungeonScene extends Phaser.Scene {
       // reset idle timer
       this.startIdleTimer()
 
-      // disable shield
-      if (this.hero.shieldActive) this.hero.toggleShield()
-
       if (this.dungeonNumber === 1) {
         if (this.registry.get('narratorSaid').includes('whenHeWasDefeated')) {
           this.narrator.sayOnce('againEmptiness')

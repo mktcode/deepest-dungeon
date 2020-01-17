@@ -63,7 +63,7 @@ export default class Hero {
     this.prepareLevelUpAnimation()
 
     this.keys.shift.on('down', () => {
-      this.toggleShield()
+      this.useShield()
     })
 
     // attack
@@ -175,24 +175,25 @@ export default class Hero {
     })
   }
 
-  toggleShield() {
-    if (this.scene.dungeonNumber > 4) {
-      if (this.shieldActive) {
+  useShield() {
+    const currentMana = this.scene.registry.get('mana')
+    if (this.scene.dungeonNumber > 4 && !this.shieldActive && currentMana) {
+      this.scene.registry.set('mana', currentMana - 1)
+      this.shieldActive = true
+      this.shieldParticles.start()
+      this.shieldParticles2.start()
+      this.scene.lightManager.lights.push({
+        key: 'shield',
+        x: () => this.scene.worldToTileX(this.container.x),
+        y: () => this.scene.worldToTileX(this.container.y),
+        intensity: () => LightManager.flickering(1)
+      })
+      this.scene.time.delayedCall(3000, () => {
         this.shieldActive = false
         this.shieldParticles.stop()
         this.shieldParticles2.stop()
         this.scene.lightManager.removeLightByKey('shield')
-      } else {
-        this.shieldActive = true
-        this.shieldParticles.start()
-        this.shieldParticles2.start()
-        this.scene.lightManager.lights.push({
-          key: 'shield',
-          x: () => this.scene.worldToTileX(this.container.x),
-          y: () => this.scene.worldToTileX(this.container.y),
-          intensity: () => LightManager.flickering(1)
-        })
-      }
+      })
     }
   }
 
