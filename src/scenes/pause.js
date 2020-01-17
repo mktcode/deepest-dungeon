@@ -74,9 +74,9 @@ export default class PauseScene extends Phaser.Scene {
     this.instructions = this.add.text(
       centerX - 100,
       centerY + 50,
-      'Run:         WASD/Arrows' + "\n" +
-      'Walk:        Hold Shift' + "\n" +
+      'Move:        WASD/Arrows' + "\n" +
       'Attack:      Space' + "\n" +
+      'Shield:      Shift' + "\n" +
       'Use:         E' + "\n" +
       'Scout\'s Eye: Q' + "\n" +
       'Pause:       Esc',
