@@ -11,6 +11,7 @@
 - [ ] animate cooldowns in item slots
 - [ ] make torches usable on demand
 - [ ] remove mobile control leftovers
+- [ ] NO UI!
 - [ ] subtitles for the narrator
 - [ ] use seeds as sharable "sessions" and saved games
 - [ ] more enemies/traps
