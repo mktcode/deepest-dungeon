@@ -15,6 +15,7 @@ import aTimeeater from "./assets/audio/narrator/a-timeeater.mp3"
 import timeeaterQuickNow from "./assets/audio/narrator/timeeater-quick-now.mp3"
 import dungeonStartedToQuake from "./assets/audio/narrator/dungeon-started-to-quake.mp3"
 import itsGettingHot from "./assets/audio/narrator/its-getting-hot.mp3"
+import shieldSpell from "./assets/audio/narrator/shield-spell.mp3"
 import aScoutsEye from "./assets/audio/narrator/a-scouts-eye.mp3"
 import maybeAboutDecisions from "./assets/audio/narrator/maybe-about-decisions.mp3"
 import slowlyHeBeganToQuestion from "./assets/audio/narrator/slowly-he-began-to-question.mp3"
@@ -51,6 +52,7 @@ export default class Narrator {
     this.dungeonStartedToQuake = scene.sound.add('dungeonStartedToQuake')
     this.itsGettingHot = scene.sound.add('itsGettingHot')
     this.aScoutsEye = scene.sound.add('aScoutsEye')
+    this.shieldSpell = scene.sound.add('shieldSpell')
     this.maybeAboutDecisions = scene.sound.add('maybeAboutDecisions')
     this.slowlyHeBeganToQuestion = scene.sound.add('slowlyHeBeganToQuestion')
     this.theEnd = scene.sound.add('theEnd')
@@ -89,6 +91,7 @@ export default class Narrator {
     scene.load.audio('dungeonStartedToQuake', dungeonStartedToQuake)
     scene.load.audio('itsGettingHot', itsGettingHot)
     scene.load.audio('aScoutsEye', aScoutsEye)
+    scene.load.audio('shieldSpell', shieldSpell)
     scene.load.audio('maybeAboutDecisions', maybeAboutDecisions)
     scene.load.audio('slowlyHeBeganToQuestion', slowlyHeBeganToQuestion)
     scene.load.audio('theEnd', theEnd)
