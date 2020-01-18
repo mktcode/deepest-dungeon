@@ -1245,7 +1245,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.addTorch()
     }
 
-    if (this.dungeonNumber >= 7 && !this.hero.hasItem('shieldScroll')) {
+    if (this.dungeonNumber >= 7 && !this.hero.hasItem('shield')) {
       this.addShieldScroll()
     }
 
