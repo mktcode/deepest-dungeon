@@ -61,6 +61,7 @@ export default class Hero {
     this.addToScene(x, y)
     this.prepareShield()
     this.prepareLevelUpAnimation()
+    this.prepareSpeedBoostAnimation()
 
     this.keys.shift.on('down', () => {
       this.useShield()
@@ -246,6 +247,52 @@ export default class Hero {
         }
       }
     }
+  }
+
+  prepareSpeedBoostAnimation() {
+    this.speedBoostAnimation = this.scene.interactionParticle.createEmitter({
+      on: false,
+      blendMode: 'SCREEN',
+      scale: { start: 0.7, end: 0.2 },
+      alpha: { start: 1, end: 0 },
+      speed: 75,
+      quantity: 2,
+      frequency: 50,
+      lifespan: 300,
+      follow: this.container,
+      angle: (particle) => {
+        if (this.lastDirection === 'up-left') {
+          return 45
+        }
+        if (this.lastDirection === 'up') {
+          return 90
+        }
+        if (this.lastDirection === 'up-right') {
+          return 135
+        }
+        if (this.lastDirection === 'right') {
+          return 180
+        }
+        if (this.lastDirection === 'down-right') {
+          return 225
+        }
+        if (this.lastDirection === 'down') {
+          return 270
+        }
+        if (this.lastDirection === 'down-left') {
+          return 315
+        }
+        if (this.lastDirection === 'left') {
+          return 360
+        }
+        return 0
+      },
+      emitZone: {
+        source: new Phaser.Geom.Circle(0, 0, 10),
+        type: 'random',
+        quantity: 2
+      }
+    })
   }
 
   improveSkill() {
@@ -491,14 +538,23 @@ export default class Hero {
       this.scene.sounds.walking.setVolume(0)
 
       const runOrWalk = this.scene.narrator.forceWalk ? 'walk' : 'run'
-      this.baseSpeed = runOrWalk === 'run' ? 2 : 1
-      if (this.attacking) this.baseSpeed *= 0.1
-      if (this.scene.narrator.slowmo) {
-        this.baseSpeed *= 0.3
+
+      this.baseSpeed = 2
+      if (this.scene.dungeonVisits > 1 && this.scene.dungeonNumber !== this.scene.registry.get('playersDeepestDungeon')) {
+        this.baseSpeed = 3
+        if (!this.speedBoostAnimation.on) {
+          this.speedBoostAnimation.start()
+        }
+      } else {
+        if (this.speedBoostAnimation.on) {
+          this.speedBoostAnimation.stop()
+        }
       }
-      if (this.scene.narrator.freeze || this.container.body.isStatic) {
-        this.baseSpeed *= 0
-      }
+
+      if (this.scene.narrator.slowmo) this.baseSpeed = 0.6
+      if (this.scene.narrator.freeze || this.container.body.isStatic || this.attacking) this.baseSpeed = 0
+
+      if (runOrWalk === 'walk') this.baseSpeed /= 2
 
       // Horizontal movement
       const sound = runOrWalk === 'run' ? this.scene.sounds.running : this.scene.sounds.walking

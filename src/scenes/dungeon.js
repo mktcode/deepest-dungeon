@@ -25,6 +25,7 @@ export default class DungeonScene extends Phaser.Scene {
   constructor(dungeonNumber) {
     super('Dungeon' + dungeonNumber)
     this.dungeonNumber = dungeonNumber
+    this.dungeonVisits = 1
     this.dungeon = new Dungeon({
       randomSeed: 'Dungeon' + this.dungeonNumber,
       width: Math.min(200, 65 + this.dungeonNumber),
@@ -82,6 +83,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.music = this.registry.get('music')
     this.music.setRate(1)
     this.registry.set('currentDungeon', this.dungeonNumber)
+    this.registry.set('playersDeepestDungeon', this.dungeonNumber)
     this.interactionParticle = this.add.particles('particle').setDepth(5)
     this.interactionParticleAbove = this.add.particles('particle').setDepth(7)
     this.ambientParticle = this.add.particles('particle').setDepth(9)
@@ -106,6 +108,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.addFog()
 
     this.events.on('wake', () => {
+      this.dungeonVisits++
       this.cameras.main.fadeIn(1000, 0, 0, 0)
       this.cameras.main.shake(1000, 0, true) // interrupt shake if dungeon was shaking when leaving it
       this.music.setRate(1)
