@@ -199,7 +199,7 @@ export default class Hero {
   }
 
   useStairs() {
-    if (this.scene.narrator.playing) return
+    if (this.scene.narrator.playing && this.scene.narrator.blockStairs) return
     if (this.isNear([
       ...TILES.STAIRS.OPEN[0],
       ...TILES.STAIRS.OPEN[1],

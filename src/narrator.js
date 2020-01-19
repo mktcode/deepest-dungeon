@@ -70,6 +70,7 @@ export default class Narrator {
     this.freeze = false
     this.forceWalk = false
     this.playing = null
+    this.blockStairs = true
   }
 
   static preload(scene) {
