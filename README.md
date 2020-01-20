@@ -1,40 +1,47 @@
 # TODO
 
-- [ ] Bugfix: when died, xp/points disappear, some weird tween/animation moves them away
-- [ ] Bugfix: sometimes enemies are contantly walking against wall
-- [ ] Bugfix: safe room light not visible when safe room is to the tp
-- [ ] bottom-left corner wall tile should be above player
-- [ ] trapdoors: random tiles change after standing on them too long, instant death
-- [ ] adjust/expand narrator
+- [ ] BUG: safe room light not visible when safe room is to the top
+- [ ] BUG: death animation doesn't trigger sometimes
+- [ ] trapdoors, random tiles change after standing on them too long, instant death
+- [ ] more story
 - [ ] implement global high score
-- [ ] implement mana and spell attack
+- [ ] implement spell attack
 - [ ] animate cooldowns in item slots
 - [ ] make torches usable on demand
 - [ ] remove mobile control leftovers
-- [ ] NO UI!
+- [ ] UI change, fade in/out when narrator speaks
+- [ ] more beautiful and unique UI
 - [ ] subtitles for the narrator
 - [ ] use seeds as sharable "sessions" and saved games
 - [ ] more enemies/traps
 - [ ] stamina for running (and attacking)
-- [ ] death animation doesn't trigger sometimes
 - [ ] fix bouncy hero collision (leading to leaving a room unintended)
 - [ ] adjust volume of all sounds/narrative
 - [ ] timeeater countdown doesn't stop when pausing the game
-- [ ] add credits
-- [ ] Bug: when dieing multiple times without picking up your stuff... xp dust can't be picked up anymore, instead gives more and more xp when touching it
-- [ ] polishing
-  - [ ] sound effects must be quiter when narrator speaks
-  - [ ] make character slide/speed up/down a bit
-  - [ ] Narrative
-    - [ ] adjust volumes
-    - [ ] freeze char after idling 20s, when trying to move again: Frozen in fear, he didn't dare to move, for a far too long time. (unfreeze, slowmo) He gathered all his courage and slowly he began to move, to continue his journey. (normal speed)
-  - [ ] add/improve sounds
-    - [ ] going down stairs
-    - [ ] walking/running when slowmo
-  - [ ] new (animated) boss enemy
-  - [ ] animated experience points
-  - [ ] fill up health animation when using shrine
-  - [ ] put the time eater as far away from the doors as possible
+- [ ] add all credits
+- [ ] zoom to object of interest (narrator)
+- [ ] attack combo with second attack animation
+- [ ] skill mana
+- [ ] skill shield (duration, damage)
+- [ ] let timeeater wander around dungeon
+- [ ] make sounds play in parallel if neccessary
+- [ ] chapter popup text
+- [ ] sound effects must be quiter when narrator speaks
+- [ ] make character slide/speed up/down a bit
+- [ ] Narrative
+  - [ ] adjust volumes
+- [ ] add/improve sounds
+  - [ ] going down stairs
+  - [ ] walking/running when slowmo
+- [ ] new (animated) boss enemy
+- [ ] put the time eater as far away from the doors as possible
+- [ ] steem blockchain as storage
+- [ ] multiplayer
+  - [ ] connect via seed
+  - [ ] ranks
+  - [ ] permanent leveling
+  - [ ] randomly meet other players
+    - [ ] they introduced themselves with theirs names: input field, initiate chat
 
 # phaser-electron-typescript-parcel [![Build Status](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel.svg?branch=master)](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel)
 
