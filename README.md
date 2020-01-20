@@ -36,6 +36,7 @@
 - [ ] new (animated) boss enemy
 - [ ] put the time eater as far away from the doors as possible
 - [ ] steem blockchain as storage
+- [ ] light layer: seamless rooms
 - [ ] multiplayer
   - [ ] connect via seed
   - [ ] ranks
