@@ -130,28 +130,30 @@ export default class GuiScene extends Phaser.Scene {
 
   addLetterBoxes() {
     this.letterBoxHeight = this.game.scale.height / 5
-    this.letterBox1 = this.add.rectangle(this.game.scale.width / 2, -(this.letterBoxHeight / 2), this.game.scale.width, this.letterBoxHeight, 0x000000).setDepth(20)
-    this.letterBox2 = this.add.rectangle(this.game.scale.width / 2, this.game.scale.height + this.letterBoxHeight / 2, this.game.scale.width, this.letterBoxHeight, 0x000000).setDepth(20)
+    this.letterBoxY1 = -(this.letterBoxHeight / 2)
+    this.letterBoxY2 = this.game.scale.height + this.letterBoxHeight / 2
+    this.letterBox1 = this.add.rectangle(this.game.scale.width / 2, this.letterBoxY1, this.game.scale.width, this.letterBoxHeight, 0x000000).setDepth(20)
+    this.letterBox2 = this.add.rectangle(this.game.scale.width / 2, this.letterBoxY2, this.game.scale.width, this.letterBoxHeight, 0x000000).setDepth(20)
   }
 
   showLetterBoxes() {
     this.tweens.add({
       targets: this.letterBox1,
-      y: '+=' + this.letterBoxHeight
+      y: { from: this.letterBoxY1, to: this.letterBoxY1 + this.letterBoxHeight}
     })
     this.tweens.add({
       targets: this.letterBox2,
-      y: '-=' + this.letterBoxHeight
+      y: { from: this.letterBoxY2, to: this.letterBoxY2 - this.letterBoxHeight}
     })
   }
   hideLetterBoxes() {
     this.tweens.add({
       targets: this.letterBox1,
-      y: '-=' + this.letterBoxHeight
+      y: { from: this.letterBoxY1, to: this.letterBoxY1 - this.letterBoxHeight}
     })
     this.tweens.add({
       targets: this.letterBox2,
-      y: '+=' + this.letterBoxHeight
+      y: { from: this.letterBoxY2, to: this.letterBoxY2 + this.letterBoxHeight}
     })
   }
 
