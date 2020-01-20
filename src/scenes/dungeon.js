@@ -25,7 +25,6 @@ export default class DungeonScene extends Phaser.Scene {
   constructor(dungeonNumber) {
     super('Dungeon' + dungeonNumber)
     this.dungeonNumber = dungeonNumber
-    this.dungeonVisits = 1
     this.dungeon = new Dungeon({
       randomSeed: 'Dungeon' + this.dungeonNumber,
       width: Math.min(200, 65 + this.dungeonNumber),
@@ -38,18 +37,22 @@ export default class DungeonScene extends Phaser.Scene {
       }
     })
     const rooms = this.dungeon.rooms.slice()
+
     this.otherRooms = rooms
     this.startRoom = this.getStartRoom()
     this.visitedRooms = [this.startRoom]
     this.currentRoom = this.startRoom
     this.endRoom = this.getEndRoom()
-    this.safeRoom = this.getSafeRoom()
+    this.safeRoom = null
 
     this.sword = null
     this.torch = null
     this.pathfinder = null
     this.pathSprites = []
+    this.fireTraps = []
+
     this.safeRoomActivated = false
+    this.dungeonVisits = 1
 
     this.enemies = []
     this.healthOrbs = []
@@ -60,8 +63,6 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.isStatic = { isStatic: true }
     this.wallPhysics = { isStatic: true, collisionFilter: { category: COLLISION_CATEGORIES.WALL } }
-
-    this.nextOuttake = 1
   }
 
   static preload(scene) {
@@ -76,14 +77,16 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   create() {
-    this.cameras.main.setZoom(2)
-    this.cameras.main.fadeIn(1000, 0, 0, 0)
+    // prepare
     this.narrator = new Narrator(this)
     this.sounds = new Sounds(this)
     this.music = this.registry.get('music')
     this.music.setRate(1)
+    this.safeRoom = this.getSafeRoom()
     this.registry.set('currentDungeon', this.dungeonNumber)
     this.registry.set('playersDeepestDungeon', this.dungeonNumber)
+
+    // particles
     this.interactionParticle = this.add.particles('particle').setDepth(5)
     this.interactionParticleAbove = this.add.particles('particle').setDepth(7)
     this.ambientParticle = this.add.particles('particle').setDepth(9)
@@ -91,123 +94,148 @@ export default class DungeonScene extends Phaser.Scene {
     this.fireParticle = this.add.particles('particle').setDepth(7)
     this.fireParticleAbove = this.add.particles('particle').setDepth(10)
     this.orbParticle = this.add.particles('particle').setDepth(7)
+
     // this.matter.world.createDebugGraphic()
 
+    // build dungeon
     this.prepareMap()
     this.prepareRooms()
-    this.prepareSafeRoom()
     this.addStairs()
-    this.addHero()
-    this.addEnemies()
-    this.addItems()
-    this.addFireTraps()
-    this.addTimebomb()
-    this.addOverlayText()
-    this.startIdleTimer()
+    this.prepareSafeRoom()
     this.addAmbientParticles()
     this.addFog()
 
-    this.events.on('wake', () => {
-      this.dungeonVisits++
-      this.cameras.main.fadeIn(1000, 0, 0, 0)
-      this.cameras.main.shake(1000, 0, true) // interrupt shake if dungeon was shaking when leaving it
-      this.music.setRate(1)
-      this.sounds.running.setVolume(0)
-      this.sounds.walking.setVolume(0)
-      this.registry.set('currentDungeon', this.dungeonNumber)
-      this.addEnemies(true)
+    // add objects
+    this.addHero()
+    this.addEnemies()
+    this.addObjects()
+    this.addOverlayText()
+    this.startIdleTimer()
 
-      // keyboard bug workaround
-      this.hero.resetKeys()
+    this.addControls()
 
-      // reset idle timer
-      this.startIdleTimer()
+    // when we come back to this dungeon after dying and when we leave it
+    this.events.on('wake', () => this.wake())
+    this.events.on('sleep', () => this.sleep())
 
-      if (this.dungeonNumber === 1) {
-        if (this.registry.get('narratorSaid').includes('whenHeWasDefeated')) {
-          this.narrator.sayOnce('againEmptiness')
-        } else {
-          this.narrator.sayOnce('whenHeWasDefeated')
-        }
+    this.start()
+  }
+
+  start() {
+    this.cameras.main.setZoom(this.registry.get('zoom'))
+    this.cameras.main.fadeIn(1000, 0, 0, 0)
+
+    if (this.dungeonNumber === 2) {
+      this.music.play()
+    }
+
+    const narratorSaid = this.registry.get('narratorSaid')
+    if (!narratorSaid.includes('whereAmI')) {
+      this.playStoryElementOnce('whereAmI')
+    } else {
+      if (this.registry.get('items').includes('sword') && !narratorSaid.includes('theDeeperHeWent')) {
+        this.playStoryElementOnce('theDeeperHeWent')
+      } else if (narratorSaid.includes('theDeeperHeWent') && !narratorSaid.includes('maybeAboutDecisions')) {
+        this.playStoryElementOnce('maybeAboutDecisions')
+      } else if (narratorSaid.includes('maybeAboutDecisions') && !narratorSaid.includes('slowlyHeBeganToQuestion')) {
+        this.playStoryElementOnce('slowlyHeBeganToQuestion')
+      } else if (narratorSaid.includes('slowlyHeBeganToQuestion') && narratorSaid.includes('aTimeeater') && narratorSaid.includes('shieldSpell') && narratorSaid.includes('aScoutsEye') && !narratorSaid.includes('theEnd')) {
+        this.playStoryElementOnce('theEnd')
+        this.addCredits()
+      } else if (narratorSaid.includes('theEnd')) {
+        this.playStoryElementOnce('outtakes')
+        this.addCredits()
       }
+    }
+  }
 
-      // place hero
-      this.hero.sprites.hero.visible = false
-      this.hero.freeze()
-      this.time.delayedCall(1000, () => {
-        this.hero.sprites.hero.visible = true
-        this.hero.dead = false
-        this.hero.unfreeze()
-        this.hero.jumpTo(
-          this.tileToWorldX(this.safeRoom && this.safeRoomActivated ? this.safeRoom.centerX : this.startRoom.centerX),
-          this.tileToWorldY(this.safeRoom && this.safeRoomActivated ? this.safeRoom.centerY : this.startRoom.centerY)
-        )
-      })
+  wake() {
+    this.cameras.main.fadeIn(1000, 0, 0, 0)
+    this.cameras.main.shake(1000, 0, true) // interrupt shake if dungeon was shaking when leaving it
+    this.cameras.main.setZoom(this.registry.get('zoom'))
+
+    this.dungeonVisits++
+    this.registry.set('currentDungeon', this.dungeonNumber)
+
+    // resetting sounds and input
+    this.music.setRate(1)
+    this.sounds.running.setVolume(0)
+    this.sounds.walking.setVolume(0)
+    this.hero.resetKeys()
+    this.sounds.stop('ticking')
+    this.sounds.stop('tickingFast')
+
+    // reset idle timer
+    this.startIdleTimer()
+
+    // add new enemies
+    this.addEnemies()
+
+    if (!this.registry.get('narratorSaid').includes('whenHeWasDefeated')) {
+      this.playStoryElementOnce('whenHeWasDefeated')
+    } else {
+      this.playStoryElementOnce('againEmptiness')
+    }
+
+    // place hero
+    this.hero.sprites.hero.visible = false
+    this.hero.freeze()
+    this.time.delayedCall(1000, () => {
+      this.hero.sprites.hero.visible = true
+      this.hero.dead = false
+      this.hero.unfreeze()
+      this.hero.jumpTo(
+        this.tileToWorldX(this.safeRoom && this.safeRoomActivated ? this.safeRoom.centerX : this.startRoom.centerX),
+        this.tileToWorldY(this.safeRoom && this.safeRoomActivated ? this.safeRoom.centerY : this.startRoom.centerY)
+      )
     })
+  }
 
-    this.events.on('sleep', () => {
-      this.sounds.stop('ticking')
-      this.sounds.stop('tickingFast')
-      this.sounds.running.setVolume(0)
-      this.sounds.walking.setVolume(0)
-      this.countdown = null
-      if (this.countdownText) {
-        this.countdownText.destroy()
-      }
-      if (this.heroParticles) {
-        this.heroParticles.stop()
-      }
-    })
-
-    if (this.dungeonNumber === 1) {
-      this.narrator.freezeStart()
-      this.narrator.sayOnce('whereAmI', 1).then(() => this.narrator.freezeEnd())
+  sleep() {
+    this.sounds.stop('ticking')
+    this.sounds.stop('tickingFast')
+    this.sounds.running.setVolume(0)
+    this.sounds.walking.setVolume(0)
+    this.countdown = null
+    if (this.countdownText) {
+      this.countdownText.destroy()
     }
-
-    if (this.dungeonNumber === 3) {
-      this.narrator.slowmoStart()
-      this.narrator.sayOnce('maybeAboutDecisions', 1).then(() => this.narrator.slowmoEnd())
+    if (this.heroParticles) {
+      this.heroParticles.stop()
     }
+  }
 
-    if (this.dungeonNumber === 5) {
-      this.narrator.slowmoStart()
-      this.narrator.sayOnce('theDeeperHeWent', 1).then(() => this.narrator.slowmoEnd())
+  addControls() {
+    this.input.keyboard.on('keyup-ESC', () => this.pauseGame())
+    this.input.on('wheel', (pointer, currentlyOver, dx, dy) => this.zoom(pointer, currentlyOver, dx, dy))
+  }
+
+  pauseGame() {
+    this.scene.pause()
+    if (this.narrator.playing) this.narrator.playing.pause()
+    this.scene.run('Pause')
+  }
+
+  zoom(pointer, currentlyOver, dx, dy) {
+    if (this.narrator.playing) return
+    let zoom = this.registry.get('zoom')
+    if (dy > 0) {
+      zoom -= 0.05
+    } else {
+      zoom += 0.05
     }
+    if (zoom < 1.8) zoom = 1.8
+    if (zoom > 3.5) zoom = 3.5
+    this.cameras.main.setZoom(zoom)
+    this.registry.set('zoom', zoom)
+  }
 
-    if (this.dungeonNumber === 11) {
-      this.narrator.slowmoStart()
-      this.narrator.sayOnce('slowlyHeBeganToQuestion', 1).then(() => this.narrator.slowmoEnd())
-    }
-
-    if (this.dungeonNumber === 12) {
-      this.narrator.freezeStart()
-      this.narrator.sayOnce('theEnd', 1).then(() => {
-        this.narrator.freezeEnd()
-        const items = this.registry.get('items')
-        items.push('sword')
-        items.push('torch')
-        items.push('torch')
-        this.registry.set('items', items)
-        this.registry.set('weapon', 'sword')
-        this.registry.set('health', 30)
-        this.registry.set('maxHealth', 30)
-        this.registry.set('damage', 1337 / 2)
-      })
-    }
-
-    if (this.dungeonNumber >= 12) {
-      this.addCreditsToRandomRoom('Support me!' + "\n" + 'patreon.com/mkt' + "\n" + '...or below the game! ;)')
-      this.addCreditsToRandomRoom('Music:' + "\n" + 'Kai Engel' + "\n" +  'kai-engel.com')
-      this.addCreditsToRandomRoom('Dungeon Design:' + "\n" + 'Szadi art.' + "\n" +  'szadiart.itch.io')
-      this.addCreditsToRandomRoom('Character Design:' + "\n" + 'Robert Ramsay' + "\n" +  'robertramsay.co.uk')
-      this.addCreditsToRandomRoom('Other Stuff:' + "\n" + 'opengameart.org' + "\n" +  'freesound.org')
-    }
-
-    this.input.keyboard.on('keyup-ESC', () => {
-      this.scene.pause()
-      if (this.narrator.playing) this.narrator.playing.pause()
-      this.scene.run('Pause')
-    })
+  addCredits() {
+    this.addCreditsToRandomRoom('Support me!' + "\n" + 'patreon.com/mkt' + "\n" + '...or below the game! ;)')
+    this.addCreditsToRandomRoom('Music:' + "\n" + 'Kai Engel' + "\n" +  'kai-engel.com')
+    this.addCreditsToRandomRoom('Dungeon Design:' + "\n" + 'Szadi art.' + "\n" +  'szadiart.itch.io')
+    this.addCreditsToRandomRoom('Character Design:' + "\n" + 'Robert Ramsay' + "\n" +  'robertramsay.co.uk')
+    this.addCreditsToRandomRoom('Other Stuff:' + "\n" + 'opengameart.org' + "\n" +  'freesound.org')
   }
 
   addAmbientParticles() {
@@ -254,6 +282,110 @@ export default class DungeonScene extends Phaser.Scene {
 
   startIdleTimer() {
     this.idleTimer = new Date().getTime() / 1000
+  }
+
+  playStoryElement(key) {
+    if (key === 'whereAmI') {
+      // in first dungeon wait for gui to be ready
+      setTimeout(() => {
+        this.narrator.freezeStart()
+        this.narrator.sayOnce('whereAmI', 1).then(() => this.narrator.freezeEnd())
+      }, 250)
+    }
+
+    if (key === 'whatWasThisAbout') {
+      this.narrator.sayOnce('whatWasThisAbout')
+    }
+
+    if (key === 'finallySomeStairs') {
+      this.narrator.slowmoStart()
+      this.narrator.forceWalk = true
+      this.narrator.sayOnce('finallySomeStairs').then(() => {
+        this.narrator.slowmoEnd()
+        this.narrator.forceWalk = false
+      })
+    }
+
+    if (key === 'undeadCreatures') {
+      this.narrator.sayOnce('undeadCreatures')
+    }
+
+    if (key === 'killingAllTheseEnemies') {
+      this.narrator.sayOnce('killingAllTheseEnemies')
+    }
+
+    if (key === 'thereItWasASword') {
+      this.narrator.sayOnce('thereItWasASword')
+    }
+
+    if (key === 'maybeAboutDecisions') {
+      this.narrator.slowmoStart()
+      this.narrator.sayOnce('maybeAboutDecisions', 1).then(() => this.narrator.slowmoEnd())
+    }
+
+    if (key === 'theDeeperHeWent') {
+      this.narrator.slowmoStart()
+      this.narrator.sayOnce('theDeeperHeWent', 1).then(() => this.narrator.slowmoEnd())
+    }
+
+    if (key === 'torchPerfect') {
+      this.narrator.sayOnce('torchPerfect')
+    }
+
+    if (key === 'thisRoomWasDifferent') {
+      this.narrator.slowmoStart()
+      this.narrator.sayOnce('thisRoomWasDifferent').then(() => this.narrator.slowmoEnd())
+    }
+
+    if (key === 'slowlyHeBeganToQuestion') {
+      this.narrator.slowmoStart()
+      this.narrator.sayOnce('slowlyHeBeganToQuestion', 1).then(() => this.narrator.slowmoEnd())
+    }
+
+    if (key === 'aTimeeater') {
+      this.narrator.slowmoStart()
+      this.narrator.sayOnce('aTimeeater').then(() => {
+        this.narrator.slowmoEnd()
+      })
+    }
+
+    if (key === 'itsGettingHot') {
+      this.narrator.sayOnce('itsGettingHot')
+    }
+
+    if (key === 'aScoutsEye') {
+      this.narrator.sayOnce('aScoutsEye')
+    }
+
+    if (key === 'shieldSpell') {
+      this.narrator.sayOnce('shieldSpell')
+    }
+
+    if (key === 'theEnd') {
+      this.narrator.freezeStart()
+      this.narrator.sayOnce('theEnd', 1).then(() => {
+        this.narrator.freezeEnd()
+        const items = this.registry.get('items')
+        items.push('sword')
+        items.push('torch')
+        items.push('torch')
+        this.registry.set('items', items)
+        this.registry.set('weapon', 'sword')
+        this.registry.set('health', 30)
+        this.registry.set('maxHealth', 30)
+        this.registry.set('damage', 1337 / 2)
+      })
+    }
+
+    if (key === 'outtakes') {
+      this.narrator.sayOnce('outtakes', 0, 1)
+    }
+  }
+
+  playStoryElementOnce(key) {
+    if (!this.registry.get('narratorSaid').includes(key)) {
+      this.playStoryElement(key)
+    }
   }
 
   playIdleNarrative() {
@@ -817,7 +949,7 @@ export default class DungeonScene extends Phaser.Scene {
     })
   }
 
-  addEnemies(revisit) {
+  addEnemies() {
     const maxEnemies = Math.min(10, this.dungeonNumber - 1)
     if (this.dungeonNumber > 1) {
       this.otherRooms.forEach(room => {
@@ -1082,8 +1214,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   addFireTraps() {
-    this.fireTraps = []
-    if (this.dungeonNumber > 5) {
+    if (this.registry.get('narratorSaid').includes('torchPerfect')) {
       const allowedTiles = [
         ...TILES.WALL.TOP[2].map(t => t.index),
         ...TILES.WALL.BOTTOM.map(t => t.index),
@@ -1239,21 +1370,32 @@ export default class DungeonScene extends Phaser.Scene {
     })
   }
 
-  addItems() {
-    if (this.dungeonNumber >= 3 && !this.hero.hasItem('sword')) {
+  addObjects() {
+    const narratorSaid = this.registry.get('narratorSaid')
+    const items = this.registry.get('items')
+
+    if ((narratorSaid.includes('killingAllTheseEnemies')) && !items.includes('sword')) {
       this.addSword()
     }
 
-    if (this.dungeonNumber >= 5 && this.dungeonNumber % 2) {
+    if (items.includes('sword') && !narratorSaid.includes('theDeeperHeWent')) {
       this.addTorch()
     }
 
-    if (this.dungeonNumber >= 7 && !this.hero.hasItem('shield')) {
+    if (narratorSaid.includes('torchPerfect')) {
+      this.addFireTraps()
+    }
+
+    if (narratorSaid.includes('torchPerfect') && !items.includes('pathfinder')) {
+      this.addPathfinder()
+    }
+
+    if (narratorSaid.includes('aScoutsEye') && !items.includes('shield')) {
       this.addShieldScroll()
     }
 
-    if (this.dungeonNumber >= 9 && !this.hero.hasItem('pathfinder')) {
-      this.addPathfinder()
+    if (narratorSaid.includes('shieldSpell')) {
+      this.addTimebomb()
     }
   }
 
@@ -1280,7 +1422,6 @@ export default class DungeonScene extends Phaser.Scene {
       objectB: this.sword,
       callback: (collision) => {
         if (this.hero.dead || collision.bodyA.isSensor) return
-
         this.registry.set('weapon', 'sword')
         const items = this.registry.get('items')
         items.push('sword')
@@ -1329,7 +1470,7 @@ export default class DungeonScene extends Phaser.Scene {
 
   addPathfinder(x, y) {
     if (!x && !y) {
-      this.pathFinderRoom = this.dungeon.r.randomPick(this.otherRooms)
+      this.pathFinderRoom = this.otherRooms.find(r => !r.hasFireTraps)
       x = this.tileToWorldX(Phaser.Utils.Array.GetRandom([this.pathFinderRoom.left + 3, this.pathFinderRoom.right - 2])) + 12
       y = this.tileToWorldY(Phaser.Utils.Array.GetRandom([this.pathFinderRoom.top + 5, this.pathFinderRoom.bottom - 2])) + 12
     }
@@ -1395,7 +1536,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   addTimebomb() {
-    if (this.dungeonNumber >= 9) {
+    if (this.registry.get('narratorSaid').includes('shieldSpell')) {
       this.timebombRoom = this.otherRooms.sort((a, b) => b.width * b.height - a.width * a.height)[0]
 
       this.timebomb = this.add.container(this.tileToWorldX(this.timebombRoom.centerX),this.tileToWorldY(this.timebombRoom.centerY))
@@ -1602,12 +1743,11 @@ export default class DungeonScene extends Phaser.Scene {
         this.narrator.sayOnce('dungeonStartedToQuake')
       }
       if (minutes === 0 && seconds === 10) {
-        this.cameras.main.shake(10000, 0.005)
+        this.cameras.main.shake(10000, 0.003)
       }
       if (minutes === 0 && seconds === 0) {
         this.countdown = null
         this.countdownText.destroy()
-        this.cameras.main.shake(1000, 0.005)
         this.heroParticles.stop()
         this.hero.takeDamage(this.registry.get('maxHealth'))
       }
@@ -1704,73 +1844,58 @@ export default class DungeonScene extends Phaser.Scene {
     })
   }
 
-  setCurrentRoom() {
+  updateCurrentRoom() {
     const currentRoom = this.dungeon.getRoomAt(
       this.worldToTileX(this.hero.container.x),
       this.worldToTileY(this.hero.container.y)
     )
-    if (this.currentRoom !== currentRoom) {
+    if (currentRoom && currentRoom !== this.currentRoom) {
       this.currentRoom = currentRoom
       if (!this.visitedRooms.includes(this.currentRoom)) {
         this.visitedRooms.push(this.currentRoom)
 
-        if (this.dungeonNumber === 1 && this.currentRoom === this.endRoom) {
-          this.narrator.slowmoStart()
-          this.narrator.forceWalk = true
-          this.narrator.sayOnce('finallySomeStairs').then(() => {
-            this.narrator.slowmoEnd()
-            this.narrator.forceWalk = false
-          })
+        if (this.dungeonNumber === 1) {
+          if (this.visitedRooms.length >= 4) {
+            this.playStoryElementOnce('whatWasThisAbout')
+          }
+
+          if (this.currentRoom === this.endRoom) {
+            this.playStoryElementOnce('finallySomeStairs')
+          }
         }
 
-        if (this.dungeonNumber === 1 && this.visitedRooms.length > this.dungeon.rooms.length / 2) {
-          this.narrator.sayOnce('whatWasThisAbout')
-        }
-
-        if (this.dungeonNumber === 2 && this.enemies.find(e => e.room === this.currentRoom)) {
-          this.narrator.sayOnce('undeadCreatures')
+        if (this.dungeonNumber === 2) {
+          if (this.enemies.find(e => e.room === this.currentRoom)) {
+            this.playStoryElementOnce('undeadCreatures')
+          }
         }
 
         if (this.swordRoom && this.currentRoom === this.swordRoom) {
-          this.narrator.sayOnce('thereItWasASword')
-        }
-
-        if (this.timebombRoom && this.currentRoom === this.timebombRoom && !this.registry.get('narratorSaid').includes('aTimeeater')) {
-          this.narrator.slowmoStart()
-          this.narrator.sayOnce('aTimeeater').then(() => {
-            this.narrator.slowmoEnd()
-          })
-        }
-
-        if (this.safeRoom && this.currentRoom === this.safeRoom && !this.registry.get('narratorSaid').includes('thisRoomWasDifferent')) {
-          this.narrator.slowmoStart()
-          this.narrator.sayOnce('thisRoomWasDifferent').then(() => {
-            this.narrator.slowmoEnd()
-          })
+          this.playStoryElementOnce('thereItWasASword')
         }
 
         if (this.torchRoom && this.currentRoom === this.torchRoom) {
-          this.narrator.sayOnce('torchPerfect')
-        }
-
-        if (this.currentRoom && this.currentRoom.hasFireTraps) {
-          this.narrator.sayOnce('itsGettingHot')
+          this.playStoryElementOnce('torchPerfect')
         }
 
         if (this.pathFinderRoom && this.currentRoom === this.pathFinderRoom) {
-          this.narrator.sayOnce('aScoutsEye')
+          this.playStoryElementOnce('aScoutsEye')
+        }
+
+        if (this.safeRoom && this.currentRoom === this.safeRoom) {
+          this.playStoryElementOnce('thisRoomWasDifferent')
+        }
+
+        if (this.timebombRoom && this.currentRoom === this.timebombRoom) {
+          this.playStoryElementOnce('aTimeeater')
+        }
+
+        if (this.currentRoom.hasFireTraps) {
+          this.playStoryElementOnce('itsGettingHot')
         }
 
         if (this.shieldScrollRoom && this.currentRoom === this.shieldScrollRoom) {
-          this.narrator.sayOnce('shieldSpell')
-        }
-
-        if (this.dungeonNumber >= 12 && this.nextOuttake <= 8) {
-          this.narrator.slowmoStart()
-          this.narrator.sayOnce('outtake' + this.nextOuttake, 0, 1).then(() => {
-            this.nextOuttake++
-            this.narrator.slowmoEnd()
-          })
+          this.playStoryElementOnce('shieldSpell')
         }
       }
     }
@@ -1796,7 +1921,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.getEndRoom()
     this.hero.update()
     this.enemies.forEach(e => e.update())
-    this.setCurrentRoom()
+    this.updateCurrentRoom()
     this.updateStairParticles()
     this.updateShrineParticles()
     this.lightManager.update()

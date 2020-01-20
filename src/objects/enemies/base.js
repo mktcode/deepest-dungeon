@@ -126,8 +126,8 @@ export default class BaseEnemy {
       if (this.hp <= 0) {
         if (this.sound) this.sound.remove()
         this.dungeon.registry.set('enemiesKilled', this.dungeon.registry.get('enemiesKilled') + 1)
-        if (this.dungeon.registry.get('enemiesKilled') === 3 && !this.dungeon.registry.get('items').includes('sword')) {
-          this.dungeon.narrator.sayOnce('killingAllTheseEnemies')
+        if (this.dungeon.registry.get('enemiesKilled') === 2 && !this.dungeon.registry.get('items').includes('sword')) {
+          this.dungeon.playStoryElementOnce('killingAllTheseEnemies')
         }
         this.dead = true
         this.die()

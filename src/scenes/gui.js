@@ -111,8 +111,8 @@ export default class GuiScene extends Phaser.Scene {
 
     this.addHealthAnimation()
     this.addManaAnimation()
-
     this.addLowHealthAnimation()
+    this.addLetterBoxes()
 
     // listen to changes
     this.registry.events.on('changedata', this.update, this)
@@ -126,6 +126,33 @@ export default class GuiScene extends Phaser.Scene {
     this.updateXp()
     this.updateSelectedItem()
     this.updateItems()
+  }
+
+  addLetterBoxes() {
+    this.letterBoxHeight = this.game.scale.height / 5
+    this.letterBox1 = this.add.rectangle(this.game.scale.width / 2, -(this.letterBoxHeight / 2), this.game.scale.width, this.letterBoxHeight, 0x000000).setDepth(20)
+    this.letterBox2 = this.add.rectangle(this.game.scale.width / 2, this.game.scale.height + this.letterBoxHeight / 2, this.game.scale.width, this.letterBoxHeight, 0x000000).setDepth(20)
+  }
+
+  showLetterBoxes() {
+    this.tweens.add({
+      targets: this.letterBox1,
+      y: '+=' + this.letterBoxHeight
+    })
+    this.tweens.add({
+      targets: this.letterBox2,
+      y: '-=' + this.letterBoxHeight
+    })
+  }
+  hideLetterBoxes() {
+    this.tweens.add({
+      targets: this.letterBox1,
+      y: '-=' + this.letterBoxHeight
+    })
+    this.tweens.add({
+      targets: this.letterBox2,
+      y: '+=' + this.letterBoxHeight
+    })
   }
 
   addHealthAnimation() {
