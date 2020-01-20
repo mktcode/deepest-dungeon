@@ -5,6 +5,7 @@ import Zombie from "../objects/enemies/zombie.js";
 import Spider from "../objects/enemies/spider.js";
 import TILES from "../tile-mapping.js";
 import COLLISION_CATEGORIES from "../collision-categories.js";
+import TEXTS from "../texts.js";
 import LightManager from "../light-manager.js";
 import Narrator from '../narrator.js'
 import Sounds from '../sounds.js'
@@ -1853,50 +1854,58 @@ export default class DungeonScene extends Phaser.Scene {
       this.currentRoom = currentRoom
       if (!this.visitedRooms.includes(this.currentRoom)) {
         this.visitedRooms.push(this.currentRoom)
+      }
 
-        if (this.dungeonNumber === 1) {
-          if (this.visitedRooms.length >= 4) {
-            this.playStoryElementOnce('whatWasThisAbout')
-          }
-
-          if (this.currentRoom === this.endRoom) {
-            this.playStoryElementOnce('finallySomeStairs')
-          }
+      if (this.dungeonNumber === 1) {
+        if (this.visitedRooms.length >= 4) {
+          this.playStoryElementOnce('whatWasThisAbout')
         }
 
-        if (this.dungeonNumber === 2) {
-          if (this.enemies.find(e => e.room === this.currentRoom)) {
-            this.playStoryElementOnce('undeadCreatures')
-          }
+        if (this.currentRoom === this.endRoom) {
+          this.playStoryElementOnce('finallySomeStairs')
+          this.scene.get('Gui').showSubtitle(TEXTS.E_TO_USE_STAIRS)
+        } else {
+          this.scene.get('Gui').hideSubtitle(TEXTS.E_TO_USE_STAIRS)
         }
+      }
 
-        if (this.swordRoom && this.currentRoom === this.swordRoom) {
-          this.playStoryElementOnce('thereItWasASword')
+      if (this.dungeonNumber === 2) {
+        if (this.enemies.find(e => e.room === this.currentRoom) && !this.registry.get('narratorSaid').includes('undeadCreatures')) {
+          this.playStoryElementOnce('undeadCreatures')
+          this.scene.get('Gui').showSubtitle('Press Space to attack.')
         }
+      }
 
-        if (this.torchRoom && this.currentRoom === this.torchRoom) {
-          this.playStoryElementOnce('torchPerfect')
-        }
+      if (this.swordRoom && this.currentRoom === this.swordRoom) {
+        this.playStoryElementOnce('thereItWasASword')
+        this.scene.get('Gui').hideSubtitle(TEXTS.FIND_A_SWORD)
+      }
 
-        if (this.pathFinderRoom && this.currentRoom === this.pathFinderRoom) {
-          this.playStoryElementOnce('aScoutsEye')
-        }
+      if (this.torchRoom && this.currentRoom === this.torchRoom) {
+        this.playStoryElementOnce('torchPerfect')
+      }
 
-        if (this.safeRoom && this.currentRoom === this.safeRoom) {
-          this.playStoryElementOnce('thisRoomWasDifferent')
-        }
+      if (this.pathFinderRoom && this.currentRoom === this.pathFinderRoom) {
+        this.playStoryElementOnce('aScoutsEye')
+      }
 
-        if (this.timebombRoom && this.currentRoom === this.timebombRoom) {
-          this.playStoryElementOnce('aTimeeater')
-        }
+      if (this.safeRoom && this.currentRoom === this.safeRoom && this.registry.get('minDungeon') === 1) {
+        this.playStoryElementOnce('thisRoomWasDifferent')
+        this.scene.get('Gui').showSubtitle(TEXTS.E_TO_ACTIVATE_CHECKPOINT)
+      } else {
+        this.scene.get('Gui').hideSubtitle(TEXTS.E_TO_ACTIVATE_CHECKPOINT)
+      }
 
-        if (this.currentRoom.hasFireTraps) {
-          this.playStoryElementOnce('itsGettingHot')
-        }
+      if (this.timebombRoom && this.currentRoom === this.timebombRoom) {
+        this.playStoryElementOnce('aTimeeater')
+      }
 
-        if (this.shieldScrollRoom && this.currentRoom === this.shieldScrollRoom) {
-          this.playStoryElementOnce('shieldSpell')
-        }
+      if (this.currentRoom.hasFireTraps) {
+        this.playStoryElementOnce('itsGettingHot')
+      }
+
+      if (this.shieldScrollRoom && this.currentRoom === this.shieldScrollRoom) {
+        this.playStoryElementOnce('shieldSpell')
       }
     }
   }

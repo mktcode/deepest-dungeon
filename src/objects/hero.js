@@ -3,6 +3,7 @@ import DungeonScene from "../scenes/dungeon.js"
 import LightManager from "../light-manager.js";
 import TILES from "../tile-mapping.js";
 import COLLISION_CATEGORIES from "../collision-categories.js";
+import TEXTS from "../texts.js";
 
 export default class Hero {
   constructor(scene, x, y) {
@@ -70,6 +71,10 @@ export default class Hero {
     // attack
     this.keys.space.on('down', () => {
       if (!this.attacking) {
+        const gui = this.scene.scene.get('Gui')
+        if (gui.subtitle.text === TEXTS.SPACE_TO_ATTACK) {
+          gui.showSubtitle(TEXTS.KILL_X_UNDEAD.replace('{num}', 3))
+        }
         this.attacking = true
         this.attack(this.lastDirection).once('complete', () => {
           this.attacking = false
@@ -208,6 +213,7 @@ export default class Hero {
       ...TILES.STAIRS.OPEN[4]
     ])) {
       this.freeze()
+      this.scene.scene.get('Gui').hideSubtitle(TEXTS.E_TO_USE_STAIRS)
       const nextDungeon = this.scene.dungeonNumber + 1
       this.scene.cameras.main.fadeOut(1000, 0, 0, 0, (camera, progress) => {
         if (progress === 1) {
@@ -226,6 +232,7 @@ export default class Hero {
   useShrine() {
     if (this.isNear([...TILES.SHRINE[0], ...TILES.SHRINE[1], ...TILES.SHRINE[2]])) {
       this.scene.activateSafeRoom()
+      this.scene.scene.get('Gui').hideSubtitle(TEXTS.E_TO_ACTIVATE_CHECKPOINT)
       const healthDiff = this.scene.registry.get('maxHealth') - this.scene.registry.get('health')
       if (healthDiff) {
         for (let i = 0; i < healthDiff; i++) {

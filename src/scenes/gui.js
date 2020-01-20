@@ -113,6 +113,7 @@ export default class GuiScene extends Phaser.Scene {
     this.addManaAnimation()
     this.addLowHealthAnimation()
     this.addLetterBoxes()
+    this.addSubtitle()
 
     // listen to changes
     this.registry.events.on('changedata', this.update, this)
@@ -149,12 +150,80 @@ export default class GuiScene extends Phaser.Scene {
   hideLetterBoxes() {
     this.tweens.add({
       targets: this.letterBox1,
-      y: { from: this.letterBoxY1, to: this.letterBoxY1 - this.letterBoxHeight}
+      y: { from: this.letterBoxY1 + this.letterBoxHeight, to: this.letterBoxY1}
     })
     this.tweens.add({
       targets: this.letterBox2,
-      y: { from: this.letterBoxY2, to: this.letterBoxY2 + this.letterBoxHeight}
+      y: { from: this.letterBoxY2 - this.letterBoxHeight, to: this.letterBoxY2}
     })
+  }
+
+  addSubtitle() {
+    this.subtitleX = 0
+    this.subtitleY = this.game.scale.height - this.game.scale.height * 0.2 + 10
+    this.subtitle = this.add.text(this.subtitleX, this.subtitleY, '', {
+      font: "9px monospace",
+      fill: "#CCCCCC",
+      shadow: {
+        offsetX: 2,
+        offsetY: 2,
+        color: '#000',
+        blur: 0,
+        fill: '#000000'
+      }
+    }).setDepth(25).setAlign('center').setScale(2).setAlpha(0).setFixedSize(this.game.scale.width / 2, 100)
+  }
+
+  showSubtitle(text, hideAfter) {
+    if (text !== this.subtitle.text) {
+      if (this.subtitle.text !== '') {
+        this.tweens.add({
+          targets: this.subtitle,
+          duration: 250,
+          alpha: { from: 1, to: 0},
+          onComplete: () => {
+            this.subtitle.setText(text)
+            this.tweens.add({
+              targets: this.subtitle,
+              duration: 250,
+              alpha: { from: 0, to: 1 },
+              onComplete: () => {
+                if (hideAfter) {
+                  this.time.delayedCall(hideAfter, () => {
+                    this.hideSubtitle(text)
+                  })
+                }
+              }
+            })
+          }
+        })
+      } else {
+        this.subtitle.setText(text)
+        this.tweens.add({
+          targets: this.subtitle,
+          duration: 250,
+          alpha: { from: 0, to: 1 },
+          onComplete: () => {
+            if (hideAfter) {
+              this.time.delayedCall(hideAfter, () => {
+                this.hideSubtitle(text)
+              })
+            }
+          }
+        })
+      }
+    }
+  }
+
+  hideSubtitle(text) {
+    if (this.subtitle.text && (!text || text === this.subtitle.text)) {
+      this.tweens.add({
+        targets: this.subtitle,
+        duration: 250,
+        alpha: { from: 1, to: 0},
+        onComplete: () => this.subtitle.setText('')
+      })
+    }
   }
 
   addHealthAnimation() {
