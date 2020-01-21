@@ -6,6 +6,7 @@ import frame from "../assets/gui/frame.png";
 import orbs from "../assets/gui/orbs.png";
 import bars from "../assets/gui/bars.png";
 import items from "../assets/gui/items.png";
+import cursor from "../assets/gui/cursor.png";
 
 export default class GuiScene extends Phaser.Scene {
   constructor() {
@@ -25,6 +26,10 @@ export default class GuiScene extends Phaser.Scene {
 
   static preload(scene) {
     scene.load.image("gui-frame", frame)
+    scene.load.spritesheet("cursor", cursor, {
+      frameWidth: 42,
+      frameHeight: 46
+    })
     scene.load.spritesheet(
       "gui-orbs",
       orbs,
@@ -109,6 +114,8 @@ export default class GuiScene extends Phaser.Scene {
       this.selectedItem
     ])
 
+    this.createCursor()
+
     this.addHealthAnimation()
     this.addManaAnimation()
     this.addLowHealthAnimation()
@@ -127,6 +134,36 @@ export default class GuiScene extends Phaser.Scene {
     this.updateXp()
     this.updateSelectedItem()
     this.updateItems()
+    this.updateCursor()
+  }
+
+  createCursor() {
+    this.input.setDefaultCursor('none')
+    this.cursor = this.add.sprite(0, 0, "cursor", 0)
+    this.resetCursorIdleTime()
+    this.input.on('pointermove', () => this.resetCursorIdleTime())
+    this.input.on('pointerdown', () => {
+      this.cursor.setFrame(1)
+      this.resetCursorIdleTime()
+    })
+    this.input.on('pointerup', () => {
+      this.cursor.setFrame(0)
+      this.resetCursorIdleTime()
+    })
+  }
+
+  resetCursorIdleTime() {
+    this.cursorIdleTime = new Date().getTime()
+  }
+
+  updateCursor() {
+    this.cursor.setX(this.input.activePointer.x)
+    this.cursor.setY(this.input.activePointer.y)
+    if ((new Date().getTime() - this.cursorIdleTime) / 1000 > 3) {
+      this.cursor.setAlpha(0)
+    } else {
+      this.cursor.setAlpha(1)
+    }
   }
 
   addLetterBoxes() {
