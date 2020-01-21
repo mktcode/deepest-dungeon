@@ -1,6 +1,7 @@
 import Phaser from "phaser"
 import DungeonScene from "../scenes/dungeon.js"
 import LightManager from "../light-manager.js";
+import PathFinder from 'pathfinding'
 import TILES from "../tile-mapping.js";
 import COLLISION_CATEGORIES from "../collision-categories.js";
 import TEXTS from "../texts.js";
@@ -459,16 +460,26 @@ export default class Hero {
   }
 
   moveToXY(x, y) {
-    const vector = new Phaser.Math.Vector2({ x, y })
-    const vectorHero = { x: this.container.x + 8, y: this.container.y + 9}
-    const distance = vector.distance(vectorHero)
-    const diff = vector.subtract(vectorHero)
+    const finder = new PathFinder.AStarFinder({ allowDiagonal: true, dontCrossCorners: true })
+    const heroVector = new Phaser.Math.Vector2({ x: this.scene.worldToTileX(this.container.x + 8), y: this.scene.worldToTileY(this.container.y + 9) })
+    const targetVector = new Phaser.Math.Vector2({ x: this.scene.worldToTileX(x), y: this.scene.worldToTileY(y) })
+    const path = finder.findPath(
+      heroVector.x,
+      heroVector.y,
+      targetVector.x,
+      targetVector.y,
+      this.scene.getPathGrid()
+    )
 
-    if (distance > 2) {
-      if (Math.abs(diff.x) > 1) {
+    if (path.length > 1) {
+      const nextTargetVector = new Phaser.Math.Vector2({ x: path[1][0], y: path[1][1] })
+      const distance = nextTargetVector.distance(heroVector)
+      const diff = nextTargetVector.subtract(heroVector)
+
+      if (Math.abs(diff.x)) {
         this.container.setVelocityX(diff.x > 0 ? this.getSpeed() : -this.getSpeed())
       }
-      if (Math.abs(diff.y) > 1) {
+      if (Math.abs(diff.y)) {
         this.container.setVelocityY(diff.y > 0 ? this.getSpeed() : -this.getSpeed())
       }
 
