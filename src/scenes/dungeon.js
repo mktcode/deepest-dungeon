@@ -157,6 +157,7 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.dungeonVisits++
     this.registry.set('currentDungeon', this.dungeonNumber)
+    this.hero.setSpeedBoost(this.dungeonNumber < this.scene.registry.get('playersDeepestDungeon'))
 
     // resetting sounds and input
     this.music.setRate(1)
@@ -179,10 +180,10 @@ export default class DungeonScene extends Phaser.Scene {
     }
 
     // place hero
-    this.hero.sprites.hero.visible = false
+    this.hero.sprite.visible = false
     this.hero.freeze()
     this.time.delayedCall(1000, () => {
-      this.hero.sprites.hero.visible = true
+      this.hero.sprite.visible = true
       this.hero.dead = false
       this.hero.unfreeze()
       this.hero.jumpTo(

@@ -8,10 +8,7 @@ import TEXTS from "../texts.js";
 export default class Hero {
   constructor(scene, x, y) {
     this.scene = scene
-    this.sprites = {
-      hero: null,
-      sword: null
-    }
+
     this.keys = this.scene.input.keyboard.createCursorKeys();
     this.wasdKeys = this.scene.input.keyboard.addKeys({
       up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -26,44 +23,57 @@ export default class Hero {
     this.dead = false
     this.lastDirection = 'down'
     this.shieldActive = false
+    this.speed = 2
+    this.speedBoost = false
 
     this.addToScene(x, y)
     this.prepareShield()
     this.prepareLevelUpAnimation()
     this.prepareSpeedBoostAnimation()
+    this.initControls()
 
-    this.keys.shift.on('down', () => {
-      this.useShield()
-    })
+    this.scene.sounds.play('running', 0, false, true)
+    this.scene.sounds.play('walking', 0, false, true)
+  }
 
+  initControls() {
     // attack
     this.keys.space.on('down', () => {
-      if (!this.attacking) {
-        const gui = this.scene.scene.get('Gui')
-        if (gui.subtitle.text === TEXTS.SPACE_TO_ATTACK) {
-          gui.showSubtitle(TEXTS.KILL_X_UNDEAD.replace('{num}', 3))
-        }
-        this.attacking = true
-        this.attack(this.lastDirection).once('complete', () => {
-          this.attacking = false
-        })
+      if (this.dead) return
+      if (this.attacking) return
+
+      const gui = this.scene.scene.get('Gui')
+      if (gui.subtitle.text === TEXTS.SPACE_TO_ATTACK) {
+        gui.showSubtitle(TEXTS.KILL_X_UNDEAD.replace('{num}', 3))
       }
+      this.attacking = true
+      this.attack(this.lastDirection).once('complete', () => {
+        this.attacking = false
+      })
+    })
+
+    // shield
+    this.keys.shift.on('down', () => {
+      if (this.dead) return
+
+      this.useShield()
     })
 
     // use
     this.scene.input.keyboard.on('keyup-E', () => {
+      if (this.dead) return
+
       this.useStairs()
       this.useShrine()
       this.improveSkill()
-    });
+    })
 
     // show path
     this.scene.input.keyboard.on('keyup-Q', () => {
-      this.usePathfinder()
-    });
+      if (this.dead) return
 
-    this.scene.sounds.play('running', 0, false, true)
-    this.scene.sounds.play('walking', 0, false, true)
+      this.usePathfinder()
+    })
   }
 
   static getLevelByXp(xp) {
@@ -323,8 +333,8 @@ export default class Hero {
     this.container = this.scene.add.container(x, y).setDepth(6)
     this.scene.matter.add.gameObject(this.container)
 
-    this.sprites.hero = this.scene.add.sprite(0, -10, 'sprites', 'hero/with-weapon/walk/down/1')
-    this.container.add(this.sprites.hero)
+    this.sprite = this.scene.add.sprite(0, -10, 'sprites', 'hero/with-weapon/walk/down/1')
+    this.container.add(this.sprite)
 
     const { Body, Bodies } = Phaser.Physics.Matter.Matter
     const compoundBody = Body.create({ parts: [
@@ -411,8 +421,53 @@ export default class Hero {
     const slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
     const withSword = this.scene.registry.get('weapon') ? 'with-sword-': ''
 
-    this.sprites.hero.anims.play(name + '-' + withSword + direction + slowmo, true)
+    this.sprite.anims.play(name + '-' + withSword + direction + slowmo, true)
     return this.scene.anims.get(name + '-' + withSword + direction + slowmo)
+  }
+
+  move(direction) {
+    this.lastDirection = direction
+    this.run(direction)
+
+    // horizontal
+    if (['left', 'up-left', 'down-left'].includes(direction)) {
+      this.container.setVelocityX(-this.getSpeed())
+    } else if (['right', 'up-right', 'down-right'].includes(direction)) {
+      this.container.setVelocityX(this.getSpeed())
+    }
+
+    // vertical
+    if (['up', 'up-left', 'up-right'].includes(direction)) {
+      this.container.setVelocityY(-this.getSpeed())
+    } else if (['down', 'down-left', 'down-right'].includes(direction)) {
+      this.container.setVelocityY(this.getSpeed())
+    }
+
+    // Normalize and scale the velocity so that sprite can't move faster along a diagonal
+    const vector = new Phaser.Math.Vector2(this.container.body.velocity)
+    vector.normalize().scale(this.getSpeed())
+    this.container.setVelocity(vector.x, vector.y)
+
+    // play sound
+    const sound = this.scene.narrator.forceWalk ? this.scene.sounds.walking : this.scene.sounds.running
+    sound.setVolume(this.speed ? 0.15 : 0)
+  }
+
+  getSpeed() {
+    let speed = this.speed
+    if (this.speedBoost) speed *= 1.5
+
+    if (this.scene.narrator.slowmo) speed *= 0.3
+    if (this.scene.narrator.forceWalk) speed *= 0.5
+    if (this.scene.narrator.freeze || this.container.body.isStatic || this.attacking) speed = 0
+
+    return speed
+  }
+
+  setSpeedBoost(active) {
+    this.speedBoost = active
+    if (this.speedBoost) this.speedBoostAnimation.start()
+    else this.speedBoostAnimation.stop()
   }
 
   idle(direction) {
@@ -459,7 +514,7 @@ export default class Hero {
     let heroHp = this.scene.registry.get('health')
     heroHp -= damage
     this.scene.registry.set('health', heroHp)
-    this.scene.flashSprite(this.sprites.hero)
+    this.scene.flashSprite(this.sprite)
     this.scene.popupDamageNumber(damage, this.container.x, this.container.y, '#CC0000')
     this.scene.scene.get('Gui').playHealthAnimation()
 
@@ -506,100 +561,24 @@ export default class Hero {
   }
 
   update() {
-    if (!this.dead) {
-      // Stop any previous movement from the last frame
-      this.container.setVelocity(0)
-      this.scene.sounds.running.setVolume(0)
-      this.scene.sounds.walking.setVolume(0)
+    // Stop any previous movement from the last frame
+    this.container.setVelocity(0)
+    // stop sound from last frame
+    this.scene.sounds.running.setVolume(0)
+    this.scene.sounds.walking.setVolume(0)
 
-      const runOrWalk = this.scene.narrator.forceWalk ? 'walk' : 'run'
+    if (this.dead || this.attacking) return
 
-      this.baseSpeed = 2
-      if (this.scene.dungeonVisits > 1 && this.scene.dungeonNumber !== this.scene.registry.get('playersDeepestDungeon')) {
-        this.baseSpeed = 3
-        if (!this.speedBoostAnimation.on) {
-          this.speedBoostAnimation.start()
-        }
-      } else {
-        if (this.speedBoostAnimation.on) {
-          this.speedBoostAnimation.stop()
-        }
-      }
+    const directions = []
+    if (this.isDirectionKeyDown('up')) directions.push('up')
+    else if (this.isDirectionKeyDown('down')) directions.push('down')
+    if (this.isDirectionKeyDown('left')) directions.push('left')
+    else if (this.isDirectionKeyDown('right')) directions.push('right')
 
-      if (this.scene.narrator.slowmo) this.baseSpeed = 0.6
-      if (this.scene.narrator.freeze || this.container.body.isStatic || this.attacking) this.baseSpeed = 0
-
-      if (runOrWalk === 'walk') this.baseSpeed /= 2
-
-      // Horizontal movement
-      const sound = runOrWalk === 'run' ? this.scene.sounds.running : this.scene.sounds.walking
-      if (this.isDirectionKeyDown('left')) {
-        this.container.setVelocityX(-this.baseSpeed);
-      } else if (this.isDirectionKeyDown('right')) {
-        this.container.setVelocityX(this.baseSpeed);
-      }
-
-      // Vertical movement
-      if (this.isDirectionKeyDown('up')) {
-        this.container.setVelocityY(-this.baseSpeed);
-      } else if (this.isDirectionKeyDown('down')) {
-        this.container.setVelocityY(this.baseSpeed);
-      }
-
-      // movement sound
-      if (
-        this.isDirectionKeyDown('left') ||
-        this.isDirectionKeyDown('right') ||
-        this.isDirectionKeyDown('up') ||
-        this.isDirectionKeyDown('down')
-      ) {
-        sound.setVolume(this.baseSpeed ? 0.15 : 0)
-      }
-
-      // Normalize and scale the velocity so that sprite can't move faster along a diagonal
-      const vector = new Phaser.Math.Vector2(this.container.body.velocity)
-      vector.normalize().scale(this.baseSpeed)
-      this.container.setVelocity(vector.x, vector.y);
-
-      // Update the animation last and give left/right/down animations precedence over up animations
-      // Do nothing if slashing animation is playing
-      if (!this.attacking) {
-        if (!this.container.body.isStatic && !this.scene.narrator.freeze) {
-          if (this.isDirectionKeyDown('up')) {
-            this.lastDirection = 'up'
-            if (this.isDirectionKeyDown('left')) {
-              this.lastDirection = 'up-left'
-              this[runOrWalk]("up-left")
-            } else if (this.isDirectionKeyDown('right')) {
-              this.lastDirection = 'up-right'
-              this[runOrWalk]("up-right")
-            } else {
-              this[runOrWalk]("up")
-            }
-          } else if (this.isDirectionKeyDown('down')) {
-            this.lastDirection = 'down'
-            if (this.isDirectionKeyDown('left')) {
-              this.lastDirection = 'down-left'
-              this[runOrWalk]("down-left")
-            } else if (this.isDirectionKeyDown('right')) {
-              this.lastDirection = 'down-right'
-              this[runOrWalk]("down-right")
-            } else {
-              this[runOrWalk]("down")
-            }
-          } else if (this.isDirectionKeyDown('left')) {
-            this.lastDirection = 'left'
-            this[runOrWalk]("left")
-          } else if (this.isDirectionKeyDown('right')) {
-            this.lastDirection = 'right'
-            this[runOrWalk]("right")
-          } else {
-            this.idle()
-          }
-        } else {
-          this.idle()
-        }
-      }
+    if (directions.length) {
+      this.move(directions.join('-'))
+    } else {
+      this.idle()
     }
   }
 }
