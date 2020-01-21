@@ -30,13 +30,21 @@ export default class Hero {
     this.prepareShield()
     this.prepareLevelUpAnimation()
     this.prepareSpeedBoostAnimation()
-    this.initControls()
+    this.addControls()
 
     this.scene.sounds.play('running', 0, false, true)
     this.scene.sounds.play('walking', 0, false, true)
   }
 
-  initControls() {
+  addControls() {
+    // move by click
+    this.scene.input.on('pointerdown', pointer => {
+      this.moveTo = {
+        x: pointer.worldX,
+        y: pointer.worldY
+      }
+    })
+
     // attack
     this.keys.space.on('down', () => {
       if (this.dead) return
@@ -443,14 +451,53 @@ export default class Hero {
       this.container.setVelocityY(this.getSpeed())
     }
 
-    // Normalize and scale the velocity so that sprite can't move faster along a diagonal
-    const vector = new Phaser.Math.Vector2(this.container.body.velocity)
-    vector.normalize().scale(this.getSpeed())
-    this.container.setVelocity(vector.x, vector.y)
+    this.normalizeSpeed()
 
     // play sound
     const sound = this.scene.narrator.forceWalk ? this.scene.sounds.walking : this.scene.sounds.running
     sound.setVolume(this.speed ? 0.15 : 0)
+  }
+
+  moveToXY(x, y) {
+    const vector = new Phaser.Math.Vector2({ x, y })
+    const vectorHero = { x: this.container.x + 8, y: this.container.y + 9}
+    const distance = vector.distance(vectorHero)
+    const diff = vector.subtract(vectorHero)
+
+    if (distance > 2) {
+      if (Math.abs(diff.x) > 1) {
+        this.container.setVelocityX(diff.x > 0 ? this.getSpeed() : -this.getSpeed())
+      }
+      if (Math.abs(diff.y) > 1) {
+        this.container.setVelocityY(diff.y > 0 ? this.getSpeed() : -this.getSpeed())
+      }
+
+      this.normalizeSpeed()
+
+      const direction = [
+        'right',
+        'down-right',
+        'down',
+        'down-left',
+        'left',
+        'up-left',
+        'up',
+        'up-right'
+      ][((Math.round(Math.atan2(this.container.body.velocity.y, this.container.body.velocity.x) / (2 * Math.PI / 8))) + 8) % 8]
+      if (direction) {
+        this.lastDirection = direction
+        this.run(direction)
+      }
+    } else {
+      this.moveTo = null
+    }
+  }
+
+  normalizeSpeed() {
+    // Normalize and scale the velocity so that sprite can't move faster along a diagonal
+    const vector = new Phaser.Math.Vector2(this.container.body.velocity)
+    vector.normalize().scale(this.getSpeed())
+    this.container.setVelocity(vector.x, vector.y)
   }
 
   getSpeed() {
@@ -576,7 +623,10 @@ export default class Hero {
     else if (this.isDirectionKeyDown('right')) directions.push('right')
 
     if (directions.length) {
+      this.moveTo = null
       this.move(directions.join('-'))
+    } else if (this.moveTo) {
+      this.moveToXY(this.moveTo.x, this.moveTo.y)
     } else {
       this.idle()
     }
