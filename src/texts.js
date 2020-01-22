@@ -6,5 +6,7 @@ export default {
   E_TO_ACTIVATE_CHECKPOINT: 'Press E or click to activate checkpoint.',
   SPACE_TO_ATTACK: 'Press Space or click on enemy to attack.',
   KILL_X_UNDEAD: 'Kill {num} undead.',
-  FIND_A_SWORD: 'Find a sword.'
+  FIND_A_SWORD: 'Find a sword.',
+  Q_TO_USE_PATHFINDER: 'Press Q to show the path to the doors.',
+  SHIFT_TO_USE_SHIELD: 'Press Shift to use your shield spell.'
 }

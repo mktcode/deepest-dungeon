@@ -1571,6 +1571,10 @@ export default class DungeonScene extends Phaser.Scene {
         tween.remove()
         this.pathfinder.destroy()
         this.lightManager.removeLight(this.pathfinder)
+        this.scene.get('Gui').showSubtitle(TEXTS.Q_TO_USE_PATHFINDER)
+        this.time.delayedCall(5000, () => {
+          this.scene.get('Gui').hideSubtitle(TEXTS.Q_TO_USE_PATHFINDER)
+        })
       }
     });
   }
@@ -1604,6 +1608,10 @@ export default class DungeonScene extends Phaser.Scene {
         tween.remove()
         this.shieldScroll.destroy()
         this.lightManager.removeLight(this.shieldScroll)
+        this.scene.get('Gui').showSubtitle(TEXTS.SHIFT_TO_USE_SHIELD)
+        this.time.delayedCall(5000, () => {
+          this.scene.get('Gui').hideSubtitle(TEXTS.SHIFT_TO_USE_SHIELD)
+        })
       }
     });
   }
