@@ -126,30 +126,36 @@ export default class DungeonScene extends Phaser.Scene {
     this.cameras.main.setZoom(this.registry.get('zoom'))
     this.cameras.main.fadeIn(1000, 0, 0, 0)
 
-    if (this.dungeonNumber === 2) {
-      this.music.play()
-    }
+    // ALERT: DIRTY WORKAROUND: BUG: Dungeon depends on Gui and vice verca on start up. Needs to be fixed.
+    setTimeout(() => {
+      const gui = this.scene.get('Gui')
 
-    const narratorSaid = this.registry.get('narratorSaid')
-    if (!narratorSaid.includes('whereAmI')) {
-      this.playStoryElementOnce('whereAmI').then(() => {
-        this.scene.get('Gui').showSubtitle(TEXTS.WASD_TO_MOVE)
-      })
-    } else {
-      if (this.registry.get('items').includes('sword') && !narratorSaid.includes('theDeeperHeWent')) {
-        this.playStoryElementOnce('theDeeperHeWent')
-      } else if (narratorSaid.includes('theDeeperHeWent') && !narratorSaid.includes('maybeAboutDecisions')) {
-        this.playStoryElementOnce('maybeAboutDecisions')
-      } else if (narratorSaid.includes('maybeAboutDecisions') && !narratorSaid.includes('slowlyHeBeganToQuestion')) {
-        this.playStoryElementOnce('slowlyHeBeganToQuestion')
-      } else if (narratorSaid.includes('slowlyHeBeganToQuestion') && narratorSaid.includes('aTimeeater') && narratorSaid.includes('shieldSpell') && narratorSaid.includes('aScoutsEye') && !narratorSaid.includes('theEnd')) {
-        this.playStoryElementOnce('theEnd')
-        this.addCredits()
-      } else if (narratorSaid.includes('theEnd')) {
-        this.playStoryElementOnce('outtakes')
-        this.addCredits()
+      if (this.dungeonNumber === 2) {
+        this.music.play()
+        gui.showChapterIntroText(1, TEXTS.CHAPTER_ONE)
       }
-    }
+
+      const narratorSaid = this.registry.get('narratorSaid')
+      if (!narratorSaid.includes('whereAmI')) {
+        this.playStoryElementOnce('whereAmI').then(() => {
+          gui.showSubtitle(TEXTS.WASD_TO_MOVE)
+        })
+      } else {
+        if (this.registry.get('items').includes('sword') && !narratorSaid.includes('theDeeperHeWent')) {
+          this.playStoryElementOnce('theDeeperHeWent')
+        } else if (narratorSaid.includes('theDeeperHeWent') && !narratorSaid.includes('maybeAboutDecisions')) {
+          this.playStoryElementOnce('maybeAboutDecisions')
+        } else if (narratorSaid.includes('maybeAboutDecisions') && !narratorSaid.includes('slowlyHeBeganToQuestion')) {
+          this.playStoryElementOnce('slowlyHeBeganToQuestion')
+        } else if (narratorSaid.includes('slowlyHeBeganToQuestion') && narratorSaid.includes('aTimeeater') && narratorSaid.includes('shieldSpell') && narratorSaid.includes('aScoutsEye') && !narratorSaid.includes('theEnd')) {
+          this.playStoryElementOnce('theEnd')
+          this.addCredits()
+        } else if (narratorSaid.includes('theEnd')) {
+          this.playStoryElementOnce('outtakes')
+          this.addCredits()
+        }
+      }
+    }, 100)
   }
 
   wake() {

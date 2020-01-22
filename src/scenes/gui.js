@@ -228,6 +228,41 @@ export default class GuiScene extends Phaser.Scene {
     }
   }
 
+  showChapterIntroText(num, title) {
+    this.time.delayedCall(1000, () => {
+      const chapterNum = this.add.text(0, this.game.scale.height * 0.2 - 50, 'Chapter ' + num, {
+        font: "8px monospace",
+        fill: "#CCCCCC"
+      }).setDepth(25).setAlign('center').setAlpha(0).setScale(3).setFixedSize(this.game.scale.width / 3, 200)
+      const chapterTitle = this.add.text(0, this.game.scale.height * 0.2, title, {
+        font: "16px monospace",
+        fill: "#CCCCCC"
+      }).setDepth(25).setAlign('center').setAlpha(0).setScale(3).setFixedSize(this.game.scale.width / 3, 200)
+
+      this.tweens.add({
+        targets: [chapterNum, chapterTitle],
+        duration: 3000,
+        scale: { from: 3, to: 4 },
+        alpha: { from: 0, to: 1},
+        x: '-=' + this.game.scale.width / 5.5,
+        ease: 'Qubic',
+        onComplete: () => {
+          this.tweens.add({
+            targets: [chapterNum, chapterTitle],
+            duration: 3000,
+            scale: { from: 4, to: 5 },
+            alpha: { from: 1, to: 0},
+            x: '-=' + this.game.scale.width / 5.5,
+            onComplete: () => {
+              chapterNum.destroy()
+              chapterTitle.destroy()
+            }
+          })
+        }
+      })
+    })
+  }
+
   addHealthAnimation() {
     this.healthAnimationParticle = this.add.particles('particle').setDepth(-1)
     this.healthAnimation = this.healthAnimationParticle.createEmitter({
