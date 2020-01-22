@@ -540,9 +540,11 @@ export default class Hero {
   }
 
   setSpeedBoost(active) {
-    this.speedBoost = active
-    if (this.speedBoost) this.speedBoostAnimation.start()
-    else this.speedBoostAnimation.stop()
+    if (this.speedBoost !== active) {
+      this.speedBoost = active
+      if (this.speedBoost) this.speedBoostAnimation.start()
+      else this.speedBoostAnimation.stop()
+    }
   }
 
   idle(direction) {
@@ -650,13 +652,17 @@ export default class Hero {
     if (this.isDirectionKeyDown('left')) directions.push('left')
     else if (this.isDirectionKeyDown('right')) directions.push('right')
 
+    const hasSpeedBoost = this.scene.dungeonNumber < this.scene.registry.get('playersDeepestDungeon')
     if (directions.length) {
       this.moveTo = null
       this.move(directions.join('-'))
+      this.setSpeedBoost(hasSpeedBoost)
     } else if (this.moveTo) {
       this.moveToXY(this.moveTo.x, this.moveTo.y)
+      this.setSpeedBoost(hasSpeedBoost)
     } else {
       this.idle()
+      this.setSpeedBoost(false)
     }
   }
 }

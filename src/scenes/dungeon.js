@@ -165,7 +165,6 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.dungeonVisits++
     this.registry.set('currentDungeon', this.dungeonNumber)
-    this.hero.setSpeedBoost(this.dungeonNumber < this.registry.get('playersDeepestDungeon'))
 
     // resetting sounds and input
     this.music.setRate(1)
