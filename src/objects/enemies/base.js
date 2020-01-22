@@ -126,16 +126,17 @@ export default class BaseEnemy {
       this.sprite.setVelocity(0)
       if (this.hp <= 0) {
         if (this.sound) this.sound.remove()
+        this.dungeon.registry.set('enemiesKilled', this.dungeon.registry.get('enemiesKilled') + 1)
 
         if (!this.dungeon.registry.get('items').includes('sword')) {
-          this.dungeon.registry.set('enemiesKilled', this.dungeon.registry.get('enemiesKilled') + 1)
           if (this.dungeon.registry.get('enemiesKilled') === 1) {
             this.dungeon.scene.get('Gui').showSubtitle(TEXTS.KILL_X_UNDEAD.replace('{num}', 2))
           } else if (this.dungeon.registry.get('enemiesKilled') === 2) {
             this.dungeon.scene.get('Gui').subtitle.setText(TEXTS.KILL_X_UNDEAD.replace('{num}', 1))
-        } else if (this.dungeon.registry.get('enemiesKilled') === 3) {
-            this.dungeon.playStoryElementOnce('killingAllTheseEnemies')
-            this.dungeon.scene.get('Gui').showSubtitle(TEXTS.FIND_A_SWORD, 12000)
+          } else if (this.dungeon.registry.get('enemiesKilled') === 3) {
+            this.dungeon.playStoryElementOnce('killingAllTheseEnemies').then(() => {
+              this.dungeon.scene.get('Gui').showSubtitle(TEXTS.FIND_A_SWORD, 12000)
+            })
           }
         }
 

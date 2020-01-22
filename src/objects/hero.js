@@ -434,7 +434,22 @@ export default class Hero {
     return this.scene.anims.get(name + '-' + withSword + direction + slowmo)
   }
 
+  updateSubtitles() {
+    const gui = this.scene.scene.get('Gui')
+    if (gui.subtitle.text === TEXTS.WASD_TO_MOVE) {
+      gui.hideSubtitle(TEXTS.WASD_TO_MOVE)
+      gui.showSubtitle(TEXTS.FIND_THE_STAIRS)
+      this.scene.time.delayedCall(5000, () => {
+        if (gui.subtitle.text === TEXTS.FIND_THE_STAIRS) {
+          gui.hideSubtitle(TEXTS.FIND_THE_STAIRS)
+        }
+      })
+    }
+  }
+
   move(direction) {
+    this.updateSubtitles()
+
     this.lastDirection = direction
     this.run(direction)
 
@@ -460,6 +475,8 @@ export default class Hero {
   }
 
   moveToXY(x, y) {
+    this.updateSubtitles()
+
     const finder = new PathFinder.AStarFinder({ allowDiagonal: true, dontCrossCorners: true })
     const heroVector = new Phaser.Math.Vector2({ x: this.scene.worldToTileX(this.container.x + 8), y: this.scene.worldToTileY(this.container.y + 9) })
     const targetVector = new Phaser.Math.Vector2({ x: this.scene.worldToTileX(x), y: this.scene.worldToTileY(y) })

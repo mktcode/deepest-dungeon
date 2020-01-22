@@ -208,45 +208,15 @@ export default class GuiScene extends Phaser.Scene {
         blur: 0,
         fill: '#000000'
       }
-    }).setDepth(25).setAlign('center').setScale(2).setAlpha(0).setFixedSize(this.game.scale.width / 2, 100)
+    }).setDepth(25).setAlign('center').setScale(2).setFixedSize(this.game.scale.width / 2, 100)
   }
 
   showSubtitle(text, hideAfter) {
     if (text !== this.subtitle.text) {
-      if (this.subtitle.text !== '') {
-        this.tweens.add({
-          targets: this.subtitle,
-          duration: 250,
-          alpha: { from: 1, to: 0},
-          onComplete: () => {
-            this.subtitle.setText(text)
-            this.tweens.add({
-              targets: this.subtitle,
-              duration: 250,
-              alpha: { from: 0, to: 1 },
-              onComplete: () => {
-                if (hideAfter) {
-                  this.time.delayedCall(hideAfter, () => {
-                    this.hideSubtitle(text)
-                  })
-                }
-              }
-            })
-          }
-        })
-      } else {
-        this.subtitle.setText(text)
-        this.tweens.add({
-          targets: this.subtitle,
-          duration: 250,
-          alpha: { from: 0, to: 1 },
-          onComplete: () => {
-            if (hideAfter) {
-              this.time.delayedCall(hideAfter, () => {
-                this.hideSubtitle(text)
-              })
-            }
-          }
+      this.subtitle.setText(text)
+      if (hideAfter) {
+        this.time.delayedCall(hideAfter, () => {
+          this.subtitle.setText('')
         })
       }
     }
@@ -254,12 +224,7 @@ export default class GuiScene extends Phaser.Scene {
 
   hideSubtitle(text) {
     if (this.subtitle.text && (!text || text === this.subtitle.text)) {
-      this.tweens.add({
-        targets: this.subtitle,
-        duration: 250,
-        alpha: { from: 1, to: 0},
-        onComplete: () => this.subtitle.setText('')
-      })
+      this.subtitle.setText('')
     }
   }
 
@@ -409,9 +374,6 @@ export default class GuiScene extends Phaser.Scene {
       this.registry.set('skillPoints', this.registry.get('skillPoints') + 1)
       const currentDungeon = this.scene.get('Dungeon' + this.registry.get('currentDungeon'))
       currentDungeon.hero.levelUpAnimation()
-      currentDungeon.time.delayedCall(1000, () => {
-        currentDungeon.lightManager.removeLight(currentDungeon.hero.sprites.levelUp)
-      })
     }
     const lastMaxXp = Hero.getXpForLevelUp(xpBasedLevel)
     const currentMaxXp = Hero.getXpForLevelUp(xpBasedLevel + 1)
