@@ -738,6 +738,8 @@ export default class DungeonScene extends Phaser.Scene {
           ...TILES.STAIRS.OPEN[3],
           ...TILES.STAIRS.OPEN[4]
         ].includes(tile.index)) {
+          this.hero.moveTo = null
+          this.hero.targetedEnemy = null
           this.hero.useStairs()
         }
       })
@@ -814,6 +816,8 @@ export default class DungeonScene extends Phaser.Scene {
           ...TILES.SHRINE[1],
           ...TILES.SHRINE[2]
         ].includes(tile.index)) {
+          this.hero.moveTo = null
+          this.hero.targetedEnemy = null
           this.hero.useShrine()
         }
       })
