@@ -151,6 +151,7 @@ export default class DungeonScene extends Phaser.Scene {
           this.playStoryElementOnce('theEnd')
           this.addCredits()
         } else if (narratorSaid.includes('theEnd')) {
+          this.narrator.blockStairs = false
           this.playStoryElementOnce('outtakes')
           this.addCredits()
         }
@@ -180,11 +181,15 @@ export default class DungeonScene extends Phaser.Scene {
     // add new enemies
     this.addEnemies()
 
+    // narrative
     if (!this.registry.get('narratorSaid').includes('whenHeWasDefeated')) {
       this.playStoryElementOnce('whenHeWasDefeated')
     } else {
       this.playStoryElementOnce('againEmptiness')
     }
+
+    // unblock stairs while narrator is speaking
+    this.narrator.blockStairs = false
 
     // place hero
     this.hero.sprite.visible = false
