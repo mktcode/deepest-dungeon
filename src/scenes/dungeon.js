@@ -180,6 +180,7 @@ export default class DungeonScene extends Phaser.Scene {
 
     // add new enemies
     this.addEnemies()
+    this.hero.targetedEnemy = null
 
     // narrative
     if (!this.registry.get('narratorSaid').includes('whenHeWasDefeated')) {
@@ -1027,10 +1028,11 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   addEnemies() {
-    const maxEnemies = Math.min(10, this.dungeonNumber - 1)
+    const maxEnemies = 1 //Math.min(16, this.dungeonNumber)
+    const minEnemies = 1 //Math.max(2, maxEnemies - 8)
     if (this.dungeonNumber > 1) {
       this.otherRooms.forEach(room => {
-        const num = this.dungeon.r.randomInteger(1, maxEnemies)
+        const num = this.dungeon.r.randomInteger(minEnemies, maxEnemies)
         for (let i = 1; i <= num; i++) {
           if (this.dungeonNumber > 6) {
             if (Phaser.Math.Between(0, 2)) {

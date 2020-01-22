@@ -20,6 +20,14 @@ export default class BaseEnemy {
     this.xp = xp
     this.damage = damage
     this.sprite = this.dungeon.matter.add.sprite(x, y, 'sprites', 0)
+    this.sprite.setData('name', this.name)
+
+    this.sprite.on('pointerover', () => {
+      this.sprite.setTint(0xFF0000)
+    })
+    this.sprite.on('pointerout', () => {
+      this.sprite.clearTint()
+    })
 
     this.walk()
 
@@ -91,13 +99,20 @@ export default class BaseEnemy {
   }
 
   setCollision(width, height, originX, originY) {
+    this.inputRect = new Phaser.Geom.Rectangle(0, 0, width + 10, height + 10)
+
     this.sprite
       .setRectangle(width, height)
       .setCollisionCategory(COLLISION_CATEGORIES.ENEMY)
       .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.HERO])
       .setOrigin(originX, originY)
       .setFixedRotation()
+      .setInteractive(this.inputRect, Phaser.Geom.Rectangle.Contains)
       .setDepth(6)
+
+    // this totally as issues with the camera... needs fix but maybe on phaser's side
+    this.sprite.input.hitArea.x = this.sprite.width / 2
+    this.sprite.input.hitArea.y = this.sprite.height / 2 + (this.sprite.height * 0.1)
   }
 
   playAnim(name, direction) {
@@ -125,6 +140,7 @@ export default class BaseEnemy {
       this.dungeon.flashSprite(this.sprite)
       this.sprite.setVelocity(0)
       if (this.hp <= 0) {
+        this.dungeon.hero.targetedEnemy = null
         if (this.sound) this.sound.remove()
         this.dungeon.registry.set('enemiesKilled', this.dungeon.registry.get('enemiesKilled') + 1)
 

@@ -20,6 +20,7 @@ export default class Hero {
 
     this.attacking = false
     this.underAttack = false
+    this.targetedEnemy = null
     this.burning = false
     this.dead = false
     this.lastDirection = 'down'
@@ -39,26 +40,23 @@ export default class Hero {
 
   addControls() {
     // move by click
-    this.scene.input.on('pointerdown', pointer => {
-      this.moveTo = {
-        x: pointer.worldX,
-        y: pointer.worldY
+    this.scene.input.on('pointerdown', (pointer, currentlyOver) => {
+      const targetedEnemy = currentlyOver.find(co => ['spider', 'zombie'].includes(co.getData('name')))
+      if (targetedEnemy) {
+        this.moveTo = null
+        this.targetedEnemy = targetedEnemy
+      } else {
+        this.targetedEnemy = null
+        this.moveTo = {
+          x: pointer.worldX,
+          y: pointer.worldY
+        }
       }
     })
 
     // attack
     this.keys.space.on('down', () => {
-      if (this.dead) return
-      if (this.attacking) return
-
-      const gui = this.scene.scene.get('Gui')
-      if (gui.subtitle.text === TEXTS.SPACE_TO_ATTACK) {
-        gui.showSubtitle(TEXTS.KILL_X_UNDEAD.replace('{num}', 3))
-      }
-      this.attacking = true
-      this.attack(this.lastDirection).once('complete', () => {
-        this.attacking = false
-      })
+      this.doAttack()
     })
 
     // shield
@@ -82,6 +80,20 @@ export default class Hero {
       if (this.dead) return
 
       this.usePathfinder()
+    })
+  }
+
+  doAttack() {
+    if (this.dead) return
+    if (this.attacking) return
+
+    const gui = this.scene.scene.get('Gui')
+    if (gui.subtitle.text === TEXTS.SPACE_TO_ATTACK) {
+      gui.showSubtitle(TEXTS.KILL_X_UNDEAD.replace('{num}', 3))
+    }
+    this.attacking = true
+    this.attack(this.lastDirection).once('complete', () => {
+      this.attacking = false
     })
   }
 
@@ -488,7 +500,9 @@ export default class Hero {
       this.scene.getPathGrid()
     )
 
-    if (path.length > 1) {
+    const minDistance = this.targetedEnemy ? 2 : 1
+
+    if (path.length > minDistance) {
       const nextTargetVector = new Phaser.Math.Vector2({ x: path[1][0], y: path[1][1] })
       const distance = nextTargetVector.distance(heroVector)
       const diff = nextTargetVector.subtract(heroVector)
@@ -518,6 +532,13 @@ export default class Hero {
       }
     } else {
       this.moveTo = null
+      if (this.targetedEnemy) {
+        const diff = { x: this.targetedEnemy.x - this.container.x, y: this.targetedEnemy.y - this.container.y }
+        const directionIndex = ((Math.round(Math.atan2(diff.y, diff.x) / (2 * Math.PI / 8))) + 8) % 8
+        const direction = ['right', 'down-right', 'down', 'down-left', 'left', 'up-left', 'up', 'up-right'][directionIndex]
+        this.lastDirection = direction
+        this.doAttack()
+      }
     }
   }
 
@@ -653,12 +674,17 @@ export default class Hero {
     else if (this.isDirectionKeyDown('right')) directions.push('right')
 
     const hasSpeedBoost = this.scene.dungeonNumber < this.scene.registry.get('playersDeepestDungeon')
+
     if (directions.length) {
       this.moveTo = null
+      this.targetedEnemy = null
       this.move(directions.join('-'))
       this.setSpeedBoost(hasSpeedBoost)
     } else if (this.moveTo) {
       this.moveToXY(this.moveTo.x, this.moveTo.y)
+      this.setSpeedBoost(hasSpeedBoost)
+    } else if (this.targetedEnemy) {
+      this.moveToXY(this.targetedEnemy.x, this.targetedEnemy.y)
       this.setSpeedBoost(hasSpeedBoost)
     } else {
       this.idle()
