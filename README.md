@@ -2,6 +2,7 @@
 
 - [ ] BUG: safe room light not visible when safe room is to the top
 - [ ] BUG: death animation doesn't trigger sometimes
+- [ ] BUG: can't click inside of door to move
 - [ ] trapdoors, random tiles change after standing on them too long, instant death
 - [ ] more story
 - [ ] implement global high score
