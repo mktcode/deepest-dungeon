@@ -621,7 +621,7 @@ export default class DungeonScene extends Phaser.Scene {
           this.walls.push(this.matter.add.rectangle(topDoorRight + 2, worldTop - 20, 5, 40, this.wallPhysics))
         }
         if (door.x === 0) {
-          const leftDoorTop = this.tileToWorldY(top + door.y) + 22
+          const leftDoorTop = this.tileToWorldY(top + door.y) + 17
           const leftDoorBottom = this.tileToWorldY(top + door.y) + 62
           this.walls.push(this.matter.add.rectangle(worldLeft - 16, leftDoorTop, 40, 5, this.wallPhysics))
           this.walls.push(this.matter.add.rectangle(worldLeft - 16, leftDoorBottom, 40, 5, this.wallPhysics))
@@ -652,8 +652,8 @@ export default class DungeonScene extends Phaser.Scene {
           } else {
             slices = Slice(part, this.tileSize * door.x - 32, this.tileSize * door.y, this.tileSize * door.x + 32, this.tileSize * door.y)
             if (slices.length > 1) {
-              slices[0][1] -= 30
-              slices[0][7] -= 30
+              slices[0][1] -= 35
+              slices[0][7] -= 35
               slices[1][7] += 8
               slices[1][1] += 8
             }
