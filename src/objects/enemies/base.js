@@ -140,7 +140,10 @@ export default class BaseEnemy {
       this.dungeon.flashSprite(this.sprite)
       this.sprite.setVelocity(0)
       if (this.hp <= 0) {
-        this.dungeon.hero.targetedEnemy = null
+        this.sprite.disableInteractive()
+        if (this.dungeon.hero.targetedEnemy === this.sprite) {
+          this.dungeon.hero.targetedEnemy = null
+        }
         if (this.sound) this.sound.remove()
         this.dungeon.registry.set('enemiesKilled', this.dungeon.registry.get('enemiesKilled') + 1)
 
