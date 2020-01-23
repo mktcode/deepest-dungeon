@@ -235,14 +235,14 @@ export default class DungeonScene extends Phaser.Scene {
       blendMode: 'SCREEN',
       scale: { start: 0.2, end: 0.4 },
       alpha: { start: 0.5, end: 0 },
-      speed: 10,
-      quantity: 20,
+      speed: 5,
+      quantity: 10,
       frequency: 200,
-      lifespan: 1000,
+      lifespan: 750,
       emitZone: {
-        source: new Phaser.Geom.Circle(0, 0, 10),
+        source: new Phaser.Geom.Circle(0, 0, 5),
         type: 'edge',
-        quantity: 20
+        quantity: 10
       }
     })
 
