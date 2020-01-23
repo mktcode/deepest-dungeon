@@ -114,6 +114,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.startIdleTimer()
 
     this.addControls()
+    this.addClickAnimation()
 
     // when we come back to this dungeon after dying and when we leave it
     this.events.on('wake', () => this.wake())
@@ -223,6 +224,32 @@ export default class DungeonScene extends Phaser.Scene {
   addControls() {
     this.input.keyboard.on('keyup-ESC', () => this.pauseGame())
     this.input.on('wheel', (pointer, currentlyOver, dx, dy) => this.zoom(pointer, currentlyOver, dx, dy))
+  }
+
+  addClickAnimation() {
+    this.clickAnimationParticle = this.add.particles('particle').setDepth(1)
+    this.clickAnimation = this.clickAnimationParticle.createEmitter({
+      on: false,
+      blendMode: 'SCREEN',
+      scale: { start: 0.2, end: 0.4 },
+      alpha: { start: 0.5, end: 0 },
+      speed: 10,
+      quantity: 20,
+      frequency: 200,
+      lifespan: 1000,
+      emitZone: {
+        source: new Phaser.Geom.Circle(0, 0, 10),
+        type: 'edge',
+        quantity: 20
+      }
+    })
+
+    this.input.on('pointerdown', (pointer, currentlyOver) => {
+      const targetedEnemy = currentlyOver.find(co => ['spider', 'zombie'].includes(co.getData('name')))
+      this.clickAnimation.setTint(targetedEnemy ? 0xFF0000 : 0xFFFFFF)
+      this.clickAnimation.setPosition(pointer.worldX - 10, pointer.worldY - 10)
+      this.clickAnimation.explode()
+    })
   }
 
   pauseGame() {
