@@ -451,7 +451,7 @@ export default class Hero {
     if (gui.subtitle.text === TEXTS.WASD_TO_MOVE) {
       gui.hideSubtitle(TEXTS.WASD_TO_MOVE)
       gui.showSubtitle(TEXTS.FIND_THE_STAIRS)
-      this.scene.time.delayedCall(5000, () => {
+      this.scene.time.delayedCall(10000, () => {
         if (gui.subtitle.text === TEXTS.FIND_THE_STAIRS) {
           gui.hideSubtitle(TEXTS.FIND_THE_STAIRS)
         }
