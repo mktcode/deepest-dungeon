@@ -667,28 +667,30 @@ export default class Hero {
 
     if (this.dead || this.attacking) return
 
-    const directions = []
-    if (this.isDirectionKeyDown('up')) directions.push('up')
-    else if (this.isDirectionKeyDown('down')) directions.push('down')
-    if (this.isDirectionKeyDown('left')) directions.push('left')
-    else if (this.isDirectionKeyDown('right')) directions.push('right')
+    if (!this.scene.narrator.freeze && !this.container.body.isStatic) {
+      const directions = []
+      if (this.isDirectionKeyDown('up')) directions.push('up')
+      else if (this.isDirectionKeyDown('down')) directions.push('down')
+      if (this.isDirectionKeyDown('left')) directions.push('left')
+      else if (this.isDirectionKeyDown('right')) directions.push('right')
 
-    const hasSpeedBoost = this.scene.dungeonNumber < this.scene.registry.get('playersDeepestDungeon')
+      const hasSpeedBoost = this.scene.dungeonNumber < this.scene.registry.get('playersDeepestDungeon')
 
-    if (directions.length) {
-      this.moveTo = null
-      this.targetedEnemy = null
-      this.move(directions.join('-'))
-      this.setSpeedBoost(hasSpeedBoost)
-    } else if (this.moveTo) {
-      this.moveToXY(this.moveTo.x, this.moveTo.y)
-      this.setSpeedBoost(hasSpeedBoost)
-    } else if (this.targetedEnemy) {
-      this.moveToXY(this.targetedEnemy.x, this.targetedEnemy.y)
-      this.setSpeedBoost(hasSpeedBoost)
-    } else {
-      this.idle()
-      this.setSpeedBoost(false)
+      if (directions.length) {
+        this.moveTo = null
+        this.targetedEnemy = null
+        this.move(directions.join('-'))
+        this.setSpeedBoost(hasSpeedBoost)
+      } else if (this.moveTo) {
+        this.moveToXY(this.moveTo.x, this.moveTo.y)
+        this.setSpeedBoost(hasSpeedBoost)
+      } else if (this.targetedEnemy) {
+        this.moveToXY(this.targetedEnemy.x, this.targetedEnemy.y)
+        this.setSpeedBoost(hasSpeedBoost)
+      } else {
+        this.idle()
+        this.setSpeedBoost(false)
+      }
     }
   }
 }
