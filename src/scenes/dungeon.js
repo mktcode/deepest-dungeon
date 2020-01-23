@@ -800,7 +800,7 @@ export default class DungeonScene extends Phaser.Scene {
       }
 
       // show help text
-      if (this.dungeonNumber === 1) {
+      if (this.dungeonNumber === 1 && this.dungeonVisits === 1) {
         gui.showSubtitle(TEXTS.E_TO_USE_STAIRS)
       }
     } else {
