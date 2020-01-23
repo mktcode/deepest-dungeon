@@ -184,10 +184,12 @@ export default class DungeonScene extends Phaser.Scene {
     this.hero.targetedEnemy = null
 
     // narrative
-    if (!this.registry.get('narratorSaid').includes('whenHeWasDefeated')) {
-      this.playStoryElementOnce('whenHeWasDefeated')
-    } else {
-      this.playStoryElementOnce('againEmptiness')
+    if (this.dungeonNumber === this.registry.get('minDungeon')) {
+      if (!this.registry.get('narratorSaid').includes('whenHeWasDefeated')) {
+        this.playStoryElementOnce('whenHeWasDefeated')
+      } else {
+        this.playStoryElementOnce('againEmptiness')
+      }
     }
 
     // unblock stairs while narrator is speaking
@@ -341,6 +343,14 @@ export default class DungeonScene extends Phaser.Scene {
 
       if (key === 'whatWasThisAbout') {
         this.narrator.sayOnce('whatWasThisAbout').then(() => resolve())
+      }
+
+      if (key === 'whenHeWasDefeated') {
+        this.narrator.sayOnce('whenHeWasDefeated').then(() => resolve())
+      }
+
+      if (key === 'againEmptiness') {
+        this.narrator.sayOnce('againEmptiness').then(() => resolve())
       }
 
       if (key === 'finallySomeStairs') {
