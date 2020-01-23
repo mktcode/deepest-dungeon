@@ -145,16 +145,22 @@ export default class BaseEnemy {
           this.dungeon.hero.targetedEnemy = null
         }
         if (this.sound) this.sound.remove()
-        this.dungeon.registry.set('enemiesKilled', this.dungeon.registry.get('enemiesKilled') + 1)
+
+        let enemiesKilled = this.dungeon.registry.get('enemiesKilled')
+        enemiesKilled++
+        this.dungeon.registry.set('enemiesKilled', enemiesKilled)
+
+        const gui = this.dungeon.scene.get('Gui')
 
         if (!this.dungeon.registry.get('items').includes('sword')) {
-          if (this.dungeon.registry.get('enemiesKilled') === 1) {
-            this.dungeon.scene.get('Gui').showSubtitle(TEXTS.KILL_X_UNDEAD.replace('{num}', 2))
-          } else if (this.dungeon.registry.get('enemiesKilled') === 2) {
-            this.dungeon.scene.get('Gui').subtitle.setText(TEXTS.KILL_X_UNDEAD.replace('{num}', 1))
-          } else if (this.dungeon.registry.get('enemiesKilled') === 3) {
+          if (enemiesKilled === 1) {
+            gui.showSubtitle(TEXTS.KILL_X_UNDEAD.replace('{num}', 2))
+          } else if (enemiesKilled === 2) {
+            gui.subtitle.setText(TEXTS.KILL_X_UNDEAD.replace('{num}', 1))
+          } else if (enemiesKilled === 3) {
+            gui.hideSubtitle(TEXTS.KILL_X_UNDEAD.replace('{num}', 1))
             this.dungeon.playStoryElementOnce('killingAllTheseEnemies').then(() => {
-              this.dungeon.scene.get('Gui').showSubtitle(TEXTS.FIND_A_SWORD, 12000)
+              gui.showSubtitle(TEXTS.FIND_A_SWORD, 12000)
             })
           }
         }
