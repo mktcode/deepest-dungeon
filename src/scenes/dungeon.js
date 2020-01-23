@@ -1059,8 +1059,8 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   addEnemies() {
-    const maxEnemies = 1 //Math.min(16, this.dungeonNumber)
-    const minEnemies = 1 //Math.max(2, maxEnemies - 8)
+    const maxEnemies = Math.min(16, this.dungeonNumber)
+    const minEnemies = Math.max(2, maxEnemies - 8)
     if (this.dungeonNumber > 1) {
       this.otherRooms.forEach(room => {
         const num = this.dungeon.r.randomInteger(minEnemies, maxEnemies)
