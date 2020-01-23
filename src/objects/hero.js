@@ -41,15 +41,17 @@ export default class Hero {
   addControls() {
     // move by click
     this.scene.input.on('pointerdown', (pointer, currentlyOver) => {
-      const targetedEnemy = currentlyOver.find(co => ['spider', 'zombie'].includes(co.getData('name')))
-      if (targetedEnemy) {
-        this.moveTo = null
-        this.targetedEnemy = targetedEnemy
-      } else {
-        this.targetedEnemy = null
-        this.moveTo = {
-          x: pointer.worldX,
-          y: pointer.worldY
+      if (pointer.leftButtonDown()) {
+        const targetedEnemy = currentlyOver.find(co => ['spider', 'zombie'].includes(co.getData('name')))
+        if (targetedEnemy) {
+          this.moveTo = null
+          this.targetedEnemy = targetedEnemy
+        } else {
+          this.targetedEnemy = null
+          this.moveTo = {
+            x: pointer.worldX,
+            y: pointer.worldY
+          }
         }
       }
     })
