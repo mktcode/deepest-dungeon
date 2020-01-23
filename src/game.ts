@@ -37,7 +37,8 @@ const config: GameConfig = {
         mapping: 'matterCollision'
       }
     ]
-  }
+  },
+  disableContextMenu: true
 }
 
 const game = new Phaser.Game(config)
