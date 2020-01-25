@@ -29,6 +29,8 @@
 - [ ] chapter popup text
 - [ ] sound effects must be quiter when narrator speaks
 - [ ] make character slide/speed up/down a bit
+- [ ] make timeeater a sensor
+- [ ] look around idle animation
 - [ ] Narrative
   - [ ] adjust volumes
 - [ ] add/improve sounds
