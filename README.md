@@ -46,6 +46,11 @@
   - [ ] permanent leveling
   - [ ] randomly meet other players
     - [ ] they introduced themselves with theirs names: input field, initiate chat
+- [ ] when you find an item, make the level depending on that item:
+  - find pathfinder: make levels bigger
+  - find shield: more enemies running at you
+  - find fireball: make flamable stuff you need to break to reach the doors
+  - etc
 
 # phaser-electron-typescript-parcel [![Build Status](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel.svg?branch=master)](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel)
 
