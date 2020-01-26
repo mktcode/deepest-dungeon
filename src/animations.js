@@ -8,6 +8,7 @@ export default class Animations {
     this.createHeroAnim('run', 1.5)
     this.createHeroAnim('attack', 1.5)
     this.createHeroAnim('die', 1.5)
+    this.createHeroAnim('look-around', 0.7)
 
     this.createZombiAnim('walk', 1.5)
     this.createZombiAnim('die', 1.5)

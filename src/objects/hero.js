@@ -571,7 +571,17 @@ export default class Hero {
   }
 
   idle(direction) {
-    return this.playAnim('idle', direction)
+    const now = new Date().getTime() / 1000
+    if (now - this.scene.idleTimer > 5 && !Math.floor((now - this.scene.idleTimer) % 10)) {
+      this.looking = true
+    }
+    if (this.looking) {
+      const anim = this.lookAround()
+      anim.on('complete', () => this.looking = false)
+      return anim
+    } else {
+      return this.playAnim('idle', direction)
+    }
   }
 
   walk(direction) {
@@ -597,6 +607,10 @@ export default class Hero {
   die(direction) {
     this.scene.startIdleTimer()
     return this.playAnim('die', direction)
+  }
+
+  lookAround(direction) {
+    return this.playAnim('look-around', direction)
   }
 
   playHitSound() {
