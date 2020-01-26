@@ -96,8 +96,6 @@ export default class DungeonScene extends Phaser.Scene {
     this.fireParticleAbove = this.add.particles('particle').setDepth(10)
     this.orbParticle = this.add.particles('particle').setDepth(7)
 
-    // this.matter.world.createDebugGraphic()
-
     // build dungeon
     this.prepareMap()
     this.prepareRooms()
