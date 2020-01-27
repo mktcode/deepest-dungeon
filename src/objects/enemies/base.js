@@ -101,13 +101,15 @@ export default class BaseEnemy {
   }
 
   setCollision(x, y, width, height, originX, originY) {
+    const interactionX = this.sprite.width * originX - width / 2
+    const interactionY = this.sprite.height * originY - height / 2
     this.sprite
       .setExistingBody(Phaser.Physics.Matter.Matter.Bodies.rectangle(x, y, width, height, { label: 'enemy-' + this.name }))
       .setCollisionCategory(COLLISION_CATEGORIES.ENEMY)
       .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.HERO, COLLISION_CATEGORIES.FIREBALL])
       .setOrigin(originX, originY)
       .setFixedRotation()
-      .setInteractive(new Phaser.Geom.Rectangle(this.sprite.width * originX - width / 2, this.sprite.height * originY - height / 2, width, height), Phaser.Geom.Rectangle.Contains)
+      .setInteractive(new Phaser.Geom.Rectangle(interactionX - width * 0.25, interactionY - height * 0.25, width * 1.5, height * 1.5), Phaser.Geom.Rectangle.Contains)
       .setDepth(6)
   }
 
