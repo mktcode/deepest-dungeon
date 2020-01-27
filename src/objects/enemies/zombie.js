@@ -3,7 +3,6 @@ import BaseEnemy from "./base.js"
 
 export default class Zombie extends BaseEnemy {
   constructor(dungeon, room, dieCallback) {
-    super(dungeon, room, dieCallback, 3, 3, 1, 'zombie')
-    this.setCollision(10, 16, 0.5, 0.6)
+    super(dungeon, room, dieCallback, 3, 3, 1, 'zombie', 10, 16, 0.5, 0.6)
   }
 }

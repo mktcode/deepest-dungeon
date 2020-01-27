@@ -3,7 +3,7 @@ import COLLISION_CATEGORIES from "../../collision-categories.js";
 import TEXTS from "../../texts.js";
 
 export default class BaseEnemy {
-  constructor(dungeon, room, dieCallback, hp, xp, damage, name) {
+  constructor(dungeon, room, dieCallback, hp, xp, damage, name, width, height, originX, originY) {
     this.dungeon = dungeon
     this.room = room
     this.name = name
@@ -19,8 +19,10 @@ export default class BaseEnemy {
     this.hp = hp
     this.xp = xp
     this.damage = damage
-    this.sprite = this.dungeon.matter.add.sprite(x, y, 'sprites', 0)
+
+    this.sprite = this.dungeon.matter.add.sprite(x, y, 'sprites', 'enemies/' + this.name + '/walk/down/1')
     this.sprite.setData('name', this.name)
+    this.setCollision(x, y, width, height, originX, originY)
 
     this.sprite.on('pointerover', () => {
       this.sprite.setTint(0xFF0000)
@@ -98,21 +100,15 @@ export default class BaseEnemy {
     })
   }
 
-  setCollision(width, height, originX, originY) {
-    this.inputRect = new Phaser.Geom.Rectangle(0, 0, width + 10, height + 10)
-
+  setCollision(x, y, width, height, originX, originY) {
     this.sprite
-      .setRectangle(width, height)
+      .setExistingBody(Phaser.Physics.Matter.Matter.Bodies.rectangle(x, y, width, height, { label: 'enemy-' + this.name }))
       .setCollisionCategory(COLLISION_CATEGORIES.ENEMY)
-      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.HERO])
+      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.HERO, COLLISION_CATEGORIES.FIREBALL])
       .setOrigin(originX, originY)
       .setFixedRotation()
-      .setInteractive(this.inputRect, Phaser.Geom.Rectangle.Contains)
+      .setInteractive(new Phaser.Geom.Rectangle(this.sprite.width * originX - width / 2, this.sprite.height * originY - height / 2, width, height), Phaser.Geom.Rectangle.Contains)
       .setDepth(6)
-
-    // this totally as issues with the camera... needs fix but maybe on phaser's side
-    this.sprite.input.hitArea.x = this.sprite.width / 2
-    this.sprite.input.hitArea.y = this.sprite.height / 2 + (this.sprite.height * 0.1)
   }
 
   playAnim(name, direction) {
