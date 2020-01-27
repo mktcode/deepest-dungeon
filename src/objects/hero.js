@@ -362,7 +362,7 @@ export default class Hero {
     const { Body, Bodies } = Phaser.Physics.Matter.Matter
     const compoundBody = Body.create({ parts: [
       // hero
-      Bodies.rectangle(0, 0, 16, 18, { chamfer: { radius: 10 }, collisionFilter: { category: COLLISION_CATEGORIES.HERO, mask: COLLISION_CATEGORIES.WALL & COLLISION_CATEGORIES.ENEMY } }),
+      Bodies.rectangle(0, 0, 16, 18, { chamfer: { radius: 10 } }),
       // sword
       Bodies.rectangle(0, -28, 16, 30, { isSensor: true, label: 'up' }),
       Bodies.rectangle(0, 28, 16, 30, { isSensor: true, label: 'down' }),
@@ -384,6 +384,8 @@ export default class Hero {
     ] })
     this.container
       .setExistingBody(compoundBody)
+      .setCollisionCategory(COLLISION_CATEGORIES.HERO)
+      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.ENEMY])
       .setFixedRotation()
       .setFriction(20)
       .setPosition(x, y)
