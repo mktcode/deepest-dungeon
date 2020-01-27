@@ -248,7 +248,7 @@ export default class DungeonScene extends Phaser.Scene {
       if (pointer.leftButtonDown()) {
         const targetedEnemy = currentlyOver.find(co => ['spider', 'zombie'].includes(co.getData('name')))
         this.clickAnimation.setTint(targetedEnemy ? 0xFF0000 : 0xFFFFFF)
-        this.clickAnimation.setPosition(pointer.worldX - 10, pointer.worldY - 10)
+        this.clickAnimation.setPosition(pointer.worldX, pointer.worldY)
         this.clickAnimation.explode()
       }
     })

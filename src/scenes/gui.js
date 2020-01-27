@@ -157,8 +157,8 @@ export default class GuiScene extends Phaser.Scene {
   }
 
   updateCursor() {
-    this.cursor.setX(this.input.activePointer.x)
-    this.cursor.setY(this.input.activePointer.y)
+    this.cursor.setX(this.input.activePointer.x + 18)
+    this.cursor.setY(this.input.activePointer.y + 20)
     if ((new Date().getTime() - this.cursorIdleTime) / 1000 > 3) {
       this.cursor.setAlpha(0)
     } else {
