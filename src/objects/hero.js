@@ -724,6 +724,8 @@ export default class Hero {
     this.scene.sounds.running.setVolume(0)
     this.scene.sounds.walking.setVolume(0)
 
+    this.fireballs.forEach(fireball => fireball.update())
+
     if (this.dead || this.attacking || this.isCasting()) return
 
     if (!this.scene.narrator.freeze && !this.container.body.isStatic) {
@@ -751,7 +753,5 @@ export default class Hero {
         this.setSpeedBoost(false)
       }
     }
-
-    this.fireballs.forEach(fireball => fireball.update())
   }
 }
