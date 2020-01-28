@@ -74,9 +74,9 @@ export default class Animations {
       const prefix = 'hero/with-weapon/taunt/' + direction + '/'
 
       this.anims.create({
-        key: 'start-cast-spell-' + direction,
+        key: 'start-cast-spell-with-sword-' + direction,
         frames: this.anims.generateFrameNames('sprites', { start: 1, end: 19, prefix: prefix }),
-        frameRate: 19,
+        frameRate: 24,
         repeat: 0
       })
     })
