@@ -1525,7 +1525,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.addTimebomb()
     }
 
-    if (narratorSaid.includes('aTimeeater')) {
+    if (narratorSaid.includes('aTimeeater') && !items.includes('fireball')) {
       this.addFireballScroll()
     }
   }
