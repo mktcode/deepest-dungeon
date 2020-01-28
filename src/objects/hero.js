@@ -385,7 +385,7 @@ export default class Hero {
     this.container
       .setExistingBody(compoundBody)
       .setCollisionCategory(COLLISION_CATEGORIES.HERO)
-      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.ENEMY])
+      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.ENEMY, COLLISION_CATEGORIES.TIMEBOMB])
       .setFixedRotation()
       .setFriction(20)
       .setPosition(x, y)
