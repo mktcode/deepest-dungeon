@@ -132,7 +132,7 @@ export default class Fireball {
 
   grow() {
     this.scene.time.addEvent({
-      delay: 1000,
+      delay: 500,
       repeat: 2,
       callback: () => {
         if (!this.isReleased()) {
