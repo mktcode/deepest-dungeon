@@ -33,6 +33,8 @@
 - [ ] look around idle animation
 - [ ] Narrative
   - [ ] adjust volumes
+  - [ ] finding fireball scroll
+  - [ ] running out of mana (when casting fireball or shield)
 - [ ] add/improve sounds
   - [ ] going down stairs
   - [ ] walking/running when slowmo
