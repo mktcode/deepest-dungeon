@@ -23,9 +23,6 @@ const config: GameConfig = {
       // debug: MatterDebugConfig
     }
   },
-  audio: {
-    disableWebAudio: true
-  },
   plugins: {
     global: [{
         key: 'joystick',
