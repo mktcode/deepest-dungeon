@@ -5,6 +5,7 @@ import PathFinder from 'pathfinding'
 import TILES from "../tile-mapping.js";
 import COLLISION_CATEGORIES from "../collision-categories.js";
 import TEXTS from "../texts.js";
+import Fireball from "./fireball.js";
 
 export default class Hero {
   constructor(scene, x, y) {
@@ -28,7 +29,6 @@ export default class Hero {
     this.speed = 2
     this.speedBoost = false
     this.fireballs = []
-    this.castingFireball = false
 
     this.addToScene(x, y)
     this.prepareShield()
@@ -55,35 +55,34 @@ export default class Hero {
             y: pointer.worldY
           }
         }
-      } else if (pointer.rightButtonDown()) {
-        if (!this.castingFireball && this.scene.registry.get('mana') && this.scene.registry.get('items').includes('fireball')) {
-          this.castingFireball = true
-          this.freeze()
-          let target = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY)
-          let from = new Phaser.Math.Vector2(this.container.x, this.container.y)
+      } else if (pointer.rightButtonDown() && this.canCastFireball()) {
+        let target = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY)
+        let from = new Phaser.Math.Vector2(this.container.x, this.container.y)
 
-          this.lastDirection = this.scene.getDirectionFromVector(target.clone().subtract(from))
-          const anim = this.castFireballAnimation()
-          anim.on('complete', () => {
-            this.castingFireball = false
-            this.unfreeze()
-          })
+        this.lastDirection = this.scene.getDirectionFromVector(target.clone().subtract(from))
 
-          if (targetedEnemy) {
-            target = targetedEnemy
-          }
-
-          this.castFireball(target)
+        if (targetedEnemy) {
+          target = targetedEnemy
         }
+
+        const newFireball = new Fireball(this.scene, target, this)
+
+        const anim = this.castSpellAnimation()
+        anim.on('complete', () => {
+          newFireball.animationComplete = true
+        })
+
+        this.fireballs.push(newFireball)
       }
     })
+
     this.scene.input.on('pointerup', (pointer, currentlyOver) => {
-      if (pointer.rightButtonReleased() && this.currentlyCastedFireball) {
+      if (pointer.rightButtonReleased() && this.getLastFireball()) {
         const targetedEnemy = currentlyOver.find(co => ['spider', 'zombie'].includes(co.getData('name')))
         if (targetedEnemy) {
-          this.currentlyCastedFireball.container.setData('target', targetedEnemy)
+          this.getLastFireball().target = targetedEnemy
         }
-        this.currentlyCastedFireball.container.setData('moving', true)
+        this.getLastFireball().rightButtonReleased = true
       }
     })
 
@@ -116,6 +115,18 @@ export default class Hero {
     })
   }
 
+  canCastFireball() {
+    return (
+      (!this.getLastFireball() || this.getLastFireball().isReleased()) &&
+      this.scene.registry.get('mana') &&
+      this.scene.registry.get('items').includes('fireball')
+    )
+  }
+
+  getLastFireball() {
+    return this.fireballs[this.fireballs.length - 1]
+  }
+
   doAttack() {
     if (this.dead) return
     if (this.attacking) return
@@ -127,136 +138,6 @@ export default class Hero {
     this.attacking = true
     this.attack(this.lastDirection).once('complete', () => {
       this.attacking = false
-    })
-  }
-
-  castFireball(target) {
-    let positionOffset = { x: 0, y: 0 }
-    if (this.lastDirection === 'up') positionOffset = { x: -5, y: -25 }
-    else if (this.lastDirection === 'up-right') positionOffset = { x: 10, y: -22 }
-    else if (this.lastDirection === 'right') positionOffset = { x: 15, y: -15 }
-    else if (this.lastDirection === 'down-right') positionOffset = { x: 17, y: -7 }
-    else if (this.lastDirection === 'down') positionOffset = { x: 7, y: 2 }
-    else if (this.lastDirection === 'down-left') positionOffset = { x: -10, y: 10 }
-    else if (this.lastDirection === 'left') positionOffset = { x: -15, y: -10 }
-    else if (this.lastDirection === 'up-left') positionOffset = { x: -10, y: -15 }
-
-    const depth = ['up-left', 'up', 'up-right'].includes(this.lastDirection) ? 3 : 6
-
-    const fireballParticle1 = this.scene.add.particles('particle').setDepth(depth)
-    const fireballParticle2 = this.scene.add.particles('particle').setDepth(depth)
-
-    const container = this.scene.add.container(this.container.x, this.container.y)
-    container.add(fireballParticle1)
-    this.scene.matter.add.gameObject(container)
-    container
-      .setData({ target: target, moving: false })
-      .setDepth(depth)
-      .setExistingBody(
-        Phaser.Physics.Matter.Matter.Bodies.circle(
-          this.container.x + positionOffset.x,
-          this.container.y + positionOffset.y,
-          5,
-          { isSensor: true }
-        )
-      )
-      .setFixedRotation()
-      .setRotation(0)
-      .setCollisionCategory(COLLISION_CATEGORIES.FIREBALL)
-      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.ENEMY])
-
-    const emitter1 = fireballParticle1.createEmitter({
-      on: false,
-      tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
-      blendMode: 'SCREEN',
-      scale: { start: 0.3, end: 0.6 },
-      alpha: { start: 1, end: 0 },
-      speed: 5,
-      quantity: 20,
-      frequency: 50,
-      lifespan: 1000,
-      emitZone: {
-        source: new Phaser.Geom.Circle(0, 0, 1),
-        type: 'edge',
-        quantity: 20
-      }
-    })
-    const emitter2 = fireballParticle2.createEmitter({
-      on: false,
-      tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
-      blendMode: 'SCREEN',
-      scale: { start: 0.2, end: 0.3 },
-      alpha: { start: 1, end: 0 },
-      speed: 10,
-      quantity: 20,
-      frequency: 25,
-      lifespan: 1000,
-      gravityY: -20,
-      follow: container,
-      emitZone: {
-        source: new Phaser.Geom.Circle(0, 0, 2),
-        type: 'edge',
-        quantity: 20
-      }
-    })
-
-    this.scene.time.delayedCall(500, () => {
-      emitter1.start()
-      emitter2.start()
-      this.scene.lightManager.lights.push({
-        sprite: container,
-        intensity: () => LightManager.flickering(1)
-      })
-    })
-
-    const fireball = { container, emitter1, emitter2 }
-    this.fireballs.push(fireball)
-    this.currentlyCastedFireball = fireball
-
-    this.scene.matterCollision.addOnCollideStart({
-      objectA: container,
-      objectB: this.walls,
-      callback: (collision) => {
-        this.fireballExplode(fireball)
-      }
-    })
-
-    this.scene.enemies.forEach(enemy => {
-      this.scene.matterCollision.addOnCollideStart({
-        objectA: container,
-        objectB: enemy.sprite,
-        callback: (collision) => {
-          enemy.takeDamage(5)
-          this.fireballExplode(fireball)
-        }
-      })
-    })
-
-    this.scene.registry.set('mana', this.scene.registry.get('mana') - 1)
-  }
-
-  fireballExplode(fireball) {
-    Phaser.Utils.Array.Remove(this.fireballs, fireball)
-    fireball.container.setVelocity(0)
-    fireball.emitter1.explode()
-    fireball.emitter2.stop()
-    this.scene.time.delayedCall(1000, () => {
-      this.scene.lightManager.removeLight(fireball.container)
-      fireball.container.destroy()
-    })
-  }
-
-  updateFireballs() {
-    this.fireballs.forEach(fireball => {
-      const target = fireball.container.getData('target')
-      const moving = fireball.container.getData('moving')
-      if (target && moving) {
-        if (Phaser.Math.Distance.BetweenPoints(fireball.container, target) < 2) {
-          this.fireballExplode(fireball)
-        } else {
-          this.scene.moveToObject(fireball.container, target, 3)
-        }
-      }
     })
   }
 
@@ -767,7 +648,7 @@ export default class Hero {
     return this.playAnim('look-around', direction)
   }
 
-  castFireballAnimation(direction) {
+  castSpellAnimation(direction) {
     return this.playAnim('start-cast-spell', direction)
   }
 
@@ -832,6 +713,10 @@ export default class Hero {
     return this.keys[direction].isDown || this.wasdKeys[direction].isDown
   }
 
+  isCasting() {
+    return this.getLastFireball() && !this.getLastFireball().isReleased()
+  }
+
   update() {
     // Stop any previous movement from the last frame
     this.container.setVelocity(0)
@@ -839,7 +724,7 @@ export default class Hero {
     this.scene.sounds.running.setVolume(0)
     this.scene.sounds.walking.setVolume(0)
 
-    if (this.dead || this.attacking || this.castingFireball) return
+    if (this.dead || this.attacking || this.isCasting()) return
 
     if (!this.scene.narrator.freeze && !this.container.body.isStatic) {
       const directions = []
@@ -867,6 +752,6 @@ export default class Hero {
       }
     }
 
-    this.updateFireballs()
+    this.fireballs.forEach(fireball => fireball.update())
   }
 }
