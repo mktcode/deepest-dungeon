@@ -19,7 +19,7 @@ export default class Fireball {
     this.particle2 = this.scene.add.particles('particle').setDepth(this.depth)
 
     this.container = this.scene.add.container(this.caster.container.x, this.caster.container.y)
-    this.container.add(this.particle1)
+    this.container.add(this.particle2)
     this.scene.matter.add.gameObject(this.container)
 
     this.container
@@ -37,21 +37,30 @@ export default class Fireball {
       .setCollisionCategory(COLLISION_CATEGORIES.FIREBALL)
       .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.ENEMY])
 
+    this.createEmitters()
+    this.createCollisions()
+    this.start()
+
+    this.scene.registry.set('mana', this.scene.registry.get('mana') - 1)
+  }
+
+  createEmitters() {
     this.emitter1 = this.particle1.createEmitter({
       on: false,
       tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
       blendMode: 'SCREEN',
-      scale: { start: 0.3, end: 0.6 },
+      scale: { start: 0.1, end: 0.2 },
       alpha: { start: 1, end: 0 },
       speed: 5,
-      quantity: 20,
+      quantity: 5,
       frequency: 50,
       lifespan: 1000,
       emitZone: {
-        source: new Phaser.Geom.Circle(0, 0, 1),
-        type: 'edge',
-        quantity: 20
-      }
+        source: new Phaser.Geom.Circle(0, 0, 3),
+        type: 'random',
+        quantity: 10
+      },
+      follow: this.container
     })
     this.emitter2 = this.particle2.createEmitter({
       on: false,
@@ -59,19 +68,19 @@ export default class Fireball {
       blendMode: 'SCREEN',
       scale: { start: 0.2, end: 0.3 },
       alpha: { start: 1, end: 0 },
-      speed: 10,
-      quantity: 20,
-      frequency: 25,
-      lifespan: 1000,
-      gravityY: -20,
-      follow: this.container,
+      speed: 2,
+      quantity: 5,
+      frequency: 30,
+      lifespan: 750,
       emitZone: {
         source: new Phaser.Geom.Circle(0, 0, 2),
         type: 'edge',
         quantity: 20
       }
     })
+  }
 
+  createCollisions() {
     this.scene.matterCollision.addOnCollideStart({
       objectA: this.container,
       objectB: this.scene.walls,
@@ -90,7 +99,9 @@ export default class Fireball {
         }
       })
     })
+  }
 
+  start() {
     this.scene.time.delayedCall(500, () => {
       this.emitter1.start()
       this.emitter2.start()
@@ -98,9 +109,57 @@ export default class Fireball {
         sprite: this.container,
         intensity: () => LightManager.flickering(1)
       })
+      this.grow()
     })
+  }
 
-    this.scene.registry.set('mana', this.scene.registry.get('mana') - 1)
+  grow() {
+    this.scene.time.addEvent({
+      delay: 1000,
+      repeat: 2,
+      callback: () => {
+        if (!this.isReleased()) {
+          if (this.damage === 5) {
+            this.emitter1.setEmitZone({
+              source: new Phaser.Geom.Circle(0, 0, 6),
+              type: 'random',
+              quantity: 40
+            })
+            this.emitter1.setSpeed(10)
+            this.emitter1.setQuantity(10)
+
+            this.emitter2.setEmitZone({
+              source: new Phaser.Geom.Circle(0, 0, 4),
+              type: 'edge',
+              quantity: 40
+            })
+            this.emitter2.setQuantity(8)
+            this.emitter2.setSpeed(3)
+            this.emitter2.setFrequency(10)
+            this.damage = 10
+          } else if (this.damage === 10) {
+            this.emitter1.setEmitZone({
+              source: new Phaser.Geom.Circle(0, 0, 10),
+              type: 'random',
+              quantity: 80
+            })
+            this.emitter1.setSpeed(15)
+            this.emitter1.setQuantity(15)
+
+            this.emitter2.setEmitZone({
+              source: new Phaser.Geom.Circle(0, 0, 6),
+              type: 'edge',
+              quantity: 80
+            })
+            this.emitter2.setQuantity(10)
+            this.emitter2.setSpeed(5)
+            this.emitter2.setFrequency(8)
+            this.emitter2.setLifespan(1100)
+            this.damage = 15
+          }
+        }
+      }
+    })
   }
 
   isReleased() {
@@ -130,7 +189,7 @@ export default class Fireball {
     this.container.setVelocity(0)
     this.emitter1.explode()
     this.emitter2.stop()
-    this.scene.time.delayedCall(1000, () => {
+    this.scene.time.delayedCall(this.emitter2.lifespan.propertyValue, () => {
       this.scene.lightManager.removeLight(this.container)
       this.container.destroy()
     })
