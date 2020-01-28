@@ -100,6 +100,7 @@ export default class Fireball {
           if (enemy.dead && nearestEnemy && this.size > 1) {
             this.setSize(this.size - 1)
             this.target = nearestEnemy.sprite
+            this.scene.sounds.play('fireball')
           } else {
             this.explode()
           }
@@ -127,6 +128,7 @@ export default class Fireball {
         intensity: () => LightManager.flickering(1)
       })
       this.grow()
+      this.scene.sounds.play('fireball2')
     })
   }
 
@@ -239,6 +241,10 @@ export default class Fireball {
     this.container.setVelocity(0)
     this.emitter1.explode()
     this.emitter2.stop()
+    this.scene.sounds.play('fireball')
+    this.scene.time.delayedCall(200, () => {
+      this.scene.sounds.stop('fireball2')
+    })
     this.scene.time.delayedCall(this.emitter2.lifespan.propertyValue, () => {
       this.scene.lightManager.removeLight(this.container)
       this.container.destroy()

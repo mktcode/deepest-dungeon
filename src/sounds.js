@@ -25,6 +25,8 @@ import xpPing5 from './assets/audio/sounds/xp-ping5.mp3';
 import xpPing6 from './assets/audio/sounds/xp-ping6.mp3';
 import xpPing7 from './assets/audio/sounds/xp-ping7.mp3';
 import xpPing8 from './assets/audio/sounds/xp-ping8.mp3';
+import fireball from './assets/audio/sounds/fireball.mp3';
+import fireball2 from './assets/audio/sounds/fireball2.mp3';
 
 export default class Sounds {
   constructor(scene) {
@@ -56,6 +58,8 @@ export default class Sounds {
     this.xpPing6 = scene.sound.add('xpPing6', { volume: 0.7 })
     this.xpPing7 = scene.sound.add('xpPing7', { volume: 0.7 })
     this.xpPing8 = scene.sound.add('xpPing8', { volume: 0.7 })
+    this.fireball = scene.sound.add('fireball', { volume: 0.7 })
+    this.fireball2 = scene.sound.add('fireball2', { volume: 0.7 })
     this.playing = null
   }
 
@@ -87,6 +91,8 @@ export default class Sounds {
     scene.load.audio('xpPing6', xpPing6)
     scene.load.audio('xpPing7', xpPing7)
     scene.load.audio('xpPing8', xpPing8)
+    scene.load.audio('fireball', fireball)
+    scene.load.audio('fireball2', fireball2)
   }
 
   play(key, delay, slowmo, loop) {
