@@ -8,6 +8,7 @@ export default class Fireball {
     this.target = target
     this.caster = caster
 
+    this.size = 1
     this.damage = 5
     this.animationComplete = false
     this.rightButtonReleased = false
@@ -95,10 +96,26 @@ export default class Fireball {
         objectB: enemy.sprite,
         callback: (collision) => {
           enemy.takeDamage(this.damage)
-          this.explode()
+          const nearestEnemy = this.findNearestEnemy()
+          if (enemy.dead && nearestEnemy && this.size > 1) {
+            this.setSize(this.size - 1)
+            this.target = nearestEnemy.sprite
+          } else {
+            this.explode()
+          }
         }
       })
     })
+  }
+
+  findNearestEnemy() {
+    const enemiesByDistance = this.scene.enemies.filter(e => !e.dead && e.room === this.scene.currentRoom).sort((a, b) => {
+      const distanceA = Phaser.Math.Distance.Between(a.sprite.x, a.sprite.y, this.container.x, this.container.y)
+      const distanceB = Phaser.Math.Distance.Between(b.sprite.x, b.sprite.y, this.container.x, this.container.y)
+      return distanceA - distanceB
+    })
+
+    return enemiesByDistance.length ? enemiesByDistance[0] : null
   }
 
   start() {
@@ -119,47 +136,80 @@ export default class Fireball {
       repeat: 2,
       callback: () => {
         if (!this.isReleased()) {
-          if (this.damage === 5) {
-            this.emitter1.setEmitZone({
-              source: new Phaser.Geom.Circle(0, 0, 6),
-              type: 'random',
-              quantity: 40
-            })
-            this.emitter1.setSpeed(10)
-            this.emitter1.setQuantity(10)
-
-            this.emitter2.setEmitZone({
-              source: new Phaser.Geom.Circle(0, 0, 4),
-              type: 'edge',
-              quantity: 40
-            })
-            this.emitter2.setQuantity(8)
-            this.emitter2.setSpeed(3)
-            this.emitter2.setFrequency(10)
-            this.damage = 10
-          } else if (this.damage === 10) {
-            this.emitter1.setEmitZone({
-              source: new Phaser.Geom.Circle(0, 0, 10),
-              type: 'random',
-              quantity: 80
-            })
-            this.emitter1.setSpeed(15)
-            this.emitter1.setQuantity(15)
-
-            this.emitter2.setEmitZone({
-              source: new Phaser.Geom.Circle(0, 0, 6),
-              type: 'edge',
-              quantity: 80
-            })
-            this.emitter2.setQuantity(10)
-            this.emitter2.setSpeed(5)
-            this.emitter2.setFrequency(8)
-            this.emitter2.setLifespan(1100)
-            this.damage = 15
+          if (this.size === 1) {
+            this.setSize(2)
+          } else if (this.size === 2) {
+            this.setSize(3)
           }
         }
       }
     })
+  }
+
+  setSize(size) {
+    this.size = size
+    if (this.size === 1) {
+      this.emitter1.setEmitZone({
+        source: new Phaser.Geom.Circle(0, 0, 3),
+        type: 'random',
+        quantity: 10
+      })
+      this.emitter1.setSpeed(5)
+      this.emitter1.setQuantity(5)
+
+      this.emitter2.setEmitZone({
+        source: new Phaser.Geom.Circle(0, 0, 2),
+        type: 'edge',
+        quantity: 20
+      })
+      this.emitter2.setSpeed(2)
+      this.emitter2.setQuantity(5)
+      this.emitter2.setFrequency(30)
+      this.emitter2.setLifespan(750)
+      this.damage = 5
+    }
+
+    if (this.size === 2) {
+      this.emitter1.setEmitZone({
+        source: new Phaser.Geom.Circle(0, 0, 6),
+        type: 'random',
+        quantity: 40
+      })
+      this.emitter1.setSpeed(10)
+      this.emitter1.setQuantity(10)
+
+      this.emitter2.setEmitZone({
+        source: new Phaser.Geom.Circle(0, 0, 4),
+        type: 'edge',
+        quantity: 40
+      })
+      this.emitter2.setSpeed(3)
+      this.emitter2.setQuantity(8)
+      this.emitter2.setFrequency(10)
+      this.emitter2.setLifespan(750)
+      this.damage = 10
+    }
+
+    if (this.size === 3) {
+      this.emitter1.setEmitZone({
+        source: new Phaser.Geom.Circle(0, 0, 10),
+        type: 'random',
+        quantity: 80
+      })
+      this.emitter1.setSpeed(15)
+      this.emitter1.setQuantity(15)
+
+      this.emitter2.setEmitZone({
+        source: new Phaser.Geom.Circle(0, 0, 6),
+        type: 'edge',
+        quantity: 80
+      })
+      this.emitter2.setSpeed(5)
+      this.emitter2.setQuantity(10)
+      this.emitter2.setFrequency(8)
+      this.emitter2.setLifespan(1100)
+      this.damage = 15
+    }
   }
 
   isReleased() {
