@@ -10,6 +10,8 @@ export default class Animations {
     this.createHeroAnim('die', 1.5)
     this.createHeroAnim('look-around', 0.7)
 
+    this.createHeroCastSpellAnim()
+
     this.createZombiAnim('walk', 1.5)
     this.createZombiAnim('die', 1.5)
 
@@ -62,6 +64,19 @@ export default class Animations {
         key: name + '-' + direction + '-slowmo',
         frames: this.anims.generateFrameNames('sprites', { start: 1, end: numberOfFramesWithoutWeapon, prefix: withoutWeaponPrefix }),
         frameRate: numberOfFramesWithoutWeapon * frameRateMod / 3,
+        repeat: 0
+      })
+    })
+  }
+
+  createHeroCastSpellAnim() {
+    ['up', 'down', 'left', 'right', 'up-left', 'up-right', 'down-left', 'down-right'].forEach(direction => {
+      const prefix = 'hero/with-weapon/taunt/' + direction + '/'
+
+      this.anims.create({
+        key: 'start-cast-spell-' + direction,
+        frames: this.anims.generateFrameNames('sprites', { start: 1, end: 4, prefix: prefix }),
+        frameRate: 10,
         repeat: 0
       })
     })

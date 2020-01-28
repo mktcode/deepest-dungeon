@@ -8,5 +8,6 @@ export default {
   KILL_X_UNDEAD: 'Kill {num} undead.',
   FIND_A_SWORD: 'Find a sword.',
   Q_TO_USE_PATHFINDER: 'Press Q to show the path to the doors.',
-  SHIFT_TO_USE_SHIELD: 'Press Shift to use your shield spell.'
+  SHIFT_TO_USE_SHIELD: 'Press Shift to use your shield spell.',
+  RIGHTCLICK_TO_USE_FIREBALL: 'Right click to cast a fireball.'
 }

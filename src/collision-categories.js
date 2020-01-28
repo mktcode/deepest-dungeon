@@ -4,4 +4,5 @@ export default {
   ENEMY: 4,
   SHIELD: 8,
   TIMEBOMB: 16,
+  FIREBALL: 32
 }

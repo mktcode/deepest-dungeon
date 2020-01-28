@@ -39,10 +39,10 @@ export default class Hero {
   }
 
   addControls() {
-    // move by click
+    // move by click and spell attack
     this.scene.input.on('pointerdown', (pointer, currentlyOver) => {
+      const targetedEnemy = currentlyOver.find(co => ['spider', 'zombie'].includes(co.getData('name')))
       if (pointer.leftButtonDown()) {
-        const targetedEnemy = currentlyOver.find(co => ['spider', 'zombie'].includes(co.getData('name')))
         if (targetedEnemy) {
           this.moveTo = null
           this.targetedEnemy = targetedEnemy
@@ -53,6 +53,12 @@ export default class Hero {
             y: pointer.worldY
           }
         }
+      } else if (pointer.rightButtonDown()) {
+        let target = { x: pointer.worldX, y: pointer.worldY }
+        if (targetedEnemy) {
+          target = targetedEnemy
+        }
+        this.scene.emitFireball(target)
       }
     })
 

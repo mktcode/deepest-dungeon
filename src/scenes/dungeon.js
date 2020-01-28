@@ -56,6 +56,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.dungeonVisits = 1
 
     this.enemies = []
+    this.fireballs = []
     this.healthOrbs = []
     this.manaOrbs = []
     this.xpOrbs = []
@@ -63,7 +64,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.xpOrbSoundResetTimeout = null
 
     this.isStatic = { isStatic: true }
-    this.wallPhysics = { isStatic: true, collisionFilter: { category: COLLISION_CATEGORIES.WALL } }
+    this.wallPhysics = { isStatic: true, collisionFilter: { category: COLLISION_CATEGORIES.WALL }, label: 'wall' }
   }
 
   static preload(scene) {
@@ -125,7 +126,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.cameras.main.setZoom(this.registry.get('zoom'))
     this.cameras.main.fadeIn(1000, 0, 0, 0)
 
-    // ALERT: DIRTY WORKAROUND: BUG: Dungeon depends on Gui and vice verca on start up. Needs to be fixed.
+    // ALERT: DIRTY WORKAROUND (setTimeout): Dungeon depends on Gui and vice verca on start up. Needs to be fixed.
     setTimeout(() => {
       const gui = this.scene.get('Gui')
 
@@ -146,7 +147,14 @@ export default class DungeonScene extends Phaser.Scene {
           this.playStoryElementOnce('maybeAboutDecisions')
         } else if (narratorSaid.includes('maybeAboutDecisions') && !narratorSaid.includes('slowlyHeBeganToQuestion')) {
           this.playStoryElementOnce('slowlyHeBeganToQuestion')
-        } else if (narratorSaid.includes('slowlyHeBeganToQuestion') && narratorSaid.includes('aTimeeater') && narratorSaid.includes('shieldSpell') && narratorSaid.includes('aScoutsEye') && !narratorSaid.includes('theEnd')) {
+        } else if (
+          narratorSaid.includes('slowlyHeBeganToQuestion') &&
+          narratorSaid.includes('aTimeeater') &&
+          narratorSaid.includes('shieldSpell') &&
+          narratorSaid.includes('aScoutsEye') &&
+          this.registry.get('items').includes('fireball') &&
+          !narratorSaid.includes('theEnd')
+        ) {
           this.playStoryElementOnce('theEnd')
           this.addCredits()
         } else if (narratorSaid.includes('theEnd')) {
@@ -1333,6 +1341,109 @@ export default class DungeonScene extends Phaser.Scene {
     })
   }
 
+  emitFireball(target) {
+    if (!this.registry.get('items').includes('fireball') || !this.registry.get('mana')) return
+
+    const fireballParticle1 = this.add.particles('particle').setDepth(7)
+    const fireballParticle2 = this.add.particles('particle').setDepth(7)
+
+    const container = this.add.container(this.hero.container.x, this.hero.container.y)
+    container.add(fireballParticle1)
+    this.matter.add.gameObject(container)
+    container
+      .setData('target', target)
+      .setDepth(6)
+      .setExistingBody(Phaser.Physics.Matter.Matter.Bodies.circle(this.hero.container.x, this.hero.container.y, 5, { isSensor: true }))
+      .setFixedRotation()
+      .setRotation(0)
+      .setCollisionCategory(COLLISION_CATEGORIES.FIREBALL)
+      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.ENEMY])
+
+    const emitter1 = fireballParticle1.createEmitter({
+      tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
+      blendMode: 'SCREEN',
+      scale: { start: 0.3, end: 0.6 },
+      alpha: { start: 1, end: 0 },
+      speed: 15,
+      quantity: 40,
+      frequency: 50,
+      lifespan: 1000,
+      emitZone: {
+        source: new Phaser.Geom.Circle(0, 0, 5),
+        type: 'edge',
+        quantity: 40
+      }
+    })
+    const emitter2 = fireballParticle2.createEmitter({
+      tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
+      blendMode: 'SCREEN',
+      scale: { start: 0.2, end: 0.3 },
+      alpha: { start: 1, end: 0 },
+      speed: 25,
+      quantity: 40,
+      frequency: 25,
+      lifespan: 1000,
+      gravityY: -20,
+      follow: container,
+      emitZone: {
+        source: new Phaser.Geom.Circle(0, 0, 10),
+        type: 'edge',
+        quantity: 40
+      }
+    })
+
+    const fireball = { container, emitter1, emitter2 }
+    this.fireballs.push(fireball)
+
+    this.lightManager.lights.push({
+      sprite: container,
+      intensity: () => LightManager.flickering(1)
+    })
+
+    this.matterCollision.addOnCollideStart({
+      objectA: container,
+      objectB: this.walls,
+      callback: (collision) => {
+        this.fireballExplode(fireball)
+      }
+    })
+
+    this.enemies.forEach(enemy => {
+      this.matterCollision.addOnCollideStart({
+        objectA: container,
+        objectB: enemy.sprite,
+        callback: (collision) => {
+          enemy.takeDamage(5)
+          this.fireballExplode(fireball)
+        }
+      })
+    })
+
+    this.registry.set('mana', this.registry.get('mana') - 1)
+  }
+
+  fireballExplode(fireball) {
+    Phaser.Utils.Array.Remove(this.fireballs, fireball)
+    fireball.container.setVelocity(0)
+    fireball.emitter1.explode()
+    fireball.emitter2.stop()
+    this.time.delayedCall(1000, () => {
+      this.lightManager.removeLight(fireball.container)
+      fireball.container.destroy()
+    })
+  }
+
+  updateFireballs() {
+    this.fireballs.forEach(fireball => {
+      const target = fireball.container.getData('target')
+      if (Phaser.Math.Distance.BetweenPoints(fireball.container, target) < 2) {
+        this.fireballExplode(fireball)
+      } else {
+        this.moveToObject(fireball.container, target, 3)
+      }
+    })
+  }
+
   addFireTraps() {
     if (this.registry.get('narratorSaid').includes('torchPerfect')) {
       const allowedTiles = [
@@ -1517,6 +1628,10 @@ export default class DungeonScene extends Phaser.Scene {
     if (narratorSaid.includes('shieldSpell')) {
       this.addTimebomb()
     }
+
+    if (narratorSaid.includes('aTimeeater')) {
+      this.addFireballScroll()
+    }
   }
 
   addSword(x, y) {
@@ -1658,6 +1773,43 @@ export default class DungeonScene extends Phaser.Scene {
         this.scene.get('Gui').showSubtitle(TEXTS.SHIFT_TO_USE_SHIELD)
         this.time.delayedCall(5000, () => {
           this.scene.get('Gui').hideSubtitle(TEXTS.SHIFT_TO_USE_SHIELD)
+        })
+      }
+    });
+  }
+
+  addFireballScroll(x, y) {
+    if (!x && !y) {
+      this.fireballScrollRoom = this.dungeon.r.randomPick(this.otherRooms)
+      x = this.tileToWorldX(Phaser.Utils.Array.GetRandom([this.fireballScrollRoom.left + 3, this.fireballScrollRoom.right - 2])) + 12
+      y = this.tileToWorldY(Phaser.Utils.Array.GetRandom([this.fireballScrollRoom.top + 5, this.fireballScrollRoom.bottom - 2])) + 12
+    }
+    this.fireballScroll = this.matter.add.sprite(x, y, 'scroll', 0, { isStatic: true, collisionFilter: { group: -1 } }).setSize(24, 24).setDepth(8)
+    const tween = this.tweens.add({
+      targets: this.fireballScroll,
+      yoyo: true,
+      repeat: -1,
+      y: '+=8'
+    })
+    this.lightManager.lights.push({
+      sprite: this.fireballScroll,
+      intensity: () => 1
+    })
+
+    this.matterCollision.addOnCollideStart({
+      objectA: this.hero.container,
+      objectB: this.fireballScroll,
+      callback: (collision) => {
+        if (this.hero.dead || collision.bodyA.isSensor) return
+        const items = this.registry.get('items')
+        items.push('fireball')
+        this.registry.set('items', items)
+        tween.remove()
+        this.fireballScroll.destroy()
+        this.lightManager.removeLight(this.fireballScroll)
+        this.scene.get('Gui').showSubtitle(TEXTS.RIGHTCLICK_TO_USE_FIREBALL)
+        this.time.delayedCall(5000, () => {
+          this.scene.get('Gui').hideSubtitle(TEXTS.RIGHTCLICK_TO_USE_FIREBALL)
         })
       }
     });
@@ -2063,6 +2215,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.updateXpOrbs()
     this.updateHealthOrbs()
     this.updateManaOrbs()
+    this.updateFireballs()
     this.playIdleNarrative()
   }
 }
