@@ -630,16 +630,7 @@ export default class Hero {
 
       this.normalizeSpeed()
 
-      const direction = [
-        'right',
-        'down-right',
-        'down',
-        'down-left',
-        'left',
-        'up-left',
-        'up',
-        'up-right'
-      ][((Math.round(Math.atan2(this.container.body.velocity.y, this.container.body.velocity.x) / (2 * Math.PI / 8))) + 8) % 8]
+      const direction = this.scene.getDirectionFromVector(this.container.body.velocity)
       if (direction) {
         this.lastDirection = direction
         this.run(direction)

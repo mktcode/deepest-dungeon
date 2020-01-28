@@ -2095,6 +2095,19 @@ export default class DungeonScene extends Phaser.Scene {
     return this.map.worldToTileY(y)
   }
 
+  getDirectionFromVector(vector) {
+    return [
+      'right',
+      'down-right',
+      'down',
+      'down-left',
+      'left',
+      'up-left',
+      'up',
+      'up-right'
+    ][((Math.round(Math.atan2(vector.y, vector.x) / (2 * Math.PI / 8))) + 8) % 8]
+  }
+
   update() {
     this.getEndRoom()
     this.hero.update()
