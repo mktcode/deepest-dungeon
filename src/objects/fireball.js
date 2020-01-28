@@ -246,6 +246,7 @@ export default class Fireball {
   }
 
   update() {
+    this.container.setRotation(this.container.rotation + 0.05)
     if (this.isReleased()) {
       if (Phaser.Math.Distance.BetweenPoints(this.container, this.target) < 2) {
         this.explode()
