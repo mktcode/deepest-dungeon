@@ -27,6 +27,7 @@ export default class Hero {
     this.shieldActive = false
     this.speed = 2
     this.speedBoost = false
+    this.fireballs = []
 
     this.addToScene(x, y)
     this.prepareShield()
@@ -58,7 +59,7 @@ export default class Hero {
         if (targetedEnemy) {
           target = targetedEnemy
         }
-        this.scene.emitFireball(target)
+        this.emitFireball(target)
       }
     })
 
@@ -102,6 +103,109 @@ export default class Hero {
     this.attacking = true
     this.attack(this.lastDirection).once('complete', () => {
       this.attacking = false
+    })
+  }
+
+  emitFireball(target) {
+    if (!this.scene.registry.get('items').includes('fireball') || !this.scene.registry.get('mana')) return
+
+    const fireballParticle1 = this.scene.add.particles('particle').setDepth(7)
+    const fireballParticle2 = this.scene.add.particles('particle').setDepth(7)
+
+    const container = this.scene.add.container(this.container.x, this.container.y)
+    container.add(fireballParticle1)
+    this.scene.matter.add.gameObject(container)
+    container
+      .setData('target', target)
+      .setDepth(6)
+      .setExistingBody(Phaser.Physics.Matter.Matter.Bodies.circle(this.container.x, this.container.y, 5, { isSensor: true }))
+      .setFixedRotation()
+      .setRotation(0)
+      .setCollisionCategory(COLLISION_CATEGORIES.FIREBALL)
+      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.ENEMY])
+
+    const emitter1 = fireballParticle1.createEmitter({
+      tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
+      blendMode: 'SCREEN',
+      scale: { start: 0.3, end: 0.6 },
+      alpha: { start: 1, end: 0 },
+      speed: 15,
+      quantity: 40,
+      frequency: 50,
+      lifespan: 1000,
+      emitZone: {
+        source: new Phaser.Geom.Circle(0, 0, 5),
+        type: 'edge',
+        quantity: 40
+      }
+    })
+    const emitter2 = fireballParticle2.createEmitter({
+      tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
+      blendMode: 'SCREEN',
+      scale: { start: 0.2, end: 0.3 },
+      alpha: { start: 1, end: 0 },
+      speed: 25,
+      quantity: 40,
+      frequency: 25,
+      lifespan: 1000,
+      gravityY: -20,
+      follow: container,
+      emitZone: {
+        source: new Phaser.Geom.Circle(0, 0, 10),
+        type: 'edge',
+        quantity: 40
+      }
+    })
+
+    const fireball = { container, emitter1, emitter2 }
+    this.fireballs.push(fireball)
+
+    this.scene.lightManager.lights.push({
+      sprite: container,
+      intensity: () => LightManager.flickering(1)
+    })
+
+    this.scene.matterCollision.addOnCollideStart({
+      objectA: container,
+      objectB: this.walls,
+      callback: (collision) => {
+        this.fireballExplode(fireball)
+      }
+    })
+
+    this.scene.enemies.forEach(enemy => {
+      this.scene.matterCollision.addOnCollideStart({
+        objectA: container,
+        objectB: enemy.sprite,
+        callback: (collision) => {
+          enemy.takeDamage(5)
+          this.fireballExplode(fireball)
+        }
+      })
+    })
+
+    this.scene.registry.set('mana', this.scene.registry.get('mana') - 1)
+  }
+
+  fireballExplode(fireball) {
+    Phaser.Utils.Array.Remove(this.fireballs, fireball)
+    fireball.container.setVelocity(0)
+    fireball.emitter1.explode()
+    fireball.emitter2.stop()
+    this.scene.time.delayedCall(1000, () => {
+      this.scene.lightManager.removeLight(fireball.container)
+      fireball.container.destroy()
+    })
+  }
+
+  updateFireballs() {
+    this.fireballs.forEach(fireball => {
+      const target = fireball.container.getData('target')
+      if (Phaser.Math.Distance.BetweenPoints(fireball.container, target) < 2) {
+        this.fireballExplode(fireball)
+      } else {
+        this.scene.moveToObject(fireball.container, target, 3)
+      }
     })
   }
 
@@ -716,5 +820,7 @@ export default class Hero {
         this.setSpeedBoost(false)
       }
     }
+
+    this.updateFireballs()
   }
 }

@@ -56,7 +56,6 @@ export default class DungeonScene extends Phaser.Scene {
     this.dungeonVisits = 1
 
     this.enemies = []
-    this.fireballs = []
     this.healthOrbs = []
     this.manaOrbs = []
     this.xpOrbs = []
@@ -1341,109 +1340,6 @@ export default class DungeonScene extends Phaser.Scene {
     })
   }
 
-  emitFireball(target) {
-    if (!this.registry.get('items').includes('fireball') || !this.registry.get('mana')) return
-
-    const fireballParticle1 = this.add.particles('particle').setDepth(7)
-    const fireballParticle2 = this.add.particles('particle').setDepth(7)
-
-    const container = this.add.container(this.hero.container.x, this.hero.container.y)
-    container.add(fireballParticle1)
-    this.matter.add.gameObject(container)
-    container
-      .setData('target', target)
-      .setDepth(6)
-      .setExistingBody(Phaser.Physics.Matter.Matter.Bodies.circle(this.hero.container.x, this.hero.container.y, 5, { isSensor: true }))
-      .setFixedRotation()
-      .setRotation(0)
-      .setCollisionCategory(COLLISION_CATEGORIES.FIREBALL)
-      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.ENEMY])
-
-    const emitter1 = fireballParticle1.createEmitter({
-      tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
-      blendMode: 'SCREEN',
-      scale: { start: 0.3, end: 0.6 },
-      alpha: { start: 1, end: 0 },
-      speed: 15,
-      quantity: 40,
-      frequency: 50,
-      lifespan: 1000,
-      emitZone: {
-        source: new Phaser.Geom.Circle(0, 0, 5),
-        type: 'edge',
-        quantity: 40
-      }
-    })
-    const emitter2 = fireballParticle2.createEmitter({
-      tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
-      blendMode: 'SCREEN',
-      scale: { start: 0.2, end: 0.3 },
-      alpha: { start: 1, end: 0 },
-      speed: 25,
-      quantity: 40,
-      frequency: 25,
-      lifespan: 1000,
-      gravityY: -20,
-      follow: container,
-      emitZone: {
-        source: new Phaser.Geom.Circle(0, 0, 10),
-        type: 'edge',
-        quantity: 40
-      }
-    })
-
-    const fireball = { container, emitter1, emitter2 }
-    this.fireballs.push(fireball)
-
-    this.lightManager.lights.push({
-      sprite: container,
-      intensity: () => LightManager.flickering(1)
-    })
-
-    this.matterCollision.addOnCollideStart({
-      objectA: container,
-      objectB: this.walls,
-      callback: (collision) => {
-        this.fireballExplode(fireball)
-      }
-    })
-
-    this.enemies.forEach(enemy => {
-      this.matterCollision.addOnCollideStart({
-        objectA: container,
-        objectB: enemy.sprite,
-        callback: (collision) => {
-          enemy.takeDamage(5)
-          this.fireballExplode(fireball)
-        }
-      })
-    })
-
-    this.registry.set('mana', this.registry.get('mana') - 1)
-  }
-
-  fireballExplode(fireball) {
-    Phaser.Utils.Array.Remove(this.fireballs, fireball)
-    fireball.container.setVelocity(0)
-    fireball.emitter1.explode()
-    fireball.emitter2.stop()
-    this.time.delayedCall(1000, () => {
-      this.lightManager.removeLight(fireball.container)
-      fireball.container.destroy()
-    })
-  }
-
-  updateFireballs() {
-    this.fireballs.forEach(fireball => {
-      const target = fireball.container.getData('target')
-      if (Phaser.Math.Distance.BetweenPoints(fireball.container, target) < 2) {
-        this.fireballExplode(fireball)
-      } else {
-        this.moveToObject(fireball.container, target, 3)
-      }
-    })
-  }
-
   addFireTraps() {
     if (this.registry.get('narratorSaid').includes('torchPerfect')) {
       const allowedTiles = [
@@ -2215,7 +2111,6 @@ export default class DungeonScene extends Phaser.Scene {
     this.updateXpOrbs()
     this.updateHealthOrbs()
     this.updateManaOrbs()
-    this.updateFireballs()
     this.playIdleNarrative()
   }
 }
