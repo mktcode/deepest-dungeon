@@ -175,11 +175,10 @@ export default class DungeonScene extends Phaser.Scene {
 
     // resetting sounds and input
     this.music.setRate(1)
-    this.sounds.running.setVolume(0)
-    this.sounds.walking.setVolume(0)
     this.hero.resetKeys()
-    this.sounds.stop('ticking')
-    this.sounds.stop('tickingFast')
+    if (this.timebombTickingSound) {
+      this.timebombTickingSound.stop()
+    }
 
     // reset idle timer
     this.startIdleTimer()
@@ -215,10 +214,9 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   sleep() {
-    this.sounds.stop('ticking')
-    this.sounds.stop('tickingFast')
-    this.sounds.running.setVolume(0)
-    this.sounds.walking.setVolume(0)
+    if (this.timebombTickingSound) {
+      this.timebombTickingSound.stop()
+    }
     this.countdown = null
     if (this.countdownText) {
       this.countdownText.destroy()
@@ -1779,7 +1777,7 @@ export default class DungeonScene extends Phaser.Scene {
           emitter2.stop()
           this.music.setSeek(40)
           this.music.setRate(1.5)
-          this.sounds.play('ticking', 1.5, false, true)
+          this.timebombTickingSound = this.sounds.play('ticking', 1.5, false, true)
           this.time.delayedCall(2000, () => this.narrator.sayOnce('timeeaterQuickNow'))
           this.heroParticles = this.interactionParticle.createEmitter({
             tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
@@ -1914,8 +1912,8 @@ export default class DungeonScene extends Phaser.Scene {
 
       if (minutes === 0 && seconds === 30) {
         this.cameras.main.shake(20000, 0.001)
-        this.sounds.stop('ticking')
-        this.sounds.play('tickingFast', 0.1, false, true)
+        this.timebombTickingSound.stop()
+        this.timebombTickingSound = this.sounds.play('tickingFast', 0.1, false, true)
         this.narrator.sayOnce('dungeonStartedToQuake')
       }
       if (minutes === 0 && seconds === 10) {

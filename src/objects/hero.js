@@ -36,8 +36,8 @@ export default class Hero {
     this.prepareSpeedBoostAnimation()
     this.addControls()
 
-    this.scene.sounds.play('running', 0, false, true)
-    this.scene.sounds.play('walking', 0, false, true)
+    this.runningSound = this.scene.sounds.play('running', 0, false, true, 0)
+    this.walkingSound = this.scene.sounds.play('walking', 0, false, true, 0)
   }
 
   addControls() {
@@ -528,8 +528,9 @@ export default class Hero {
     this.normalizeSpeed()
 
     // play sound
-    const sound = this.scene.narrator.forceWalk ? this.scene.sounds.walking : this.scene.sounds.running
-    sound.setVolume(this.speed ? 0.15 : 0)
+    this.scene.narrator.forceWalk
+      ? this.walkingSound.setVolume(this.speed ? 0.15 : 0)
+      : this.runningSound.setVolume(this.speed ? 0.15 : 0)
   }
 
   moveToXY(x, y) {
@@ -674,8 +675,8 @@ export default class Hero {
     if (heroHp <= 0) {
       this.die()
       this.scene.sounds.play('die')
-      this.scene.sounds.running.setVolume(0)
-      this.scene.sounds.walking.setVolume(0)
+      this.runningSound.setVolume(0)
+      this.walkingSound.setVolume(0)
       this.freeze()
       this.dead = true
       const lastLevelXp = this.constructor.getXpForLevelUp(this.scene.registry.get('level'))
@@ -721,8 +722,8 @@ export default class Hero {
     // Stop any previous movement from the last frame
     this.container.setVelocity(0)
     // stop sound from last frame
-    this.scene.sounds.running.setVolume(0)
-    this.scene.sounds.walking.setVolume(0)
+    this.runningSound.setVolume(0)
+    this.walkingSound.setVolume(0)
 
     this.fireballs.forEach(fireball => fireball.update())
 

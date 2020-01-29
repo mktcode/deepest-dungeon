@@ -120,6 +120,7 @@ export default class Fireball {
   }
 
   start() {
+    this.backgroundSound = this.scene.sounds.play('fireball2')
     this.scene.time.delayedCall(500, () => {
       this.emitter1.start()
       this.emitter2.start()
@@ -128,7 +129,6 @@ export default class Fireball {
         intensity: () => LightManager.flickering(1)
       })
       this.grow()
-      this.scene.sounds.play('fireball2')
     })
   }
 
@@ -243,7 +243,7 @@ export default class Fireball {
     this.emitter2.stop()
     this.scene.sounds.play('fireball')
     this.scene.time.delayedCall(200, () => {
-      this.scene.sounds.stop('fireball2')
+      this.backgroundSound.stop()
     })
     this.scene.time.delayedCall(this.emitter2.lifespan.propertyValue, () => {
       this.scene.lightManager.removeLight(this.container)

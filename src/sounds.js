@@ -31,36 +31,6 @@ import fireball2 from './assets/audio/sounds/fireball2.mp3';
 export default class Sounds {
   constructor(scene) {
     this.scene = scene
-    this.activateSafeRoom = scene.sound.add('activateSafeRoom')
-    this.attackSound = scene.sound.add('attackSound', { volume: 0.25 })
-    this.attackHitSound = scene.sound.add('attackHitSound', { volume: 0.5 })
-    this.attackPunchSound = scene.sound.add('attackPunchSound', { volume: 0.25 })
-    this.attackPunchHitSound = scene.sound.add('attackPunchHitSound', { volume: 0.3 })
-    this.zombie1 = scene.sound.add('zombie1')
-    this.zombie2 = scene.sound.add('zombie2')
-    this.spider1 = scene.sound.add('spider1')
-    this.spider2 = scene.sound.add('spider2')
-    this.ticking = scene.sound.add('ticking')
-    this.tickingFast = scene.sound.add('tickingFast')
-    this.levelUp = scene.sound.add('levelUp', { volume: 0.7 })
-    this.skillUp = scene.sound.add('skillUp')
-    this.heartBeat = scene.sound.add('heartBeat', { volume: 0.5 })
-    this.takeHit = scene.sound.add('takeHit', { volume: 0.3 })
-    this.die = scene.sound.add('die', { volume: 0.3 })
-    this.running = scene.sound.add('running', { volume: 0 })
-    this.walking = scene.sound.add('walking', { volume: 0 })
-    this.healthPing = scene.sound.add('healthPing')
-    this.xpPing1 = scene.sound.add('xpPing1', { volume: 0.7 })
-    this.xpPing2 = scene.sound.add('xpPing2', { volume: 0.7 })
-    this.xpPing3 = scene.sound.add('xpPing3', { volume: 0.7 })
-    this.xpPing4 = scene.sound.add('xpPing4', { volume: 0.7 })
-    this.xpPing5 = scene.sound.add('xpPing5', { volume: 0.7 })
-    this.xpPing6 = scene.sound.add('xpPing6', { volume: 0.7 })
-    this.xpPing7 = scene.sound.add('xpPing7', { volume: 0.7 })
-    this.xpPing8 = scene.sound.add('xpPing8', { volume: 0.7 })
-    this.fireball = scene.sound.add('fireball', { volume: 0.7 })
-    this.fireball2 = scene.sound.add('fireball2', { volume: 0.7 })
-    this.playing = null
   }
 
   static preload(scene) {
@@ -95,18 +65,10 @@ export default class Sounds {
     scene.load.audio('fireball2', fireball2)
   }
 
-  play(key, delay, slowmo, loop) {
-    return new Promise((resolve) => {
-      this.playing = this[key]
-      this.playing.play({ rate: slowmo ? 0.3 : 1, delay: delay || 0, loop: loop || false })
-      this.playing.once('complete', () => {
-        this.playing = null
-        resolve()
-      })
-    })
-  }
-
-  stop(key) {
-    this[key].stop()
+  play(key, delay, slowmo, loop, volume) {
+    const sound = this.scene.sound.add(key, { volume: volume })
+    sound.once('complete', sound.destroy, sound)
+    sound.play({ rate: slowmo ? 0.3 : 1, delay: delay || 0, loop: loop || false })
+    return sound
   }
 }
