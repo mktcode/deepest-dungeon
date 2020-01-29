@@ -31,6 +31,7 @@
 - [ ] sound effects must be quiter when narrator speaks
 - [ ] make character slide/speed up/down a bit
 - [ ] make timeeater a sensor
+- [ ] increase hp/mana/damage automatically on level up, instead choose gameplay mechanics on level up (shield makes damage, fireball bounces to other enemies, etc.)
 - [ ] look around idle animation
 - [ ] Narrative
   - [ ] adjust volumes
