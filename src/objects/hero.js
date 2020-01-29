@@ -527,10 +527,7 @@ export default class Hero {
 
     this.normalizeSpeed()
 
-    // play sound
-    this.scene.narrator.forceWalk
-      ? this.walkingSound.setVolume(this.speed ? 0.15 : 0)
-      : this.runningSound.setVolume(this.speed ? 0.15 : 0)
+    this.playWalkingSound()
   }
 
   moveToXY(x, y) {
@@ -567,6 +564,7 @@ export default class Hero {
       if (direction) {
         this.lastDirection = direction
         this.run(direction)
+        this.playWalkingSound()
       }
     } else {
       this.moveTo = null
@@ -578,6 +576,12 @@ export default class Hero {
         this.doAttack()
       }
     }
+  }
+
+  playWalkingSound() {
+    this.scene.narrator.forceWalk
+      ? this.walkingSound.setVolume(this.speed ? 0.15 : 0)
+      : this.runningSound.setVolume(this.speed ? 0.15 : 0)
   }
 
   normalizeSpeed() {
