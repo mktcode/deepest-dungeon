@@ -25,6 +25,7 @@
 - [ ] skill mana
 - [ ] skill shield (duration, damage)
 - [ ] let timeeater wander around dungeon
+- [ ] click to move doesn't play walking/running sounds
 - [ ] make sounds play in parallel if neccessary
 - [ ] chapter popup text
 - [ ] sound effects must be quiter when narrator speaks
