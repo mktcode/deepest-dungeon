@@ -2,14 +2,12 @@
 
 - [ ] BUG: safe room light not visible when safe room is to the top
 - [ ] BUG: death animation doesn't trigger sometimes
-- [ ] BUG: can't click inside of door to move
 - [ ] trapdoors, random tiles change after standing on them too long, instant death
 - [ ] more story
 - [ ] implement global high score
 - [ ] implement spell attack
 - [ ] animate cooldowns in item slots
 - [ ] make torches usable on demand
-- [ ] remove mobile control leftovers
 - [ ] UI change, fade in/out when narrator speaks
 - [ ] more beautiful and unique UI
 - [ ] subtitles for the narrator
@@ -25,8 +23,6 @@
 - [ ] skill mana
 - [ ] skill shield (duration, damage)
 - [ ] let timeeater wander around dungeon
-- [ ] click to move doesn't play walking/running sounds
-- [ ] make sounds play in parallel if neccessary
 - [ ] chapter popup text
 - [ ] sound effects must be quiter when narrator speaks
 - [ ] make character slide/speed up/down a bit
