@@ -1,6 +1,5 @@
 import MenuScene from './scenes/menu.js'
 import PreloadScene from './scenes/preload.js'
-import VirtualJoyStickPlugin from './plugins/rexvirtualjoystickplugin.min.js'
 import MatterDebugConfig from './matter-debug-config.js'
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin'
 
@@ -24,11 +23,6 @@ const config: GameConfig = {
     }
   },
   plugins: {
-    global: [{
-        key: 'joystick',
-        plugin: VirtualJoyStickPlugin,
-        start: true
-    }],
     scene: [
       {
         key: 'matterCollision',
