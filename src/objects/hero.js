@@ -50,10 +50,7 @@ export default class Hero {
           this.targetedEnemy = targetedEnemy
         } else {
           this.targetedEnemy = null
-          this.moveTo = {
-            x: pointer.worldX,
-            y: pointer.worldY
-          }
+          this.moveTo = this.scene.findClosestWalkablePoint(pointer.worldX, pointer.worldY)
         }
       } else if (pointer.rightButtonDown() && this.canCastFireball()) {
         let target = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY)

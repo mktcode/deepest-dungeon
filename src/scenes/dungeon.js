@@ -2106,6 +2106,24 @@ export default class DungeonScene extends Phaser.Scene {
     ][((Math.round(Math.atan2(vector.y, vector.x) / (2 * Math.PI / 8))) + 8) % 8]
   }
 
+  findClosestWalkablePoint(x, y) {
+    x = this.worldToTileX(x)
+    y = this.worldToTileX(y)
+
+    const walkables = []
+    this.getPathGrid().nodes.forEach((node) => {
+      walkables.push(...node.filter(n => n.walkable))
+    })
+
+    walkables.sort((a, b) => {
+      return Phaser.Math.Distance.Between(a.x, a.y, x, y) - Phaser.Math.Distance.Between(b.x, b.y, x, y)
+    })
+
+    const clostest = walkables[0]
+
+    return { x: this.tileToWorldX(clostest.x), y: this.tileToWorldY(clostest.y) }
+  }
+
   update() {
     this.getEndRoom()
     this.hero.update()
