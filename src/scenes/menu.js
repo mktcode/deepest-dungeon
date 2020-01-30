@@ -44,7 +44,7 @@ export default class MenuScene extends Phaser.Scene {
     this.registry.set('skillPoints', 0)
     this.registry.set('skillPointsSpent', 0)
     this.registry.set('enemiesKilled', 0)
-    this.registry.set('zoom', 2)
+    this.registry.set('zoom', this.game.device.os.desktop ? 2 : 1.5)
   }
 
   addTitle() {
