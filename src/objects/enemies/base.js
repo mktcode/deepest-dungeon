@@ -168,10 +168,10 @@ export default class BaseEnemy {
         for (let i = 0; i < this.xp; i++) {
           this.dungeon.emitXpOrb(this.sprite.x, this.sprite.y, true)
         }
-        if (this.dungeon.registry.get('health') < this.dungeon.registry.get('maxHealth') && !Phaser.Math.Between(0, 15)) {
+        if (this.dungeon.registry.get('health') < this.dungeon.registry.get('maxHealth') && !Phaser.Math.Between(0, 8)) {
           this.dungeon.emitHealthOrb(this.sprite.x, this.sprite.y, true)
         }
-        if (this.dungeon.registry.get('mana') < this.dungeon.registry.get('maxMana') && !Phaser.Math.Between(0, 15)) {
+        if (this.dungeon.registry.get('mana') < this.dungeon.registry.get('maxMana') && !Phaser.Math.Between(0, 8)) {
           this.dungeon.emitManaOrb(this.sprite.x, this.sprite.y, true)
         }
         this.dungeon.time.delayedCall(1000, () => {
