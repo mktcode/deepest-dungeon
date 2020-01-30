@@ -1066,7 +1066,7 @@ export default class DungeonScene extends Phaser.Scene {
         const torches = this.registry.get('items').filter(item => item === 'torch')
 
         if (torches && torches.length) {
-          return LightManager.flickering((this.registry.get('torchIntensity') - 1) / 2 + torches.length - 1)
+          return LightManager.flickering((this.registry.get('torchIntensity') - 1) / 2 + torches.length - 0.5)
         }
         return 0
       }
