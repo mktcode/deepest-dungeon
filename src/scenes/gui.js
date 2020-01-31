@@ -2,144 +2,106 @@ import Phaser from "phaser";
 import Hero from "../objects/hero.js";
 
 // assets
-import frame from "../assets/gui/frame.png";
-import orbs from "../assets/gui/orbs.png";
-import bars from "../assets/gui/bars.png";
-import items from "../assets/gui/items.png";
-import cursor from "../assets/gui/cursor.png";
+import guiHero from "../assets/gui/hero.png";
+import guiOrb from "../assets/gui/orb.png";
+import guiOrbReflection from "../assets/gui/orb-reflection.png";
+import guiOrbSmall from "../assets/gui/orb-small.png";
+import guiBars from "../assets/gui/bars.png";
+import guiHealth from "../assets/gui/health.png";
+import guiMana from "../assets/gui/mana.png";
+import guiXp from "../assets/gui/xp.png";
+import guiCursor from "../assets/gui/cursor.png";
 
 export default class GuiScene extends Phaser.Scene {
   constructor() {
     super('Gui')
-    this.items = {
-      slot1: null,
-      slot2: null,
-      slot3: null,
-      slot4: null,
-      slot5: null,
-      slot6: null,
-      slot7: null,
-      slot8: null,
-      slot9: null
-    }
   }
 
   static preload(scene) {
-    scene.load.image("gui-frame", frame)
-    scene.load.spritesheet("cursor", cursor, {
-      frameWidth: 42,
-      frameHeight: 46
-    })
-    scene.load.spritesheet(
-      "gui-orbs",
-      orbs,
-      {
-        frameWidth: 87,
-        frameHeight: 75
-      }
-    );
-    scene.load.spritesheet(
-      "gui-bars",
-      bars,
-      {
-        frameWidth: 348,
-        frameHeight: 9
-      }
-    );
-    scene.load.spritesheet(
-      "gui-items",
-      items,
-      {
-        frameWidth: 36,
-        frameHeight: 36
-      }
-    );
+    scene.load.spritesheet("guiHero", guiHero, { frameWidth: 63, frameHeight: 63 })
+    scene.load.image("guiOrb", guiOrb)
+    scene.load.image("guiOrbReflection", guiOrbReflection)
+    scene.load.image("guiOrbSmall", guiOrbSmall)
+    scene.load.image("guiBars", guiBars)
+    scene.load.image("guiHealth", guiHealth)
+    scene.load.image("guiMana", guiMana)
+    scene.load.image("guiXp", guiXp)
+    scene.load.spritesheet("guiCursor", guiCursor, { frameWidth: 42, frameHeight: 46 })
   }
 
   create() {
-    this.scale.on('resize', this.resize, this)
-
-    this.centerX = this.game.scale.width / 2
-    this.centerY = this.game.scale.height - 46
-
-    this.container = this.add.container(this.centerX, this.centerY)
-    this.frame = this.add.image(0, 0, "gui-frame").setInteractive()
-    this.healthFill = this.add.sprite(-193, 0, "gui-orbs", 0)
-    this.manaFill = this.add.sprite(193, 0, "gui-orbs", 1)
-    this.dungeonProgressBar = this.add.sprite(0, -15, "gui-bars", 0)
-    this.xpBar = this.add.sprite(0, -3, "gui-bars", 1)
-
-    // items
-    const itemsTextStyle = {
-      font: "11px monospace",
-      fill: "#FFFFFF"
-    }
-    this.items.slot1 = this.add.sprite(-156, 23, "gui-items", 0)
-    this.items.slot2 = this.add.sprite(-156 + 39, 23, "gui-items", 1)
-    this.items.slot3 = this.add.sprite(-156 + 2 * 39, 23, "gui-items", 2)
-    this.items.slot4 = this.add.sprite(-156 + 3 * 39, 23, "gui-items", 3)
-    this.items.slot5 = this.add.sprite(-156 + 4 * 39, 23, "gui-items", 4)
-    this.items.slot6 = this.add.sprite(-156 + 5 * 39, 23, "gui-items", 5)
-    this.items.slot7 = this.add.sprite(-156 + 6 * 39, 23, "gui-items", 6)
-    this.items.slot8 = this.add.sprite(-156 + 7 * 39, 23, "gui-items", 7).setInteractive()
-    this.items.slot9 = this.add.sprite(-156 + 8 * 39, 23, "gui-items", 8)
-    this.items.slot9text = this.add.text(-171 + 8 * 39, 23 + 5, '', itemsTextStyle)
-
-    this.items.slot8.on('pointerup', () => {
-      const currentDungeon = this.scene.get('Dungeon' + this.registry.get('currentDungeon'))
-      currentDungeon.hero.usePathfinder()
-    })
-
-    // selected item
-    this.selectedItem = this.add.graphics();
-    this.selectedItem.lineStyle(3, 0xffffff, 1);
-    this.selectedItem.strokeRect(-173, 5, 34, 34);
-
-    this.container.add([
-      this.healthFill,
-      this.manaFill,
-      this.frame,
-      this.dungeonProgressBar,
-      this.xpBar,
-      this.items.slot1,
-      this.items.slot2,
-      this.items.slot3,
-      this.items.slot4,
-      this.items.slot5,
-      this.items.slot6,
-      this.items.slot7,
-      this.items.slot8,
-      this.items.slot9,
-      this.items.slot9text,
-      this.selectedItem
-    ])
-
-    this.createCursor()
-
-    this.addHealthAnimation()
-    this.addManaAnimation()
+    this.addCharacterInfo()
+    this.addCursor()
     this.addLowHealthAnimation()
     this.addLetterBoxes()
     this.addSubtitle()
 
-    // listen to changes
+    this.scale.on('resize', this.resize, this)
     this.registry.events.on('changedata', this.update, this)
     this.update()
   }
 
-  update() {
-    this.updateHealth()
-    this.updateMana()
-    this.updateDungeonProgress()
-    this.updateXp()
-    this.updateSelectedItem()
-    this.updateItems()
-    this.updateCursor()
+  addCharacterInfo() {
+    this.centerX = 120
+    this.centerY = 55
+
+    this.anims.create({
+      key: "guiHeroIdle",
+      frames: this.anims.generateFrameNumbers("guiHero", { start: 0, end: 19 }),
+      frameRate: 12,
+      repeat: -1
+    })
+    this.anims.create({
+      key: "guiHeroLookAround",
+      frames: this.anims.generateFrameNumbers("guiHero", { start: 20, end: 63 }),
+      frameRate: 12,
+      repeat: 0
+    })
+
+    this.guiHero = this.add.sprite(-65, 0, "guiHero", 0)
+    this.guiHero.anims.play('guiHeroIdle')
+    this.time.addEvent({
+      delay: 15000,
+      callback: () => {
+        this.guiHero.anims.play('guiHeroLookAround')
+        const anim = this.anims.get('guiHeroLookAround')
+        anim.on('complete', () => {
+          this.guiHero.anims.play('guiHeroIdle')
+        })
+      },
+      loop: true
+    })
+
+    this.guiHeroOrb = this.add.image(-65, 0, "guiOrb")
+    this.guiHeroOrbReflection = this.add.image(-55, -10, "guiOrbReflection")
+    this.guiLevelOrb = this.add.image(-33, 0, "guiOrbSmall")
+    this.guiTorchOrb = this.add.image(-80, 30, "guiOrbSmall")
+    this.guiShieldOrb = this.add.image(-50, 30, "guiOrbSmall")
+    this.guiLevelNum = this.add.text(-41, -6, '1', { font: "10px monospace", fill: "#857562" }).setFixedSize(16, 16).setAlign("center")
+    this.guiBars = this.add.image(60, 0, "guiBars")
+    this.guiHealth = this.add.image(60, -12, "guiHealth")
+    this.guiMana = this.add.image(60, 12, "guiMana")
+    this.guiXp = this.add.image(60, 0, "guiXp")
+
+    this.container = this.add.container(this.centerX, this.centerY)
+    this.container.add([
+      this.guiHealth,
+      this.guiMana,
+      this.guiBars,
+      this.guiXp,
+      this.guiHeroOrb,
+      this.guiHero,
+      this.guiHeroOrbReflection,
+      this.guiLevelOrb,
+      this.guiLevelNum,
+      this.guiTorchOrb,
+      this.guiShieldOrb
+    ])
   }
 
-  createCursor() {
+  addCursor() {
     this.input.setDefaultCursor('none')
-    this.cursor = this.add.sprite(0, 0, "cursor", 0)
+    this.cursor = this.add.sprite(0, 0, "guiCursor", 0)
     this.resetCursorIdleTime()
     this.input.on('pointermove', () => this.resetCursorIdleTime())
     this.input.on('pointerdown', () => {
@@ -263,65 +225,6 @@ export default class GuiScene extends Phaser.Scene {
     })
   }
 
-  addHealthAnimation() {
-    this.healthAnimationParticle = this.add.particles('particle').setDepth(-1)
-    this.healthAnimation = this.healthAnimationParticle.createEmitter({
-      tint: [0xCC0000],
-      on: false,
-      x: this.centerX - 193,
-      y: this.centerY,
-      blendMode: 'SCREEN',
-      scale: { start: 1, end: 2 },
-      alpha: { start: 1, end: 0 },
-      speed: 30,
-      quantity: 40,
-      frequency: 200,
-      lifespan: 500,
-      emitZone: {
-        source: new Phaser.Geom.Circle(0, 0, 45),
-        type: 'edge',
-        quantity: 40
-      }
-    })
-  }
-
-  addManaAnimation() {
-    this.manaAnimationParticle = this.add.particles('particle').setDepth(-1)
-    this.manaAnimation = this.manaAnimationParticle.createEmitter({
-      tint: [0x0000FF],
-      on: false,
-      x: this.centerX + 193,
-      y: this.centerY,
-      blendMode: 'SCREEN',
-      scale: { start: 1, end: 2 },
-      alpha: { start: 1, end: 0 },
-      speed: 30,
-      quantity: 40,
-      frequency: 200,
-      lifespan: 500,
-      emitZone: {
-        source: new Phaser.Geom.Circle(0, 0, 45),
-        type: 'edge',
-        quantity: 40
-      }
-    })
-  }
-
-  playHealthAnimation() {
-    this.playOrbAnimation(this.healthAnimation)
-  }
-
-  playManaAnimation() {
-    this.playOrbAnimation(this.manaAnimation)
-  }
-
-  playOrbAnimation(animation) {
-    animation.start()
-    this.time.delayedCall(250, () => {
-      animation.stop()
-    })
-  }
-
   addLowHealthAnimation() {
     this.lowHealthAnimationParticle = this.add.particles('particle').setDepth(-1)
     this.lowHealthAnimation = this.lowHealthAnimationParticle.createEmitter({
@@ -383,21 +286,14 @@ export default class GuiScene extends Phaser.Scene {
     const health = this.registry.get('health')
     const maxHealth = this.registry.get('maxHealth')
 
-    this.healthFill.setCrop(0, 90 - 90 * (health / maxHealth), 90, 90)
+    this.guiHealth.setCrop(0, 0, 190 * (health / maxHealth), 12)
   }
 
   updateMana() {
     const mana = this.registry.get('mana')
     const maxMana = this.registry.get('maxMana')
 
-    this.manaFill.setCrop(0, 90 - 90 * (mana / maxMana), 90, 90)
-  }
-
-  updateDungeonProgress() {
-    const currentDungeon = this.registry.get('currentDungeon')
-    const deepestDungeon = this.registry.get('deepestDungeon')
-
-    this.dungeonProgressBar.setCrop(0, 0, 348 * (currentDungeon / deepestDungeon), 9)
+    this.guiMana.setCrop(0, 0, 190 * (mana / maxMana), 12)
   }
 
   updateXp() {
@@ -415,42 +311,18 @@ export default class GuiScene extends Phaser.Scene {
     const thisLevelXp = currentMaxXp - lastMaxXp
     const xp = totalXp - lastMaxXp
 
-    this.xpBar.setCrop(0, 0, 348 * (xp / thisLevelXp), 9)
-  }
-
-  updateSelectedItem() {
-    if (this.registry.get('weapon') === 'sword') {
-      this.container.bringToTop(this.selectedItem)
-    } else {
-      this.container.sendToBack(this.selectedItem)
-    }
-  }
-
-  updateItems() {
-    const items = this.registry.get('items')
-    if (items.includes('sword')) {
-      this.container.bringToTop(this.items.slot1)
-    } else {
-      this.container.sendToBack(this.items.slot1)
-    }
-    if (items.includes('pathfinder')) {
-      this.container.bringToTop(this.items.slot8)
-      this.items.slot8.setAlpha(this.registry.get('pathfinderCooldown') ? 0.3 : 1)
-    } else {
-      this.container.sendToBack(this.items.slot8)
-    }
-    if (items.includes('torch')) {
-      this.container.bringToTop(this.items.slot9)
-      this.container.bringToTop(this.items.slot9text)
-      const torchesNum = items.filter(i => i === 'torch').length
-      this.items.slot9text.setText(torchesNum)
-    } else {
-      this.container.sendToBack(this.items.slot9)
-      this.container.sendToBack(this.items.slot9text)
-    }
+    this.guiXp.setCrop(0, 0, 190 * (xp / thisLevelXp), 2)
+    this.guiLevelNum.setText(this.registry.get('level'))
   }
 
   resize() {
     this.container.setPosition(this.centerX, this.centerY)
+  }
+
+  update() {
+    this.updateHealth()
+    this.updateMana()
+    this.updateXp()
+    this.updateCursor()
   }
 }
