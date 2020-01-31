@@ -50,23 +50,14 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.on('complete', () => {
       progressBar.destroy();
       progressBox.destroy();
-      const playButton = this.add
-        .text(centerX - 49, centerY, 'Play', {
-          font: "24px monospace",
-          fill: "#000000",
-          padding: { x: 20, y: 10 },
-          backgroundColor: "#ffffff"
-        })
-        .setInteractive();
-      playButton.on('pointerup', () => {
-        const cam = this.cameras.main;
-        cam.fadeOut(250, 0, 0, 0);
-        cam.once("camerafadeoutcomplete", () => {
-          this.scene.shutdown('Preload')
-          this.scene.start('Menu')
-        });
+
+      const cam = this.cameras.main;
+      cam.fadeOut(250, 0, 0, 0);
+      cam.once("camerafadeoutcomplete", () => {
+        this.scene.shutdown('Preload')
+        this.scene.start('Menu')
       })
-    });
+    })
   }
 
   create() {
