@@ -1,56 +1,60 @@
 # TODO
 
-- [ ] BUG: safe room light not visible when safe room is to the top
-- [ ] BUG: death animation doesn't trigger sometimes
-- [ ] trapdoors, random tiles change after standing on them too long, instant death
-- [ ] more story
-- [ ] implement global high score
-- [ ] implement spell attack
-- [ ] animate cooldowns in item slots
-- [ ] make torches usable on demand
-- [ ] UI change, fade in/out when narrator speaks
-- [ ] more beautiful and unique UI
-- [ ] subtitles for the narrator
-- [ ] use seeds as sharable "sessions" and saved games
-- [ ] more enemies/traps
-- [ ] stamina for running (and attacking)
-- [ ] fix bouncy hero collision (leading to leaving a room unintended)
-- [ ] adjust volume of all sounds/narrative
-- [ ] timeeater countdown doesn't stop when pausing the game
-- [ ] add all credits
-- [ ] zoom to object of interest (narrator)
-- [ ] attack combo with second attack animation
-- [ ] skill mana
-- [ ] skill shield (duration, damage)
-- [ ] let timeeater wander around dungeon
-- [ ] chapter popup text
-- [ ] sound effects must be quiter when narrator speaks
-- [ ] make character slide/speed up/down a bit
-- [ ] make timeeater a sensor
-- [ ] increase hp/mana/damage automatically on level up, instead choose gameplay mechanics on level up (shield makes damage, fireball bounces to other enemies, etc.)
-- [ ] look around idle animation
-- [ ] Narrative
-  - [ ] adjust volumes
-  - [ ] finding fireball scroll
-  - [ ] running out of mana (when casting fireball or shield)
-- [ ] add/improve sounds
-  - [ ] going down stairs
-  - [ ] walking/running when slowmo
-- [ ] new (animated) boss enemy
-- [ ] put the time eater as far away from the doors as possible
-- [ ] steem blockchain as storage
-- [ ] light layer: seamless rooms
-- [ ] multiplayer
+- BUGS/ISSUES:
+  - [ ] death animation doesn't trigger sometimes
+  - [ ] fix bouncy hero collision (leading to leaving a room unintended) caused by compound body
+  - [ ] timeeater countdown doesn't stop when pausing the game
+  - [ ] abstract hero class to be reusable for multiple players/characters
+- IDEAS:
+  - ENEMIES/TRAPS/PUZZLES:
+    - [ ] trapdoors, random tiles change after standing on them too long, instant death
+    - [ ] more enemies
+    - [ ] white giant spider as end boss
+    - [ ] let spiders shoot webs to slow down
+  - [ ] more story
+  - [ ] implement global high score
+  - [ ] make torches usable on demand
+  - [ ] use seeds as sharable "sessions" and saved games
+  - [ ] stamina for running (and attacking)
+  - [ ] attack combo with second attack animation
+  - [ ] increase hp/mana/damage automatically on level up, instead choose gameplay mechanic (shield damage, fireball bounces to other enemies, etc.)
+  - [ ] steem blockchain as storage
+  - [ ] when you find an item, make the level depending on that item:
+    - find pathfinder: make levels bigger
+    - find shield: more enemies running at you
+    - find fireball: make flamable stuff you need to break to reach the doors
+    - etc
+- POLISHING:
+  - [ ] animate cooldowns in item slots
+  - [ ] UI change, fade in/out when narrator speaks
+  - [ ] more beautiful and unique UI
+  - [ ] subtitles for the narrator
+  - [ ] adjust volume of all sounds/narrative
+  - [ ] sound effects must be quiter when narrator speaks
+  - [ ] add all credits
+  - [ ] zoom to object of interest (narrator)
+  - [ ] skill mana
+  - [ ] skill shield (duration, damage)
+  - [ ] let timeeater wander around dungeon
+  - [ ] better positioning for chapter popup text
+  - [ ] interrupt narrator by pressing a key
+  - [ ] make character slide/speed up/down a bit
+  - [ ] make timeeater a sensor
+  - [ ] increase sword/punch hit boxes
+  - [ ] Narrative
+    - [ ] finding fireball scroll
+    - [ ] running out of mana (when casting fireball or shield)
+  - [ ] add/improve sounds
+    - [ ] going down stairs
+    - [ ] walking/running when slowmo
+  - [ ] put the time eater as far away from the doors as possible
+  - [ ] light layer: seamless rooms
+- MULTIPLAYER:
   - [ ] connect via seed
   - [ ] ranks
   - [ ] permanent leveling
   - [ ] randomly meet other players
-    - [ ] they introduced themselves with theirs names: input field, initiate chat
-- [ ] when you find an item, make the level depending on that item:
-  - find pathfinder: make levels bigger
-  - find shield: more enemies running at you
-  - find fireball: make flamable stuff you need to break to reach the doors
-  - etc
+    - [ ] "they introduced themselves with theirs names": input field, initiate chat
 
 # phaser-electron-typescript-parcel [![Build Status](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel.svg?branch=master)](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel)
 
