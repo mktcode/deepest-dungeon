@@ -886,7 +886,7 @@ export default class DungeonScene extends Phaser.Scene {
         doorLightX1 = this.safeRoom.x + doors[0].x
         doorLightY1 = this.safeRoom.y + doors[0].y
         doorLightX2 = this.safeRoom.x + doors[0].x
-        doorLightY2 = this.safeRoom.y + doors[0].y - 1
+        doorLightY2 = this.safeRoom.y + doors[0].y + 2
       }
 
       this.lightManager.lights.push({
