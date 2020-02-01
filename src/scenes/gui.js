@@ -224,10 +224,8 @@ export default class GuiScene extends BaseScene {
 
   startPathfinderCooldown() {
     this.registry.set('pathfinderCooldown', true)
-    this.updateItems()
     this.time.delayedCall(120000, () => {
       this.registry.set('pathfinderCooldown', false)
-      this.updateItems()
     })
   }
 
