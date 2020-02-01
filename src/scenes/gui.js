@@ -1,14 +1,15 @@
 import Phaser from "phaser";
+import BaseScene from "../scenes/base.js";
 import Hero from "../objects/hero.js";
 
-export default class GuiScene extends Phaser.Scene {
+export default class GuiScene extends BaseScene {
   constructor() {
     super('Gui')
   }
 
   create() {
+    super.create()
     this.addCharacterInfo()
-    this.addCursor()
     this.addLowHealthAnimation()
     this.addLetterBoxes()
     this.addSubtitle()
@@ -74,35 +75,6 @@ export default class GuiScene extends Phaser.Scene {
       this.guiTorchOrb,
       this.guiShieldOrb
     ])
-  }
-
-  addCursor() {
-    this.input.setDefaultCursor('none')
-    this.cursor = this.add.sprite(0, 0, "guiCursor", 0)
-    this.resetCursorIdleTime()
-    this.input.on('pointermove', () => this.resetCursorIdleTime())
-    this.input.on('pointerdown', () => {
-      this.cursor.setFrame(1)
-      this.resetCursorIdleTime()
-    })
-    this.input.on('pointerup', () => {
-      this.cursor.setFrame(0)
-      this.resetCursorIdleTime()
-    })
-  }
-
-  resetCursorIdleTime() {
-    this.cursorIdleTime = new Date().getTime()
-  }
-
-  updateCursor() {
-    this.cursor.setX(this.input.activePointer.x + 18)
-    this.cursor.setY(this.input.activePointer.y + 20)
-    if ((new Date().getTime() - this.cursorIdleTime) / 1000 > 3) {
-      this.cursor.setAlpha(0)
-    } else {
-      this.cursor.setAlpha(1)
-    }
   }
 
   addLetterBoxes() {
@@ -297,9 +269,9 @@ export default class GuiScene extends Phaser.Scene {
   }
 
   update() {
+    super.update()
     this.updateHealth()
     this.updateMana()
     this.updateXp()
-    this.updateCursor()
   }
 }
