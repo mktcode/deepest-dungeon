@@ -138,6 +138,12 @@ export default class DungeonScene extends Phaser.Scene {
       if (!narratorSaid.includes('whereAmI')) {
         this.playStoryElementOnce('whereAmI').then(() => {
           gui.showSubtitle(TEXTS.WASD_TO_MOVE)
+          this.time.delayedCall(1000, () => {
+            this.tweens.add({
+              targets: [gui.characterInfo],
+              alpha: { from: 0, to: 1 }
+            })
+          })
         })
       } else {
         if (this.registry.get('items').includes('sword') && !narratorSaid.includes('theDeeperHeWent')) {

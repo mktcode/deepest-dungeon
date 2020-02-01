@@ -61,8 +61,8 @@ export default class GuiScene extends BaseScene {
     this.guiMana = this.add.image(60, 12, "guiMana")
     this.guiXp = this.add.image(60, 0, "guiXp")
 
-    this.container = this.add.container(this.centerX, this.centerY)
-    this.container.add([
+    this.characterInfo = this.add.container(this.centerX, this.centerY).setAlpha(0)
+    this.characterInfo.add([
       this.guiHealth,
       this.guiMana,
       this.guiBars,
@@ -262,9 +262,7 @@ export default class GuiScene extends BaseScene {
     this.guiLevelNum.setText(this.registry.get('level'))
   }
 
-  resize() {
-    this.container.setPosition(this.centerX, this.centerY)
-  }
+  resize() {}
 
   update() {
     super.update()
