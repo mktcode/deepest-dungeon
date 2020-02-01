@@ -14,9 +14,11 @@ export default class MenuScene extends BaseScene {
 
   create() {
     super.create()
-    
+
     this.cameras.main.fadeIn(250, 0, 0, 0);
-    this.music = this.sound.add('ambientMusik', { volume: 0.25, loop: true  });
+    this.menuMusic = this.sound.add('menuMusic', { volume: 1, loop: true  })
+    this.menuMusic.play()
+    this.music = this.sound.add('ambientMusic', { volume: 1, loop: true  })
 
     this.centerX = this.game.scale.width / 2
     this.centerY = this.game.scale.height / 2
@@ -54,7 +56,9 @@ export default class MenuScene extends BaseScene {
       // new game button
       container.add(new GuiButton(this, 0, -80, 150, 'New Game', () => {
         this.cameras.main.fadeOut(1000, 0, 0, 0, (camera, progress) => {
+          this.menuMusic.setVolume(1 - progress)
           if (progress === 1) {
+            this.menuMusic.stop()
             this.scene.sleep()
             this.scene.add('Dungeon1', new DungeonScene(this.registry.get('currentDungeon')), true)
             this.scene.add('Gui', new GuiScene(), true)

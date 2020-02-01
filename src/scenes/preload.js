@@ -9,6 +9,7 @@ import Animations from "../animations.js"
 import spriteAtlas from "../assets/spriteatlas/spriteatlas.json"
 import spriteAtlasImage from "../assets/spriteatlas/spriteatlas.png"
 import themeMp3 from "../assets/audio/kai-engel-downfall.mp3"
+import menuMp3 from "../assets/audio/kai-engel-crying-earth.mp3"
 
 import guiHero from "../assets/gui/hero.png"
 import guiOrb from "../assets/gui/orb.png"
@@ -37,7 +38,8 @@ export default class PreloadScene extends Phaser.Scene {
 
   preload() {
     this.load.atlas('sprites', spriteAtlasImage, spriteAtlas)
-    this.load.audio("ambientMusik", themeMp3)
+    this.load.audio("ambientMusic", themeMp3)
+    this.load.audio("menuMusic", menuMp3)
 
     this.load.spritesheet("guiHero", guiHero, { frameWidth: 63, frameHeight: 63 })
     this.load.image("guiOrb", guiOrb)
