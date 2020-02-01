@@ -123,7 +123,7 @@ export default class DungeonScene extends Phaser.Scene {
 
   start() {
     this.cameras.main.setZoom(this.registry.get('zoom'))
-    this.cameras.main.fadeIn(1000, 0, 0, 0)
+    this.cameras.main.fadeIn(2000, 0, 0, 0)
 
     // ALERT: DIRTY WORKAROUND (setTimeout): Dungeon depends on Gui and vice verca on start up. Needs to be fixed.
     setTimeout(() => {
