@@ -64,24 +64,27 @@ export default class PreloadScene extends Phaser.Scene {
     const centerX = this.game.scale.width / 2
     const centerY = this.game.scale.height / 2
 
-    const progressBar = this.add.graphics();
-    const progressBox = this.add.graphics();
-    progressBox.fillStyle(0x222222, 0.8);
-    progressBox.fillRect(centerX - 160, centerY, 320, 50);
+    const progressText = this.add.text(centerX - 55, centerY + 15, 'loading game...', { font: "11px monospace", fill: "#3a352a" })
+    const progressBar = this.add.graphics().setDepth(10);
+    const progressBox = this.add.graphics().setDepth(5);
+    progressBox.fillStyle(0x3a352a);
+    progressBox.fillRect(centerX - 160, centerY, 300, 10);
+
 
     this.load.on('progress', (value) => {
       progressBar.clear();
-      progressBar.fillStyle(0xffffff, 1);
-      progressBar.fillRect(centerX - 150, centerY + 10, 300 * value, 30);
+      progressBar.fillStyle(0x601309, 1);
+      progressBar.fillRect(centerX - 158, centerY + 3, 296 * value, 4);
     });
 
     this.load.on('complete', () => {
-      progressBar.destroy();
-      progressBox.destroy();
-
       const cam = this.cameras.main;
       cam.fadeOut(250, 0, 0, 0);
       cam.once("camerafadeoutcomplete", () => {
+        progressText.destroy();
+        progressBar.destroy();
+        progressBox.destroy();
+
         this.scene.shutdown('Preload')
         this.scene.start('Menu')
       })
