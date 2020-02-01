@@ -55,7 +55,8 @@ export default class MenuScene extends BaseScene {
     this.container = new GuiContainer(this, this.game.scale.width / 2, this.game.scale.height / 2, 300, 300, container => {
       // new game button
       container.add(new GuiButton(this, 0, -80, 150, 'New Game', () => {
-        this.cameras.main.fadeOut(1000, 0, 0, 0, (camera, progress) => {
+        this.sound.play('clickMajor')
+        this.cameras.main.fadeOut(1500, 0, 0, 0, (camera, progress) => {
           this.menuMusic.setVolume(1 - progress)
           if (progress === 1) {
             this.menuMusic.stop()
