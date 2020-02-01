@@ -1,32 +1,9 @@
 import Phaser from "phaser";
 import Hero from "../objects/hero.js";
 
-// assets
-import guiHero from "../assets/gui/hero.png";
-import guiOrb from "../assets/gui/orb.png";
-import guiOrbReflection from "../assets/gui/orb-reflection.png";
-import guiOrbSmall from "../assets/gui/orb-small.png";
-import guiBars from "../assets/gui/bars.png";
-import guiHealth from "../assets/gui/health.png";
-import guiMana from "../assets/gui/mana.png";
-import guiXp from "../assets/gui/xp.png";
-import guiCursor from "../assets/gui/cursor.png";
-
 export default class GuiScene extends Phaser.Scene {
   constructor() {
     super('Gui')
-  }
-
-  static preload(scene) {
-    scene.load.spritesheet("guiHero", guiHero, { frameWidth: 63, frameHeight: 63 })
-    scene.load.image("guiOrb", guiOrb)
-    scene.load.image("guiOrbReflection", guiOrbReflection)
-    scene.load.image("guiOrbSmall", guiOrbSmall)
-    scene.load.image("guiBars", guiBars)
-    scene.load.image("guiHealth", guiHealth)
-    scene.load.image("guiMana", guiMana)
-    scene.load.image("guiXp", guiXp)
-    scene.load.spritesheet("guiCursor", guiCursor, { frameWidth: 42, frameHeight: 46 })
   }
 
   create() {
