@@ -76,6 +76,7 @@ export default class MenuScene extends BaseScene {
         150,
         'Disable Narrator',
         () => {
+          this.sound.play('clickMinor')
           if (this.registry.get("disableNarrator")) {
             this.registry.set("disableNarrator", false)
           } else {
