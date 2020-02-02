@@ -16,7 +16,10 @@ import clickMinorMp3 from "../assets/audio/sounds/click-minor.mp3"
 import guiHero from "../assets/gui/hero.png"
 import guiOrb from "../assets/gui/orb.png"
 import guiOrbReflection from "../assets/gui/orb-reflection.png"
-import guiOrbSmall from "../assets/gui/orb-small.png"
+import guiOrbLevel from "../assets/gui/orb-level.png"
+import guiOrbTorch from "../assets/gui/orb-torch.png"
+import guiOrbShield from "../assets/gui/orb-shield.png"
+import guiOrbCooldown from "../assets/gui/orb-cooldown.png"
 import guiBars from "../assets/gui/bars.png"
 import guiHealth from "../assets/gui/health.png"
 import guiMana from "../assets/gui/mana.png"
@@ -48,7 +51,10 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.spritesheet("guiHero", guiHero, { frameWidth: 63, frameHeight: 63 })
     this.load.image("guiOrb", guiOrb)
     this.load.image("guiOrbReflection", guiOrbReflection)
-    this.load.image("guiOrbSmall", guiOrbSmall)
+    this.load.image("guiOrbLevel", guiOrbLevel)
+    this.load.image("guiOrbTorch", guiOrbTorch)
+    this.load.image("guiOrbShield", guiOrbShield)
+    this.load.image("guiOrbCooldown", guiOrbCooldown)
     this.load.image("guiBars", guiBars)
     this.load.image("guiHealth", guiHealth)
     this.load.image("guiMana", guiMana)

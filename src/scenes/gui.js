@@ -5,6 +5,8 @@ import Hero from "../objects/hero.js";
 export default class GuiScene extends BaseScene {
   constructor() {
     super('Gui')
+
+    this.lastTorchPickedUpAt = 0
   }
 
   create() {
@@ -52,9 +54,11 @@ export default class GuiScene extends BaseScene {
 
     this.guiHeroOrb = this.add.image(-65, 0, "guiOrb")
     this.guiHeroOrbReflection = this.add.image(-55, -10, "guiOrbReflection")
-    this.guiLevelOrb = this.add.image(-33, 0, "guiOrbSmall")
-    this.guiTorchOrb = this.add.image(-80, 30, "guiOrbSmall")
-    this.guiShieldOrb = this.add.image(-50, 30, "guiOrbSmall")
+    this.guiLevelOrb = this.add.image(-33, 0, "guiOrbLevel")
+    this.guiTorchOrb = this.add.image(-80, 30, "guiOrbTorch").setAlpha(0)
+    this.guiTorchOrbCooldown = this.add.image(-80, 30, "guiOrbCooldown").setAlpha(0)
+    this.guiShieldOrb = this.add.image(-50, 30, "guiOrbShield").setAlpha(0)
+    this.guiShieldOrbCooldown = this.add.image(-50, 30, "guiOrbCooldown").setAlpha(0)
     this.guiLevelNum = this.add.text(-41, -6, '1', { font: "10px monospace", fill: "#857562" }).setFixedSize(16, 16).setAlign("center")
     this.guiBars = this.add.image(60, 0, "guiBars")
     this.guiHealth = this.add.image(60, -12, "guiHealth")
@@ -73,7 +77,9 @@ export default class GuiScene extends BaseScene {
       this.guiLevelOrb,
       this.guiLevelNum,
       this.guiTorchOrb,
-      this.guiShieldOrb
+      this.guiTorchOrbCooldown,
+      this.guiShieldOrb,
+      this.guiShieldOrbCooldown
     ])
   }
 
@@ -212,6 +218,7 @@ export default class GuiScene extends BaseScene {
   }
 
   removeTorchDelayed() {
+    this.lastTorchPickedUpAt = new Date().getTime()
     this.time.delayedCall(this.registry.get('torchDuration') * 1000, () => {
       const items = this.registry.get('items')
       const deleteIndex = items.findIndex((item) => item === 'torch')
@@ -262,6 +269,29 @@ export default class GuiScene extends BaseScene {
     this.guiLevelNum.setText(this.registry.get('level'))
   }
 
+  updateTorchOrb() {
+    if (this.registry.get('items').includes('torch')) {
+      const torchActiveTime = ((new Date().getTime() - this.lastTorchPickedUpAt) / 1000) / this.registry.get('torchDuration')
+      this.guiTorchOrbCooldown.setAlpha(1).setCrop(0, 25 * (1 - torchActiveTime), 25, 25)
+      this.guiTorchOrb.setAlpha(1)
+    } else {
+      this.guiTorchOrb.setAlpha(0)
+      this.guiTorchOrbCooldown.setAlpha(0)
+    }
+  }
+
+  updateShieldOrb() {
+    const currentDungeon = this.scene.get('Dungeon' + this.registry.get('currentDungeon'))
+    if (currentDungeon.hero && currentDungeon.hero.shieldActive) {
+      const shieldActiveTime = ((new Date().getTime() - currentDungeon.hero.shieldActive) / 1000) / this.registry.get('shieldDuration')
+      this.guiShieldOrbCooldown.setAlpha(1).setCrop(0, 25 * (1 - shieldActiveTime), 25, 25)
+      this.guiShieldOrb.setAlpha(1)
+    } else {
+      this.guiShieldOrb.setAlpha(0)
+      this.guiShieldOrbCooldown.setAlpha(0)
+    }
+  }
+
   resize() {}
 
   update() {
@@ -269,5 +299,7 @@ export default class GuiScene extends BaseScene {
     this.updateHealth()
     this.updateMana()
     this.updateXp()
+    this.updateTorchOrb()
+    this.updateShieldOrb()
   }
 }

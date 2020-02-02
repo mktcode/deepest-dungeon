@@ -225,7 +225,7 @@ export default class Hero {
     const currentMana = this.scene.registry.get('mana')
     if (this.scene.registry.get('items').includes('shield') && !this.shieldActive && currentMana) {
       this.scene.registry.set('mana', currentMana - 1)
-      this.shieldActive = true
+      this.shieldActive = new Date().getTime()
       this.shieldParticles.start()
       this.shieldParticles2.start()
       this.scene.lightManager.lights.push({
