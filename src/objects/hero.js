@@ -234,7 +234,7 @@ export default class Hero {
         y: () => this.scene.worldToTileX(this.container.y),
         intensity: () => LightManager.flickering(1)
       })
-      this.scene.time.delayedCall(3000, () => {
+      this.scene.time.delayedCall(this.scene.registry.get('shieldDuration') * 1000, () => {
         this.shieldActive = false
         this.shieldParticles.stop()
         this.shieldParticles2.stop()

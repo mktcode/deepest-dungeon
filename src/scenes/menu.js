@@ -38,6 +38,7 @@ export default class MenuScene extends BaseScene {
     this.registry.set('items', [])
     this.registry.set('torchDuration', 60)
     this.registry.set('torchIntensity', 1)
+    this.registry.set('shieldDuration', 10)
     this.registry.set('damage', 1)
     this.registry.set('health', 5)
     this.registry.set('maxHealth', 5)
