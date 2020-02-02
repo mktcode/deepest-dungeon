@@ -1716,100 +1716,98 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   addTimebomb() {
-    if (this.registry.get('narratorSaid').includes('shieldSpell')) {
-      this.timebombRoom = this.otherRooms.sort((a, b) => b.width * b.height - a.width * a.height)[0]
+    this.timebombRoom = this.otherRooms.sort((a, b) => b.width * b.height - a.width * a.height)[0]
 
-      this.timebomb = this.add.container(this.tileToWorldX(this.timebombRoom.centerX),this.tileToWorldY(this.timebombRoom.centerY))
-      this.matter.add.gameObject(this.timebomb)
-      this.timebomb
-        .setDepth(6)
-        .setRectangle(10, 10)
-        .setFixedRotation()
-        .setRotation(0)
-        .setCollisionCategory(COLLISION_CATEGORIES.TIMEBOMB)
-        .setCollidesWith([COLLISION_CATEGORIES.HERO, COLLISION_CATEGORIES.WALL])
+    this.timebomb = this.add.container(this.tileToWorldX(this.timebombRoom.centerX),this.tileToWorldY(this.timebombRoom.centerY))
+    this.matter.add.gameObject(this.timebomb)
+    this.timebomb
+      .setDepth(6)
+      .setRectangle(10, 10)
+      .setFixedRotation()
+      .setRotation(0)
+      .setCollisionCategory(COLLISION_CATEGORIES.TIMEBOMB)
+      .setCollidesWith([COLLISION_CATEGORIES.HERO, COLLISION_CATEGORIES.WALL])
 
-      this.lightManager.lights.push({
-        key: 'timebomb',
-        sprite: this.timebomb,
-        intensity: () => LightManager.flickering(1)
-      })
+    this.lightManager.lights.push({
+      key: 'timebomb',
+      sprite: this.timebomb,
+      intensity: () => LightManager.flickering(1)
+    })
 
-      const timebombParticle = this.add.particles('particle').setDepth(7)
-      const timebombParticle2 = this.add.particles('particle').setDepth(7)
+    const timebombParticle = this.add.particles('particle').setDepth(7)
+    const timebombParticle2 = this.add.particles('particle').setDepth(7)
 
-      this.timebomb.add(timebombParticle2)
+    this.timebomb.add(timebombParticle2)
 
-      const emitter1 = timebombParticle.createEmitter({
-        tint: [0xFFFFFF, 0x7777FF],
-        blendMode: 'SCREEN',
-        scale: { start: 0.2, end: 0.4 },
-        alpha: { start: 1, end: 0 },
-        speed: 20,
-        quantity: 5,
-        frequency: 50,
-        lifespan: 2000,
-        emitZone: {
-          source: new Phaser.Geom.Circle(0, 0, 50),
-          type: 'random',
-          quantity: 40
-        },
-        follow: this.timebomb
-      })
-      const emitter2 = timebombParticle2.createEmitter({
-        tint: [0xFFFFFF, 0x7777FF],
-        blendMode: 'SCREEN',
-        scale: { start: 0.3, end: 0.6 },
-        alpha: { start: 1, end: 0 },
-        speed: 15,
-        quantity: 40,
-        frequency: 50,
-        lifespan: 1000,
-        emitZone: {
-          source: new Phaser.Geom.Circle(0, 0, 15),
-          type: 'edge',
-          quantity: 40
-        }
-      })
+    const emitter1 = timebombParticle.createEmitter({
+      tint: [0xFFFFFF, 0x7777FF],
+      blendMode: 'SCREEN',
+      scale: { start: 0.2, end: 0.4 },
+      alpha: { start: 1, end: 0 },
+      speed: 20,
+      quantity: 5,
+      frequency: 50,
+      lifespan: 2000,
+      emitZone: {
+        source: new Phaser.Geom.Circle(0, 0, 50),
+        type: 'random',
+        quantity: 40
+      },
+      follow: this.timebomb
+    })
+    const emitter2 = timebombParticle2.createEmitter({
+      tint: [0xFFFFFF, 0x7777FF],
+      blendMode: 'SCREEN',
+      scale: { start: 0.3, end: 0.6 },
+      alpha: { start: 1, end: 0 },
+      speed: 15,
+      quantity: 40,
+      frequency: 50,
+      lifespan: 1000,
+      emitZone: {
+        source: new Phaser.Geom.Circle(0, 0, 15),
+        type: 'edge',
+        quantity: 40
+      }
+    })
 
-      this.matterCollision.addOnCollideStart({
-        objectA: this.hero.container,
-        objectB: this.timebomb,
-        callback: (collision) => {
-          if (!this.timebombActive || this.hero.dead || collision.bodyA.isSensor) return
-          this.timebombActive = false
-          this.lightManager.removeLightByKey('timebomb')
-          emitter1.stop()
-          emitter2.stop()
-          this.music.setSeek(40)
-          this.music.setRate(1.5)
-          this.timebombTickingSound = this.sounds.play('ticking', 1.5, false, true)
-          this.time.delayedCall(2000, () => this.narrator.sayOnce('timeeaterQuickNow'))
-          this.heroParticles = this.interactionParticle.createEmitter({
-            tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
-            blendMode: 'SCREEN',
-            scale: { start: 0.2, end: 0.4 },
-            alpha: { start: 1, end: 0 },
-            speed: 20,
-            quantity: 5,
-            frequency: 50,
-            lifespan: 2000,
-            emitZone: {
-              source: new Phaser.Geom.Circle(0, 0, 50),
-              type: 'random',
-              quantity: 40
-            },
-            follow: this.hero.container,
-            emitCallback: particle => this.particleEmitterAddLights(particle, 15),
-            deathCallback: particle => this.particleEmitterRemoveLights(particle)
-          })
-          this.startCountdown(60)
-        }
-      })
+    this.matterCollision.addOnCollideStart({
+      objectA: this.hero.container,
+      objectB: this.timebomb,
+      callback: (collision) => {
+        if (!this.timebombActive || this.hero.dead || collision.bodyA.isSensor) return
+        this.timebombActive = false
+        this.lightManager.removeLightByKey('timebomb')
+        emitter1.stop()
+        emitter2.stop()
+        this.music.setSeek(40)
+        this.music.setRate(1.5)
+        this.timebombTickingSound = this.sounds.play('ticking', 1.5, false, true)
+        this.time.delayedCall(2000, () => this.narrator.sayOnce('timeeaterQuickNow'))
+        this.heroParticles = this.interactionParticle.createEmitter({
+          tint: [0x888800, 0xff8800, 0xff8800, 0xff8800, 0x880000],
+          blendMode: 'SCREEN',
+          scale: { start: 0.2, end: 0.4 },
+          alpha: { start: 1, end: 0 },
+          speed: 20,
+          quantity: 5,
+          frequency: 50,
+          lifespan: 2000,
+          emitZone: {
+            source: new Phaser.Geom.Circle(0, 0, 50),
+            type: 'random',
+            quantity: 40
+          },
+          follow: this.hero.container,
+          emitCallback: particle => this.particleEmitterAddLights(particle, 15),
+          deathCallback: particle => this.particleEmitterRemoveLights(particle)
+        })
+        this.startCountdown(60)
+      }
+    })
 
-      this.timebombActive = true
-      this.timebombFollows = false
-    }
+    this.timebombActive = true
+    this.timebombFollows = false
   }
 
   updateTimebomb() {
