@@ -25,6 +25,7 @@
     - find fireball: make flamable stuff you need to break to reach the doors
     - etc
 - POLISHING:
+  - [ ] replace timeeater countdown with orb/cooldown in character info ui
   - [ ] animate cooldowns in item slots
   - [ ] UI change, fade in/out when narrator speaks
   - [ ] more beautiful and unique UI
