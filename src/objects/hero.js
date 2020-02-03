@@ -530,47 +530,55 @@ export default class Hero {
   moveToXY(x, y) {
     this.updateSubtitles()
 
+    // pixel distance
+    const pixelFromVector = new Phaser.Math.Vector2({ x: this.container.x, y: this.container.y })
+    const pixelTargetVector = new Phaser.Math.Vector2({ x: x, y: y })
+    const pixelDistance = pixelFromVector.distance(pixelTargetVector)
+
+    // tilebased pathfinding
     const finder = new PathFinder.AStarFinder({ allowDiagonal: true, dontCrossCorners: true })
-    const heroVector = new Phaser.Math.Vector2({ x: this.scene.worldToTileX(this.container.x + 8), y: this.scene.worldToTileY(this.container.y + 9) })
-    const targetVector = new Phaser.Math.Vector2({ x: this.scene.worldToTileX(x), y: this.scene.worldToTileY(y) })
+    const tileFromVector = new Phaser.Math.Vector2({ x: this.scene.worldToTileX(this.container.x), y: this.scene.worldToTileY(this.container.y) })
+    const tileTargetVector = new Phaser.Math.Vector2({ x: this.scene.worldToTileX(x), y: this.scene.worldToTileY(y) })
     const path = finder.findPath(
-      heroVector.x,
-      heroVector.y,
-      targetVector.x,
-      targetVector.y,
+      tileFromVector.x,
+      tileFromVector.y,
+      tileTargetVector.x,
+      tileTargetVector.y,
       this.scene.getPathGrid()
     )
 
-    const minDistance = this.targetedEnemy ? 2 : 1
-
-    if (path.length > minDistance) {
-      const nextTargetVector = new Phaser.Math.Vector2({ x: path[1][0], y: path[1][1] })
-      const distance = nextTargetVector.distance(heroVector)
-      const diff = nextTargetVector.subtract(heroVector)
-
-      if (Math.abs(diff.x)) {
-        this.container.setVelocityX(diff.x > 0 ? this.getSpeed() : -this.getSpeed())
-      }
-      if (Math.abs(diff.y)) {
-        this.container.setVelocityY(diff.y > 0 ? this.getSpeed() : -this.getSpeed())
-      }
-
-      this.normalizeSpeed()
-
-      const direction = this.scene.getDirectionFromVector(this.container.body.velocity)
-      if (direction) {
-        this.lastDirection = direction
-        this.run(direction)
-        this.playWalkingSound()
-      }
+    if (this.targetedEnemy && Phaser.Math.Distance.Between(x, y, this.container.x, this.container.y) < 30) {
+      const direction = this.scene.getDirectionFromVector({ x: this.targetedEnemy.x - this.container.x, y: this.targetedEnemy.y - this.container.y })
+      this.lastDirection = direction
+      this.doAttack()
     } else {
-      this.moveTo = null
-      if (this.targetedEnemy) {
-        const diff = { x: this.targetedEnemy.x - this.container.x, y: this.targetedEnemy.y - this.container.y }
-        const directionIndex = ((Math.round(Math.atan2(diff.y, diff.x) / (2 * Math.PI / 8))) + 8) % 8
-        const direction = ['right', 'down-right', 'down', 'down-left', 'left', 'up-left', 'up', 'up-right'][directionIndex]
-        this.lastDirection = direction
-        this.doAttack()
+      let diff = null
+      if (path.length > 1) {
+        const nextTileTargetVector = new Phaser.Math.Vector2({ x: path[1][0], y: path[1][1] })
+        diff = nextTileTargetVector.subtract(tileFromVector)
+      } else if (pixelDistance > 6) { // arbitrary value to avoid overshooting and wiggeling
+        diff = pixelTargetVector.subtract(pixelFromVector)
+      }
+
+      // set velocity based on diff vector
+      if (diff) {
+        if (Math.abs(diff.x)) {
+          this.container.setVelocityX(diff.x > 0 ? this.getSpeed() : -this.getSpeed())
+        }
+        if (Math.abs(diff.y)) {
+          this.container.setVelocityY(diff.y > 0 ? this.getSpeed() : -this.getSpeed())
+        }
+
+        this.normalizeSpeed()
+
+        const direction = this.scene.getDirectionFromVector(this.container.body.velocity)
+        if (direction) {
+          this.lastDirection = direction
+          this.run(direction)
+          this.playWalkingSound()
+        }
+      } else {
+        this.moveTo = null
       }
     }
   }
