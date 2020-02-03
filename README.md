@@ -3,7 +3,7 @@
 - BUGS/ISSUES:
   - [ ] death animation doesn't trigger sometimes
   - [ ] fix bouncy hero collision (leading to leaving a room unintended) caused by compound body
-  - [ ] timeeater countdown doesn't stop when pausing the game
+  - [ ] timeeater countdown and other cooldowns (shield, torch) don't stop when pausing the game
   - [ ] abstract hero class to be reusable for multiple players/characters
 - IDEAS:
   - ENEMIES/TRAPS/PUZZLES:
@@ -26,9 +26,6 @@
     - etc
 - POLISHING:
   - [ ] replace timeeater countdown with orb/cooldown in character info ui
-  - [ ] animate cooldowns in item slots
-  - [ ] UI change, fade in/out when narrator speaks
-  - [ ] more beautiful and unique UI
   - [ ] subtitles for the narrator
   - [ ] adjust volume of all sounds/narrative
   - [ ] sound effects must be quiter when narrator speaks
@@ -40,7 +37,6 @@
   - [ ] better positioning for chapter popup text
   - [ ] interrupt narrator by pressing a key
   - [ ] make character slide/speed up/down a bit
-  - [ ] make timeeater a sensor
   - [ ] increase sword/punch hit boxes
   - [ ] Narrative
     - [ ] finding fireball scroll
