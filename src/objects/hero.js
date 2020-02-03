@@ -401,7 +401,7 @@ export default class Hero {
     const { Body, Bodies } = Phaser.Physics.Matter.Matter
     const compoundBody = Body.create({ parts: [
       // hero
-      Bodies.rectangle(0, 0, 16, 18, { chamfer: { radius: 10 } }),
+      Bodies.rectangle(0, 0, 16, 18, { chamfer: { radius: 8 } }),
       // sword
       Bodies.rectangle(0, -28, 16, 30, { isSensor: true, label: 'up' }),
       Bodies.rectangle(0, 28, 16, 30, { isSensor: true, label: 'down' }),
