@@ -55,48 +55,33 @@ export default class PauseScene extends Phaser.Scene {
 
   addPauseMenu() {
     this.pauseMenu = new GuiContainer(this, this.game.scale.width / 2, this.game.scale.height / 2, 300, 300, container => {
+      // headline
+      container.add(this.add.text(
+        -28,
+        -110,
+        'Pause',
+        { font: "18px monospace", fill: "#999999" }
+      ))
+
       // continue button
-      container.add(new GuiButton(this, 0, -80, 150, 'Continue', () => {
+      container.add(new GuiButton(this, 0, -50, 150, 'Continue', () => {
         this.sound.play('clickMajor')
         this.unpause()
       }).container)
 
-      // narrator checkbox
-      container.add(new GuiCheckbox(
-        this,
-        0,
-        -40,
-        150,
-        'Disable Narrator',
-        () => {
-          this.sound.play('clickMinor')
-          if (this.registry.get("disableNarrator")) {
-            this.registry.set("disableNarrator", false)
-          } else {
-            this.registry.set("disableNarrator", true)
-          }
-        },
-        () => this.registry.get("disableNarrator")
-      ).container)
-
       // instructions
-      const instructions = this.add.container(-90, 0)
-      const textConfig = { font: "13px monospace", fill: "#999999" }
-      instructions.add(
-        this.add.text(
-          0,
-          0,
-          'Move:       WASD/Click' + "\n" +
-          'Use:      E/Left Click' + "\n" +
-          'Attack:    Space/Click' + "\n" +
-          'Scout:               Q' + "\n" +
-          'Shield:          Shift' + "\n" +
-          'Fireball:  Right Click' + "\n" +
-          'Pause:             ESC',
-          textConfig
-        )
-      )
-      container.add(instructions)
+      container.add(this.add.text(
+        -90,
+        0,
+        'Move:       WASD/Click' + "\n" +
+        'Use:      E/Left Click' + "\n" +
+        'Attack:    Space/Click' + "\n" +
+        'Scout:               Q' + "\n" +
+        'Shield:          Shift' + "\n" +
+        'Fireball:  Right Click' + "\n" +
+        'Pause:             ESC',
+        { font: "13px monospace", fill: "#999999" }
+      ))
     })
 
     this.pauseMenu.container.setAlpha(0)
