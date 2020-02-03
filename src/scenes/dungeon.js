@@ -2111,21 +2111,26 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   findClosestWalkablePoint(x, y) {
-    x = this.worldToTileX(x)
-    y = this.worldToTileX(y)
+    const tileX = this.worldToTileX(x)
+    const tileY = this.worldToTileX(y)
 
     const walkables = []
     this.getPathGrid().nodes.forEach((node) => {
       walkables.push(...node.filter(n => n.walkable))
     })
 
+    // if clicked tile is walkable return point immediately
+    if (walkables.find(t => t.x === tileX && t.y === tileY)) {
+      return { x, y }
+    }
+
+    // otherwise get closest walkable tile and return center point of it
+    // TODO: consider each corner of tile for being the closest point
     walkables.sort((a, b) => {
-      return Phaser.Math.Distance.Between(a.x, a.y, x, y) - Phaser.Math.Distance.Between(b.x, b.y, x, y)
+      return Phaser.Math.Distance.Between(a.x, a.y, tileX, tileY) - Phaser.Math.Distance.Between(b.x, b.y, tileX, tileY)
     })
 
-    const clostest = walkables[0]
-
-    return { x: this.tileToWorldX(clostest.x), y: this.tileToWorldY(clostest.y) }
+    return { x: this.tileToWorldX(walkables[0].x) + this.tileSize / 2, y: this.tileToWorldY(walkables[0].y) + this.tileSize / 2 }
   }
 
   update() {
