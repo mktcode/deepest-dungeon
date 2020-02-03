@@ -65,7 +65,7 @@ export default class PauseScene extends Phaser.Scene {
 
       // continue button
       container.add(new GuiButton(this, 0, -50, 150, 'Continue', () => {
-        this.sound.play('clickMajor')
+        this.sound.play('clickMinor')
         this.unpause()
       }).container)
 
