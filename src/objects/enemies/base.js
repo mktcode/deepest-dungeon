@@ -109,7 +109,7 @@ export default class BaseEnemy {
       .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.HERO, COLLISION_CATEGORIES.FIREBALL])
       .setOrigin(originX, originY)
       .setFixedRotation()
-      .setInteractive(new Phaser.Geom.Rectangle(interactionX - width * 0.25, interactionY - height * 0.25, width * 1.5, height * 1.5), Phaser.Geom.Rectangle.Contains)
+      .setInteractive(new Phaser.Geom.Rectangle(interactionX - width * 0.5, interactionY - height * 0.5, width * 2, height * 2), Phaser.Geom.Rectangle.Contains)
       .setDepth(6)
   }
 
