@@ -573,13 +573,20 @@ export default class Hero {
 
         const direction = this.scene.getDirectionFromVector(this.container.body.velocity)
         if (direction) {
-          this.lastDirection = direction
-          this.run(direction)
+          this.setLastDirectionDelayed(direction)
+          this.run(this.lastDirection)
           this.playWalkingSound()
         }
       } else {
         this.moveTo = null
       }
+    }
+  }
+
+  setLastDirectionDelayed(direction) {
+    if (!this.lastDirectionLastSet || new Date().getTime() - this.lastDirectionLastSet.getTime() > 100) {
+      this.lastDirectionLastSet = new Date()
+      this.lastDirection = direction
     }
   }
 
