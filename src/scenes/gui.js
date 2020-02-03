@@ -1,8 +1,7 @@
 import Phaser from "phaser";
-import BaseScene from "../scenes/base.js";
 import Hero from "../objects/hero.js";
 
-export default class GuiScene extends BaseScene {
+export default class GuiScene extends Phaser.Scene {
   constructor() {
     super('Gui')
 
@@ -10,7 +9,6 @@ export default class GuiScene extends BaseScene {
   }
 
   create() {
-    super.create()
     this.addCharacterInfo()
     this.addLowHealthAnimation()
     this.addLetterBoxes()
@@ -295,7 +293,6 @@ export default class GuiScene extends BaseScene {
   resize() {}
 
   update() {
-    super.update()
     this.updateHealth()
     this.updateMana()
     this.updateXp()

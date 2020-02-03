@@ -99,6 +99,7 @@ export default class PreloadScene extends Phaser.Scene {
 
         this.scene.shutdown('Preload')
         this.scene.start('Menu')
+        this.scene.start('Cursor')
       })
     })
   }

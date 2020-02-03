@@ -1,8 +1,8 @@
 import Phaser from 'phaser'
 
-export default class BaseScene extends Phaser.Scene {
-  constructor(key) {
-    super(key)
+export default class CursorScene extends Phaser.Scene {
+  constructor() {
+    super('Cursor')
   }
 
   create() {
@@ -42,5 +42,6 @@ export default class BaseScene extends Phaser.Scene {
 
   update() {
     this.updateCursor()
+    this.scene.bringToTop()
   }
 }

@@ -1,4 +1,3 @@
-import BaseScene from "../scenes/base.js"
 import DungeonScene from "../scenes/dungeon.js"
 import GuiScene from "../scenes/gui.js"
 import PauseScene from "../scenes/pause.js"
@@ -7,14 +6,12 @@ import GuiContainer from "../gui/container.js";
 import GuiButton from "../gui/button.js";
 import GuiCheckbox from "../gui/checkbox.js";
 
-export default class MenuScene extends BaseScene {
+export default class MenuScene extends Phaser.Scene {
   constructor() {
     super("Menu")
   }
 
   create() {
-    super.create()
-
     this.cameras.main.fadeIn(250, 0, 0, 0);
     this.menuMusic = this.sound.add('menuMusic', { volume: 1, loop: true  })
     this.menuMusic.play()

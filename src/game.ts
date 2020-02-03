@@ -1,3 +1,4 @@
+import CursorScene from './scenes/cursor.js'
 import MenuScene from './scenes/menu.js'
 import PreloadScene from './scenes/preload.js'
 import MatterDebugConfig from './matter-debug-config.js'
@@ -14,7 +15,7 @@ const config: GameConfig = {
   backgroundColor: '#000',
   parent: 'body',
   pixelArt: true,
-  scene: [PreloadScene, MenuScene],
+  scene: [PreloadScene, MenuScene, CursorScene],
   physics: {
     default: 'matter',
     matter: {
