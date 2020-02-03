@@ -267,6 +267,7 @@ export default class DungeonScene extends Phaser.Scene {
 
   pauseGame() {
     this.scene.pause()
+    this.scene.get('Gui').scene.pause()
     if (this.narrator.playing) this.narrator.playing.pause()
     this.scene.run('Pause')
   }
