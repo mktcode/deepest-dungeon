@@ -1723,6 +1723,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.timebomb
       .setDepth(6)
       .setRectangle(10, 10)
+      .setSensor(true)
       .setFixedRotation()
       .setRotation(0)
       .setCollisionCategory(COLLISION_CATEGORIES.TIMEBOMB)
