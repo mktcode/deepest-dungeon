@@ -24,17 +24,31 @@
     - find shield: more enemies running at you
     - find fireball: make flamable stuff you need to break to reach the doors
     - etc
+  - [ ] destruction of dungeon when timeeater coundown passed (animate tiles do drop down)
+  - [ ] NFTs (STEEM)
+  - [ ] make it possible to go back up (needs adjustments in wake function)
+  - [ ] the "heart of the dungeon": an item that is carried deepper and deeper into the dungeon by players (presistently)
+    - [ ] physics based: player needs to push it to the stairs
+    - [ ] decision: actually two items: push "love" or "hate" deeper into the dungeon
+    - [ ] weekly reset of deepest dungeon
+    - [ ] but keep track of all time deepest dungeon
+  - [ ] let enemies randomly respawn (with particle emitter animation of course)
 - POLISHING:
+  - [ ] text in the preloading screen with continue button
+  - [ ] small "rate the game" button on the main menu screen
+  - [ ] let pathfinder cost mana and make dots dissappear faster
+  - [ ] narrator overlapping when idle narrative plays
   - [ ] replace timeeater countdown with orb/cooldown in character info ui
-  - [ ] subtitles for the narrator
-  - [ ] adjust volume of all sounds/narrative
-  - [ ] sound effects must be quiter when narrator speaks
+  - [ ] bigger subtitles
+  - [ ] rework skilling system
   - [ ] add all credits
   - [ ] zoom to object of interest (narrator)
-  - [ ] skill mana
-  - [ ] skill shield (duration, damage)
-  - [ ] let timeeater wander around dungeon
-  - [ ] better positioning for chapter popup text
+  - [ ] adjust volume of all sounds/narrative
+  - [ ] sound effects must be quiter when narrator speaks
+  - [ ] subtitles for the narrator
+  - [ ] flashing help texts
+  - [ ] let timeeater wander around dungeon (after first met)
+  - [ ] better animation for chapter popup text
   - [ ] interrupt narrator by pressing a key
   - [ ] make character slide/speed up/down a bit
   - [ ] increase sword/punch hit boxes
