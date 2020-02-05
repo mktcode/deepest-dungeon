@@ -229,10 +229,10 @@ export default class BaseEnemy {
         }
 
         if (this.dungeon.hero.shieldActive) {
-          if (distanceY < 40 && distanceX < 55) {
+          if (distanceY < 30 && distanceX < 45) {
             sprite.setVelocityX(sprite.body.velocity.x * -5)
             sprite.setVelocityY(sprite.body.velocity.y * -5)
-          } else if (distanceY < 45 && distanceX < 60) {
+          } else if (distanceY < 45 && distanceX < 50) {
             sprite.setVelocityX(sprite.body.velocity.x = 0)
             sprite.setVelocityY(sprite.body.velocity.y = 0)
           }

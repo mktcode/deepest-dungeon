@@ -196,7 +196,7 @@ export default class Hero {
       quantity: 20,
       angle: { min: 180, max: 360 },
       emitZone: {
-        source: new Phaser.Geom.Ellipse(0, 0, 100, 50),
+        source: new Phaser.Geom.Ellipse(0, 0, 80, 40),
         type: 'edge',
         quantity: 18
       }
@@ -216,7 +216,7 @@ export default class Hero {
       quantity: 40,
       angle: { min: 180, max: 360 },
       emitZone: {
-        source: new Phaser.Geom.Ellipse(0, 0, 100, 50),
+        source: new Phaser.Geom.Ellipse(0, 0, 80, 40),
         type: 'edge',
         quantity: 18
       }
