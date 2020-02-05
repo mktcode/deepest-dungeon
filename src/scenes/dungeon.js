@@ -280,7 +280,7 @@ export default class DungeonScene extends Phaser.Scene {
     } else {
       zoom += 0.05
     }
-    if (zoom < 1.5) zoom = 1.5
+    if (zoom < 1.3) zoom = 1.3
     if (zoom > 3.5) zoom = 3.5
     this.cameras.main.setZoom(zoom)
     this.registry.set('zoom', zoom)
