@@ -1,71 +1,78 @@
 # TODO
 
 - BUGS/ISSUES:
-  - [ ] death animation doesn't trigger sometimes
-  - [ ] fix bouncy hero collision (leading to leaving a room unintended) caused by compound body
-  - [ ] timeeater countdown and other cooldowns (shield, torch) don't stop when pausing the game
-  - [ ] abstract hero class to be reusable for multiple players/characters
+  - death animation doesn't trigger sometimes
+  - timeeater countdown and other cooldowns (shield, torch) don't stop when pausing the game
+  - idle narrative can overlap other narrative pieces
 - IDEAS:
   - ENEMIES/TRAPS/PUZZLES:
-    - [ ] trapdoors, random tiles change after standing on them too long, instant death
-    - [ ] more enemies
-    - [ ] white giant spider as end boss
-    - [ ] let spiders shoot webs to slow down
-  - [ ] more story
-  - [ ] implement global high score
-  - [ ] make torches usable on demand
-  - [ ] use seeds as sharable "sessions" and saved games
-  - [ ] stamina for running (and attacking)
-  - [ ] attack combo with second attack animation
-  - [ ] increase hp/mana/damage automatically on level up, instead choose gameplay mechanic (shield damage, fireball bounces to other enemies, etc.)
-  - [ ] steem blockchain as storage
-  - [ ] when you find an item, make the level depending on that item:
+    - trapdoors, random tiles change after standing on them too long, instant death
+    - more enemies
+    - white giant spider as end boss
+    - let spiders shoot webs to slow down
+  - more story
+  - implement global high score
+  - make torches usable on demand
+  - use seeds as sharable "sessions" and saved games
+  - stamina for running (and attacking)
+  - attack combo with second attack animation
+  - increase hp/mana/damage automatically on level up, instead choose gameplay mechanic (shield damage, fireball bounces to other enemies, etc.)
+  - steem blockchain as storage
+  - when you find an item, make the level depending on that item:
     - find pathfinder: make levels bigger
     - find shield: more enemies running at you
     - find fireball: make flamable stuff you need to break to reach the doors
     - etc
-  - [ ] destruction of dungeon when timeeater coundown passed (animate tiles do drop down)
-  - [ ] NFTs (STEEM)
-  - [ ] make it possible to go back up (needs adjustments in wake function)
-  - [ ] the "heart of the dungeon": an item that is carried deepper and deeper into the dungeon by players (presistently)
-    - [ ] physics based: player needs to push it to the stairs
-    - [ ] decision: actually two items: push "love" or "hate" deeper into the dungeon
-    - [ ] weekly reset of deepest dungeon
-    - [ ] but keep track of all time deepest dungeon
-  - [ ] let enemies randomly respawn (with particle emitter animation of course)
+  - destruction of dungeon when timeeater coundown passed (animate tiles do drop down)
+  - NFTs (STEEM)
+  - make it possible to go back up (needs adjustments in wake function)
+  - the "heart of evil": an item that is carried deepper and deeper into the dungeon by players (presistently)
+    - tint player black while having it
+    - put a "fake player" in the deepest dungeon (room next to safe room), you need to kill that player to enter the safe room and get the heart
+    - needs to be placed in safe room on the shrine to be saved and get only be picked up there
+    - initially first safe room after other gameplay introduction ends ("The End") has the heart
+    - narrative: "He knew his purpuse now. To carry the heart of evil as deep into the dungeon as possible.
+          And wait... what was that. On its back there was a list of names engraved." -> GuiContainer with player names
+    - physics based: player needs to push it to the stairs
+    - weekly reset of deepest dungeon or progressively set back over time (to give new players a chance of getting there)
+    - but keep track of all time deepest dungeon
+    - display other players as ghosts
+    - permadeath (after using two lives)
+  - let enemies randomly respawn (with particle emitter animation of course)
 - POLISHING:
-  - [ ] text in the preloading screen with continue button
-  - [ ] small "rate the game" button on the main menu screen
-  - [ ] let pathfinder cost mana and make dots dissappear faster
-  - [ ] narrator overlapping when idle narrative plays
-  - [ ] replace timeeater countdown with orb/cooldown in character info ui
-  - [ ] bigger subtitles
-  - [ ] rework skilling system
-  - [ ] add all credits
-  - [ ] zoom to object of interest (narrator)
-  - [ ] adjust volume of all sounds/narrative
-  - [ ] sound effects must be quiter when narrator speaks
-  - [ ] subtitles for the narrator
-  - [ ] flashing help texts
-  - [ ] let timeeater wander around dungeon (after first met)
-  - [ ] better animation for chapter popup text
-  - [ ] interrupt narrator by pressing a key
-  - [ ] make character slide/speed up/down a bit
-  - [ ] increase sword/punch hit boxes
-  - [ ] Narrative
-    - [ ] finding fireball scroll
-    - [ ] running out of mana (when casting fireball or shield)
-  - [ ] add/improve sounds
-    - [ ] going down stairs
-    - [ ] walking/running when slowmo
-  - [ ] put the time eater as far away from the doors as possible
-  - [ ] light layer: seamless rooms
+  - prevent casting fireball inside wall (so that it immediately collides)
+  - let spiders spit
+  - text in the preloading screen with continue button
+  - small "rate the game" button on the main menu screen
+  - let pathfinder cost mana and make dots dissappear faster
+  - replace timeeater countdown with orb/cooldown in character info ui
+  - bigger subtitles
+  - rework skilling system
+  - add all credits
+  - zoom to object of interest (narrator)
+  - adjust volume of all sounds/narrative
+  - sound effects must be quiter when narrator speaks
+  - subtitles for the narrator
+  - flashing help texts
+  - let timeeater wander around dungeon (after first met)
+  - better animation for chapter popup text
+  - interrupt narrator by pressing a key
+  - make character slide/speed up/down a bit
+  - increase sword/punch hit boxes
+  - Narrative
+    - finding fireball scroll
+    - running out of mana (when casting fireball or shield)
+  - add/improve sounds
+    - going down stairs
+    - walking/running when slowmo
+  - put the time eater as far away from the doors as possible
+  - light layer: seamless rooms
 - MULTIPLAYER:
-  - [ ] connect via seed
-  - [ ] ranks
-  - [ ] permanent leveling
-  - [ ] randomly meet other players
-    - [ ] "they introduced themselves with theirs names": input field, initiate chat
+  - connect via seed
+  - ranks
+  - permanent leveling
+  - randomly meet other players
+    - "they introduced themselves with theirs names": input field, initiate chat
 
 # phaser-electron-typescript-parcel [![Build Status](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel.svg?branch=master)](https://travis-ci.org/distantcam/phaser-electron-typescript-parcel)
 
