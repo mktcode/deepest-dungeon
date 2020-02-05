@@ -721,12 +721,7 @@ export default class Hero {
       this.walkingSound.setVolume(0)
       this.freeze()
       this.dead = true
-      const lastLevelXp = this.constructor.getXpForLevelUp(this.scene.registry.get('level'))
-      const lostXp = this.scene.registry.get('xp') - lastLevelXp
-      for (let i = 0; i < lostXp; i++) {
-        this.scene.emitXpOrb(this.container.x, this.container.y, false)
-      }
-      this.scene.registry.set('xp', lastLevelXp)
+      this.dropXp()
       this.scene.cameras.main.fadeOut(2000, 0, 0, 0, (camera, progress) => {
         if (progress === 1) {
           this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
@@ -742,6 +737,24 @@ export default class Hero {
       this.underAttack = false
       this.burning = false
     })
+  }
+
+  dropXp() {
+    const lastLevelXp = this.constructor.getXpForLevelUp(this.scene.registry.get('level'))
+    const lostXp = this.scene.registry.get('xp') - lastLevelXp
+
+    // drop a maximum of 10 orbs and increase xp per orb instead to avoid too many light sources
+    if (lostXp > 10) {
+      for (let i = 0; i < 10; i++) {
+        this.scene.emitXpOrb(this.container.x, this.container.y, false, lostXp / 10)
+      }
+    } else {
+      for (let i = 0; i < lostXp; i++) {
+        this.scene.emitXpOrb(this.container.x, this.container.y, false)
+      }
+    }
+
+    this.scene.registry.set('xp', lastLevelXp)
   }
 
   freeze() {

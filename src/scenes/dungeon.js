@@ -1107,7 +1107,7 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
-  emitXpOrb(x, y, following) {
+  emitXpOrb(x, y, following, xp) {
     x += Phaser.Math.Between(-25, 25)
     y += Phaser.Math.Between(-25, 25)
     const xpOrb = this.matter.add.image(x, y, 'particle', 0).setScale(0.7).setDepth(6).setRectangle(5, 5).setSensor(true).setData('following', following)
@@ -1115,15 +1115,22 @@ export default class DungeonScene extends Phaser.Scene {
       sprite: xpOrb,
       intensity: () => LightManager.flickering(0)
     })
+
+    let size = 1
+    if (xp > 3) size = 2
+    if (xp > 6) size = 3
+    if (xp > 10) size = 4
+    if (xp > 15) size = 5
+
     const xpOrbParticles = this.orbParticle.createEmitter({
       tint: [0xFF00FF, 0x0088FF, 0xFF00FF, 0x0088FF, 0xFFFFFF],
       blendMode: 'SCREEN',
-      scale: { start: 0.3, end: 0.6 },
+      scale: { start: 0.3 + size / 10, end: 0.6 + size / 10 },
       alpha: { start: 1, end: 0 },
       speed: 10,
       quantity: 10,
       frequency: 50,
-      lifespan: 250,
+      lifespan: 250 + size * 20,
       following: following
     })
 
@@ -1162,7 +1169,7 @@ export default class DungeonScene extends Phaser.Scene {
         this.lightManager.removeLight(xpOrb)
         xpOrb.destroy()
         xpOrbParticles.stop()
-        this.registry.set('xp', this.registry.get('xp') + 1)
+        this.registry.set('xp', this.registry.get('xp') + xp)
         this.sounds.play('xpPing' + this.xpOrbSound)
         this.xpOrbSound = Math.min(8, this.xpOrbSound + 1)
         clearTimeout(this.xpOrbSoundResetTimeout)

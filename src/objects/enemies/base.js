@@ -166,7 +166,7 @@ export default class BaseEnemy {
         this.dead = true
         this.die()
         for (let i = 0; i < this.xp; i++) {
-          this.dungeon.emitXpOrb(this.sprite.x, this.sprite.y, true)
+          this.dungeon.emitXpOrb(this.sprite.x, this.sprite.y, true, 1)
         }
         if (this.dungeon.registry.get('health') < this.dungeon.registry.get('maxHealth') && !Phaser.Math.Between(0, 8)) {
           this.dungeon.emitHealthOrb(this.sprite.x, this.sprite.y, true)
