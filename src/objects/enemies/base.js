@@ -30,6 +30,9 @@ export default class BaseEnemy {
     this.sprite.on('pointerout', () => {
       this.sprite.clearTint()
     })
+    this.sprite.on('pointerdown', () => {
+      this.dungeon.sounds.play('clickMinor')
+    })
 
     this.walk()
 
