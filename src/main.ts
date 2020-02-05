@@ -12,6 +12,7 @@ let mainWindow: Electron.BrowserWindow | null;
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
+    icon: path.join(__dirname, '../static/icon.png'),
     width: 1400,
     height: 700,
     fullscreen: true,

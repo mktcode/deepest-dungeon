@@ -22,10 +22,15 @@
   "build": {
     "appId": "parcel.electron",
     "mac": {
-      "category": "your.app.category.type"
+      "category": "your.app.category.type",
+      "icon": "./static/icon.png"
     },
     "win": {
-      "target": "portable"
+      "target": "portable",
+      "icon": "./static/icon.png"
+    },
+    "linux": {
+      "icon": "./static/icon.png"
     },
     "files": [
       "build/*"
