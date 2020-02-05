@@ -25,6 +25,7 @@ export default class Hero {
     this.burning = false
     this.dead = false
     this.lastDirection = 'down'
+    this.blockedDirections = []
     this.shieldActive = false
     this.speed = 2
     this.speedBoost = false
@@ -420,7 +421,12 @@ export default class Hero {
       Bodies.rectangle(-16, -12, 24, 16, { isSensor: true, angle: -2.5, label: 'punch-up-left' }),
       Bodies.rectangle(16, -12, 24, 16, { isSensor: true, angle: 2.5, label: 'punch-up-right' }),
       Bodies.rectangle(-16, 12, 24, 16, { isSensor: true, angle: 2.5, label: 'punch-down-left' }),
-      Bodies.rectangle(16, 12, 24, 16, { isSensor: true, angle: -2.5, label: 'punch-down-right' })
+      Bodies.rectangle(16, 12, 24, 16, { isSensor: true, angle: -2.5, label: 'punch-down-right' }),
+      // wall sensors
+      Bodies.rectangle(0, -10, 16, 5, { isSensor: true, label: 'wall-up' }),
+      Bodies.rectangle(0, 10, 16, 5, { isSensor: true, label: 'wall-down' }),
+      Bodies.rectangle(-10, 0, 5, 16, { isSensor: true, label: 'wall-left' }),
+      Bodies.rectangle(10, 0, 5, 16, { isSensor: true, label: 'wall-right' }),
     ] })
     this.container
       .setExistingBody(compoundBody)
@@ -431,6 +437,26 @@ export default class Hero {
       .setPosition(x, y)
       .setDepth(6)
     this.scene.cameras.main.startFollow(this.container, true, 0.1, 0.1)
+
+    // hero touches wall -> stop movement in that direction (matter js issue workaround)
+    this.scene.matterCollision.addOnCollideStart({
+      objectA: this.container,
+      objectB: this.scene.walls,
+      callback: (collision) => {
+        if (collision.bodyA.isSensor && collision.bodyA.label.startsWith('wall-')) {
+          this.blockedDirections.push(collision.bodyA.label.replace('wall-', ''))
+        }
+      }
+    })
+    this.scene.matterCollision.addOnCollideEnd({
+      objectA: this.container,
+      objectB: this.scene.walls,
+      callback: (collision) => {
+        if (collision.bodyA.isSensor && collision.bodyA.label.startsWith('wall-')) {
+          this.blockedDirections = this.blockedDirections.filter(d => d !== collision.bodyA.label.replace('wall-', ''))
+        }
+      }
+    })
   }
 
   prepareLevelUpAnimation() {
@@ -747,10 +773,10 @@ export default class Hero {
 
     if (!this.scene.narrator.freeze && !this.container.body.isStatic) {
       const directions = []
-      if (this.isDirectionKeyDown('up')) directions.push('up')
-      else if (this.isDirectionKeyDown('down')) directions.push('down')
-      if (this.isDirectionKeyDown('left')) directions.push('left')
-      else if (this.isDirectionKeyDown('right')) directions.push('right')
+      if (this.isDirectionKeyDown('up') && !this.blockedDirections.includes('up')) directions.push('up')
+      else if (this.isDirectionKeyDown('down') && !this.blockedDirections.includes('down')) directions.push('down')
+      if (this.isDirectionKeyDown('left') && !this.blockedDirections.includes('left')) directions.push('left')
+      else if (this.isDirectionKeyDown('right') && !this.blockedDirections.includes('right')) directions.push('right')
 
       const hasSpeedBoost = this.scene.dungeonNumber < this.scene.registry.get('playersDeepestDungeon')
 
