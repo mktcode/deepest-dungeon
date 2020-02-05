@@ -574,7 +574,7 @@ export default class Hero {
       this.scene.getPathGrid()
     )
 
-    if (this.targetedEnemy && Phaser.Math.Distance.Between(x, y, this.container.x, this.container.y) < 30) {
+    if (this.targetedEnemy && Phaser.Math.Distance.Between(x, y, this.container.x, this.container.y) < (this.hasItem('sword') ? 40 : 30)) {
       const direction = this.scene.getDirectionFromVector({ x: this.targetedEnemy.x - this.container.x, y: this.targetedEnemy.y - this.container.y })
       this.lastDirection = direction
       this.doAttack()
