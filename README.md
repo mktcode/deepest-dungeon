@@ -39,7 +39,9 @@
     - display other players as ghosts
     - permadeath (after using two lives)
   - let enemies randomly respawn (with particle emitter animation of course)
+  - randomized items (armor, swords, etc)
 - POLISHING:
+  - spawn fireball spell before shield
   - sound when clicking on enemy
   - prevent casting fireball inside wall (so that it immediately collides)
   - let spiders spit
