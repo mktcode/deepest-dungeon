@@ -40,6 +40,7 @@
     - permadeath (after using two lives)
   - let enemies randomly respawn (with particle emitter animation of course)
 - POLISHING:
+  - sound when clicking on enemy
   - prevent casting fireball inside wall (so that it immediately collides)
   - let spiders spit
   - text in the preloading screen with continue button
