@@ -124,28 +124,28 @@ export default class Narrator {
     if (!this.scene.registry.get('disableNarrator')) {
       this.scene.scene.get('Gui').showLetterBoxes()
       this.slowmo = true
-      this.scene.cameras.main.zoomTo(2.5)
+      this.scene.cameras.main.zoomTo(this.scene.registry.get('defaultZoom') * 1.5)
     }
   }
   slowmoEnd() {
     if (!this.scene.registry.get('disableNarrator')) {
       this.scene.scene.get('Gui').hideLetterBoxes()
       this.slowmo = false
-      this.scene.cameras.main.zoomTo(2)
+      this.scene.cameras.main.zoomTo(this.scene.registry.get('defaultZoom'))
     }
   }
   freezeStart() {
     if (!this.scene.registry.get('disableNarrator')) {
       this.scene.scene.get('Gui').showLetterBoxes()
       this.freeze = true
-      this.scene.cameras.main.zoomTo(2.5)
+      this.scene.cameras.main.zoomTo(this.scene.registry.get('defaultZoom') * 1.5)
     }
   }
   freezeEnd() {
     if (!this.scene.registry.get('disableNarrator')) {
       this.scene.scene.get('Gui').hideLetterBoxes()
       this.freeze = false
-      this.scene.cameras.main.zoomTo(2)
+      this.scene.cameras.main.zoomTo(this.scene.registry.get('defaultZoom'))
     }
   }
 }
