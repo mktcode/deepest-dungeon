@@ -49,7 +49,6 @@ export default class DungeonScene extends Phaser.Scene {
     this.sword = null
     this.torch = null
     this.pathfinder = null
-    this.pathSprites = []
     this.fireTraps = []
 
     this.safeRoomActivated = false
@@ -109,7 +108,6 @@ export default class DungeonScene extends Phaser.Scene {
     this.addEnemies()
     this.addObjects()
     this.addOverlayText()
-    this.startIdleTimer()
 
     this.addControls()
     this.addClickAnimation()
@@ -187,7 +185,7 @@ export default class DungeonScene extends Phaser.Scene {
     }
 
     // reset idle timer
-    this.startIdleTimer()
+    this.hero.startIdleTimer()
 
     // add new enemies
     this.addEnemies()
@@ -230,6 +228,10 @@ export default class DungeonScene extends Phaser.Scene {
     if (this.heroParticles) {
       this.heroParticles.stop()
     }
+  }
+
+  cameraFollow(object) {
+    this.cameras.main.startFollow(object, true, 0.1, 0.1)
   }
 
   addControls() {
@@ -334,10 +336,6 @@ export default class DungeonScene extends Phaser.Scene {
         }
       })
     }
-  }
-
-  startIdleTimer() {
-    this.idleTimer = new Date().getTime() / 1000
   }
 
   playStoryElement(key) {
@@ -481,7 +479,7 @@ export default class DungeonScene extends Phaser.Scene {
   playIdleNarrative() {
     const now = new Date().getTime() / 1000
     if (
-      now - this.idleTimer > 10 &&
+      now - this.hero.idleTimer > 10 &&
       !this.narrator.playing &&
       !this.registry.get('narratorSaid').includes('frozenInFear')
     ) {
@@ -489,13 +487,11 @@ export default class DungeonScene extends Phaser.Scene {
       this.narrator.sayOnce('frozenInFear').then(() => {
         this.narrator.freezeEnd()
       })
-    }
-  }
-
-  playIdleNarrativeFollowUp() {
-    if (
+    } else if (
+      this.hero.isMoving &&
       this.registry.get('narratorSaid').includes('frozenInFear') &&
-      !this.registry.get('narratorSaid').includes('startedToMoveAgain')
+      !this.registry.get('narratorSaid').includes('startedToMoveAgain') &&
+      ! this.narrator.playing
     ) {
       this.narrator.slowmoStart()
       this.narrator.sayOnce('startedToMoveAgain').then(() => {
@@ -1066,7 +1062,7 @@ export default class DungeonScene extends Phaser.Scene {
       this,
       this.tileToWorldX(this.startRoom.centerX) + 16,
       this.tileToWorldY(this.startRoom.centerY) + 19
-    );
+    )
     this.lightManager.lights.push({
       sprite: this.hero.container,
       intensity: () => {
@@ -1958,53 +1954,52 @@ export default class DungeonScene extends Phaser.Scene {
     return new PathFinder.Grid(grid)
   }
 
-  showPath() {
-    if (!this.pathSprites.length) {
-      const finder = new PathFinder.AStarFinder()
-      const path = finder.findPath(
-        this.worldToTileX(this.hero.container.x),
-        this.worldToTileY(this.hero.container.y),
-        this.endRoom.centerX + 1,
-        this.endRoom.centerY + 2,
-        this.getPathGrid()
-      )
+  showPath(from) {
+    const dots = []
+    const finder = new PathFinder.AStarFinder()
+    const path = finder.findPath(
+      this.worldToTileX(from.x),
+      this.worldToTileY(from.y),
+      this.endRoom.centerX + 1,
+      this.endRoom.centerY + 2,
+      this.getPathGrid()
+    )
 
-      // remove first and last point
-      path.splice(0, 1)
-      path.splice(path.length - 1, 1)
+    // remove first and last point
+    path.splice(0, 1)
+    path.splice(path.length - 1, 1)
 
-      path.forEach((tile) => {
-        this.pathSprites.push(this.add.sprite(
-          this.tileToWorldX(tile[0]) + 8,
-          this.tileToWorldY(tile[1]) + 8,
-          "path",
-          0
-        ).setDepth(5).setAlpha(0.5))
+    path.forEach((tile) => {
+      dots.push(this.add.sprite(
+        this.tileToWorldX(tile[0]) + 8,
+        this.tileToWorldY(tile[1]) + 8,
+        "path",
+        0
+      ).setDepth(5).setAlpha(0.5))
+    })
+    if (dots.length) {
+      this.scene.get('Gui').startPathfinderCooldown()
+      this.time.addEvent({
+        delay: 300,
+        callback: () => {
+          const dot = dots.shift()
+          if (dot) {
+            this.add.tween({
+              targets: [dot],
+              ease: 'Sine.easeInOut',
+              duration: 1000,
+              alpha: {
+                getStart: () => 1,
+                getEnd: () => 0
+              },
+              onComplete: () => {
+                dot.destroy()
+              }
+            });
+          }
+        },
+        repeat: dots.length - 1
       })
-      if (this.pathSprites.length) {
-        this.scene.get('Gui').startPathfinderCooldown()
-        this.time.addEvent({
-          delay: 300,
-          callback: () => {
-            const sprite = this.pathSprites.shift()
-            if (sprite) {
-              this.add.tween({
-                targets: [sprite],
-                ease: 'Sine.easeInOut',
-                duration: 1000,
-                alpha: {
-                  getStart: () => 1,
-                  getEnd: () => 0
-                },
-                onComplete: () => {
-                  sprite.destroy()
-                }
-              });
-            }
-          },
-          repeat: this.pathSprites.length - 1
-        })
-      }
     }
   }
 
