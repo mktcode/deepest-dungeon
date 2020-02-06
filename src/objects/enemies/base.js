@@ -75,13 +75,13 @@ export default class BaseEnemy {
           !this.dungeon.hero.dead &&
           collision.bodyA.isSensor &&
           this.dungeon.hero.getDamagingAttackFrames().includes(this.dungeon.hero.sprite.anims.currentFrame.index) &&
-          (this.dungeon.registry.get('weapon') ? '' : 'punch-') + this.dungeon.hero.lastDirection === collision.bodyA.label
+          (this.dungeon.hero.hasItem('sword') ? '' : 'punch-') + this.dungeon.hero.lastDirection === collision.bodyA.label
         ) {
           this.dungeon.cameras.main.shake(500, .002)
           this.underAttack = true
           this.dungeon.hero.playHitSound()
           this.takeDamage(
-            this.dungeon.registry.get('weapon')
+            this.dungeon.hero.hasItem('sword')
               ? this.dungeon.registry.get('damage') * 2
               : this.dungeon.registry.get('damage')
           )
