@@ -15,6 +15,16 @@ export default class Hero extends CharacterBase {
     })
   }
 
+  get(key) {
+    this[key] = this.scene.registry.get(key)
+    return this[key]
+  }
+
+  set(key, val) {
+    this[key] = val
+    this.scene.registry.set(key, val)
+  }
+
   addControls() {
     this.keys = this.scene.input.keyboard.createCursorKeys();
     this.wasdKeys = this.scene.input.keyboard.addKeys({
@@ -26,7 +36,7 @@ export default class Hero extends CharacterBase {
 
     // move by click and spell attack
     this.scene.input.on('pointerdown', (pointer, currentlyOver) => {
-      const targetedEnemy = currentlyOver.find(co => ['spider', 'zombie'].includes(co.getData('name')))
+      const targetedEnemy = currentlyOver.find(co => ['spider', 'zombie', 'guard'].includes(co.getData('name')))
       if (pointer.leftButtonDown()) {
         if (targetedEnemy && (!this.lastTargetedEnemeyAt || new Date().getTime() - this.lastTargetedEnemeyAt > 250)) {
           this.lastTargetedEnemeyAt = new Date().getTime()
@@ -156,6 +166,20 @@ export default class Hero extends CharacterBase {
       this.scene.time.delayedCall(10000, () => {
         if (gui.subtitle.text === TEXTS.FIND_THE_STAIRS) {
           gui.hideSubtitle(TEXTS.FIND_THE_STAIRS)
+        }
+      })
+    }
+  }
+
+  takeDamage(damage) {
+    super.takeDamage(damage)
+
+    if (this.health <= 0) {
+      this.scene.cameras.main.fadeOut(2000, 0, 0, 0, (camera, progress) => {
+        if (progress === 1) {
+          this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
+          this.scene.scene.sleep()
+          this.scene.scene.wake('Dungeon' + this.scene.registry.get('minDungeon'))
         }
       })
     }

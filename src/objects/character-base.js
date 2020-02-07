@@ -8,8 +8,24 @@ import TEXTS from "../texts.js";
 import Fireball from "./fireball.js";
 
 export default class CharacterBase {
-  constructor(scene, x, y) {
+  constructor(scene, room) {
     this.scene = scene
+
+    this.runOrWalk = 'run'
+
+    this.level = 1
+    this.xp = 0
+    this.health = 5
+    this.maxHealth = 5
+    this.mana = 5
+    this.maxMana = 5
+    this.damage = 1
+    this.items = []
+    this.torchIntensity = 1
+    this.torchDuration = 60
+    this.shieldDamage = 0
+    this.shieldDuration = 10
+    this.fireballSize = 1
 
     this.attacking = false
     this.underAttack = false
@@ -26,7 +42,7 @@ export default class CharacterBase {
     this.speedBoost = false
     this.fireballs = []
 
-    this.addToScene(x, y)
+    this.addToScene(room)
     this.prepareShield()
     this.prepareLevelUpAnimation()
     this.prepareSpeedBoostAnimation()
@@ -37,11 +53,31 @@ export default class CharacterBase {
     this.walkingSound = this.scene.sounds.play('walking', 0, false, true, 0)
   }
 
+  get(key) {
+    return this[key]
+  }
+
+  set(key, val) {
+    this[key] = val
+  }
+
+  changeHealth(amount) {
+    this.set('health', this.get('health') + amount)
+  }
+
+  changeMana(amount) {
+    this.set('mana', this.get('mana') + amount)
+  }
+
+  addItem(item) {
+    this.set('items', this.get('items').push(item))
+  }
+
   canCastFireball() {
     return (
       (!this.getLastFireball() || this.getLastFireball().isReleased()) &&
-      this.scene.registry.get('mana') &&
-      this.scene.registry.get('items').includes('fireball')
+      this.get('mana') &&
+      this.hasItem('fireball')
     )
   }
 
@@ -90,8 +126,16 @@ export default class CharacterBase {
     return ((Math.pow(level, 2) - level) * 50) / 2
   }
 
+  addItem(item) {
+    this.items.push(item)
+  }
+
+  getItems() {
+    return this.items
+  }
+
   hasItem(item) {
-    return this.scene.registry.get('items').includes(item)
+    return this.getItems().includes(item)
   }
 
   prepareShield() {
@@ -151,9 +195,8 @@ export default class CharacterBase {
   }
 
   useShield() {
-    const currentMana = this.scene.registry.get('mana')
-    if (this.scene.registry.get('items').includes('shield') && !this.shieldActive && currentMana) {
-      this.scene.registry.set('mana', currentMana - 1)
+    if (this.hasItem('shield') && !this.shieldActive && this.get('mana')) {
+      this.changeMana(-1)
       this.shieldActive = new Date().getTime()
       this.shieldParticles.start()
       this.shieldParticles2.start()
@@ -163,7 +206,7 @@ export default class CharacterBase {
         y: () => this.scene.worldToTileX(this.container.y),
         intensity: () => LightManager.flickering(1)
       })
-      this.scene.time.delayedCall(this.scene.registry.get('shieldDuration') * 1000, () => {
+      this.scene.time.delayedCall(this.getShieldDuration() * 1000, () => {
         this.shieldActive = false
         this.shieldParticles.stop()
         this.shieldParticles2.stop()
@@ -202,7 +245,7 @@ export default class CharacterBase {
     if (this.isNear([...TILES.SHRINE[0], ...TILES.SHRINE[1], ...TILES.SHRINE[2]])) {
       this.scene.activateSafeRoom()
       this.scene.scene.get('Gui').hideSubtitle(TEXTS.E_TO_ACTIVATE_CHECKPOINT)
-      const healthDiff = this.scene.registry.get('maxHealth') - this.scene.registry.get('health')
+      const healthDiff = this.get('maxHealth') - this.get('health')
       if (healthDiff) {
         for (let i = 0; i < healthDiff; i++) {
           this.scene.emitHealthOrb(
@@ -212,7 +255,7 @@ export default class CharacterBase {
           )
         }
       }
-      const manaDiff = this.scene.registry.get('maxMana') - this.scene.registry.get('mana')
+      const manaDiff = this.get('maxMana') - this.get('mana')
       if (manaDiff) {
         for (let i = 0; i < manaDiff; i++) {
           this.scene.emitManaOrb(
@@ -259,23 +302,23 @@ export default class CharacterBase {
     const tile = this.isNear(TILES.SKILLBG.OPEN[1][0])
     if (tile) {
       const xPosition = tile.x
-      if (this.scene.registry.get('skillPoints') > this.scene.registry.get('skillPointsSpent')) {
+      if (this.get('skillPoints') > this.get('skillPointsSpent')) {
         if (this.scene.worldToTileX(this.scene.healthSkillParticles.x.propertyValue) === xPosition + 1) {
           this.scene.sounds.play('skillUp')
-          this.scene.registry.set('skillPointsSpent', this.scene.registry.get('skillPointsSpent') + 1)
-          this.scene.registry.set('maxHealth', this.scene.registry.get('maxHealth') + 1)
-          this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
+          this.set('skillPointsSpent', this.get('skillPointsSpent') + 1)
+          this.set('maxHealth', this.get('maxHealth') + 1)
+          this.set('health', this.get('maxHealth'))
         }
         if (this.scene.worldToTileX(this.scene.damageSkillParticles.x.propertyValue) === xPosition + 1) {
           this.scene.sounds.play('skillUp')
-          this.scene.registry.set('skillPointsSpent', this.scene.registry.get('skillPointsSpent') + 1)
-          this.scene.registry.set('damage', this.scene.registry.get('damage') + 1)
+          this.set('skillPointsSpent', this.get('skillPointsSpent') + 1)
+          this.set('damage', this.get('damage') + 1)
         }
         if (this.scene.worldToTileX(this.scene.torchSkillParticles.x.propertyValue) === xPosition + 1) {
           this.scene.sounds.play('skillUp')
-          this.scene.registry.set('skillPointsSpent', this.scene.registry.get('skillPointsSpent') + 1)
-          this.scene.registry.set('torchDuration', this.scene.registry.get('torchDuration') + 30)
-          this.scene.registry.set('torchIntensity', this.scene.registry.get('torchIntensity') + 1)
+          this.set('skillPointsSpent', this.get('skillPointsSpent') + 1)
+          this.set('torchDuration', this.get('torchDuration') + 30)
+          this.set('torchIntensity', this.get('torchIntensity') + 1)
         }
       }
     }
@@ -284,7 +327,7 @@ export default class CharacterBase {
   usePathfinder() {
     console.log('test')
     if (
-      this.scene.registry.get('items').includes('pathfinder') && !this.scene.registry.get('pathfinderCooldown')
+      this.hasItem('pathfinder') && !this.get('pathfinderCooldown')
     ) {
       this.scene.showPath(this.container)
     }
@@ -304,7 +347,10 @@ export default class CharacterBase {
     return tiles.find(tile => tileNumbers.includes(tile.index))
   }
 
-  addToScene(x, y) {
+  addToScene(room) {
+    const x = this.scene.tileToWorldX(room.centerX) + 16
+    const y = this.scene.tileToWorldY(room.centerY) + 19
+
     this.container = this.scene.add.container(x, y).setDepth(6)
     this.scene.matter.add.gameObject(this.container)
 
@@ -342,7 +388,7 @@ export default class CharacterBase {
     this.container
       .setExistingBody(compoundBody)
       .setCollisionCategory(COLLISION_CATEGORIES.HERO)
-      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.ENEMY, COLLISION_CATEGORIES.TIMEBOMB])
+      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.HERO, COLLISION_CATEGORIES.ENEMY, COLLISION_CATEGORIES.TIMEBOMB])
       .setFixedRotation()
       .setFriction(20)
       .setPosition(x, y)
@@ -365,6 +411,19 @@ export default class CharacterBase {
         if (collision.bodyA.isSensor && collision.bodyA.label.startsWith('wall-')) {
           this.blockedDirections = this.blockedDirections.filter(d => d !== collision.bodyA.label.replace('wall-', ''))
         }
+      }
+    })
+
+    // light
+    this.scene.lightManager.lights.push({
+      sprite: this.container,
+      intensity: () => {
+        const torches = this.get('items').filter(item => item === 'torch')
+
+        if (torches && torches.length) {
+          return LightManager.flickering((this.get('torchIntensity') - 1) / 2 + torches.length - 0.5)
+        }
+        return 0
       }
     })
   }
@@ -429,7 +488,11 @@ export default class CharacterBase {
 
   move(direction) {
     this.lastDirection = direction
-    this.run(direction)
+    if (this.runOrWalk === 'walk') {
+      this.walk(direction)
+    } else {
+      this.run(direction)
+    }
 
     // horizontal
     if (['left', 'up-left', 'down-left'].includes(direction)) {
@@ -495,8 +558,12 @@ export default class CharacterBase {
         const direction = this.scene.getDirectionFromVector(this.container.body.velocity)
         if (direction) {
           this.setLastDirectionDelayed(direction)
-          this.run(this.lastDirection)
           this.playWalkingSound()
+          if (this.runOrWalk === 'walk') {
+            this.walk(this.lastDirection)
+          } else {
+            this.run(this.lastDirection)
+          }
         }
       } else {
         this.moveTo = null
@@ -529,7 +596,7 @@ export default class CharacterBase {
     if (this.speedBoost) speed *= 1.5
 
     if (this.scene.narrator.slowmo) speed *= 0.3
-    if (this.scene.narrator.forceWalk) speed *= 0.5
+    if (this.scene.narrator.forceWalk || this.runOrWalk === 'walk') speed *= 0.5
     if (this.scene.narrator.freeze || this.container.body.isStatic || this.attacking) speed = 0
 
     return speed
@@ -611,54 +678,52 @@ export default class CharacterBase {
     return this.hasItem('sword') ? [12, 13, 14, 15, 16] : [5, 6]
   }
 
+  isPlayer() {
+    return this.scene.hero === this
+  }
+
   takeDamage(damage) {
-    let heroHp = this.scene.registry.get('health')
-    heroHp -= damage
-    this.scene.registry.set('health', heroHp)
-    this.scene.flashSprite(this.sprite)
-    this.scene.popupDamageNumber(damage, this.container.x, this.container.y, '#CC0000')
+    if (!this.dead) {
+      this.changeHealth(-damage)
+      this.scene.flashSprite(this.sprite)
+      const color = this.isPlayer() ? '#CC0000' : '#CCCCCC'
+      this.scene.popupDamageNumber(damage, this.container.x, this.container.y, color)
 
-    if (heroHp <= 0) {
-      this.die()
-      this.scene.sounds.play('die')
-      this.runningSound.setVolume(0)
-      this.walkingSound.setVolume(0)
-      this.freeze()
-      this.dead = true
-      this.dropXp()
-      this.scene.cameras.main.fadeOut(2000, 0, 0, 0, (camera, progress) => {
-        if (progress === 1) {
-          this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
-          this.scene.scene.sleep()
-          this.scene.scene.wake('Dungeon' + this.scene.registry.get('minDungeon'))
-        }
+      if (this.health <= 0) {
+        this.die()
+        this.scene.sounds.play('die')
+        this.runningSound.setVolume(0)
+        this.walkingSound.setVolume(0)
+        this.freeze()
+        this.dead = true
+        this.dropXp()
+      } else {
+        this.scene.sounds.play('takeHit')
+      }
+
+      this.scene.time.delayedCall(1500, () => {
+        this.underAttack = false
+        this.burning = false
       })
-    } else {
-      this.scene.sounds.play('takeHit')
     }
-
-    this.scene.time.delayedCall(1500, () => {
-      this.underAttack = false
-      this.burning = false
-    })
   }
 
   dropXp() {
-    const lastLevelXp = this.constructor.getXpForLevelUp(this.scene.registry.get('level'))
-    const lostXp = this.scene.registry.get('xp') - lastLevelXp
+    const lastLevelXp = this.constructor.getXpForLevelUp(this.get('level'))
+    const lostXp = this.get('xp') - lastLevelXp
 
     // drop a maximum of 10 orbs and increase xp per orb instead to avoid too many light sources
     if (lostXp > 10) {
       for (let i = 0; i < 10; i++) {
-        this.scene.emitXpOrb(this.container.x, this.container.y, false, lostXp / 10)
+        this.scene.emitXpOrb(this.container.x, this.container.y, !this.isPlayer(), lostXp / 10)
       }
     } else {
       for (let i = 0; i < lostXp; i++) {
-        this.scene.emitXpOrb(this.container.x, this.container.y, false)
+        this.scene.emitXpOrb(this.container.x, this.container.y, !this.isPlayer(), 1)
       }
     }
 
-    this.scene.registry.set('xp', lastLevelXp)
+    this.set('xp', lastLevelXp)
   }
 
   freeze() {
@@ -674,7 +739,7 @@ export default class CharacterBase {
   }
 
   hasSpeedBoost() {
-    return this.scene.dungeonNumber < this.scene.registry.get('playersDeepestDungeon')
+    return this.scene.dungeonNumber < this.get('playersDeepestDungeon')
   }
 
   handleAutoMovement() {

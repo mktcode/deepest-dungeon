@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Dungeon from "@mikewesthad/dungeon";
 import Hero from "../objects/hero.js";
+import Guard from "../objects/guard.js";
 import Zombie from "../objects/enemies/zombie.js";
 import Spider from "../objects/enemies/spider.js";
 import TILES from "../tile-mapping.js";
@@ -103,14 +104,36 @@ export default class DungeonScene extends Phaser.Scene {
     this.addAmbientParticles()
     this.addFog()
 
+    // add hero
+    this.hero = new Hero(this, this.startRoom)
+
+    // if we are in the deepest dungeon, then add guard
+    if (this.dungeonNumber === this.registry.get('deepestDungeon')) {
+      this.guard = new Guard(this, this.endRoom)
+      this.guard.runOrWalk = 'walk'
+      this.guard.set('level', this.hero.get('level'))
+      this.guard.set('xp', this.dungeonNumber * 25)
+      this.guard.set('health', this.hero.get('health'))
+      this.guard.set('maxHealth', this.hero.get('maxHealth'))
+      this.guard.set('mana', this.hero.get('mana'))
+      this.guard.set('maxMana', this.hero.get('maxMana'))
+      this.guard.set('damage', this.hero.get('damage'))
+      this.hero.get('items').forEach(item => this.guard.addItem(item))
+      this.guard.set('torchIntensity', this.hero.get('torchIntensity'))
+      this.guard.set('torchDuration', this.hero.get('torchDuration'))
+      this.guard.set('shieldDamage', this.hero.get('shieldDamage'))
+      this.guard.set('shieldDuration', this.hero.get('shieldDuration'))
+      this.guard.set('fireballSize', this.hero.get('fireballSize'))
+      // this.guard.targetedEnemy = this.hero.container
+    }
+
     // add objects
-    this.addHero()
     this.addEnemies()
     this.addObjects()
-    this.addOverlayText()
 
     this.addControls()
     this.addClickAnimation()
+    this.addOverlayText()
 
     // when we come back to this dungeon after dying and when we leave it
     this.events.on('wake', () => this.wake())
@@ -209,6 +232,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.time.delayedCall(1000, () => {
       this.hero.sprite.visible = true
       this.hero.dead = false
+      this.hero.underAttack = false
       this.hero.unfreeze()
       this.hero.jumpTo(
         this.tileToWorldX(this.safeRoom && this.safeRoomActivated ? this.safeRoom.centerX : this.startRoom.centerX),
@@ -450,7 +474,6 @@ export default class DungeonScene extends Phaser.Scene {
           items.push('torch')
           items.push('torch')
           this.registry.set('items', items)
-          this.registry.set('weapon', 'sword')
           this.registry.set('health', 30)
           this.registry.set('maxHealth', 30)
           this.registry.set('damage', 1337 / 2)
@@ -1056,26 +1079,6 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
-  addHero() {
-    // Place the player in the first room
-    this.hero = new Hero(
-      this,
-      this.tileToWorldX(this.startRoom.centerX) + 16,
-      this.tileToWorldY(this.startRoom.centerY) + 19
-    )
-    this.lightManager.lights.push({
-      sprite: this.hero.container,
-      intensity: () => {
-        const torches = this.registry.get('items').filter(item => item === 'torch')
-
-        if (torches && torches.length) {
-          return LightManager.flickering((this.registry.get('torchIntensity') - 1) / 2 + torches.length - 0.5)
-        }
-        return 0
-      }
-    })
-  }
-
   addEnemies() {
     const maxEnemies = Math.min(16, this.dungeonNumber)
     const minEnemies = Math.max(2, maxEnemies - 8)
@@ -1493,12 +1496,17 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   flashSprite(sprite) {
+    const originalTint = sprite.tintTopLeft
     this.time.addEvent({
       delay: 150,
       callback: () => {
         sprite.setTintFill(0xffffff)
         this.time.delayedCall(75, () => {
-          sprite.clearTint()
+          if (originalTint) {
+            sprite.setTint(originalTint)
+          } else {
+            sprite.clearTint()
+          }
         })
       },
       repeat: 3
@@ -1561,10 +1569,7 @@ export default class DungeonScene extends Phaser.Scene {
       objectB: this.sword,
       callback: (collision) => {
         if (this.hero.dead || collision.bodyA.isSensor) return
-        this.registry.set('weapon', 'sword')
-        const items = this.registry.get('items')
-        items.push('sword')
-        this.registry.set('items', items)
+        this.hero.addItem('sword')
         tween.remove()
         this.sword.destroy()
         this.lightManager.removeLight(this.sword)
@@ -1596,9 +1601,7 @@ export default class DungeonScene extends Phaser.Scene {
       objectB: this.torch,
       callback: (collision) => {
         if (this.hero.dead || collision.bodyA.isSensor) return
-        const items = this.registry.get('items')
-        items.push('torch')
-        this.registry.set('items', items)
+        this.hero.addItem('torch')
         this.scene.get('Gui').removeTorchDelayed()
         tween.remove()
         this.torch.destroy()
@@ -1631,9 +1634,7 @@ export default class DungeonScene extends Phaser.Scene {
       objectB: this.pathfinder,
       callback: (collision) => {
         if (this.hero.dead || collision.bodyA.isSensor) return
-        const items = this.registry.get('items')
-        items.push('pathfinder')
-        this.registry.set('items', items)
+        this.hero.addItem('pathfinder')
         tween.remove()
         this.pathfinder.destroy()
         this.lightManager.removeLight(this.pathfinder)
@@ -1668,9 +1669,7 @@ export default class DungeonScene extends Phaser.Scene {
       objectB: this.shieldScroll,
       callback: (collision) => {
         if (this.hero.dead || collision.bodyA.isSensor) return
-        const items = this.registry.get('items')
-        items.push('shield')
-        this.registry.set('items', items)
+        this.hero.addItem('shield')
         tween.remove()
         this.shieldScroll.destroy()
         this.lightManager.removeLight(this.shieldScroll)
@@ -1705,9 +1704,7 @@ export default class DungeonScene extends Phaser.Scene {
       objectB: this.fireballScroll,
       callback: (collision) => {
         if (this.hero.dead || collision.bodyA.isSensor) return
-        const items = this.registry.get('items')
-        items.push('fireball')
-        this.registry.set('items', items)
+        this.hero.addItem('fireball')
         tween.remove()
         this.fireballScroll.destroy()
         this.lightManager.removeLight(this.fireballScroll)
@@ -2140,6 +2137,7 @@ export default class DungeonScene extends Phaser.Scene {
   update() {
     this.getEndRoom()
     this.hero.update()
+    if (this.guard) this.guard.update()
     this.enemies.forEach(e => e.update())
     this.updateCurrentRoom()
     this.updateStairs()
