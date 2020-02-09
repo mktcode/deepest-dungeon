@@ -206,7 +206,7 @@ export default class CharacterBase {
         y: () => this.scene.worldToTileX(this.container.y),
         intensity: () => LightManager.flickering(1)
       })
-      this.scene.time.delayedCall(this.getShieldDuration() * 1000, () => {
+      this.scene.time.delayedCall(this.get('shieldDuration') * 1000, () => {
         this.shieldActive = false
         this.shieldParticles.stop()
         this.shieldParticles2.stop()
