@@ -51,9 +51,6 @@ export default class CharacterBase {
     this.prepareSpeedBoostAnimation()
     this.startIdleTimer()
     this.startLookAroundInterval()
-
-    this.runningSound = this.scene.sounds.play('running', 0, false, true, 0)
-    this.walkingSound = this.scene.sounds.play('walking', 0, false, true, 0)
   }
 
   get(key) {
@@ -77,8 +74,7 @@ export default class CharacterBase {
   }
 
   doAttack() {
-    if (this.isDead) return
-    if (this.isAttacking) return
+    if (this.isDead || this.isAttacking) return
 
     this.isAttacking = true
     this.attack(this.lastDirection).once('complete', () => {
@@ -400,8 +396,6 @@ export default class CharacterBase {
     }
 
     this.normalizeSpeed()
-
-    this.playWalkingSound()
   }
 
   moveToXY(x, y) {
@@ -449,7 +443,6 @@ export default class CharacterBase {
         const direction = this.scene.getDirectionFromVector(this.container.body.velocity)
         if (direction) {
           this.setLastDirectionDelayed(direction)
-          this.playWalkingSound()
           if (this.runOrWalk === 'walk') {
             this.walk(this.lastDirection)
           } else {
@@ -467,12 +460,6 @@ export default class CharacterBase {
       this.lastDirectionLastSet = new Date()
       this.lastDirection = direction
     }
-  }
-
-  playWalkingSound() {
-    this.scene.narrator.forceWalk
-      ? this.walkingSound.setVolume(this.speed ? 0.15 : 0)
-      : this.runningSound.setVolume(this.speed ? 0.15 : 0)
   }
 
   normalizeSpeed() {
@@ -581,15 +568,10 @@ export default class CharacterBase {
       this.scene.popupDamageNumber(damage, this.container.x, this.container.y, color)
 
       if (this.health <= 0) {
-        this.die()
-        this.scene.sounds.play('die')
-        this.runningSound.setVolume(0)
-        this.walkingSound.setVolume(0)
-        this.freeze()
         this.isDead = true
+        this.freeze()
         this.dropXp()
-      } else {
-        this.scene.sounds.play('takeHit')
+        this.die()
       }
 
       this.scene.time.delayedCall(1500, () => {
@@ -657,6 +639,21 @@ export default class CharacterBase {
     }
   }
 
+  handleMovementSound() {
+    if (this.isMoving) {
+      if (this.runOrWalk === 'walk') {
+        this.walkingSound.resume()
+        this.runningSound.pause()
+      } else {
+        this.walkingSound.pause()
+        this.runningSound.resume()
+      }
+    } else {
+      this.walkingSound.pause()
+      this.runningSound.pause()
+    }
+  }
+
   update(callback) {
     this.updateRoom()
     // set depth based on y
@@ -664,18 +661,15 @@ export default class CharacterBase {
     // Stop any previous movement from the last frame
     this.isMoving = false
     this.container.setVelocity(0)
-    // stop sound from last frame
-    this.runningSound.setVolume(0)
-    this.walkingSound.setVolume(0)
     // update fireballs
     this.fireballs.forEach(fireball => fireball.update())
     // don't do anything else if dead or currently attacking
     if (this.isDead || this.isAttacking || Fireball.isCasting(this)) return
-
+    // handle automovement which all characters have
     this.handleAutoMovement()
-
+    // implementation specific
     if (callback) callback()
-
+    // idle
     if (!this.isMoving) {
       this.idle()
       this.setSpeedBoost(false)

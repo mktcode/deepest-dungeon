@@ -9,6 +9,11 @@ export default class Hero extends CharacterBase {
 
     this.shield = new Shield(this)
 
+    this.runningSound = this.scene.sounds.play('running', 0, false, true, 0.15)
+    this.walkingSound = this.scene.sounds.play('walking', 0, false, true, 0.15)
+    this.runningSound.pause()
+    this.walkingSound.pause()
+
     this.tint = 0x888888
     this.sprite.setTint(this.tint)
     this.container.setData('name', 'guard')
@@ -81,20 +86,24 @@ export default class Hero extends CharacterBase {
   }
 
   update() {
-    super.update()
+    super.update(() => {
+      this.runOrWalk = (
+        this.scene.dungeon.getRoomAt(this.scene.worldToTileX(this.container.x), this.scene.worldToTileY(this.container.y))
+        === this.scene.dungeon.getRoomAt(this.scene.worldToTileX(this.scene.hero.container.x), this.scene.worldToTileY(this.scene.hero.container.y))
+      ) ? 'run' : 'walk'
 
-    this.runOrWalk = (
-      this.scene.dungeon.getRoomAt(this.scene.worldToTileX(this.container.x), this.scene.worldToTileY(this.container.y))
-      === this.scene.dungeon.getRoomAt(this.scene.worldToTileX(this.scene.hero.container.x), this.scene.worldToTileY(this.scene.hero.container.y))
-    ) ? 'run' : 'walk'
+      this.targetedEnemy = this.scene.hero.isDead ? null : this.scene.hero.container
 
-    this.targetedEnemy = this.scene.hero.isDead ? null : this.scene.hero.container
+      this.handleMovementSound()
+    })
   }
 
   takeDamage(damage) {
     super.takeDamage(damage)
 
     if (this.isDead) {
+      this.scene.sounds.play('die')
+      this.handleMovementSound()
       if (this.scene.hero.targetedEnemy === this.container) {
         this.scene.hero.targetedEnemy = null
       }
@@ -102,6 +111,8 @@ export default class Hero extends CharacterBase {
         this.scene.lightManager.removeLight(this.container)
         this.sprite.destroy()
       })
+    } else {
+      this.scene.sounds.play('takeHit')
     }
   }
 }

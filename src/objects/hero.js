@@ -11,11 +11,17 @@ export default class Hero extends CharacterBase {
     this.scene.cameraFollow(this.container)
 
     this.shield = new Shield(this)
+
+    this.runningSound = this.scene.sounds.play('running', 0, false, true, 0.15)
+    this.walkingSound = this.scene.sounds.play('walking', 0, false, true, 0.15)
+    this.runningSound.pause()
+    this.walkingSound.pause()
   }
 
   update() {
     super.update(() => {
       this.handleKeyboardMovement()
+      this.handleMovementSound()
     })
   }
 
@@ -180,7 +186,9 @@ export default class Hero extends CharacterBase {
   takeDamage(damage) {
     super.takeDamage(damage)
 
-    if (this.health <= 0) {
+    if (this.isDead) {
+      this.scene.sounds.play('die')
+      this.handleMovementSound()
       this.scene.cameras.main.fadeOut(2000, 0, 0, 0, (camera, progress) => {
         if (progress === 1) {
           this.scene.registry.set('health', this.scene.registry.get('maxHealth'))
@@ -188,6 +196,8 @@ export default class Hero extends CharacterBase {
           this.scene.scene.wake('Dungeon' + this.scene.registry.get('minDungeon'))
         }
       })
+    } else {
+      this.scene.sounds.play('takeHit')
     }
   }
 }
