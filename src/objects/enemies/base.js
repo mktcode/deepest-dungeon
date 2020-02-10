@@ -3,8 +3,8 @@ import COLLISION_CATEGORIES from "../../collision-categories.js";
 import TEXTS from "../../texts.js";
 
 export default class BaseEnemy {
-  constructor(dungeon, room, dieCallback, hp, xp, damage, name, width, height, originX, originY) {
-    this.dungeon = dungeon
+  constructor(scene, room, dieCallback, hp, xp, damage, name, width, height, originX, originY) {
+    this.scene = scene
     this.room = room
     this.name = name
     this.directionX = ['left', 'right'][Phaser.Math.Between(0, 1)]
@@ -13,14 +13,14 @@ export default class BaseEnemy {
     this.dieCallback = dieCallback
     this.dead = false
 
-    const x = this.dungeon.tileToWorldX(Phaser.Math.Between(this.room.left + 2, this.room.right - 2))
-    const y = this.dungeon.tileToWorldY(Phaser.Math.Between(this.room.top + 5, this.room.bottom - 2))
+    const x = this.scene.tileToWorldX(Phaser.Math.Between(this.room.left + 2, this.room.right - 2))
+    const y = this.scene.tileToWorldY(Phaser.Math.Between(this.room.top + 5, this.room.bottom - 2))
 
     this.hp = hp
     this.xp = xp
     this.damage = damage
 
-    this.sprite = this.dungeon.matter.add.sprite(x, y, 'sprites', 'enemies/' + this.name + '/walk/down/1')
+    this.sprite = this.scene.matter.add.sprite(x, y, 'sprites', 'enemies/' + this.name + '/walk/down/1')
     this.sprite.setData('name', this.name)
     this.setCollision(x, y, width, height, originX, originY)
 
@@ -31,31 +31,31 @@ export default class BaseEnemy {
       this.sprite.clearTint()
     })
     this.sprite.on('pointerdown', () => {
-      this.dungeon.sounds.play('clickMinor')
+      this.scene.sounds.play('clickMinor')
     })
 
     this.walk()
 
     // enemy touches hero
-    this.dungeon.matterCollision.addOnCollideActive({
-      objectA: this.dungeon.hero.container,
+    this.scene.matterCollision.addOnCollideActive({
+      objectA: this.scene.hero.container,
       objectB: this.sprite,
       callback: (collision) => {
-        if (!this.dungeon.hero.underAttack && !this.dungeon.hero.dead && !this.dead && !collision.bodyA.isSensor) {
-          this.dungeon.cameras.main.shake(500, .002)
-          this.dungeon.hero.underAttack = true
-          this.dungeon.hero.takeDamage(this.damage)
+        if (!this.scene.hero.underAttack && !this.scene.hero.dead && !this.dead && !collision.bodyA.isSensor) {
+          this.scene.cameras.main.shake(500, .002)
+          this.scene.hero.underAttack = true
+          this.scene.hero.takeDamage(this.damage)
         }
       }
     })
 
     // enemy bounces off of wall
-    this.dungeon.matterCollision.addOnCollideStart({
-      objectA: this.dungeon.walls,
+    this.scene.matterCollision.addOnCollideStart({
+      objectA: this.scene.walls,
       objectB: this.sprite,
       callback: (collision) => {
         const bounds = collision.bodyA.bounds
-        const dimensions = this.dungeon.getDimensionsByVertices([bounds.max.x, bounds.max.y, bounds.min.x, bounds.min.y])
+        const dimensions = this.scene.getDimensionsByVertices([bounds.max.x, bounds.max.y, bounds.min.x, bounds.min.y])
         if (dimensions.width > dimensions.height) {
           this.directionY = this.directionY === 'up' ? 'down' : 'up'
         } else {
@@ -65,37 +65,37 @@ export default class BaseEnemy {
     })
 
     // hero attacks enemy
-    this.dungeon.matterCollision.addOnCollideActive({
-      objectA: this.dungeon.hero.container,
+    this.scene.matterCollision.addOnCollideActive({
+      objectA: this.scene.hero.container,
       objectB: this.sprite,
       callback: (collision) => {
         if (
-          this.dungeon.hero.attacking &&
+          this.scene.hero.attacking &&
           !this.underAttack &&
-          !this.dungeon.hero.dead &&
+          !this.scene.hero.dead &&
           collision.bodyA.isSensor &&
-          this.dungeon.hero.getDamagingAttackFrames().includes(this.dungeon.hero.sprite.anims.currentFrame.index) &&
-          (this.dungeon.hero.hasItem('sword') ? '' : 'punch-') + this.dungeon.hero.lastDirection === collision.bodyA.label
+          this.scene.hero.getDamagingAttackFrames().includes(this.scene.hero.sprite.anims.currentFrame.index) &&
+          (this.scene.hero.hasItem('sword') ? '' : 'punch-') + this.scene.hero.lastDirection === collision.bodyA.label
         ) {
-          this.dungeon.cameras.main.shake(500, .002)
+          this.scene.cameras.main.shake(500, .002)
           this.underAttack = true
-          this.dungeon.hero.playHitSound()
+          this.scene.hero.playHitSound()
           this.takeDamage(
-            this.dungeon.hero.hasItem('sword')
-              ? this.dungeon.registry.get('damage') * 2
-              : this.dungeon.registry.get('damage')
+            this.scene.hero.hasItem('sword')
+              ? this.scene.registry.get('damage') * 2
+              : this.scene.registry.get('damage')
           )
         }
       }
     })
 
     // sounds
-    this.dungeon.time.delayedCall(Phaser.Math.Between(0, 5000), () => {
-      this.sound = this.dungeon.time.addEvent({
+    this.scene.time.delayedCall(Phaser.Math.Between(0, 5000), () => {
+      this.sound = this.scene.time.addEvent({
         delay: 10000,
         callback: () => {
-          if (this.dungeon.currentRoom === this.room) {
-            this.dungeon.sounds.play(this.name + Phaser.Math.Between(1, 2))
+          if (this.scene.currentRoom === this.room) {
+            this.scene.sounds.play(this.name + Phaser.Math.Between(1, 2))
           }
         },
         loop: true
@@ -119,10 +119,10 @@ export default class BaseEnemy {
     if (!direction) {
       direction = 'down'
     }
-    const slowmo = this.dungeon.narrator && this.dungeon.narrator.slowmo ? '-slowmo': ''
+    const slowmo = this.scene.narrator && this.scene.narrator.slowmo ? '-slowmo': ''
 
     this.sprite.anims.play(this.name + '-' + name + '-' + direction + slowmo, true)
-    return this.dungeon.anims.get(this.name + '-' + name + '-' + direction + slowmo)
+    return this.scene.anims.get(this.name + '-' + name + '-' + direction + slowmo)
   }
 
   walk(direction) {
@@ -136,30 +136,30 @@ export default class BaseEnemy {
   takeDamage(damage) {
     if (!this.dead) {
       this.hp -= damage
-      this.dungeon.popupDamageNumber(damage, this.sprite.x, this.sprite.y, '#CCCCCC')
-      this.dungeon.flashSprite(this.sprite)
+      this.scene.popupDamageNumber(damage, this.sprite.x, this.sprite.y, '#CCCCCC')
+      this.scene.flashSprite(this.sprite)
       this.sprite.setVelocity(0)
       if (this.hp <= 0) {
         this.sprite.disableInteractive()
-        if (this.dungeon.hero.targetedEnemy === this.sprite) {
-          this.dungeon.hero.targetedEnemy = null
+        if (this.scene.hero.targetedEnemy === this.sprite) {
+          this.scene.hero.targetedEnemy = null
         }
         if (this.sound) this.sound.remove()
 
-        let enemiesKilled = this.dungeon.registry.get('enemiesKilled')
+        let enemiesKilled = this.scene.registry.get('enemiesKilled')
         enemiesKilled++
-        this.dungeon.registry.set('enemiesKilled', enemiesKilled)
+        this.scene.registry.set('enemiesKilled', enemiesKilled)
 
-        const gui = this.dungeon.scene.get('Gui')
+        const gui = this.scene.scene.get('Gui')
 
-        if (!this.dungeon.registry.get('items').includes('sword')) {
+        if (!this.scene.registry.get('items').includes('sword')) {
           if (enemiesKilled === 1) {
             gui.showSubtitle(TEXTS.KILL_X_UNDEAD.replace('{num}', 2))
           } else if (enemiesKilled === 2) {
             gui.subtitle.setText(TEXTS.KILL_X_UNDEAD.replace('{num}', 1))
           } else if (enemiesKilled === 3) {
             gui.hideSubtitle(TEXTS.KILL_X_UNDEAD.replace('{num}', 1))
-            this.dungeon.playStoryElementOnce('killingAllTheseEnemies').then(() => {
+            this.scene.playStoryElementOnce('killingAllTheseEnemies').then(() => {
               gui.showSubtitle(TEXTS.FIND_A_SWORD, 12000)
             })
           }
@@ -168,16 +168,16 @@ export default class BaseEnemy {
         this.dead = true
         this.die()
         for (let i = 0; i < this.xp; i++) {
-          this.dungeon.emitXpOrb(this.sprite.x, this.sprite.y, true, 1)
+          this.scene.emitXpOrb(this.sprite.x, this.sprite.y, true, 1)
         }
-        if (this.dungeon.registry.get('health') < this.dungeon.registry.get('maxHealth') && !Phaser.Math.Between(0, 8)) {
-          this.dungeon.emitHealthOrb(this.sprite.x, this.sprite.y, true)
+        if (this.scene.registry.get('health') < this.scene.registry.get('maxHealth') && !Phaser.Math.Between(0, 8)) {
+          this.scene.emitHealthOrb(this.sprite.x, this.sprite.y, true)
         }
-        if (this.dungeon.registry.get('mana') < this.dungeon.registry.get('maxMana') && !Phaser.Math.Between(0, 8)) {
-          this.dungeon.emitManaOrb(this.sprite.x, this.sprite.y, true)
+        if (this.scene.registry.get('mana') < this.scene.registry.get('maxMana') && !Phaser.Math.Between(0, 8)) {
+          this.scene.emitManaOrb(this.sprite.x, this.sprite.y, true)
         }
-        this.dungeon.time.delayedCall(1000, () => {
-          this.dungeon.lightManager.removeLight(this.sprite)
+        this.scene.time.delayedCall(1000, () => {
+          this.scene.lightManager.removeLight(this.sprite)
           this.sprite.destroy()
           if (this.dieCallback) {
             this.dieCallback(this)
@@ -185,7 +185,7 @@ export default class BaseEnemy {
         })
       }
 
-      this.dungeon.time.delayedCall(500, () => {
+      this.scene.time.delayedCall(500, () => {
         this.underAttack = false
         this.burning = false
       })
@@ -193,24 +193,24 @@ export default class BaseEnemy {
   }
 
   update() {
-    this.sprite.setDepth(this.dungeon.convertYToDepth(this.sprite.y, 6))
+    this.sprite.setDepth(this.scene.convertYToDepth(this.sprite.y, 6))
 
     if (!this.underAttack && !this.dead) {
       const sprite = this.sprite;
       const vector = new Phaser.Math.Vector2(sprite.x, sprite.y);
-      const distance = vector.distance({x: this.dungeon.hero.container.x, y: this.dungeon.hero.container.y})
-      const distanceX = vector.distance({x: this.dungeon.hero.container.x, y: sprite.y})
-      const distanceY = vector.distance({x: sprite.x, y: this.dungeon.hero.container.y})
+      const distance = vector.distance({x: this.scene.hero.container.x, y: this.scene.hero.container.y})
+      const distanceX = vector.distance({x: this.scene.hero.container.x, y: sprite.y})
+      const distanceY = vector.distance({x: sprite.x, y: this.scene.hero.container.y})
       let speed = 0.5
-      if (this.dungeon.narrator.slowmo) {
+      if (this.scene.narrator.slowmo) {
         speed *= 0.3
       }
-      if (this.dungeon.narrator.freeze) {
+      if (this.scene.narrator.freeze) {
         speed = 0
       }
-      if (this.room === this.dungeon.currentRoom && distance < 100 && this.dungeon.dungeonNumber > 4) {
-        if (this.dungeon.dungeonNumber > 8) speed *= 1.5
-        this.dungeon.moveToObject(sprite, this.dungeon.hero.container, speed)
+      if (this.room === this.scene.currentRoom && distance < 100 && this.scene.dungeonNumber > 4) {
+        if (this.scene.dungeonNumber > 8) speed *= 1.5
+        this.scene.moveToObject(sprite, this.scene.hero.container, speed)
         if (sprite.body.velocity.y < 0 && Math.abs(sprite.body.velocity.x) < sprite.body.velocity.y * -1 / 2) {
           this.walk('up')
         } else if (sprite.body.velocity.y > 0 && Math.abs(sprite.body.velocity.x) < sprite.body.velocity.y / 2) {
@@ -229,7 +229,7 @@ export default class BaseEnemy {
           this.walk('up-left')
         }
 
-        if (this.dungeon.hero.shieldActive) {
+        if (this.scene.hero.shieldActive) {
           if (distanceY < 30 && distanceX < 45) {
             sprite.setVelocityX(sprite.body.velocity.x * -5)
             sprite.setVelocityY(sprite.body.velocity.y * -5)
@@ -240,16 +240,16 @@ export default class BaseEnemy {
         }
       } else {
         sprite.setVelocity(0)
-        if (this.room.left + 2 >= this.dungeon.worldToTileX(sprite.x)) {
+        if (this.room.left + 2 >= this.scene.worldToTileX(sprite.x)) {
           this.directionX = 'right'
         }
-        if (this.room.right - 2 <= this.dungeon.worldToTileX(sprite.x)) {
+        if (this.room.right - 2 <= this.scene.worldToTileX(sprite.x)) {
           this.directionX = 'left'
         }
-        if (this.room.top + 5 >= this.dungeon.worldToTileY(sprite.y)) {
+        if (this.room.top + 5 >= this.scene.worldToTileY(sprite.y)) {
           this.directionY = 'down'
         }
-        if (this.room.bottom - 2 <= this.dungeon.worldToTileY(sprite.y)) {
+        if (this.room.bottom - 2 <= this.scene.worldToTileY(sprite.y)) {
           this.directionY = 'up'
         }
 
