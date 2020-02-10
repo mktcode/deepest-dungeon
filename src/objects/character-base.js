@@ -758,8 +758,8 @@ export default class CharacterBase {
 
   updateRoom() {
     const currentRoom = this.scene.dungeon.getRoomAt(
-      this.worldToTileX(this.container.x),
-      this.worldToTileY(this.container.y)
+      this.scene.worldToTileX(this.container.x),
+      this.scene.worldToTileY(this.container.y)
     )
     if (currentRoom && currentRoom !== this.room) {
       this.room = currentRoom
