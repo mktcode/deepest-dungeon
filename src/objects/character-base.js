@@ -218,7 +218,6 @@ export default class CharacterBase {
   }
 
   usePathfinder() {
-    console.log('test')
     if (
       this.hasItem('pathfinder') && !this.get('pathfinderCooldown')
     ) {
