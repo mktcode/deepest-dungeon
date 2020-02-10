@@ -2,8 +2,8 @@ import Phaser from 'phaser'
 import BaseEnemy from "./base.js"
 
 export default class Spider extends BaseEnemy {
-  constructor(dungeon, room, dieCallback) {
-    super(dungeon, room, dieCallback, 6, 6, 2, 'spider', 16, 16, 0.5, 0.65)
+  constructor(scene, room, dieCallback) {
+    super(scene, room, dieCallback, 6, 6, 2, 'spider', 16, 16, 0.5, 0.65)
 
     this.walkingPattern = Phaser.Utils.Array.Shuffle([true, true, true, false, false, false, false, false, false, false])
   }
@@ -14,23 +14,23 @@ export default class Spider extends BaseEnemy {
   }
 
   update() {
-    this.sprite.setDepth(this.dungeon.convertYToDepth(this.sprite.y, 6))
+    this.sprite.setDepth(this.scene.convertYToDepth(this.sprite.y, 6))
 
     if (!this.underAttack && !this.dead) {
       const sprite = this.sprite;
       const vector = new Phaser.Math.Vector2(sprite.x, sprite.y);
-      const distance = vector.distance({x: this.dungeon.hero.container.x, y: this.dungeon.hero.container.y})
-      const distanceX = vector.distance({x: this.dungeon.hero.container.x, y: sprite.y})
-      const distanceY = vector.distance({x: sprite.x, y: this.dungeon.hero.container.y})
+      const distance = vector.distance({x: this.scene.hero.container.x, y: this.scene.hero.container.y})
+      const distanceX = vector.distance({x: this.scene.hero.container.x, y: sprite.y})
+      const distanceY = vector.distance({x: sprite.x, y: this.scene.hero.container.y})
       let speed = 1.5
-      if (this.dungeon.narrator.slowmo) {
+      if (this.scene.narrator.slowmo) {
         speed *= 0.5
       }
-      if (this.dungeon.narrator.freeze) {
+      if (this.scene.narrator.freeze) {
         speed = 0
       }
-      if (this.room === this.dungeon.currentRoom && distance < 100 && this.dungeon.dungeonNumber > 4) {
-        this.dungeon.moveToObject(sprite, this.dungeon.hero.container, speed)
+      if (this.room === this.scene.currentRoom && distance < 100 && this.scene.dungeonNumber > 4) {
+        this.scene.moveToObject(sprite, this.scene.hero.container, speed)
         if (sprite.body.velocity.y < 0 && Math.abs(sprite.body.velocity.x) < sprite.body.velocity.y * -1 / 2) {
           this.walk('up')
         } else if (sprite.body.velocity.y > 0 && Math.abs(sprite.body.velocity.x) < sprite.body.velocity.y / 2) {
@@ -49,7 +49,7 @@ export default class Spider extends BaseEnemy {
           this.walk('up-left')
         }
 
-        if (this.dungeon.hero.shieldActive) {
+        if (this.scene.hero.shieldActive) {
           if (distanceY < 40 && distanceX < 55) {
             sprite.setVelocityX(sprite.body.velocity.x * -5)
             sprite.setVelocityY(sprite.body.velocity.y * -5)
@@ -63,16 +63,16 @@ export default class Spider extends BaseEnemy {
 
         // make movement run in intervals (creepily lurking spider)
         if (this.isWalkingPatternActive()) {
-          if (this.room.left + 2 >= this.dungeon.worldToTileX(sprite.x)) {
+          if (this.room.left + 2 >= this.scene.worldToTileX(sprite.x)) {
             this.directionX = 'right'
           }
-          if (this.room.right - 2 <= this.dungeon.worldToTileX(sprite.x)) {
+          if (this.room.right - 2 <= this.scene.worldToTileX(sprite.x)) {
             this.directionX = 'left'
           }
-          if (this.room.top + 5 >= this.dungeon.worldToTileY(sprite.y)) {
+          if (this.room.top + 5 >= this.scene.worldToTileY(sprite.y)) {
             this.directionY = 'down'
           }
-          if (this.room.bottom - 2 <= this.dungeon.worldToTileY(sprite.y)) {
+          if (this.room.bottom - 2 <= this.scene.worldToTileY(sprite.y)) {
             this.directionY = 'up'
           }
 
