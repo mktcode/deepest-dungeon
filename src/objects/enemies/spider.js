@@ -16,7 +16,7 @@ export default class Spider extends BaseEnemy {
   update() {
     this.sprite.setDepth(this.scene.convertYToDepth(this.sprite.y, 6))
 
-    if (!this.underAttack && !this.dead) {
+    if (!this.isUnderAttack && !this.isDead) {
       const sprite = this.sprite;
       const vector = new Phaser.Math.Vector2(sprite.x, sprite.y);
       const distance = vector.distance({x: this.scene.hero.container.x, y: this.scene.hero.container.y})

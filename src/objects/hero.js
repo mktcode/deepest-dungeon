@@ -74,14 +74,14 @@ export default class Hero extends CharacterBase {
 
     // shield
     this.keys.shift.on('down', () => {
-      if (this.dead) return
+      if (this.isDead) return
 
       this.useShield()
     })
 
     // use
     this.scene.input.keyboard.on('keyup-E', () => {
-      if (this.dead) return
+      if (this.isDead) return
 
       this.useStairs()
       this.useShrine()
@@ -90,7 +90,7 @@ export default class Hero extends CharacterBase {
 
     // show path
     this.scene.input.keyboard.on('keyup-Q', () => {
-      if (this.dead) return
+      if (this.isDead) return
 
       this.usePathfinder()
     })

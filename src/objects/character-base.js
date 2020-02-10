@@ -27,23 +27,24 @@ export default class CharacterBase {
     this.shieldDamage = 0
     this.shieldDuration = 10
     this.fireballSize = 1
+    this.speed = 2
 
-    this.attacking = false
-    this.underAttack = false
-    this.targetedEnemy = null
-    this.burning = false
-    this.dead = false
+    this.isAttacking = false
+    this.isUnderAttack = false
+    this.isBurning = false
+    this.isDead = false
     this.isMoving = false
     this.isLookingAround = false
+    this.isShieldActive = false
+    this.hasSpeedBoost = false
+
     this.idleTimer = new Date().getTime()
     this.lastDirection = 'down'
     this.blockedDirections = []
-    this.shieldActive = false
-    this.speed = 2
-    this.speedBoost = false
     this.fireballs = []
+    this.targetedEnemy = null
 
-    this.addToScene(this.room)
+    this.addToScene()
     this.prepareShield()
     this.prepareLevelUpAnimation()
     this.prepareSpeedBoostAnimation()
@@ -108,12 +109,12 @@ export default class CharacterBase {
   }
 
   doAttack() {
-    if (this.dead) return
-    if (this.attacking) return
+    if (this.isDead) return
+    if (this.isAttacking) return
 
-    this.attacking = true
+    this.isAttacking = true
     this.attack(this.lastDirection).once('complete', () => {
-      this.attacking = false
+      this.isAttacking = false
     })
   }
 
@@ -196,9 +197,9 @@ export default class CharacterBase {
   }
 
   useShield() {
-    if (this.hasItem('shield') && !this.shieldActive && this.get('mana')) {
+    if (this.hasItem('shield') && !this.isShieldActive && this.get('mana')) {
       this.changeMana(-1)
-      this.shieldActive = new Date().getTime()
+      this.isShieldActive = new Date().getTime()
       this.shieldParticles.start()
       this.shieldParticles2.start()
       this.scene.lightManager.lights.push({
@@ -208,7 +209,7 @@ export default class CharacterBase {
         intensity: () => LightManager.flickering(1)
       })
       this.scene.time.delayedCall(this.get('shieldDuration') * 1000, () => {
-        this.shieldActive = false
+        this.isShieldActive = false
         this.shieldParticles.stop()
         this.shieldParticles2.stop()
         this.scene.lightManager.removeLightByKey('shield')
@@ -348,9 +349,9 @@ export default class CharacterBase {
     return tiles.find(tile => tileNumbers.includes(tile.index))
   }
 
-  addToScene(room) {
-    const x = this.scene.tileToWorldX(room.centerX) + 16
-    const y = this.scene.tileToWorldY(room.centerY) + 19
+  addToScene() {
+    const x = this.scene.tileToWorldX(this.room.centerX) + 16
+    const y = this.scene.tileToWorldY(this.room.centerY) + 19
 
     this.container = this.scene.add.container(x, y)
     this.scene.matter.add.gameObject(this.container)
@@ -593,19 +594,19 @@ export default class CharacterBase {
 
   getSpeed() {
     let speed = this.speed
-    if (this.speedBoost) speed *= 1.5
+    if (this.hasSpeedBoost) speed *= 1.5
 
     if (this.scene.narrator.slowmo) speed *= 0.3
     if (this.scene.narrator.forceWalk || this.runOrWalk === 'walk') speed *= 0.5
-    if (this.scene.narrator.freeze || this.container.body.isStatic || this.attacking) speed = 0
+    if (this.scene.narrator.freeze || this.container.body.isStatic || this.isAttacking) speed = 0
 
     return speed
   }
 
   setSpeedBoost(active) {
-    if (this.speedBoost !== active) {
-      this.speedBoost = active
-      if (this.speedBoost) this.speedBoostAnimation.start()
+    if (this.hasSpeedBoost !== active) {
+      this.hasSpeedBoost = active
+      if (this.hasSpeedBoost) this.speedBoostAnimation.start()
       else this.speedBoostAnimation.stop()
     }
   }
@@ -683,7 +684,7 @@ export default class CharacterBase {
   }
 
   takeDamage(damage) {
-    if (!this.dead) {
+    if (!this.isDead) {
       this.changeHealth(-damage)
       this.scene.flashSprite(this.sprite)
       const color = this.isPlayer() ? '#CC0000' : '#CCCCCC'
@@ -695,15 +696,15 @@ export default class CharacterBase {
         this.runningSound.setVolume(0)
         this.walkingSound.setVolume(0)
         this.freeze()
-        this.dead = true
+        this.isDead = true
         this.dropXp()
       } else {
         this.scene.sounds.play('takeHit')
       }
 
       this.scene.time.delayedCall(1500, () => {
-        this.underAttack = false
-        this.burning = false
+        this.isUnderAttack = false
+        this.isBurning = false
       })
     }
   }
@@ -779,7 +780,7 @@ export default class CharacterBase {
     // update fireballs
     this.fireballs.forEach(fireball => fireball.update())
     // don't do anything else if dead or currently attacking
-    if (this.dead || this.attacking || this.isCasting()) return
+    if (this.isDead || this.isAttacking || this.isCasting()) return
 
     this.handleAutoMovement()
 

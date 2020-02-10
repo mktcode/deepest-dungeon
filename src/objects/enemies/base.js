@@ -9,9 +9,9 @@ export default class BaseEnemy {
     this.name = name
     this.directionX = ['left', 'right'][Phaser.Math.Between(0, 1)]
     this.directionY = ['up', 'down'][Phaser.Math.Between(0, 1)]
-    this.underAttack = false
+    this.isUnderAttack = false
     this.dieCallback = dieCallback
-    this.dead = false
+    this.isDead = false
 
     const x = this.scene.tileToWorldX(Phaser.Math.Between(this.room.left + 2, this.room.right - 2))
     const y = this.scene.tileToWorldY(Phaser.Math.Between(this.room.top + 5, this.room.bottom - 2))
@@ -41,7 +41,7 @@ export default class BaseEnemy {
       objectA: this.scene.hero.container,
       objectB: this.sprite,
       callback: (collision) => {
-        if (!this.scene.hero.underAttack && !this.scene.hero.dead && !this.dead && !collision.bodyA.isSensor) {
+        if (!this.scene.hero.underAttack && !this.scene.hero.dead && !this.isDead && !collision.bodyA.isSensor) {
           this.scene.cameras.main.shake(500, .002)
           this.scene.hero.underAttack = true
           this.scene.hero.takeDamage(this.damage)
@@ -71,14 +71,14 @@ export default class BaseEnemy {
       callback: (collision) => {
         if (
           this.scene.hero.attacking &&
-          !this.underAttack &&
+          !this.isUnderAttack &&
           !this.scene.hero.dead &&
           collision.bodyA.isSensor &&
           this.scene.hero.getDamagingAttackFrames().includes(this.scene.hero.sprite.anims.currentFrame.index) &&
           (this.scene.hero.hasItem('sword') ? '' : 'punch-') + this.scene.hero.lastDirection === collision.bodyA.label
         ) {
           this.scene.cameras.main.shake(500, .002)
-          this.underAttack = true
+          this.isUnderAttack = true
           this.scene.hero.playHitSound()
           this.takeDamage(
             this.scene.hero.hasItem('sword')
@@ -134,7 +134,7 @@ export default class BaseEnemy {
   }
 
   takeDamage(damage) {
-    if (!this.dead) {
+    if (!this.isDead) {
       this.hp -= damage
       this.scene.popupDamageNumber(damage, this.sprite.x, this.sprite.y, '#CCCCCC')
       this.scene.flashSprite(this.sprite)
@@ -165,7 +165,7 @@ export default class BaseEnemy {
           }
         }
 
-        this.dead = true
+        this.isDead = true
         this.die()
         for (let i = 0; i < this.xp; i++) {
           this.scene.emitXpOrb(this.sprite.x, this.sprite.y, true, 1)
@@ -186,8 +186,8 @@ export default class BaseEnemy {
       }
 
       this.scene.time.delayedCall(500, () => {
-        this.underAttack = false
-        this.burning = false
+        this.isUnderAttack = false
+        this.isBurning = false
       })
     }
   }
@@ -195,7 +195,7 @@ export default class BaseEnemy {
   update() {
     this.sprite.setDepth(this.scene.convertYToDepth(this.sprite.y, 6))
 
-    if (!this.underAttack && !this.dead) {
+    if (!this.isUnderAttack && !this.isDead) {
       const sprite = this.sprite;
       const vector = new Phaser.Math.Vector2(sprite.x, sprite.y);
       const distance = vector.distance({x: this.scene.hero.container.x, y: this.scene.hero.container.y})

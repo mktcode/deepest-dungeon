@@ -30,7 +30,7 @@ export default class Hero extends CharacterBase {
       callback: (collision) => {
         if (
           this.scene.hero.attacking &&
-          !this.underAttack &&
+          !this.isUnderAttack &&
           !this.scene.hero.dead &&
           collision.bodyA.isSensor &&
           !collision.bodyB.isSensor &&
@@ -38,7 +38,7 @@ export default class Hero extends CharacterBase {
           (this.scene.hero.hasItem('sword') ? '' : 'punch-') + this.scene.hero.lastDirection === collision.bodyA.label
         ) {
           this.scene.cameras.main.shake(500, .002)
-          this.underAttack = true
+          this.isUnderAttack = true
           this.scene.hero.playHitSound()
           this.takeDamage(
             this.scene.hero.hasItem('sword')
@@ -55,16 +55,16 @@ export default class Hero extends CharacterBase {
       objectB: this.scene.hero.container,
       callback: (collision) => {
         if (
-          this.attacking &&
-          !this.scene.hero.underAttack &&
-          !this.dead &&
+          this.isAttacking &&
+          !this.scene.hero.isUnderAttack &&
+          !this.isDead &&
           collision.bodyA.isSensor &&
           !collision.bodyB.isSensor &&
           this.getDamagingAttackFrames().includes(this.sprite.anims.currentFrame.index) &&
           (this.hasItem('sword') ? '' : 'punch-') + this.lastDirection === collision.bodyA.label
         ) {
           this.scene.cameras.main.shake(500, .002)
-          this.scene.hero.underAttack = true
+          this.scene.hero.isUnderAttack = true
           this.playHitSound()
           this.scene.hero.takeDamage(
             this.hasItem('sword')
@@ -90,7 +90,7 @@ export default class Hero extends CharacterBase {
   takeDamage(damage) {
     super.takeDamage(damage)
 
-    if (this.dead) {
+    if (this.isDead) {
       if (this.scene.hero.targetedEnemy === this.container) {
         this.scene.hero.targetedEnemy = null
       }
