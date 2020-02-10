@@ -1,5 +1,6 @@
 import CharacterBase from './character-base.js'
 import Fireball from './fireball.js'
+import Shield from './shield.js'
 import TEXTS from "../texts.js";
 
 export default class Hero extends CharacterBase {
@@ -8,6 +9,8 @@ export default class Hero extends CharacterBase {
 
     this.addControls()
     this.scene.cameraFollow(this.container)
+
+    this.shield = new Shield(this)
   }
 
   update() {
@@ -77,7 +80,7 @@ export default class Hero extends CharacterBase {
     this.keys.shift.on('down', () => {
       if (this.isDead) return
 
-      this.useShield()
+      this.shield.use()
     })
 
     // use

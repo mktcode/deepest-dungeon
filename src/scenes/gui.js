@@ -280,8 +280,8 @@ export default class GuiScene extends Phaser.Scene {
 
   updateShieldOrb() {
     const currentDungeon = this.scene.get('Dungeon' + this.registry.get('currentDungeon'))
-    if (currentDungeon.hero && currentDungeon.hero.isShieldActive) {
-      const shieldActiveTime = ((new Date().getTime() - currentDungeon.hero.isShieldActive) / 1000) / this.registry.get('shieldDuration')
+    if (currentDungeon.hero && currentDungeon.hero.shield && currentDungeon.hero.shield.isActiveSince) {
+      const shieldActiveTime = ((new Date().getTime() - currentDungeon.hero.shield.isActiveSince) / 1000) / this.registry.get('shieldDuration')
       this.guiShieldOrbCooldown.setAlpha(1).setCrop(0, 25 * (1 - shieldActiveTime), 25, 25)
       this.guiShieldOrb.setAlpha(1)
     } else {

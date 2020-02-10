@@ -49,7 +49,7 @@ export default class Spider extends BaseEnemy {
           this.walk('up-left')
         }
 
-        if (this.scene.hero.isShieldActive) {
+        if (this.scene.hero.shield.isActiveSince) {
           if (distanceY < 40 && distanceX < 55) {
             sprite.setVelocityX(sprite.body.velocity.x * -5)
             sprite.setVelocityY(sprite.body.velocity.y * -5)

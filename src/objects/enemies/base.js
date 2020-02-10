@@ -229,7 +229,7 @@ export default class BaseEnemy {
           this.walk('up-left')
         }
 
-        if (this.scene.hero.isShieldActive) {
+        if (this.scene.hero.shield.isActiveSince) {
           if (distanceY < 30 && distanceX < 45) {
             sprite.setVelocityX(sprite.body.velocity.x * -5)
             sprite.setVelocityY(sprite.body.velocity.y * -5)

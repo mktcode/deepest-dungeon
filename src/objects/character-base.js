@@ -6,9 +6,12 @@ import TILES from "../tile-mapping.js";
 import COLLISION_CATEGORIES from "../collision-categories.js";
 import TEXTS from "../texts.js";
 import Fireball from "./fireball.js";
+import uuidv4 from 'uuid/v4'
 
 export default class CharacterBase {
   constructor(scene, room) {
+    this.uuid = uuidv4()
+
     this.scene = scene
     this.room = room
 
@@ -35,7 +38,6 @@ export default class CharacterBase {
     this.isDead = false
     this.isMoving = false
     this.isLookingAround = false
-    this.isShieldActive = false
     this.isSpeedBoostActive = false
 
     this.idleTimer = new Date().getTime()
@@ -45,7 +47,6 @@ export default class CharacterBase {
     this.targetedEnemy = null
 
     this.addToScene()
-    this.prepareShield()
     this.prepareLevelUpAnimation()
     this.prepareSpeedBoostAnimation()
     this.startIdleTimer()
@@ -105,83 +106,6 @@ export default class CharacterBase {
 
   hasItem(item) {
     return this.getItems().includes(item)
-  }
-
-  prepareShield() {
-    this.shieldParticle = this.scene.add.particles('particle')
-    this.container.add(this.shieldParticle)
-    this.shieldParticles = this.shieldParticle.createEmitter({
-      on: false,
-      y: 10,
-      tint: [0x0088FF, 0xFFFFFF],
-      blendMode: 'SCREEN',
-      scale: { start: 0.2, end: 0.5 },
-      alpha: (particle, key, time, value) => {
-        if (time > 0.5) {
-          particle.accelerationY = 50
-          if (particle.x < 0) {
-            particle.accelerationX = 100
-          } else {
-            particle.accelerationX = -100
-          }
-        } else {
-          particle.accelerationX = 0
-          particle.accelerationY = -100
-        }
-        return Math.min(1 - time)
-      },
-      frequency: 50,
-      speed: 20,
-      lifespan: 1000,
-      quantity: 20,
-      angle: { min: 180, max: 360 },
-      emitZone: {
-        source: new Phaser.Geom.Ellipse(0, 0, 80, 40),
-        type: 'edge',
-        quantity: 18
-      }
-    })
-    this.shieldParticle2 = this.scene.add.particles('particle')
-    this.container.add(this.shieldParticle2)
-    this.container.sendToBack(this.shieldParticle2)
-    this.shieldParticles2 = this.shieldParticle2.createEmitter({
-      on: false,
-      y: 10,
-      tint: [0x0088FF, 0xFFFFFF],
-      blendMode: 'SCREEN',
-      scale: { start: 0.2, end: 0.5 },
-      frequency: 50,
-      speed: 5,
-      lifespan: 500,
-      quantity: 40,
-      angle: { min: 180, max: 360 },
-      emitZone: {
-        source: new Phaser.Geom.Ellipse(0, 0, 80, 40),
-        type: 'edge',
-        quantity: 18
-      }
-    })
-  }
-
-  useShield() {
-    if (this.hasItem('shield') && !this.isShieldActive && this.get('mana')) {
-      this.changeMana(-1)
-      this.isShieldActive = new Date().getTime()
-      this.shieldParticles.start()
-      this.shieldParticles2.start()
-      this.scene.lightManager.lights.push({
-        key: 'shield',
-        x: () => this.scene.worldToTileX(this.container.x),
-        y: () => this.scene.worldToTileX(this.container.y),
-        intensity: () => LightManager.flickering(1)
-      })
-      this.scene.time.delayedCall(this.get('shieldDuration') * 1000, () => {
-        this.isShieldActive = false
-        this.shieldParticles.stop()
-        this.shieldParticles2.stop()
-        this.scene.lightManager.removeLightByKey('shield')
-      })
-    }
   }
 
   useStairs() {
