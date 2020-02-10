@@ -488,7 +488,7 @@ export default class CharacterBase {
 
     if (this.scene.narrator.slowmo) speed *= 0.3
     if (this.scene.narrator.forceWalk || this.runOrWalk === 'walk') speed *= 0.5
-    if (this.scene.narrator.freeze || this.container.body.isStatic || this.isAttacking) speed = 0
+    if (this.isFrozen() || this.isAttacking) speed = 0
 
     return speed
   }
@@ -625,12 +625,16 @@ export default class CharacterBase {
     this.container.body.isStatic = false
   }
 
+  isFrozen() {
+    return this.scene.narrator.freeze || this.container.body.isStatic
+  }
+
   hasSpeedBoost() {
     return this.scene.dungeonNumber < this.get('playersDeepestDungeon')
   }
 
   handleAutoMovement() {
-    if (!this.scene.narrator.freeze && !this.container.body.isStatic) {
+    if (!this.isFrozen()) {
       if (this.moveTo) {
         this.moveToXY(this.moveTo.x, this.moveTo.y)
         this.setSpeedBoost(this.hasSpeedBoost())

@@ -101,18 +101,20 @@ export default class Hero extends CharacterBase {
   }
 
   handleKeyboardMovement() {
-    const directions = []
-    if (this.isDirectionKeyDown('up') && !this.blockedDirections.includes('up')) directions.push('up')
-    else if (this.isDirectionKeyDown('down') && !this.blockedDirections.includes('down')) directions.push('down')
-    if (this.isDirectionKeyDown('left') && !this.blockedDirections.includes('left')) directions.push('left')
-    else if (this.isDirectionKeyDown('right') && !this.blockedDirections.includes('right')) directions.push('right')
+    if (!this.isFrozen()) {
+      const directions = []
+      if (this.isDirectionKeyDown('up') && !this.blockedDirections.includes('up')) directions.push('up')
+      else if (this.isDirectionKeyDown('down') && !this.blockedDirections.includes('down')) directions.push('down')
+      if (this.isDirectionKeyDown('left') && !this.blockedDirections.includes('left')) directions.push('left')
+      else if (this.isDirectionKeyDown('right') && !this.blockedDirections.includes('right')) directions.push('right')
 
-    if (directions.length) {
-      this.moveTo = null
-      this.targetedEnemy = null
-      this.move(directions.join('-'))
-      this.setSpeedBoost(this.hasSpeedBoost())
-      this.isMoving = true
+      if (directions.length) {
+        this.moveTo = null
+        this.targetedEnemy = null
+        this.move(directions.join('-'))
+        this.setSpeedBoost(this.hasSpeedBoost())
+        this.isMoving = true
+      }
     }
   }
 
