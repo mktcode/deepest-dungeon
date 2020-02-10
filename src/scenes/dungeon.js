@@ -2134,6 +2134,10 @@ export default class DungeonScene extends Phaser.Scene {
     return { x: this.tileToWorldX(walkables[0].x) + this.tileSize / 2, y: this.tileToWorldY(walkables[0].y) + this.tileSize / 2 }
   }
 
+  convertYToDepth(y, base) {
+    return base + y / (y + 1)
+  }
+
   update() {
     this.getEndRoom()
     this.hero.update()

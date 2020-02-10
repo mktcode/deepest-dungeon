@@ -14,17 +14,16 @@ export default class Fireball {
     this.rightButtonReleased = false
 
     this.positionOffset = this.getPositionOffset(this.caster.lastDirection)
-    this.depth = this.getDepth(this.caster.lastDirection)
-
-    this.particle1 = this.scene.add.particles('particle').setDepth(this.depth)
-    this.particle2 = this.scene.add.particles('particle').setDepth(this.depth)
 
     this.container = this.scene.add.container(this.caster.container.x, this.caster.container.y)
+
+    this.particle1 = this.scene.add.particles('particle')
+    this.particle2 = this.scene.add.particles('particle')
+
     this.container.add(this.particle2)
     this.scene.matter.add.gameObject(this.container)
 
     this.container
-      .setDepth(this.depth)
       .setExistingBody(
         Phaser.Physics.Matter.Matter.Bodies.circle(
           this.caster.container.x + this.positionOffset.x,
@@ -232,10 +231,6 @@ export default class Fireball {
     return positionOffset
   }
 
-  getDepth(direction) {
-    return ['up-left', 'up', 'up-right'].includes(direction) ? 3 : 6
-  }
-
   explode() {
     Phaser.Utils.Array.Remove(this.caster.fireballs, this)
     this.container.setVelocity(0)
@@ -252,6 +247,11 @@ export default class Fireball {
   }
 
   update() {
+    const depth = this.scene.convertYToDepth(this.container.y, 6)
+    this.container.setDepth(depth)
+    this.particle1.setDepth(depth)
+    this.particle2.setDepth(depth)
+
     this.container.setRotation(this.container.rotation + 0.05)
     if (this.isReleased()) {
       if (Phaser.Math.Distance.BetweenPoints(this.container, this.target) < 2) {

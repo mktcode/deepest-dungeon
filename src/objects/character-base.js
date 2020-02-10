@@ -351,7 +351,7 @@ export default class CharacterBase {
     const x = this.scene.tileToWorldX(room.centerX) + 16
     const y = this.scene.tileToWorldY(room.centerY) + 19
 
-    this.container = this.scene.add.container(x, y).setDepth(6)
+    this.container = this.scene.add.container(x, y)
     this.scene.matter.add.gameObject(this.container)
 
     this.sprite = this.scene.add.sprite(0, -10, 'sprites', 'hero/with-weapon/walk/down/1')
@@ -392,7 +392,6 @@ export default class CharacterBase {
       .setFixedRotation()
       .setFriction(20)
       .setPosition(x, y)
-      .setDepth(6)
 
     // hero touches wall -> stop movement in that direction (matter js issue workaround)
     this.scene.matterCollision.addOnCollideStart({
@@ -757,6 +756,7 @@ export default class CharacterBase {
   }
 
   update(callback) {
+    this.container.setDepth(this.scene.convertYToDepth(this.container.y, 6))
     // Stop any previous movement from the last frame
     this.isMoving = false
     this.container.setVelocity(0)

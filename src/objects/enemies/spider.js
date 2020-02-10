@@ -14,6 +14,8 @@ export default class Spider extends BaseEnemy {
   }
 
   update() {
+    this.sprite.setDepth(this.dungeon.convertYToDepth(this.sprite.y, 6))
+
     if (!this.underAttack && !this.dead) {
       const sprite = this.sprite;
       const vector = new Phaser.Math.Vector2(sprite.x, sprite.y);

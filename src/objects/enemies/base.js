@@ -113,7 +113,6 @@ export default class BaseEnemy {
       .setOrigin(originX, originY)
       .setFixedRotation()
       .setInteractive(new Phaser.Geom.Rectangle(interactionX - width * 1.5, interactionY - height * 1.5, width * 4, height * 4), Phaser.Geom.Rectangle.Contains)
-      .setDepth(6)
   }
 
   playAnim(name, direction) {
@@ -194,6 +193,8 @@ export default class BaseEnemy {
   }
 
   update() {
+    this.sprite.setDepth(this.dungeon.convertYToDepth(this.sprite.y, 6))
+
     if (!this.underAttack && !this.dead) {
       const sprite = this.sprite;
       const vector = new Phaser.Math.Vector2(sprite.x, sprite.y);
