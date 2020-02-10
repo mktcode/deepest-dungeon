@@ -276,7 +276,7 @@ export default class CharacterBase {
     this.container
       .setExistingBody(compoundBody)
       .setCollisionCategory(COLLISION_CATEGORIES.HERO)
-      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.HERO, COLLISION_CATEGORIES.ENEMY, COLLISION_CATEGORIES.TIMEBOMB])
+      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.HERO, COLLISION_CATEGORIES.ENEMY, COLLISION_CATEGORIES.TIMEBOMB, COLLISION_CATEGORIES.FIREBALL])
       .setFixedRotation()
       .setFriction(20)
       .setPosition(x, y)

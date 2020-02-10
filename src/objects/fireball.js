@@ -35,7 +35,7 @@ export default class Fireball {
       .setFixedRotation()
       .setRotation(0)
       .setCollisionCategory(COLLISION_CATEGORIES.FIREBALL)
-      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.ENEMY])
+      .setCollidesWith([COLLISION_CATEGORIES.WALL, COLLISION_CATEGORIES.HERO, COLLISION_CATEGORIES.ENEMY])
 
     this.createEmitters()
     this.createCollisions()
@@ -89,16 +89,17 @@ export default class Fireball {
       }
     })
 
-    this.scene.enemies.forEach(enemy => {
+    this.getPotentialTargets().forEach(target => {
       this.scene.matterCollision.addOnCollideStart({
         objectA: this.container,
-        objectB: enemy.sprite,
+        objectB: target.container || target.sprite,
         callback: (collision) => {
-          enemy.takeDamage(this.damage)
-          const nearestEnemy = this.findNearestEnemy()
-          if (enemy.isDead && nearestEnemy && this.size > 1) {
+          if (collision.bodyB.isSensor) return
+          target.takeDamage(this.damage)
+          const nearestTarget = this.findNearestTarget()
+          if (nearestTarget && this.size > 1) {
             this.setSize(this.size - 1)
-            this.target = nearestEnemy.sprite
+            this.target = nearestTarget
             this.scene.sounds.play('fireball')
           } else {
             this.explode()
@@ -108,14 +109,23 @@ export default class Fireball {
     })
   }
 
-  findNearestEnemy() {
-    const enemiesByDistance = this.scene.enemies.filter(e => !e.isDead && e.room === this.scene.currentRoom).sort((a, b) => {
-      const distanceA = Phaser.Math.Distance.Between(a.sprite.x, a.sprite.y, this.container.x, this.container.y)
-      const distanceB = Phaser.Math.Distance.Between(b.sprite.x, b.sprite.y, this.container.x, this.container.y)
+  findNearestTarget() {
+    const targetsByDistance = this.getPotentialTargets().map(t => t.container || t.sprite).sort((a, b) => {
+      const distanceA = Phaser.Math.Distance.Between(a.x, a.y, this.container.x, this.container.y)
+      const distanceB = Phaser.Math.Distance.Between(b.x, b.y, this.container.x, this.container.y)
       return distanceA - distanceB
     })
 
-    return enemiesByDistance.length ? enemiesByDistance[0] : null
+    return targetsByDistance.length ? targetsByDistance[0] : null
+  }
+
+  getPotentialTargets() {
+    const targets = [...this.scene.enemies.filter(e => !e.isDead)]
+
+    if (this.caster !== this.scene.hero && !this.scene.hero.isDead) targets.push(this.scene.hero)
+    if (this.scene.guard && this.caster !== this.scene.guard && !this.scene.guard.isDead) targets.push(this.scene.guard)
+
+    return targets
   }
 
   start() {
