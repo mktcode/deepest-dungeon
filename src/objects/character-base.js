@@ -36,7 +36,7 @@ export default class CharacterBase {
     this.isMoving = false
     this.isLookingAround = false
     this.isShieldActive = false
-    this.hasSpeedBoost = false
+    this.isSpeedBoostActive = false
 
     this.idleTimer = new Date().getTime()
     this.lastDirection = 'down'
@@ -594,7 +594,7 @@ export default class CharacterBase {
 
   getSpeed() {
     let speed = this.speed
-    if (this.hasSpeedBoost) speed *= 1.5
+    if (this.isSpeedBoostActive) speed *= 1.5
 
     if (this.scene.narrator.slowmo) speed *= 0.3
     if (this.scene.narrator.forceWalk || this.runOrWalk === 'walk') speed *= 0.5
@@ -604,9 +604,9 @@ export default class CharacterBase {
   }
 
   setSpeedBoost(active) {
-    if (this.hasSpeedBoost !== active) {
-      this.hasSpeedBoost = active
-      if (this.hasSpeedBoost) this.speedBoostAnimation.start()
+    if (this.isSpeedBoostActive !== active) {
+      this.isSpeedBoostActive = active
+      if (this.isSpeedBoostActive) this.speedBoostAnimation.start()
       else this.speedBoostAnimation.stop()
     }
   }
