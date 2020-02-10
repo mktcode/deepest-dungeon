@@ -1,9 +1,13 @@
 import Phaser from 'phaser'
 import CharacterBase from './character-base.js'
+import Fireball from './fireball.js'
+import Shield from './shield.js'
 
 export default class Hero extends CharacterBase {
   constructor(scene, x, y) {
     super(scene, x, y)
+
+    this.shield = new Shield(this)
 
     this.tint = 0x888888
     this.sprite.setTint(this.tint)
