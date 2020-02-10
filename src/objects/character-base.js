@@ -780,7 +780,7 @@ export default class CharacterBase {
     // update fireballs
     this.fireballs.forEach(fireball => fireball.update())
     // don't do anything else if dead or currently attacking
-    if (this.isDead || this.isAttacking || this.isCasting()) return
+    if (this.isDead || this.isAttacking || Fireball.isCasting(this)) return
 
     this.handleAutoMovement()
 

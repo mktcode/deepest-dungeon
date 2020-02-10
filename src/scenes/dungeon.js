@@ -230,8 +230,8 @@ export default class DungeonScene extends Phaser.Scene {
     this.hero.freeze()
     this.time.delayedCall(1000, () => {
       this.hero.sprite.visible = true
-      this.hero.dead = false
-      this.hero.underAttack = false
+      this.hero.isDead = false
+      this.hero.isUnderAttack = false
       this.hero.unfreeze()
       this.hero.jumpTo(
         this.tileToWorldX(this.safeRoom && this.safeRoomActivated ? this.safeRoom.centerX : this.startRoom.centerX),
@@ -1160,7 +1160,7 @@ export default class DungeonScene extends Phaser.Scene {
       objectA: this.hero.container,
       objectB: xpOrb,
       callback: (collision) => {
-        if (this.hero.dead || collision.bodyA.isSensor) return
+        if (this.hero.isDead || collision.bodyA.isSensor) return
         tween1.remove()
         tween2.remove()
         Phaser.Utils.Array.Remove(this.xpOrbs, xpOrb)
@@ -1179,7 +1179,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   updateXpOrbs() {
-    if (this.hero.dead) return
+    if (this.hero.isDead) return
 
     this.xpOrbs.forEach(orb => {
       if (orb.getData('following')) {
@@ -1243,7 +1243,7 @@ export default class DungeonScene extends Phaser.Scene {
       objectA: this.hero.container,
       objectB: orb,
       callback: (collision) => {
-        if (this.hero.dead || collision.bodyA.isSensor) return
+        if (this.hero.isDead || collision.bodyA.isSensor) return
         tween1.remove()
         tween2.remove()
         Phaser.Utils.Array.Remove(this.healthOrbs, orb)
@@ -1257,7 +1257,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   updateHealthOrbs() {
-    if (this.hero.dead) return
+    if (this.hero.isDead) return
 
     this.healthOrbs.forEach(orb => {
       if (orb.getData('following')) {
@@ -1321,7 +1321,7 @@ export default class DungeonScene extends Phaser.Scene {
       objectA: this.hero.container,
       objectB: orb,
       callback: (collision) => {
-        if (this.hero.dead || collision.bodyA.isSensor) return
+        if (this.hero.isDead || collision.bodyA.isSensor) return
         tween1.remove()
         tween2.remove()
         Phaser.Utils.Array.Remove(this.manaOrbs, orb)
@@ -1335,7 +1335,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   updateManaOrbs() {
-    if (this.hero.dead) return
+    if (this.hero.isDead) return
 
     this.manaOrbs.forEach(orb => {
       if (orb.getData('following')) {
@@ -1481,13 +1481,13 @@ export default class DungeonScene extends Phaser.Scene {
           particle.x < this.hero.container.body.parts[1].bounds.max.x &&
           particle.y > this.hero.container.body.parts[1].bounds.min.y &&
           particle.y < this.hero.container.body.parts[1].bounds.max.y &&
-          !this.hero.burning &&
-          !this.hero.dead
+          !this.hero.isBurning &&
+          !this.hero.isDead
         ) {
-          this.hero.burning = true
+          this.hero.isBurning = true
           this.hero.takeDamage(1)
           this.time.delayedCall(1000, () => {
-            this.hero.burning = false
+            this.hero.isBurning = false
           })
         }
       })
@@ -1567,7 +1567,7 @@ export default class DungeonScene extends Phaser.Scene {
       objectA: this.hero.container,
       objectB: this.sword,
       callback: (collision) => {
-        if (this.hero.dead || collision.bodyA.isSensor) return
+        if (this.hero.isDead || collision.bodyA.isSensor) return
         this.hero.addItem('sword')
         tween.remove()
         this.sword.destroy()
@@ -1599,7 +1599,7 @@ export default class DungeonScene extends Phaser.Scene {
       objectA: this.hero.container,
       objectB: this.torch,
       callback: (collision) => {
-        if (this.hero.dead || collision.bodyA.isSensor) return
+        if (this.hero.isDead || collision.bodyA.isSensor) return
         this.hero.addItem('torch')
         this.scene.get('Gui').removeTorchDelayed()
         tween.remove()
@@ -1632,7 +1632,7 @@ export default class DungeonScene extends Phaser.Scene {
       objectA: this.hero.container,
       objectB: this.pathfinder,
       callback: (collision) => {
-        if (this.hero.dead || collision.bodyA.isSensor) return
+        if (this.hero.isDead || collision.bodyA.isSensor) return
         this.hero.addItem('pathfinder')
         tween.remove()
         this.pathfinder.destroy()
@@ -1667,7 +1667,7 @@ export default class DungeonScene extends Phaser.Scene {
       objectA: this.hero.container,
       objectB: this.shieldScroll,
       callback: (collision) => {
-        if (this.hero.dead || collision.bodyA.isSensor) return
+        if (this.hero.isDead || collision.bodyA.isSensor) return
         this.hero.addItem('shield')
         tween.remove()
         this.shieldScroll.destroy()
@@ -1702,7 +1702,7 @@ export default class DungeonScene extends Phaser.Scene {
       objectA: this.hero.container,
       objectB: this.fireballScroll,
       callback: (collision) => {
-        if (this.hero.dead || collision.bodyA.isSensor) return
+        if (this.hero.isDead || collision.bodyA.isSensor) return
         this.hero.addItem('fireball')
         tween.remove()
         this.fireballScroll.destroy()
@@ -1776,7 +1776,7 @@ export default class DungeonScene extends Phaser.Scene {
       objectA: this.hero.container,
       objectB: this.timebomb,
       callback: (collision) => {
-        if (!this.timebombActive || this.hero.dead || collision.bodyA.isSensor) return
+        if (!this.timebombActive || this.hero.isDead || collision.bodyA.isSensor) return
         this.timebombActive = false
         this.lightManager.removeLightByKey('timebomb')
         emitter1.stop()
@@ -1878,9 +1878,9 @@ export default class DungeonScene extends Phaser.Scene {
             particle.x < enemy.sprite.body.bounds.max.x &&
             particle.y > enemy.sprite.body.bounds.min.y &&
             particle.y < enemy.sprite.body.bounds.max.y &&
-            !enemy.burning
+            !enemy.isBurning
           ) {
-            enemy.burning = true
+            enemy.isBurning = true
             enemy.takeDamage(1)
           }
         })

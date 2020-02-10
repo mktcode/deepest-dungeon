@@ -41,9 +41,9 @@ export default class BaseEnemy {
       objectA: this.scene.hero.container,
       objectB: this.sprite,
       callback: (collision) => {
-        if (!this.scene.hero.underAttack && !this.scene.hero.dead && !this.isDead && !collision.bodyA.isSensor) {
+        if (!this.scene.hero.isUnderAttack && !this.scene.hero.isDead && !this.isDead && !collision.bodyA.isSensor) {
           this.scene.cameras.main.shake(500, .002)
-          this.scene.hero.underAttack = true
+          this.scene.hero.isUnderAttack = true
           this.scene.hero.takeDamage(this.damage)
         }
       }
@@ -70,9 +70,9 @@ export default class BaseEnemy {
       objectB: this.sprite,
       callback: (collision) => {
         if (
-          this.scene.hero.attacking &&
+          this.scene.hero.isAttacking &&
           !this.isUnderAttack &&
-          !this.scene.hero.dead &&
+          !this.scene.hero.isDead &&
           collision.bodyA.isSensor &&
           this.scene.hero.getDamagingAttackFrames().includes(this.scene.hero.sprite.anims.currentFrame.index) &&
           (this.scene.hero.hasItem('sword') ? '' : 'punch-') + this.scene.hero.lastDirection === collision.bodyA.label
@@ -229,7 +229,7 @@ export default class BaseEnemy {
           this.walk('up-left')
         }
 
-        if (this.scene.hero.shieldActive) {
+        if (this.scene.hero.isShieldActive) {
           if (distanceY < 30 && distanceX < 45) {
             sprite.setVelocityX(sprite.body.velocity.x * -5)
             sprite.setVelocityY(sprite.body.velocity.y * -5)

@@ -96,7 +96,7 @@ export default class Fireball {
         callback: (collision) => {
           enemy.takeDamage(this.damage)
           const nearestEnemy = this.findNearestEnemy()
-          if (enemy.dead && nearestEnemy && this.size > 1) {
+          if (enemy.isDead && nearestEnemy && this.size > 1) {
             this.setSize(this.size - 1)
             this.target = nearestEnemy.sprite
             this.scene.sounds.play('fireball')
@@ -109,7 +109,7 @@ export default class Fireball {
   }
 
   findNearestEnemy() {
-    const enemiesByDistance = this.scene.enemies.filter(e => !e.dead && e.room === this.scene.currentRoom).sort((a, b) => {
+    const enemiesByDistance = this.scene.enemies.filter(e => !e.isDead && e.room === this.scene.currentRoom).sort((a, b) => {
       const distanceA = Phaser.Math.Distance.Between(a.sprite.x, a.sprite.y, this.container.x, this.container.y)
       const distanceB = Phaser.Math.Distance.Between(b.sprite.x, b.sprite.y, this.container.x, this.container.y)
       return distanceA - distanceB

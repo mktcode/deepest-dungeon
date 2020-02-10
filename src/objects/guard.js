@@ -29,9 +29,9 @@ export default class Hero extends CharacterBase {
       objectB: this.container,
       callback: (collision) => {
         if (
-          this.scene.hero.attacking &&
+          this.scene.hero.isAttacking &&
           !this.isUnderAttack &&
-          !this.scene.hero.dead &&
+          !this.scene.hero.isDead &&
           collision.bodyA.isSensor &&
           !collision.bodyB.isSensor &&
           this.scene.hero.getDamagingAttackFrames().includes(this.scene.hero.sprite.anims.currentFrame.index) &&
@@ -84,7 +84,7 @@ export default class Hero extends CharacterBase {
       === this.scene.dungeon.getRoomAt(this.scene.worldToTileX(this.scene.hero.container.x), this.scene.worldToTileY(this.scene.hero.container.y))
     ) ? 'run' : 'walk'
 
-    this.targetedEnemy = this.scene.hero.dead ? null : this.scene.hero.container
+    this.targetedEnemy = this.scene.hero.isDead ? null : this.scene.hero.container
   }
 
   takeDamage(damage) {
