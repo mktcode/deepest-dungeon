@@ -246,6 +246,43 @@ export default class Fireball {
     })
   }
 
+  static canCast(caster) {
+    return (
+      (!this.getLast(caster) || this.getLast(caster).isReleased()) &&
+      caster.get('mana') &&
+      caster.hasItem('fireball')
+    )
+  }
+
+  static cast(scene, caster, target) {
+    const newFireball = new Fireball(scene, target, caster)
+
+    const anim = caster.castSpell()
+    anim.on('complete', () => {
+      newFireball.animationComplete = true
+    })
+
+    caster.fireballs.push(newFireball)
+  }
+
+  static isCasting(caster) {
+    return Fireball.getLast(caster) && !Fireball.getLast(caster).isReleased()
+  }
+
+  static release(caster, target) {
+    const fireball = this.getLast(caster)
+    if (fireball) {
+      if (target) {
+        fireball.target = target
+      }
+      fireball.rightButtonReleased = true
+    }
+  }
+
+  static getLast(caster) {
+    return caster.fireballs[caster.fireballs.length - 1]
+  }
+
   update() {
     const depth = this.scene.convertYToDepth(this.container.y, 6)
     this.container.setDepth(depth)

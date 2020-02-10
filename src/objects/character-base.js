@@ -75,39 +75,6 @@ export default class CharacterBase {
     this.set('items', this.get('items').push(item))
   }
 
-  canCastFireball() {
-    return (
-      (!this.getLastFireball() || this.getLastFireball().isReleased()) &&
-      this.get('mana') &&
-      this.hasItem('fireball')
-    )
-  }
-
-  castFireball(target) {
-    const newFireball = new Fireball(this.scene, target, this)
-
-    const anim = this.castSpell()
-    anim.on('complete', () => {
-      newFireball.animationComplete = true
-    })
-
-    this.fireballs.push(newFireball)
-  }
-
-  releaseFireball(target) {
-    const fireball = this.getLastFireball()
-    if (fireball) {
-      if (target) {
-        fireball.target = target
-      }
-      fireball.rightButtonReleased = true
-    }
-  }
-
-  getLastFireball() {
-    return this.fireballs[this.fireballs.length - 1]
-  }
-
   doAttack() {
     if (this.isDead) return
     if (this.isAttacking) return
@@ -733,10 +700,6 @@ export default class CharacterBase {
 
   unfreeze() {
     this.container.body.isStatic = false
-  }
-
-  isCasting() {
-    return this.getLastFireball() && !this.getLastFireball().isReleased()
   }
 
   hasSpeedBoost() {

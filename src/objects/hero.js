@@ -1,4 +1,5 @@
 import CharacterBase from './character-base.js'
+import Fireball from './fireball.js'
 import TEXTS from "../texts.js";
 
 export default class Hero extends CharacterBase {
@@ -46,7 +47,7 @@ export default class Hero extends CharacterBase {
           this.targetedEnemy = null
           this.moveTo = this.scene.findClosestWalkablePoint(pointer.worldX, pointer.worldY)
         }
-      } else if (pointer.rightButtonDown() && this.canCastFireball()) {
+      } else if (pointer.rightButtonDown() && Fireball.canCast(this)) {
         let target = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY)
         let from = new Phaser.Math.Vector2(this.container.x, this.container.y)
 
@@ -56,14 +57,14 @@ export default class Hero extends CharacterBase {
           target = targetedEnemy
         }
 
-        this.castFireball(target)
+        Fireball.cast(this.scene, this, target)
       }
     })
 
     this.scene.input.on('pointerup', (pointer, currentlyOver) => {
       if (pointer.rightButtonReleased()) {
         const targetedEnemy = currentlyOver.find(co => ['spider', 'zombie'].includes(co.getData('name')))
-        this.releaseFireball(targetedEnemy)
+        Fireball.release(this, targetedEnemy)
       }
     })
 
