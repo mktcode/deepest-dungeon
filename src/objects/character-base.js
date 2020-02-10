@@ -10,6 +10,7 @@ import Fireball from "./fireball.js";
 export default class CharacterBase {
   constructor(scene, room) {
     this.scene = scene
+    this.room = room
 
     this.runOrWalk = 'run'
 
@@ -42,7 +43,7 @@ export default class CharacterBase {
     this.speedBoost = false
     this.fireballs = []
 
-    this.addToScene(room)
+    this.addToScene(this.room)
     this.prepareShield()
     this.prepareLevelUpAnimation()
     this.prepareSpeedBoostAnimation()
@@ -755,7 +756,19 @@ export default class CharacterBase {
     }
   }
 
+  updateRoom() {
+    const currentRoom = this.scene.dungeon.getRoomAt(
+      this.worldToTileX(this.container.x),
+      this.worldToTileY(this.container.y)
+    )
+    if (currentRoom && currentRoom !== this.room) {
+      this.room = currentRoom
+    }
+  }
+
   update(callback) {
+    this.updateRoom()
+    // set depth based on y
     this.container.setDepth(this.scene.convertYToDepth(this.container.y, 6))
     // Stop any previous movement from the last frame
     this.isMoving = false
