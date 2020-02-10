@@ -124,7 +124,6 @@ export default class DungeonScene extends Phaser.Scene {
       this.guard.set('shieldDamage', this.hero.get('shieldDamage'))
       this.guard.set('shieldDuration', this.hero.get('shieldDuration'))
       this.guard.set('fireballSize', this.hero.get('fireballSize'))
-      // this.guard.targetedEnemy = this.hero.container
     }
 
     // add objects
