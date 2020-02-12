@@ -1,7 +1,7 @@
-import Phaser from 'phaser';
+import GuiButton from './button.js'
 
 export default class GuiContainer {
-  constructor(scene, x, y, width, height, contentCallback) {
+  constructor(scene, x, y, width, height, contentCallback, closeCallback) {
     this.scene = scene
 
     this.cornerTopLeft = this.scene.add.image(-width / 2 + 50, -height / 2 + 50, 'guiContainerCorner')
@@ -28,6 +28,11 @@ export default class GuiContainer {
       this.cornerBottomLeft,
       this.cornerBottomRight
     ])
+
+    if (closeCallback) {
+      // close button
+      this.container.add(new GuiButton(this.scene, width / 2 - 14, -(height / 2 - 14), 27, 'x', closeCallback).container)
+    }
 
     contentCallback(this.container)
   }
