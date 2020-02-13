@@ -1,27 +1,30 @@
-import Phaser from "phaser";
-import Dungeon from "@mikewesthad/dungeon";
-import Hero from "../objects/hero.js";
-import Guard from "../objects/guard.js";
-import Zombie from "../objects/enemies/zombie.js";
-import Spider from "../objects/enemies/spider.js";
-import TILES from "../tile-mapping.js";
-import COLLISION_CATEGORIES from "../collision-categories.js";
-import TEXTS from "../texts.js";
-import LightManager from "../light-manager.js";
+import Phaser from 'phaser'
+import Dungeon from '@mikewesthad/dungeon'
+import Hero from '../objects/hero.js'
+import Guard from '../objects/guard.js'
+import Zombie from '../objects/enemies/zombie.js'
+import Spider from '../objects/enemies/spider.js'
+import TILES from '../tile-mapping.js'
+import COLLISION_CATEGORIES from '../collision-categories.js'
+import TEXTS from '../texts.js'
+import LightManager from '../light-manager.js'
 import Narrator from '../narrator.js'
 import Sounds from '../sounds.js'
 import PathFinder from 'pathfinding'
 import { Slice } from 'polyk'
+import axios from 'axios'
+
+require('dotenv').config()
 
 // assets
-import tileset from "../assets/dungeon-tileset-extruded.png";
-import swordSprite from "../assets/sword.png";
-import torchSprite from "../assets/torch.png";
-import pathSprite from "../assets/path.png";
-import pathfinderSprite from "../assets/pathfinder.png";
-import particle from "../assets/particle.png";
-import fog from "../assets/fog.png";
-import scroll from "../assets/scroll.png";
+import tileset from '../assets/dungeon-tileset-extruded.png'
+import swordSprite from '../assets/sword.png'
+import torchSprite from '../assets/torch.png'
+import pathSprite from '../assets/path.png'
+import pathfinderSprite from '../assets/pathfinder.png'
+import particle from '../assets/particle.png'
+import fog from '../assets/fog.png'
+import scroll from '../assets/scroll.png'
 
 export default class DungeonScene extends Phaser.Scene {
   constructor(dungeonNumber) {
@@ -67,7 +70,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   static preload(scene) {
-    scene.load.image("tileset", tileset)
+    scene.load.image('tileset', tileset)
     scene.load.spritesheet('sword', swordSprite, { frameWidth: 31, frameHeight: 31 })
     scene.load.spritesheet('torch', torchSprite, { frameWidth: 8, frameHeight: 18 })
     scene.load.spritesheet('path', pathSprite, { frameWidth: 6, frameHeight: 6 })
@@ -81,7 +84,7 @@ export default class DungeonScene extends Phaser.Scene {
     // prepare
     this.narrator = new Narrator(this)
     this.sounds = new Sounds(this)
-    this.music = this.registry.get('music')
+    this.music = this.registry.get('ambientMusic')
     this.music.setRate(1)
     this.safeRoom = this.getSafeRoom()
     this.registry.set('currentDungeon', this.dungeonNumber)
@@ -108,23 +111,25 @@ export default class DungeonScene extends Phaser.Scene {
     this.hero = new Hero(this, this.startRoom)
 
     // if we are in the deepest dungeon, then add guard
-    if (this.dungeonNumber === this.registry.get('deepestDungeon')) {
-      this.guard = new Guard(this, this.endRoom)
-      this.guard.runOrWalk = 'walk'
-      this.guard.set('level', this.hero.get('level'))
-      this.guard.set('xp', this.dungeonNumber * 25)
-      this.guard.set('health', this.hero.get('health'))
-      this.guard.set('maxHealth', this.hero.get('maxHealth'))
-      this.guard.set('mana', this.hero.get('mana'))
-      this.guard.set('maxMana', this.hero.get('maxMana'))
-      this.guard.set('damage', this.hero.get('damage'))
-      this.hero.get('items').forEach(item => this.guard.addItem(item))
-      this.guard.set('torchIntensity', this.hero.get('torchIntensity'))
-      this.guard.set('torchDuration', this.hero.get('torchDuration'))
-      this.guard.set('shieldDamage', this.hero.get('shieldDamage'))
-      this.guard.set('shieldDuration', this.hero.get('shieldDuration'))
-      this.guard.set('fireballSize', this.hero.get('fireballSize'))
-    }
+    axios.get(process.env.API_URL + '/api/players/' + this.registry.get('credentials').name + '/guard').then(res => {
+      if (this.dungeonNumber === res.data.deepestDungeon && this.endRoom) {
+        this.guard = new Guard(this, this.endRoom)
+        this.guard.runOrWalk = 'walk'
+        this.guard.set('level', this.hero.get('level'))
+        this.guard.set('xp', this.dungeonNumber * 25)
+        this.guard.set('health', this.hero.get('health'))
+        this.guard.set('maxHealth', this.hero.get('maxHealth'))
+        this.guard.set('mana', this.hero.get('mana'))
+        this.guard.set('maxMana', this.hero.get('maxMana'))
+        this.guard.set('damage', this.hero.get('damage'))
+        this.hero.get('items').forEach(item => this.guard.addItem(item))
+        this.guard.set('torchIntensity', this.hero.get('torchIntensity'))
+        this.guard.set('torchDuration', this.hero.get('torchDuration'))
+        this.guard.set('shieldDamage', this.hero.get('shieldDamage'))
+        this.guard.set('shieldDuration', this.hero.get('shieldDuration'))
+        this.guard.set('fireballSize', this.hero.get('fireballSize'))
+      }
+    })
 
     // add objects
     this.addEnemies()
@@ -181,11 +186,9 @@ export default class DungeonScene extends Phaser.Scene {
           !narratorSaid.includes('theEnd')
         ) {
           this.playStoryElementOnce('theEnd')
-          this.addCredits()
         } else if (narratorSaid.includes('theEnd')) {
           this.narrator.blockStairs = false
           this.playStoryElementOnce('outtakes')
-          this.addCredits()
         }
       }
     }, 100)
@@ -253,6 +256,38 @@ export default class DungeonScene extends Phaser.Scene {
     }
   }
 
+  save() {
+    const gui = this.scene.get('Gui')
+    const savingText = gui.add.text(this.game.scale.width - 80, this.game.scale.height - 20, 'saving...', {
+      font: '12px monospace',
+      fill: '#CCCCCC'
+    })
+
+    const tween = this.tweens.add({
+      duration: 250,
+      targets: savingText,
+      yoyo: true,
+      repeat: -1,
+      alpha: { from: 0, to: 1 }
+    })
+
+    const credentials = this.registry.get('credentials')
+    axios.post(process.env.API_URL + '/api/save', {
+      name: credentials.name,
+      password: credentials.password,
+      currentDungeon: this.registry.get('currentDungeon'),
+      deepestDungeon: this.registry.get('deepestDungeon'),
+      minDungeon: this.registry.get('minDungeon')
+    }).then(() => {
+      setTimeout(() => {
+        tween.remove()
+        savingText.destroy()
+      }, 2000)
+    }).catch(e => {
+      console.log('saving failed', e)
+    })
+  }
+
   cameraFollow(object) {
     this.cameras.main.startFollow(object, true, 0.1, 0.1)
   }
@@ -309,14 +344,6 @@ export default class DungeonScene extends Phaser.Scene {
     if (zoom > 3.5) zoom = 3.5
     this.cameras.main.setZoom(zoom)
     this.registry.set('zoom', zoom)
-  }
-
-  addCredits() {
-    this.addCreditsToRandomRoom('Support me!' + "\n" + 'patreon.com/mkt' + "\n" + '...or below the game! ;)')
-    this.addCreditsToRandomRoom('Music:' + "\n" + 'Kai Engel' + "\n" +  'kai-engel.com')
-    this.addCreditsToRandomRoom('Dungeon Design:' + "\n" + 'Szadi art.' + "\n" +  'szadiart.itch.io')
-    this.addCreditsToRandomRoom('Character Design:' + "\n" + 'Robert Ramsay' + "\n" +  'robertramsay.co.uk')
-    this.addCreditsToRandomRoom('Other Stuff:' + "\n" + 'opengameart.org' + "\n" +  'freesound.org')
   }
 
   addAmbientParticles() {
@@ -519,22 +546,6 @@ export default class DungeonScene extends Phaser.Scene {
       this.narrator.sayOnce('startedToMoveAgain').then(() => {
         this.narrator.slowmoEnd()
       })
-    }
-  }
-
-  addCreditsToRandomRoom(text) {
-    const room = this.dungeon.r.randomPick(this.otherRooms)
-    if (room) {
-      Phaser.Utils.Array.Remove(this.otherRooms, room)
-      this.add.text(
-        this.tileToWorldX(room.centerX) - 25,
-        this.tileToWorldY(room.centerY),
-        text,
-        {
-          font: "10px monospace",
-          fill: "#FFFFFF"
-        }
-      ).setDepth(5).setAlpha(0.5).setAlign('center')
     }
   }
 

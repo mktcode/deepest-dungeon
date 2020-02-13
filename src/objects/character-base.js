@@ -133,6 +133,7 @@ export default class CharacterBase {
   useShrine() {
     if (this.isNear([...TILES.SHRINE[0], ...TILES.SHRINE[1], ...TILES.SHRINE[2]])) {
       this.scene.activateSafeRoom()
+      this.scene.save()
       this.scene.scene.get('Gui').hideSubtitle(TEXTS.E_TO_ACTIVATE_CHECKPOINT)
       const healthDiff = this.get('maxHealth') - this.get('health')
       if (healthDiff) {

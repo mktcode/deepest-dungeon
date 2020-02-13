@@ -12,43 +12,18 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   create() {
-    this.cameras.main.fadeIn(250, 0, 0, 0);
-    this.menuMusic = this.sound.add('menuMusic', { volume: 1, loop: true  })
+    this.cameras.main.fadeIn(250, 0, 0, 0)
+    this.menuMusic = this.registry.get('menuMusic')
     this.menuMusic.play()
-    this.music = this.sound.add('ambientMusic', { volume: 1, loop: true  })
 
     this.centerX = this.game.scale.width / 2
     this.centerY = this.game.scale.height / 2
 
-    this.setRegistryDefaults()
     this.addContainer()
-  }
 
-  setRegistryDefaults() {
-    this.registry.set('music', this.music)
-    this.registry.set('currentDungeon', 1)
-    this.registry.set('minDungeon', 1)
-    this.registry.set('deepestDungeon', 12)
-    this.registry.set('narratorSaid', [])
-    this.registry.set('disableNarrator', false)
-    this.registry.set('items', [])
-    this.registry.set('torchDuration', 60)
-    this.registry.set('torchIntensity', 1)
-    this.registry.set('shieldDuration', 10)
-    this.registry.set('shieldDamage', 0)
-    this.registry.set('fireballSize', 1)
-    this.registry.set('damage', 1)
-    this.registry.set('health', 5)
-    this.registry.set('maxHealth', 5)
-    this.registry.set('mana', 5)
-    this.registry.set('maxMana', 5)
-    this.registry.set('level', 1)
-    this.registry.set('xp', 0)
-    this.registry.set('skillPoints', 0)
-    this.registry.set('skillPointsSpent', 0)
-    this.registry.set('enemiesKilled', 0)
-    this.registry.set('zoom', this.game.device.os.desktop ? 2 : 1.3)
-    this.registry.set('defaultZoom', this.game.device.os.desktop ? 2 : 1.3)
+    this.events.on('wake', () => {
+      this.cameras.main.fadeIn(250, 0, 0, 0);
+    })
   }
 
   addContainer() {
@@ -68,42 +43,56 @@ export default class MenuScene extends Phaser.Scene {
         })
       }).container)
 
-      // narrator checkbox
-      container.add(new GuiCheckbox(
-        this,
-        0,
-        -40,
-        150,
-        'Disable Narrator',
-        () => {
-          this.sound.play('clickMinor')
-          if (this.registry.get("disableNarrator")) {
-            this.registry.set("disableNarrator", false)
-          } else {
-            this.registry.set("disableNarrator", true)
-          }
-        },
-        () => this.registry.get("disableNarrator")
-      ).container)
+      // continue button
+      const currentDungeon = this.registry.get('currentDungeon')
+      if (currentDungeon > 1) {
+        container.add(new GuiButton(this, 0, -40, 150, 'Continue', () => {
+          this.sound.play('clickMajor')
+          this.cameras.main.fadeOut(1500, 0, 0, 0, (camera, progress) => {
+            this.menuMusic.setVolume(1 - progress)
+            if (progress === 1) {
+              this.menuMusic.stop()
+              this.scene.sleep()
+              this.scene.add('Dungeon' + currentDungeon, new DungeonScene(currentDungeon), true)
+              this.scene.add('Gui', new GuiScene(), true)
+              this.scene.add('Pause', new PauseScene())
+            }
+          })
+        }).container)
+      }
 
-      // instructions
-      const instructions = this.add.container(-90, 0)
-      const textConfig = { font: "13px monospace", fill: "#999999" }
-      instructions.add(
-        this.add.text(
-          0,
-          0,
-          'Move:       WASD/Click' + "\n" +
-          'Use:      E/Left Click' + "\n" +
-          'Attack:    Space/Click' + "\n" +
-          'Scout:               Q' + "\n" +
-          'Shield:          Shift' + "\n" +
-          'Fireball:  Right Click' + "\n" +
-          'Pause:             ESC',
-          textConfig
-        )
-      )
-      container.add(instructions)
+      // controls button
+      container.add(new GuiButton(this, 0, 0, 150, 'Controls', () => {
+        this.sound.play('clickMinor')
+        this.cameras.main.fadeOut(250, 0, 0, 0, (camera, progress) => {
+          if (progress === 1) {
+            this.scene.sleep()
+            this.scene.run('Controls')
+          }
+        })
+      }).container)
+
+      // settings button
+      container.add(new GuiButton(this, 0, 40, 150, 'Settings', () => {
+        this.sound.play('clickMinor')
+        this.cameras.main.fadeOut(250, 0, 0, 0, (camera, progress) => {
+          if (progress === 1) {
+            this.scene.sleep()
+            this.scene.run('Settings')
+          }
+        })
+      }).container)
+
+      // credits button
+      container.add(new GuiButton(this, 0, 80, 150, 'Credits', () => {
+        this.sound.play('clickMinor')
+        this.cameras.main.fadeOut(250, 0, 0, 0, (camera, progress) => {
+          if (progress === 1) {
+            this.scene.sleep()
+            this.scene.run('Credits')
+          }
+        })
+      }).container)
     })
   }
 }

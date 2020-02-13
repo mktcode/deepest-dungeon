@@ -4,6 +4,7 @@ import DungeonScene from "../scenes/dungeon.js"
 import Narrator from "../narrator.js"
 import Sounds from "../sounds.js"
 import Animations from "../animations.js"
+import axios from "axios"
 
 // assets
 import spriteAtlas from "../assets/spriteatlas/spriteatlas.json"
@@ -68,6 +69,7 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.spritesheet("guiButtonBg", guiButtonBg, { frameWidth: 250, frameHeight: 23 })
     this.load.spritesheet("guiCheckbox", guiCheckbox, { frameWidth: 27, frameHeight: 27 })
     this.load.spritesheet("guiCursor", guiCursor, { frameWidth: 42, frameHeight: 46 })
+    this.load.html('loginForm', "../src/assets/html/login.html")
 
     Narrator.preload(this)
     Sounds.preload(this)
@@ -98,7 +100,7 @@ export default class PreloadScene extends Phaser.Scene {
         progressBox.destroy();
 
         this.scene.shutdown('Preload')
-        this.scene.start('Menu')
+        this.scene.start('Login')
         this.scene.start('Cursor')
       })
     })
@@ -106,5 +108,34 @@ export default class PreloadScene extends Phaser.Scene {
 
   create() {
     new Animations(this)
+    this.setRegistryDefaults()
+  }
+
+  setRegistryDefaults() {
+    this.registry.set('menuMusic', this.sound.add('menuMusic', { loop: true  }))
+    this.registry.set('ambientMusic', this.sound.add('ambientMusic', { loop: true  }))
+    this.registry.set('currentDungeon', 1)
+    this.registry.set('minDungeon', 1)
+    this.registry.set('deepestDungeon', 1)
+    this.registry.set('narratorSaid', [])
+    this.registry.set('disableNarrator', false)
+    this.registry.set('items', ['fireball', 'sword', 'shield'])
+    this.registry.set('torchDuration', 60)
+    this.registry.set('torchIntensity', 1)
+    this.registry.set('shieldDuration', 10)
+    this.registry.set('shieldDamage', 0)
+    this.registry.set('fireballSize', 1)
+    this.registry.set('damage', 1)
+    this.registry.set('health', 5)
+    this.registry.set('maxHealth', 5)
+    this.registry.set('mana', 5)
+    this.registry.set('maxMana', 5)
+    this.registry.set('level', 1)
+    this.registry.set('xp', 0)
+    this.registry.set('skillPoints', 0)
+    this.registry.set('skillPointsSpent', 0)
+    this.registry.set('enemiesKilled', 0)
+    this.registry.set('zoom', this.game.device.os.desktop ? 2 : 1.3)
+    this.registry.set('defaultZoom', this.game.device.os.desktop ? 2 : 1.3)
   }
 }
