@@ -32,6 +32,8 @@ export default class Hero extends CharacterBase {
       this.scene.sounds.play('clickMinor')
     })
 
+    this.behavior()
+
     // hero attacks enemy
     this.scene.matterCollision.addOnCollideActive({
       objectA: this.scene.hero.container,
@@ -82,6 +84,26 @@ export default class Hero extends CharacterBase {
           )
         }
       }
+    })
+  }
+
+  behavior() {
+    this.scene.time.addEvent({
+      delay: Phaser.Math.Between(2000, 5000),
+      callback: () => {
+        if (this.scene.hero.isDead) return
+        const distance = Phaser.Math.Distance.BetweenPoints(this.scene.hero.container, this.container)
+
+        if (this.hasItem('fireball') && distance < 100) {
+          Fireball.cast(this.scene, this, this.scene.hero.container)
+          this.scene.time.delayedCall(1000, () => Fireball.release(this, this.scene.hero.container))
+        }
+
+        if (this.hasItem('shield') && distance < 70) {
+          this.shield.use()
+        }
+      },
+      repeat: -1
     })
   }
 
