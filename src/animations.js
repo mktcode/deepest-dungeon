@@ -25,6 +25,12 @@ export default class Animations {
       repeat: -1
     });
     this.anims.create({
+      key: "candlestand",
+      frames: this.anims.generateFrameNumbers("candlestand", { start: 0, end: 3 }),
+      frameRate: 7,
+      repeat: -1
+    });
+    this.anims.create({
       key: "pathfinder",
       frames: this.anims.generateFrameNumbers("pathfinder", { start: 0, end: 11 }),
       frameRate: 12,

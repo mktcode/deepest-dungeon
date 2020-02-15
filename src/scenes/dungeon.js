@@ -20,6 +20,7 @@ require('dotenv').config()
 import tileset from '../assets/dungeon-tileset-extruded.png'
 import swordSprite from '../assets/sword.png'
 import torchSprite from '../assets/torch.png'
+import candlestandSprite from '../assets/candlestand.png'
 import pathSprite from '../assets/path.png'
 import pathfinderSprite from '../assets/pathfinder.png'
 import particle from '../assets/particle.png'
@@ -54,6 +55,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.torch = null
     this.pathfinder = null
     this.fireTraps = []
+    this.candlestands = []
 
     this.safeRoomActivated = false
     this.dungeonVisits = 1
@@ -73,6 +75,7 @@ export default class DungeonScene extends Phaser.Scene {
     scene.load.image('tileset', tileset)
     scene.load.spritesheet('sword', swordSprite, { frameWidth: 31, frameHeight: 31 })
     scene.load.spritesheet('torch', torchSprite, { frameWidth: 8, frameHeight: 18 })
+    scene.load.spritesheet('candlestand', candlestandSprite, { frameWidth: 16, frameHeight: 40 })
     scene.load.spritesheet('path', pathSprite, { frameWidth: 6, frameHeight: 6 })
     scene.load.spritesheet('pathfinder', pathfinderSprite, { frameWidth: 24, frameHeight: 24 })
     scene.load.image('particle', particle)
@@ -1527,12 +1530,14 @@ export default class DungeonScene extends Phaser.Scene {
     const narratorSaid = this.registry.get('narratorSaid')
     const items = this.registry.get('items')
 
-    if ((narratorSaid.includes('killingAllTheseEnemies')) && !items.includes('sword')) {
-      this.addSword()
+    this.addCandlestands()
+
+    if (narratorSaid.includes('whereAmI')) {
+      this.addTorch()
     }
 
-    if (items.includes('sword') && !narratorSaid.includes('theDeeperHeWent')) {
-      this.addTorch()
+    if ((narratorSaid.includes('killingAllTheseEnemies')) && !items.includes('sword')) {
+      this.addSword()
     }
 
     if (narratorSaid.includes('torchPerfect')) {
@@ -1554,6 +1559,47 @@ export default class DungeonScene extends Phaser.Scene {
     if (narratorSaid.includes('aTimeeater') && !items.includes('fireball')) {
       this.addFireballScroll()
     }
+  }
+
+  addCandlestands() {
+    const room = this.startRoom
+    this.addCandlestand(
+      this.tileToWorldX(room.left + 2),
+      this.tileToWorldY(room.top + 4)
+    )
+    this.addCandlestand(
+      this.tileToWorldX(room.right - 1),
+      this.tileToWorldY(room.top + 4)
+    )
+    this.addCandlestand(
+      this.tileToWorldX(room.right - 1),
+      this.tileToWorldY(room.bottom + 1)
+    )
+    this.addCandlestand(
+      this.tileToWorldX(room.left + 2),
+      this.tileToWorldY(room.bottom + 1)
+    )
+  }
+
+  addCandlestand(x, y) {
+    const body = Phaser.Physics.Matter.Matter.Bodies.rectangle(x, y, 10, 10, { inertia: Infinity, frictionAir: 1, chamfer: { radius: 2 } })
+    const candlestand = this.matter.add.sprite(x, y, 'candlestand', 0)
+    candlestand
+      .setExistingBody(body)
+      .setOrigin(0.5, 0.85)
+    candlestand.anims.play('candlestand', true)
+    this.lightManager.lights.push({
+      x: () => this.worldToTileX(candlestand.x),
+      y: () => this.worldToTileY(candlestand.y) - 2,
+      intensity: () => LightManager.flickering(1)
+    })
+    this.candlestands.push(candlestand)
+  }
+
+  updateCandlestands() {
+    this.candlestands.forEach(cs => {
+      cs.setDepth(this.convertYToDepth(cs.y, 6))
+    })
   }
 
   addSword(x, y) {
@@ -2165,6 +2211,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.updateXpOrbs()
     this.updateHealthOrbs()
     this.updateManaOrbs()
+    this.updateCandlestands()
     this.playIdleNarrative()
   }
 }
