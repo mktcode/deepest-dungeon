@@ -119,7 +119,7 @@ export default class PreloadScene extends Phaser.Scene {
     this.registry.set('deepestDungeon', 1)
     this.registry.set('narratorSaid', [])
     this.registry.set('disableNarrator', false)
-    this.registry.set('items', ['fireball', 'sword', 'shield'])
+    this.registry.set('items', [])
     this.registry.set('torchDuration', 60)
     this.registry.set('torchIntensity', 1)
     this.registry.set('shieldDuration', 10)
