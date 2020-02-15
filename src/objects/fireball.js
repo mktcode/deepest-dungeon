@@ -85,6 +85,7 @@ export default class Fireball {
       objectA: this.container,
       objectB: this.scene.walls,
       callback: (collision) => {
+        if (!this.isReleased()) return
         this.explode()
       }
     })
@@ -94,7 +95,7 @@ export default class Fireball {
         objectA: this.container,
         objectB: target.container || target.sprite,
         callback: (collision) => {
-          if (collision.bodyB.isSensor) return
+          if (!this.isReleased() || collision.bodyB.isSensor) return
           target.takeDamage(this.damage)
           const nearestTarget = this.findNearestTarget()
           if (nearestTarget && this.size > 1) {
