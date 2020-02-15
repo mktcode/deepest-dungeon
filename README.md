@@ -4,6 +4,7 @@
   - death animation doesn't trigger sometimes
   - timeeater countdown and other cooldowns (shield, torch) don't stop when pausing the game
   - idle narrative can overlap other narrative pieces
+  - buggy animation when running into candlestands
 - IDEAS:
   - ENEMIES/TRAPS/PUZZLES:
     - trapdoors, random tiles change after standing on them too long, instant death
@@ -45,10 +46,9 @@
   - guard in first level that defeats you (while cutscene) and you loose your shield and fireball and sword which were introduced to the player in the cut scene, from there on the guard will always wait for players in the deepest ever reached dungeon, represented by the name and stats of one of the players who reached that dungeon
   - shield should reduce damage instead of pushing enemies
   - shiled should be usable spawn while shift is down and consume mana over time
-  - introduce the lighting atmosphere right in the first level with decorative candle stands, darken over time just a little bit
   - open credits urls in browser (needs electron detection)
   - let enemies take damage from flamethrowers but avoid them
-  - spawn fireball spell before shield
+  - spawn (find) fireball spell before shield
   - sound when clicking on enemy
   - prevent casting fireball inside wall (so that it immediately collides)
   - let spiders spit
