@@ -85,6 +85,12 @@ export default class Animations {
         frameRate: 24,
         repeat: 0
       })
+      this.anims.create({
+        key: 'start-cast-spell-' + direction,
+        frames: this.anims.generateFrameNames('sprites', { start: 1, end: 19, prefix: prefix }),
+        frameRate: 24,
+        repeat: 0
+      })
     })
   }
 
