@@ -46,9 +46,15 @@ export default class LoginScene extends Phaser.Scene {
           axios.post(process.env.API_URL + '/api/login', { name, password }).then(res => {
             errorMessage.setAlpha(0)
             this.registry.set('credentials', { name, password })
-            this.registry.set('deepestDungeon', res.data.deepestDungeon)
-            this.registry.set('currentDungeon', res.data.currentDungeon)
-            this.registry.set('minDungeon', res.data.minDungeon)
+            this.registry.set('deepestDungeon', res.data.deepestDungeon || 1)
+            this.registry.set('currentDungeon', res.data.currentDungeon || 1)
+            this.registry.set('minDungeon', res.data.minDungeon || 1)
+            this.registry.set('items', res.data.items || [])
+            this.registry.set('maxHealth', res.data.maxHealth || 5)
+            this.registry.set('maxMana', res.data.maxMana || 5)
+            this.registry.set('damage', res.data.damage || 1)
+            this.registry.set('xp', res.data.xp || 0)
+            this.registry.set('enemiesKilled', res.data.enemiesKilled || 0)
             this.cameras.main.fadeOut(1000, 0, 0, 0, (camera, progress) => {
               form.setAlpha(1 - progress)
               if (progress === 1) {

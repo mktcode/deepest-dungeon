@@ -280,7 +280,13 @@ export default class DungeonScene extends Phaser.Scene {
       password: credentials.password,
       currentDungeon: this.registry.get('currentDungeon'),
       deepestDungeon: this.registry.get('deepestDungeon'),
-      minDungeon: this.registry.get('minDungeon')
+      minDungeon: this.registry.get('minDungeon'),
+      items: this.registry.get('items'),
+      maxHealth: this.registry.get('maxHealth'),
+      maxMana: this.registry.get('maxMana'),
+      damage: this.registry.get('damage'),
+      xp: this.registry.get('xp'),
+      enemiesKilled: this.registry.get('enemiesKilled')
     }).then(() => {
       setTimeout(() => {
         tween.remove()
