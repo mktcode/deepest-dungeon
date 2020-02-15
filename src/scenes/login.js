@@ -49,7 +49,7 @@ export default class LoginScene extends Phaser.Scene {
             this.registry.set('deepestDungeon', res.data.deepestDungeon || 1)
             this.registry.set('currentDungeon', res.data.currentDungeon || 1)
             this.registry.set('minDungeon', res.data.minDungeon || 1)
-            this.registry.set('items', res.data.items || [])
+            this.registry.set('items', JSON.parse(res.data.items) || [])
             this.registry.set('maxHealth', res.data.maxHealth || 5)
             this.registry.set('maxMana', res.data.maxMana || 5)
             this.registry.set('damage', res.data.damage || 1)
