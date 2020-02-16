@@ -540,7 +540,7 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   getSafeRoom() {
-    if (!(this.dungeonNumber % 4)) {
+    if (this.dungeonNumber >= 4 && !(this.dungeonNumber % 2)) {
       if (this.safeRoom) return this.safeRoom
 
       const roomsWithOneDoor = this.otherRooms.filter(r => r.getDoorLocations().length === 1)
