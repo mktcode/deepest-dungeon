@@ -6,17 +6,22 @@ require('dotenv').config()
 
 export default class LeaderboardScene extends SubmenuScene {
   constructor() {
-    super("Leaderboard", 300, 200, container => {
+    super("Leaderboard", 360, 300, container => {
       axios.get(process.env.API_URL + '/api/leaderboard').then(res => {
-        let textLeft = 'Player (lvl):\n'
-        let textRight = 'Dungeon:\n'
+        let textLeft = '\nPlayer (lvl):\n\n'
+        let textCenter = '\nDungeon:\n\n'
+        let textRight = 'Enemies\nkilled:\n\n'
         res.data.forEach((player, i) => {
           if (i > 9) return
-          textLeft += (i + 1) + '. ' + player.name + ' (' + getLevelByXp(player.xp) + ') ' + '\n'
-          textRight += player.deepestDungeon + '\n'
+          let name = player.name
+          if (name.length > 10) name = name.substr(0, 9) + '...'
+          textLeft += (i + 1) + '. ' + name + ' (' + getLevelByXp(player.xp) + ') ' + '\n'
+          textCenter += player.deepestDungeon + '\n'
+          textRight += player.enemiesKilled + '\n'
         })
-        container.add(this.add.text(-100, -60, textLeft, { font: "13px monospace", fill: "#999999" }))
-        container.add(this.add.text(40, -60, textRight, { font: "13px monospace", fill: "#999999", align: 'right' }))
+        container.add(this.add.text(-140, -100, textLeft, { font: "13px monospace", fill: "#999999" }))
+        container.add(this.add.text(0, -100, textCenter, { font: "13px monospace", fill: "#999999", align: 'right' }))
+        container.add(this.add.text(80, -100, textRight, { font: "13px monospace", fill: "#999999", align: 'right' }))
       })
     })
   }
