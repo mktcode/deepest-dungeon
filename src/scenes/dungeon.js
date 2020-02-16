@@ -28,9 +28,10 @@ import fog from '../assets/fog.png'
 import scroll from '../assets/scroll.png'
 
 export default class DungeonScene extends Phaser.Scene {
-  constructor(dungeonNumber) {
+  constructor(dungeonNumber, startInSafeRoom) {
     super('Dungeon' + dungeonNumber)
     this.dungeonNumber = dungeonNumber
+    this.startInSafeRoom = startInSafeRoom
     this.dungeon = new Dungeon({
       randomSeed: 'Dungeon' + this.dungeonNumber,
       width: Math.min(200, 65 + this.dungeonNumber),
@@ -111,7 +112,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.addFog()
 
     // add hero
-    this.hero = new Hero(this, this.startRoom)
+    this.hero = new Hero(this, this.startInSafeRoom && this.safeRoom ? this.safeRoom : this.startRoom)
 
     // if we are in the deepest dungeon, then add guard
     axios.get(process.env.API_URL + '/api/players/' + this.registry.get('credentials').name + '/guard').then(res => {
@@ -967,6 +968,10 @@ export default class DungeonScene extends Phaser.Scene {
           quantity: 40
         }
       })
+
+      if (this.startInSafeRoom) {
+        this.activateSafeRoom()
+      }
     }
   }
 

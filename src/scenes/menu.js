@@ -53,7 +53,7 @@ export default class MenuScene extends Phaser.Scene {
             if (progress === 1) {
               this.menuMusic.stop()
               this.scene.sleep()
-              this.scene.add('Dungeon' + currentDungeon, new DungeonScene(currentDungeon), true)
+              this.scene.add('Dungeon' + currentDungeon, new DungeonScene(currentDungeon, true), true)
               this.scene.add('Gui', new GuiScene(), true)
               this.scene.add('Pause', new PauseScene())
             }
