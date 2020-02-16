@@ -504,14 +504,6 @@ export default class DungeonScene extends Phaser.Scene {
         this.narrator.freezeStart()
         this.narrator.sayOnce('theEnd', 1).then(() => {
           this.narrator.freezeEnd()
-          const items = this.registry.get('items')
-          items.push('sword')
-          items.push('torch')
-          items.push('torch')
-          this.registry.set('items', items)
-          this.registry.set('health', 30)
-          this.registry.set('maxHealth', 30)
-          this.registry.set('damage', 1337 / 2)
           resolve()
         })
       }
