@@ -279,7 +279,7 @@ export default class DungeonScene extends Phaser.Scene {
       name: credentials.name,
       password: credentials.password,
       currentDungeon: this.registry.get('currentDungeon'),
-      deepestDungeon: this.registry.get('deepestDungeon'),
+      deepestDungeon: this.registry.get('playersDeepestDungeon'),
       minDungeon: this.registry.get('minDungeon'),
       items: this.registry.get('items'),
       maxHealth: this.registry.get('maxHealth'),
