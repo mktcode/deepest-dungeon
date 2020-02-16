@@ -57,6 +57,7 @@ export default class LoginScene extends Phaser.Scene {
             this.registry.set('xp', res.data.xp || 0)
             this.registry.set('level', getLevelByXp(this.registry.get('xp')))
             this.registry.set('enemiesKilled', res.data.enemiesKilled || 0)
+            this.registry.set('narratorSaid', JSON.parse(res.data.narratorSaid) || [])
             this.cameras.main.fadeOut(1000, 0, 0, 0, (camera, progress) => {
               form.setAlpha(1 - progress)
               if (progress === 1) {
