@@ -10,6 +10,7 @@ import TEXTS from '../texts.js'
 import LightManager from '../light-manager.js'
 import Narrator from '../narrator.js'
 import Sounds from '../sounds.js'
+import { getLevelByXp } from '../helper.js'
 import PathFinder from 'pathfinding'
 import { Slice } from 'polyk'
 import axios from 'axios'
@@ -118,20 +119,25 @@ export default class DungeonScene extends Phaser.Scene {
     axios.get(process.env.API_URL + '/api/players/' + this.registry.get('credentials').name + '/guard').then(res => {
       if (this.dungeonNumber >= res.data.deepestDungeon && this.endRoom) {
         this.guard = new Guard(this, this.endRoom)
+        this.guard.uuid = res.data.uuid
         this.guard.runOrWalk = 'walk'
-        this.guard.set('level', this.hero.get('level'))
-        this.guard.set('xp', this.dungeonNumber * 25)
-        this.guard.set('health', this.hero.get('health'))
-        this.guard.set('maxHealth', this.hero.get('maxHealth'))
-        this.guard.set('mana', this.hero.get('mana'))
-        this.guard.set('maxMana', this.hero.get('maxMana'))
-        this.guard.set('damage', this.hero.get('damage'))
-        this.hero.get('items').forEach(item => this.guard.addItem(item))
+        this.guard.set('level', getLevelByXp(res.data.xp))
+        this.guard.set('xp', res.data.xp)
+        this.guard.set('health', res.data.maxHealth)
+        this.guard.set('maxHealth', res.data.maxHealth)
+        this.guard.set('mana', res.data.maxMana)
+        this.guard.set('maxMana', res.data.maxMana)
+        this.guard.set('damage', res.data.damage)
         this.guard.set('torchIntensity', this.hero.get('torchIntensity'))
         this.guard.set('torchDuration', this.hero.get('torchDuration'))
         this.guard.set('shieldDamage', this.hero.get('shieldDamage'))
         this.guard.set('shieldDuration', this.hero.get('shieldDuration'))
         this.guard.set('fireballSize', this.hero.get('fireballSize'))
+
+        const items = JSON.parse(res.data.items)
+        if (items && items.length) {
+          items.forEach(item => this.guard.addItem(item))
+        }
       }
     })
 
