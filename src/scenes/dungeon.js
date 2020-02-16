@@ -235,6 +235,14 @@ export default class DungeonScene extends Phaser.Scene {
         this.tileToWorldY(this.safeRoom && this.safeRoomActivated ? this.safeRoom.centerY : this.startRoom.centerY)
       )
     })
+
+    // place guard
+    if (this.guard) {
+      this.guard.jumpTo(
+        this.tileToWorldX(this.endRoom.centerX),
+        this.tileToWorldY(this.endRoom.centerY)
+      )
+    }
   }
 
   sleep() {
