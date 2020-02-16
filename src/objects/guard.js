@@ -88,10 +88,10 @@ export default class Hero extends CharacterBase {
   }
 
   behavior() {
-    this.scene.time.addEvent({
+    this.behaviorInterval = this.scene.time.addEvent({
       delay: Phaser.Math.Between(2000, 5000),
       callback: () => {
-        if (this.scene.hero.isDead) return
+        if (this.scene.hero.isDead || this.isDead) return
         const distance = Phaser.Math.Distance.BetweenPoints(this.scene.hero.container, this.container)
 
         if (this.hasItem('fireball') && distance < 100) {
@@ -124,6 +124,7 @@ export default class Hero extends CharacterBase {
     super.takeDamage(damage)
 
     if (this.isDead) {
+      this.behaviorInterval.remove()
       this.scene.sounds.play('die')
       this.handleMovementSound()
       if (this.scene.hero.targetedEnemy === this.container) {
