@@ -6,6 +6,7 @@ import TILES from "../tile-mapping.js";
 import COLLISION_CATEGORIES from "../collision-categories.js";
 import TEXTS from "../texts.js";
 import Fireball from "./fireball.js";
+import { getXpForLevelUp } from "../helper.js"
 import uuidv4 from 'uuid/v4'
 
 export default class CharacterBase {
@@ -80,16 +81,6 @@ export default class CharacterBase {
     this.attack(this.lastDirection).once('complete', () => {
       this.isAttacking = false
     })
-  }
-
-  static getLevelByXp(xp) {
-    // required xp for level up: current level * 50
-    // https://gamedev.stackexchange.com/questions/110431/how-can-i-calculate-current-level-from-total-xp-when-each-level-requires-propor
-    return Math.floor((1 + Math.sqrt(1 + 8 * xp / 50)) / 2)
-  }
-
-  static getXpForLevelUp(level) {
-    return ((Math.pow(level, 2) - level) * 50) / 2
   }
 
   addItem(item) {
@@ -583,7 +574,7 @@ export default class CharacterBase {
   }
 
   dropXp() {
-    const lastLevelXp = this.constructor.getXpForLevelUp(this.get('level'))
+    const lastLevelXp = getXpForLevelUp(this.get('level'))
     const lostXp = this.get('xp') - lastLevelXp
 
     // drop a maximum of 10 orbs and increase xp per orb instead to avoid too many light sources

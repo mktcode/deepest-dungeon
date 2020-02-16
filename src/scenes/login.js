@@ -2,6 +2,7 @@ import axios from "axios"
 import GuiContainer from "../gui/container.js";
 import GuiButton from "../gui/button.js";
 import GuiCheckbox from "../gui/checkbox.js";
+import { getLevelByXp } from "../helper.js"
 
 require('dotenv').config()
 
@@ -54,6 +55,7 @@ export default class LoginScene extends Phaser.Scene {
             this.registry.set('maxMana', res.data.maxMana || 5)
             this.registry.set('damage', res.data.damage || 1)
             this.registry.set('xp', res.data.xp || 0)
+            this.registry.set('level', getLevelByXp(this.registry.get('xp')))
             this.registry.set('enemiesKilled', res.data.enemiesKilled || 0)
             this.cameras.main.fadeOut(1000, 0, 0, 0, (camera, progress) => {
               form.setAlpha(1 - progress)
