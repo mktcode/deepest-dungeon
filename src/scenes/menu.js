@@ -27,7 +27,7 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   addContainer() {
-    this.container = new GuiContainer(this, this.game.scale.width / 2, this.game.scale.height / 2, 300, 300, container => {
+    this.container = new GuiContainer(this, this.game.scale.width / 2, this.game.scale.height / 2, 265, 280, container => {
       // new game button
       container.add(new GuiButton(this, 0, -80, 150, 'New Game', () => {
         this.sound.play('clickMajor')
@@ -46,7 +46,7 @@ export default class MenuScene extends Phaser.Scene {
       // continue button
       const currentDungeon = this.registry.get('currentDungeon')
       if (currentDungeon > 1) {
-        container.add(new GuiButton(this, 0, -40, 150, 'Continue', () => {
+        container.add(new GuiButton(this, 0, -50, 150, 'Continue', () => {
           this.sound.play('clickMajor')
           this.cameras.main.fadeOut(1500, 0, 0, 0, (camera, progress) => {
             this.menuMusic.setVolume(1 - progress)
@@ -61,8 +61,19 @@ export default class MenuScene extends Phaser.Scene {
         }).container)
       }
 
+      // leaderboard button
+      container.add(new GuiButton(this, 0, -20, 150, 'Leaderboard', () => {
+        this.sound.play('clickMajor')
+        this.cameras.main.fadeOut(250, 0, 0, 0, (camera, progress) => {
+          if (progress === 1) {
+            this.scene.sleep()
+            this.scene.run('Leaderboard')
+          }
+        })
+      }).container)
+
       // controls button
-      container.add(new GuiButton(this, 0, 0, 150, 'Controls', () => {
+      container.add(new GuiButton(this, 0, 20, 150, 'Controls', () => {
         this.sound.play('clickMinor')
         this.cameras.main.fadeOut(250, 0, 0, 0, (camera, progress) => {
           if (progress === 1) {
@@ -73,7 +84,7 @@ export default class MenuScene extends Phaser.Scene {
       }).container)
 
       // settings button
-      container.add(new GuiButton(this, 0, 40, 150, 'Settings', () => {
+      container.add(new GuiButton(this, 0, 50, 150, 'Settings', () => {
         this.sound.play('clickMinor')
         this.cameras.main.fadeOut(250, 0, 0, 0, (camera, progress) => {
           if (progress === 1) {

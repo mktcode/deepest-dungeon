@@ -1,6 +1,7 @@
 import CursorScene from './scenes/cursor.js'
 import LoginScene from './scenes/login.js'
 import MenuScene from './scenes/menu.js'
+import LeaderboardScene from './scenes/leaderboard.js'
 import ControlsScene from './scenes/controls.js'
 import SettingsScene from './scenes/settings.js'
 import CreditsScene from './scenes/credits.js'
@@ -22,7 +23,7 @@ const config: GameConfig = {
   dom: {
     createContainer: true
   },
-  scene: [PreloadScene, LoginScene, MenuScene, ControlsScene, SettingsScene, CreditsScene, CursorScene],
+  scene: [PreloadScene, LoginScene, MenuScene, LeaderboardScene, ControlsScene, SettingsScene, CreditsScene, CursorScene],
   physics: {
     default: 'matter',
     matter: {
