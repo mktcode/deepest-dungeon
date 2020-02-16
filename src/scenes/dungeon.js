@@ -116,7 +116,7 @@ export default class DungeonScene extends Phaser.Scene {
 
     // if we are in the deepest dungeon, then add guard
     axios.get(process.env.API_URL + '/api/players/' + this.registry.get('credentials').name + '/guard').then(res => {
-      if (this.dungeonNumber === res.data.deepestDungeon && this.endRoom) {
+      if (this.dungeonNumber >= res.data.deepestDungeon && this.endRoom) {
         this.guard = new Guard(this, this.endRoom)
         this.guard.runOrWalk = 'walk'
         this.guard.set('level', this.hero.get('level'))
