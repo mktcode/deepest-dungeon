@@ -174,14 +174,7 @@ export default class DungeonScene extends Phaser.Scene {
           })
         })
       } else {
-        if (this.registry.get('items').includes('sword') && !narratorSaid.includes('theDeeperHeWent')) {
-          this.playStoryElementOnce('theDeeperHeWent')
-        } else if (narratorSaid.includes('theDeeperHeWent') && !narratorSaid.includes('maybeAboutDecisions')) {
-          this.playStoryElementOnce('maybeAboutDecisions')
-        } else if (narratorSaid.includes('maybeAboutDecisions') && !narratorSaid.includes('slowlyHeBeganToQuestion')) {
-          this.playStoryElementOnce('slowlyHeBeganToQuestion')
-        } else if (
-          narratorSaid.includes('slowlyHeBeganToQuestion') &&
+        if (
           narratorSaid.includes('aTimeeater') &&
           narratorSaid.includes('shieldSpell') &&
           narratorSaid.includes('aScoutsEye') &&
@@ -189,9 +182,6 @@ export default class DungeonScene extends Phaser.Scene {
           !narratorSaid.includes('theEnd')
         ) {
           this.playStoryElementOnce('theEnd')
-        } else if (narratorSaid.includes('theEnd')) {
-          this.narrator.blockStairs = false
-          this.playStoryElementOnce('outtakes')
         }
       }
     }, 100)
@@ -444,22 +434,6 @@ export default class DungeonScene extends Phaser.Scene {
         this.narrator.sayOnce('thereItWasASword').then(() => resolve())
       }
 
-      if (key === 'maybeAboutDecisions') {
-        this.narrator.slowmoStart()
-        this.narrator.sayOnce('maybeAboutDecisions', 1).then(() => {
-          this.narrator.slowmoEnd()
-          resolve()
-        })
-      }
-
-      if (key === 'theDeeperHeWent') {
-        this.narrator.slowmoStart()
-        this.narrator.sayOnce('theDeeperHeWent', 1).then(() => {
-          this.narrator.slowmoEnd()
-          resolve()
-        })
-      }
-
       if (key === 'torchPerfect') {
         this.narrator.sayOnce('torchPerfect').then(() => resolve())
       }
@@ -467,14 +441,6 @@ export default class DungeonScene extends Phaser.Scene {
       if (key === 'thisRoomWasDifferent') {
         this.narrator.slowmoStart()
         this.narrator.sayOnce('thisRoomWasDifferent').then(() => {
-          this.narrator.slowmoEnd()
-          resolve()
-        })
-      }
-
-      if (key === 'slowlyHeBeganToQuestion') {
-        this.narrator.slowmoStart()
-        this.narrator.sayOnce('slowlyHeBeganToQuestion', 1).then(() => {
           this.narrator.slowmoEnd()
           resolve()
         })
