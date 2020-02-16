@@ -158,6 +158,16 @@ export default class DungeonScene extends Phaser.Scene {
     setTimeout(() => {
       const gui = this.scene.get('Gui')
 
+      if (this.startInSafeRoom) {
+        this.music.play()
+        this.time.delayedCall(1000, () => {
+          this.tweens.add({
+            targets: [gui.characterInfo],
+            alpha: { from: 0, to: 1 }
+          })
+        })
+      }
+
       if (this.dungeonNumber === 2) {
         this.music.play()
         gui.showChapterIntroText(1, TEXTS.CHAPTER_ONE)
