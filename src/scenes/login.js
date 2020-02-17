@@ -2,9 +2,7 @@ import axios from "axios"
 import GuiContainer from "../gui/container.js";
 import GuiButton from "../gui/button.js";
 import GuiCheckbox from "../gui/checkbox.js";
-import { getLevelByXp } from "../helper.js"
-
-require('dotenv').config()
+import { API_URL, getLevelByXp } from "../helper.js"
 
 export default class LoginScene extends Phaser.Scene {
   constructor() {
@@ -44,7 +42,7 @@ export default class LoginScene extends Phaser.Scene {
         const name = form.getChildByID('name').value
         const password = form.getChildByID('password').value
         if (name && password) {
-          axios.post(process.env.API_URL + '/api/login', { name, password }).then(res => {
+          axios.post(API_URL + '/api/login', { name, password }).then(res => {
             errorMessage.setAlpha(0)
             this.registry.set('credentials', { name, password })
             this.registry.set('deepestDungeon', res.data.deepestDungeon || 1)

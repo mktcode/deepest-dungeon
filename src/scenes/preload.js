@@ -69,7 +69,7 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.spritesheet("guiButtonBg", guiButtonBg, { frameWidth: 250, frameHeight: 23 })
     this.load.spritesheet("guiCheckbox", guiCheckbox, { frameWidth: 27, frameHeight: 27 })
     this.load.spritesheet("guiCursor", guiCursor, { frameWidth: 42, frameHeight: 46 })
-    this.load.html('loginForm', "../src/assets/html/login.html")
+    this.load.html('loginForm', "login.html")
 
     Narrator.preload(this)
     Sounds.preload(this)

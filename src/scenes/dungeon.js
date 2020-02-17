@@ -10,12 +10,10 @@ import TEXTS from '../texts.js'
 import LightManager from '../light-manager.js'
 import Narrator from '../narrator.js'
 import Sounds from '../sounds.js'
-import { getLevelByXp } from '../helper.js'
+import { API_URL, getLevelByXp } from '../helper.js'
 import PathFinder from 'pathfinding'
 import { Slice } from 'polyk'
 import axios from 'axios'
-
-require('dotenv').config()
 
 // assets
 import tileset from '../assets/dungeon-tileset-extruded.png'
@@ -116,7 +114,7 @@ export default class DungeonScene extends Phaser.Scene {
     this.hero = new Hero(this, this.startInSafeRoom && this.safeRoom ? this.safeRoom : this.startRoom)
 
     // if we are in the deepest dungeon, then add guard
-    axios.get(process.env.API_URL + '/api/players/' + this.registry.get('credentials').name + '/guard').then(res => {
+    axios.get(API_URL + '/api/players/' + this.registry.get('credentials').name + '/guard').then(res => {
       if (this.dungeonNumber >= res.data.deepestDungeon && this.endRoom) {
         this.guard = new Guard(this, this.endRoom)
         this.guard.uuid = res.data.uuid
@@ -290,7 +288,7 @@ export default class DungeonScene extends Phaser.Scene {
     })
 
     const credentials = this.registry.get('credentials')
-    axios.post(process.env.API_URL + '/api/save', {
+    axios.post(API_URL + '/api/save', {
       name: credentials.name,
       password: credentials.password,
       currentDungeon: this.registry.get('currentDungeon'),
