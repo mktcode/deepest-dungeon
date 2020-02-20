@@ -4,6 +4,7 @@ import DungeonScene from "../scenes/dungeon.js"
 import Narrator from "../narrator.js"
 import Sounds from "../sounds.js"
 import Animations from "../animations.js"
+import GuiButton from "../gui/button.js"
 import axios from "axios"
 
 // assets
@@ -78,31 +79,64 @@ export default class PreloadScene extends Phaser.Scene {
     const centerX = this.game.scale.width / 2
     const centerY = this.game.scale.height / 2
 
-    const progressText = this.add.text(centerX - 55, centerY + 15, 'loading game...', { font: "11px monospace", fill: "#3a352a" })
-    const progressBar = this.add.graphics().setDepth(10);
-    const progressBox = this.add.graphics().setDepth(5);
-    progressBox.fillStyle(0x3a352a);
-    progressBox.fillRect(centerX - 160, centerY, 300, 10);
+    this.progressBar = this.add.container(centerX, centerY)
+    const text = this.add.text(-55, 15, 'loading game...', { font: "11px monospace", fill: "#3a352a" })
+    const progress = this.add.graphics()
+    const background = this.add.graphics()
+    background.fillStyle(0x3a352a)
+    background.fillRect(-160, 0, 300, 10)
 
+    this.progressBar.add([background, progress, text])
 
     this.load.on('progress', (value) => {
-      progressBar.clear();
-      progressBar.fillStyle(0x601309, 1);
-      progressBar.fillRect(centerX - 158, centerY + 3, 296 * value, 4);
+      progress.clear()
+      progress.fillStyle(0x601309, 1)
+      progress.fillRect(-158, 3, 296 * value, 4)
     });
 
     this.load.on('complete', () => {
-      const cam = this.cameras.main;
-      cam.fadeOut(250, 0, 0, 0);
-      cam.once("camerafadeoutcomplete", () => {
-        progressText.destroy();
-        progressBar.destroy();
-        progressBox.destroy();
-
-        this.scene.shutdown('Preload')
-        this.scene.start('Login')
-        this.scene.start('Cursor')
+      this.add.tween({
+        targets: this.progressBar,
+        alpha: { from: 1, to: 0 },
+        duration: 500,
+        onComplete: () => {
+          const text = 'This is an experimental game and\nit has bugs! If you like it anyway,\ndon\'t forget to give a rating.\n\nSound required!'
+          const infoText = this.add.text(centerX - 150, centerY - 50, text, { font: "13px monospace", fill: "#ffffff" })
+            .setFixedSize(300, 100)
+            .setAlign('center')
+            .setAlpha(0)
+          this.add.tween({
+            targets: infoText,
+            alpha: { from: 0, to: 1 },
+            duration: 500,
+            onComplete: () => {
+              this.time.delayedCall(3000, () => {
+                this.input.keyboard.on('keyup-ENTER', () => this.continue())
+                const continueText = this.add.text(centerX - 50, centerY + 50, 'Press Enter', { font: "16px monospace", fill: "#ffffff" }).setAlpha(0)
+                this.add.tween({
+                  targets: continueText,
+                  alpha: { from: 0, to: 1 },
+                  duration: 500,
+                  yoyo: true,
+                  repeat: -1
+                })
+              })
+            }
+          })
+        }
       })
+    })
+  }
+
+  continue() {
+    const cam = this.cameras.main;
+    cam.fadeOut(250, 0, 0, 0);
+    cam.once("camerafadeoutcomplete", () => {
+      this.progressBar.destroy()
+
+      this.scene.shutdown('Preload')
+      this.scene.start('Login')
+      this.scene.start('Cursor')
     })
   }
 
