@@ -110,7 +110,7 @@ export default class PreloadScene extends Phaser.Scene {
             alpha: { from: 0, to: 1 },
             duration: 500,
             onComplete: () => {
-              this.time.delayedCall(3000, () => {
+              this.time.delayedCall(1000, () => {
                 this.input.keyboard.on('keyup-ENTER', () => this.continue())
                 const continueText = this.add.text(centerX - 50, centerY + 50, 'Press Enter', { font: "16px monospace", fill: "#ffffff" }).setAlpha(0)
                 this.add.tween({
