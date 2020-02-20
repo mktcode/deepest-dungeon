@@ -37,11 +37,12 @@ export default class LoginScene extends Phaser.Scene {
       container.add(form)
 
       // login button
-      container.add(new GuiButton(this, 0, 100, 150, 'Login', () => {
+      const loginButton = new GuiButton(this, 0, 100, 150, 'Login', () => {
         this.sound.play('clickMajor')
         const name = form.getChildByID('name').value
         const password = form.getChildByID('password').value
         if (name && password) {
+          loginButton.text.setText('loading...')
           axios.post(API_URL + '/api/login', { name, password }).then(res => {
             errorMessage.setAlpha(0)
             this.registry.set('credentials', { name, password })
@@ -67,9 +68,10 @@ export default class LoginScene extends Phaser.Scene {
             })
           }).catch(e => {
             errorMessage.setAlpha(1)
-          })
+          }).finally(() => loginButton.text.setText('Login'))
         }
-      }).container)
+      })
+      container.add(loginButton.container)
     })
   }
 }
