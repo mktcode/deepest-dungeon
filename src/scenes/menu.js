@@ -2,9 +2,9 @@ import DungeonScene from "../scenes/dungeon.js"
 import GuiScene from "../scenes/gui.js"
 import PauseScene from "../scenes/pause.js"
 import Hero from "../objects/hero.js"
-import GuiContainer from "../gui/container.js";
-import GuiButton from "../gui/button.js";
-import GuiCheckbox from "../gui/checkbox.js";
+import GuiContainer from "../gui/container.js"
+import GuiButton from "../gui/button.js"
+import GuiCheckbox from "../gui/checkbox.js"
 
 export default class MenuScene extends Phaser.Scene {
   constructor() {
