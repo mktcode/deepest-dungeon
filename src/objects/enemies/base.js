@@ -49,9 +49,9 @@ export default class BaseEnemy {
       }
     })
 
-    // enemy bounces off of wall
+    // enemy bounces off of wall or other enemy
     this.scene.matterCollision.addOnCollideStart({
-      objectA: this.scene.walls,
+      objectA: [...this.scene.walls, ...this.scene.enemies.map(e => e.sprite)],
       objectB: this.sprite,
       callback: (collision) => {
         const bounds = collision.bodyA.bounds
