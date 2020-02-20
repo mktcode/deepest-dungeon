@@ -30,6 +30,16 @@ export default class Hero extends CharacterBase {
     return this[key]
   }
 
+  addItem(item) {
+    this.items.push(item)
+    this.scene.registry.set('items', this.items)
+  }
+
+  getItems() {
+    this.items = this.scene.registry.get('items')
+    return this.items
+  }
+
   set(key, val) {
     this[key] = val
     this.scene.registry.set(key, val)
