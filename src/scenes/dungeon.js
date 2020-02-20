@@ -315,6 +315,18 @@ export default class DungeonScene extends Phaser.Scene {
     this.cameras.main.startFollow(object, true, 0.1, 0.1)
   }
 
+  stopCameraFollow() {
+    this.cameras.main.stopFollow()
+  }
+
+  cameraPan(x, y) {
+    return new Promise(resolve => {
+      this.cameras.main.pan(x, y, 1000, 'Linear', false, (cam, progress) => {
+        if (progress === 1) resolve()
+      })
+    })
+  }
+
   addControls() {
     this.input.keyboard.on('keyup-ESC', () => this.pauseGame())
     this.input.on('wheel', (pointer, currentlyOver, dx, dy) => this.zoom(pointer, currentlyOver, dx, dy))
@@ -439,9 +451,12 @@ export default class DungeonScene extends Phaser.Scene {
       if (key === 'finallySomeStairs') {
         this.narrator.slowmoStart()
         this.narrator.forceWalk = true
+        this.stopCameraFollow()
+        this.cameraPan(this.tileToWorldX(this.endRoom.centerX), this.tileToWorldY(this.endRoom.centerY))
         this.narrator.sayOnce('finallySomeStairs').then(() => {
           this.narrator.slowmoEnd()
           this.narrator.forceWalk = false
+          this.cameraFollow(this.hero.container)
           resolve()
         })
       }
@@ -471,10 +486,15 @@ export default class DungeonScene extends Phaser.Scene {
       }
 
       if (key === 'aTimeeater') {
-        this.narrator.slowmoStart()
+        this.narrator.freezeStart()
+        this.stopCameraFollow()
+        this.cameraPan(this.timebomb.x, this.timebomb.y)
         this.narrator.sayOnce('aTimeeater').then(() => {
-          this.narrator.slowmoEnd()
-          resolve()
+          this.cameraPan(this.hero.container.x, this.hero.container.y).then(() => {
+            this.cameraFollow(this.hero.container)
+            this.narrator.freezeEnd()
+            resolve()
+          })
         })
       }
 
