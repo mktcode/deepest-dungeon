@@ -31,11 +31,13 @@ export default class MenuScene extends Phaser.Scene {
       // new game button
       container.add(new GuiButton(this, 0, -80, 150, 'New Game', () => {
         this.sound.play('clickMajor')
+        this.scene.get('MenuBg').cameras.main.fadeOut(1500, 0, 0, 0)
         this.cameras.main.fadeOut(1500, 0, 0, 0, (camera, progress) => {
           this.menuMusic.setVolume(1 - progress)
           if (progress === 1) {
             this.menuMusic.stop()
             this.scene.sleep()
+            this.scene.sleep('MenuBg')
             this.scene.add('Dungeon1', new DungeonScene(1), true)
             this.scene.add('Gui', new GuiScene(), true)
             this.scene.add('Pause', new PauseScene())
@@ -53,6 +55,7 @@ export default class MenuScene extends Phaser.Scene {
             if (progress === 1) {
               this.menuMusic.stop()
               this.scene.sleep()
+              this.scene.sleep('MenuBg')
               this.scene.add('Dungeon' + currentDungeon, new DungeonScene(currentDungeon, true), true)
               this.scene.add('Gui', new GuiScene(), true)
               this.scene.add('Pause', new PauseScene())

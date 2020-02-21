@@ -38,6 +38,9 @@ import guiCheckbox from "../assets/gui/checkbox.png"
 
 import guiCursor from "../assets/gui/cursor.png"
 
+import particle from '../assets/particle.png'
+import fog from '../assets/fog.png'
+
 export default class PreloadScene extends Phaser.Scene {
   constructor() {
     super("Preload")
@@ -71,6 +74,9 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.spritesheet("guiCheckbox", guiCheckbox, { frameWidth: 27, frameHeight: 27 })
     this.load.spritesheet("guiCursor", guiCursor, { frameWidth: 42, frameHeight: 46 })
     this.load.html('loginForm', "login.html")
+
+    this.load.image('particle', particle)
+    this.load.image('fog', fog)
 
     Narrator.preload(this)
     Sounds.preload(this)
@@ -136,6 +142,7 @@ export default class PreloadScene extends Phaser.Scene {
 
       this.scene.shutdown('Preload')
       this.scene.start('Login')
+      this.scene.start('MenuBg')
       this.scene.start('Cursor')
     })
   }

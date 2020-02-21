@@ -22,8 +22,6 @@ import torchSprite from '../assets/torch.png'
 import candlestandSprite from '../assets/candlestand.png'
 import pathSprite from '../assets/path.png'
 import pathfinderSprite from '../assets/pathfinder.png'
-import particle from '../assets/particle.png'
-import fog from '../assets/fog.png'
 import scroll from '../assets/scroll.png'
 
 export default class DungeonScene extends Phaser.Scene {
@@ -78,8 +76,6 @@ export default class DungeonScene extends Phaser.Scene {
     scene.load.spritesheet('candlestand', candlestandSprite, { frameWidth: 16, frameHeight: 40 })
     scene.load.spritesheet('path', pathSprite, { frameWidth: 6, frameHeight: 6 })
     scene.load.spritesheet('pathfinder', pathfinderSprite, { frameWidth: 24, frameHeight: 24 })
-    scene.load.image('particle', particle)
-    scene.load.image('fog', fog)
     scene.load.image('scroll', scroll)
   }
 
