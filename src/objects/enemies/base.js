@@ -151,8 +151,7 @@ export default class BaseEnemy {
         this.scene.registry.set('enemiesKilled', enemiesKilled)
 
         const gui = this.scene.scene.get('Gui')
-
-        if (!this.scene.registry.get('items').includes('sword')) {
+        if (!this.scene.hero.hasItem('sword')) {
           if (enemiesKilled === 1) {
             gui.showSubtitle(TEXTS.KILL_X_UNDEAD.replace('{num}', 2))
           } else if (enemiesKilled === 2) {
