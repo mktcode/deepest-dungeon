@@ -314,9 +314,13 @@ export default class DungeonScene extends Phaser.Scene {
 
   cameraPan(x, y) {
     return new Promise(resolve => {
-      this.cameras.main.pan(x, y, 1000, 'Linear', false, (cam, progress) => {
-        if (progress === 1) resolve()
-      })
+      if (this.registry.get('disableNarrator')) {
+        resolve()
+      } else {
+        this.cameras.main.pan(x, y, 1000, 'Linear', false, (cam, progress) => {
+          if (progress === 1) resolve()
+        })
+      }
     })
   }
 
@@ -442,15 +446,15 @@ export default class DungeonScene extends Phaser.Scene {
       }
 
       if (key === 'finallySomeStairs') {
-        this.narrator.slowmoStart()
-        this.narrator.forceWalk = true
+        this.narrator.freezeStart()
         this.stopCameraFollow()
         this.cameraPan(this.tileToWorldX(this.endRoom.centerX), this.tileToWorldY(this.endRoom.centerY))
         this.narrator.sayOnce('finallySomeStairs').then(() => {
-          this.narrator.slowmoEnd()
-          this.narrator.forceWalk = false
-          this.cameraFollow(this.hero.container)
-          resolve()
+          this.cameraPan(this.hero.container.x, this.hero.container.y).then(() => {
+            this.cameraFollow(this.hero.container)
+            this.narrator.freezeEnd()
+            resolve()
+          })
         })
       }
 
