@@ -50,6 +50,7 @@ export default class MenuScene extends Phaser.Scene {
       if (currentDungeon > 1) {
         container.add(new GuiButton(this, 0, -50, 150, 'Continue', () => {
           this.sound.play('clickMajor')
+          this.scene.get('MenuBg').cameras.main.fadeOut(1500, 0, 0, 0)
           this.cameras.main.fadeOut(1500, 0, 0, 0, (camera, progress) => {
             this.menuMusic.setVolume(1 - progress)
             if (progress === 1) {
