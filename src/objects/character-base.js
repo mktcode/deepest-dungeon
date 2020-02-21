@@ -525,7 +525,7 @@ export default class CharacterBase {
 
   startLookAroundInterval() {
     this.scene.time.addEvent({
-      delay: 10000,
+      delay: 20000,
       callback: () => {
         this.isLookingAround = true
       },
