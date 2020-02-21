@@ -41,7 +41,6 @@ export default class CharacterBase {
     this.isLookingAround = false
     this.isSpeedBoostActive = false
 
-    this.idleTimer = new Date().getTime()
     this.lastDirection = 'down'
     this.blockedDirections = []
     this.fireballs = []
@@ -50,7 +49,6 @@ export default class CharacterBase {
     this.addToScene()
     this.prepareLevelUpAnimation()
     this.prepareSpeedBoostAnimation()
-    this.startIdleTimer()
     this.startLookAroundInterval()
   }
 
@@ -480,10 +478,6 @@ export default class CharacterBase {
     }
   }
 
-  startIdleTimer() {
-    this.idleTimer = new Date().getTime() / 1000
-  }
-
   idle(direction) {
     const now = new Date().getTime() / 1000
 
@@ -497,17 +491,14 @@ export default class CharacterBase {
   }
 
   walk(direction) {
-    this.startIdleTimer()
     return this.playAnim('walk', direction)
   }
 
   run(direction) {
-    this.startIdleTimer()
     return this.playAnim('run', direction)
   }
 
   attack(direction) {
-    this.startIdleTimer()
     this.hasItem('sword')
       ? this.scene.sounds.play('attackSound', 0, this.scene.narrator.slowmo)
       : this.scene.sounds.play('attackPunchSound', 0, this.scene.narrator.slowmo)
@@ -515,7 +506,6 @@ export default class CharacterBase {
   }
 
   die(direction) {
-    this.startIdleTimer()
     return this.playAnim('die', direction)
   }
 

@@ -96,7 +96,6 @@ export default class Narrator {
         this.playing.play({delay: delay || 0, volume: volume})
         this.playing.once('complete', () => {
           this.playing = null
-          this.scene.hero.startIdleTimer()
           resolve()
         })
       }

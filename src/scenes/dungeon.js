@@ -213,9 +213,6 @@ export default class DungeonScene extends Phaser.Scene {
       this.timebombTickingSound.stop()
     }
 
-    // reset idle timer
-    this.hero.startIdleTimer()
-
     // add new enemies
     this.addEnemies()
     this.hero.targetedEnemy = null
@@ -530,30 +527,6 @@ export default class DungeonScene extends Phaser.Scene {
         resolve()
       }
     })
-  }
-
-  playIdleNarrative() {
-    const now = new Date().getTime() / 1000
-    if (
-      now - this.hero.idleTimer > 10 &&
-      !this.narrator.playing &&
-      !this.registry.get('narratorSaid').includes('frozenInFear')
-    ) {
-      this.narrator.freezeStart()
-      this.narrator.sayOnce('frozenInFear').then(() => {
-        this.narrator.freezeEnd()
-      })
-    } else if (
-      this.hero.isMoving &&
-      this.registry.get('narratorSaid').includes('frozenInFear') &&
-      !this.registry.get('narratorSaid').includes('startedToMoveAgain') &&
-      ! this.narrator.playing
-    ) {
-      this.narrator.slowmoStart()
-      this.narrator.sayOnce('startedToMoveAgain').then(() => {
-        this.narrator.slowmoEnd()
-      })
-    }
   }
 
   getStartRoom() {
@@ -2225,6 +2198,5 @@ export default class DungeonScene extends Phaser.Scene {
     this.updateHealthOrbs()
     this.updateManaOrbs()
     this.updateCandlestands()
-    this.playIdleNarrative()
   }
 }
