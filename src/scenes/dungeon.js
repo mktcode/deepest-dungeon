@@ -838,22 +838,27 @@ export default class DungeonScene extends Phaser.Scene {
   prepareSafeRoom() {
     if (this.safeRoom) {
       // shrine
-      const x = this.tileToWorldX(this.safeRoom.centerX)
-      const y = this.tileToWorldY(this.safeRoom.centerY + 1) + this.tileSize / 2 - 4
+      const x = this.tileToWorldX(this.safeRoom.centerX + 1)
+      const y = this.tileToWorldY(this.safeRoom.centerY + 1)
       const width = this.tileSize * 2 + 10
       const height = this.tileSize * 2 + 9
 
-      this.stuffLayer.putTilesAt(TILES.SHRINE, this.safeRoom.centerX - 1, this.safeRoom.centerY)
-      this.matter.add.rectangle(x, y, width, height + 10, this.isStatic)
-
-      // book
-      this.safeRoomBook = this.add.sprite(x, y - 14, 'book', 0).setDepth(6)
+      const shrineBody = Phaser.Physics.Matter.Matter.Bodies.rectangle(x, y, 32, 16, { isStatic: true, chamfer: { radius: 2 } })
+      this.safeRoomShrine = this.matter.add.sprite(x, y, 'shrine', 0)
+        .setExistingBody(shrineBody)
+        .setCollisionCategory(COLLISION_CATEGORIES.WALL)
+        .setCollidesWith([COLLISION_CATEGORIES.HERO, COLLISION_CATEGORIES.ENEMY, COLLISION_CATEGORIES.FIREBALL])
+        .setDepth(this.convertYToDepth(y, 6))
+        .setOrigin(0.5, 0.7)
+        .setInteractive()
+      this.walls.push(this.safeRoomShrine)
+      this.safeRoomBook = this.add.sprite(x - 2, y - 27, 'book', 0).setDepth(this.convertYToDepth(y, 6))
 
       // shrine particle emitter
       this.shrineParticles = this.interactionParticle.createEmitter({
         on: false,
         x: x - width / 2,
-        y: y + 10,
+        y: y,
         blendMode: 'SCREEN',
         scale: { start: 0, end: 0.75 },
         alpha: { start: 1, end: 0 },
@@ -870,17 +875,10 @@ export default class DungeonScene extends Phaser.Scene {
         deathCallback: particle => this.particleEmitterRemoveLights(particle)
       })
 
-      this.input.on('pointerup', (pointer) => {
-        const tile = this.stuffLayer.getTileAtWorldXY(pointer.worldX, pointer.worldY)
-        if (tile && [
-          ...TILES.SHRINE[0],
-          ...TILES.SHRINE[1],
-          ...TILES.SHRINE[2]
-        ].includes(tile.index)) {
-          this.hero.moveTo = null
-          this.hero.targetedEnemy = null
-          this.hero.useShrine()
-        }
+      this.safeRoomShrine.on('pointerup', () => {
+        this.hero.moveTo = null
+        this.hero.targetedEnemy = null
+        this.hero.useShrine()
       })
 
       // lights
@@ -1023,15 +1021,9 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   updateShrine() {
-    const tile = this.hero.isNear([
-      TILES.STAIRS.OPEN,
-      ...TILES.SHRINE[0],
-      ...TILES.SHRINE[1],
-      ...TILES.SHRINE[2]
-    ])
     const gui = this.scene.get('Gui')
     // when near...
-    if (tile) {
+    if (this.safeRoom && Phaser.Math.Distance.BetweenPoints(this.hero.container, this.safeRoomShrine) < 50) {
       // start shrine particles
       if (this.shrineParticles && this.shrineParticles.on === false) {
         this.shrineParticles.start()

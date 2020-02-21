@@ -42,6 +42,7 @@ import particle from '../assets/particle.png'
 import fog from '../assets/fog.png'
 
 import book from '../assets/book.png'
+import shrine from '../assets/shrine.png'
 
 export default class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -80,6 +81,7 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image('particle', particle)
     this.load.image('fog', fog)
     this.load.spritesheet("book", book, { frameWidth: 14, frameHeight: 18 })
+    this.load.image('shrine', shrine)
 
     Narrator.preload(this)
     Sounds.preload(this)

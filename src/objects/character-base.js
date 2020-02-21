@@ -120,7 +120,7 @@ export default class CharacterBase {
   }
 
   useShrine() {
-    if (this.isNear([...TILES.SHRINE[0], ...TILES.SHRINE[1], ...TILES.SHRINE[2]])) {
+    if (this.scene.safeRoom && Phaser.Math.Distance.BetweenPoints(this.container, this.scene.safeRoomShrine) < 50) {
       this.scene.activateSafeRoom()
       this.scene.save()
       this.scene.scene.get('Gui').hideSubtitle(TEXTS.E_TO_ACTIVATE_CHECKPOINT)
@@ -271,7 +271,7 @@ export default class CharacterBase {
       .setFriction(20)
       .setPosition(x, y)
 
-    // hero touches wall -> stop movement in that direction (matter js issue workaround)
+    // hero touches wall/shrine -> stop movement in that direction (matter js issue workaround)
     this.scene.matterCollision.addOnCollideStart({
       objectA: this.container,
       objectB: this.scene.walls,
