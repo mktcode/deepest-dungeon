@@ -12,6 +12,9 @@ export default class LoginScene extends Phaser.Scene {
   create() {
     this.cameras.main.fadeIn(250, 0, 0, 0)
 
+    this.menuMusic = this.registry.get('menuMusic')
+    this.menuMusic.play()
+
     this.centerX = this.game.scale.width / 2
     this.centerY = this.game.scale.height / 2
 
