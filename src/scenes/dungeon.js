@@ -873,6 +873,9 @@ export default class DungeonScene extends Phaser.Scene {
       this.stuffLayer.putTilesAt(TILES.SHRINE, this.safeRoom.centerX - 1, this.safeRoom.centerY)
       this.matter.add.rectangle(x, y, width, height + 10, this.isStatic)
 
+      // book
+      this.safeRoomBook = this.add.sprite(x, y - 14, 'book', 0).setDepth(6)
+
       // shrine particle emitter
       this.shrineParticles = this.interactionParticle.createEmitter({
         on: false,
@@ -1077,8 +1080,10 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   activateSafeRoom() {
-    if (!this.safeRoomActivated) {
+    if (this.safeRoom && !this.safeRoomActivated) {
       this.sounds.play('activateSafeRoom')
+      this.sounds.play('book')
+      this.safeRoomBook.anims.play('book')
       this.safeRoomActivated = true
       this.registry.set('minDungeon', this.dungeonNumber)
       this.skillShrinePositions.forEach(x => {

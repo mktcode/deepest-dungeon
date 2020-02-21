@@ -41,6 +41,8 @@ import guiCursor from "../assets/gui/cursor.png"
 import particle from '../assets/particle.png'
 import fog from '../assets/fog.png'
 
+import book from '../assets/book.png'
+
 export default class PreloadScene extends Phaser.Scene {
   constructor() {
     super("Preload")
@@ -77,6 +79,7 @@ export default class PreloadScene extends Phaser.Scene {
 
     this.load.image('particle', particle)
     this.load.image('fog', fog)
+    this.load.spritesheet("book", book, { frameWidth: 14, frameHeight: 18 })
 
     Narrator.preload(this)
     Sounds.preload(this)

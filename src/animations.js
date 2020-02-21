@@ -36,6 +36,11 @@ export default class Animations {
       frameRate: 12,
       repeat: -1
     });
+    this.anims.create({
+      key: "book",
+      frames: this.anims.generateFrameNumbers("book", { start: 0, end: 12 }),
+      frameRate: 12
+    })
   }
 
   createHeroAnim(name, frameRateMod) {
