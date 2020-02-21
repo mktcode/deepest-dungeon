@@ -50,6 +50,7 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
+    this.isDesktop = this.game.device.os.desktop
     this.load.atlas('sprites', spriteAtlasImage, spriteAtlas)
     this.load.audio("ambientMusic", themeMp3)
     this.load.audio("menuMusic", menuMp3)
@@ -123,7 +124,8 @@ export default class PreloadScene extends Phaser.Scene {
             onComplete: () => {
               this.time.delayedCall(1000, () => {
                 this.input.keyboard.on('keyup-ENTER', () => this.continue())
-                const continueText = this.add.text(centerX - 50, centerY + 50, 'Press Enter', { font: "16px monospace", fill: "#ffffff" }).setAlpha(0)
+                this.input.on('pointerdown', () => this.continue())
+                const continueText = this.add.text(centerX - 50, centerY + 50, this.isDesktop ? 'Press Enter' : 'Tap Screen', { font: "16px monospace", fill: "#ffffff" }).setAlpha(0)
                 this.add.tween({
                   targets: continueText,
                   alpha: { from: 0, to: 1 },
@@ -181,7 +183,8 @@ export default class PreloadScene extends Phaser.Scene {
     this.registry.set('skillPoints', 0)
     this.registry.set('skillPointsSpent', 0)
     this.registry.set('enemiesKilled', 0)
-    this.registry.set('zoom', this.game.device.os.desktop ? 2 : 1.3)
-    this.registry.set('defaultZoom', this.game.device.os.desktop ? 2 : 1.3)
+    this.registry.set('zoom', this.isDesktop ? 2 : 1.3)
+    this.registry.set('defaultZoom', this.isDesktop ? 2 : 1.3)
+    this.registry.set('isDesktop', this.isDesktop)
   }
 }
