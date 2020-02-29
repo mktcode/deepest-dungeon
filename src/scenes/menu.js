@@ -1,4 +1,5 @@
 import DungeonScene from "../scenes/dungeon.js"
+import DungeonNewScene from "../scenes/dungeon-new.js"
 import GuiScene from "../scenes/gui.js"
 import PauseScene from "../scenes/pause.js"
 import Hero from "../objects/hero.js"
@@ -37,9 +38,10 @@ export default class MenuScene extends Phaser.Scene {
             this.menuMusic.stop()
             this.scene.sleep()
             this.scene.sleep('MenuBg')
-            this.scene.add('Dungeon1', new DungeonScene(1), true)
-            this.scene.add('Gui', new GuiScene(), true)
-            this.scene.add('Pause', new PauseScene())
+            this.scene.add('Dungeon', new DungeonNewScene(), true)
+            // this.scene.add('Dungeon1', new DungeonScene(1), true)
+            // this.scene.add('Gui', new GuiScene(), true)
+            // this.scene.add('Pause', new PauseScene())
           }
         })
       }).container)

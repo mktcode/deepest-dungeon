@@ -1,3 +1,5 @@
+import Phaser from 'phaser'
+
 /**
  * A small helper class that can take control of our shadow tilemap layer. It keeps track of which
  * room is currently active and what light intensity to apply to each tile.
@@ -5,7 +7,11 @@
 export default class LightManager {
   constructor(scene) {
     this.scene = scene
+    this.scene.addUpdater(this.update, this)
     this.lights = []
+    this.darkness = 5
+    this.range = 15
+    this.center = () => ({ x: 0, y: 0 })
   }
 
   removeLight(sprite) {
@@ -14,6 +20,7 @@ export default class LightManager {
       this.lights.splice(removeIndex, 1)
     }
   }
+
   removeLightByKey(key) {
     const removeIndex = this.lights.findIndex(l => l.key === key)
     if (removeIndex !== -1) {
@@ -36,7 +43,21 @@ export default class LightManager {
   }
 
   getTilesByRoom(room) {
-    return this.scene.shadowLayer.getTilesWithin(room.x, room.y, room.width, room.height)
+    return this.scene.layers.shadow.getTilesWithin(room.x, room.y, room.width, room.height)
+  }
+
+  getTilesInRange(range) {
+    return this.scene.layers.shadow.getTilesWithin().filter(t => {
+      const distance = Math.abs(Phaser.Math.Distance.Between(t.x, t.y, this.center().x, this.center().y))
+      return distance <= range
+    })
+  }
+
+  getTilesOutOfRange(range) {
+    return this.scene.layers.shadow.getTilesWithin().filter(t => {
+      const distance = Math.abs(Phaser.Math.Distance.Between(t.x, t.y, this.center().x, this.center().y))
+      return distance > range
+    })
   }
 
   static flickering(intensity) {
@@ -46,40 +67,26 @@ export default class LightManager {
 
   // Helper to set the alpha on all tiles
   update() {
-    const minLight = Math.max(0.08, Math.min(1 / this.scene.dungeonNumber, 0.7))
-    this.scene.dungeon.rooms.forEach(room => {
-      const lights = this.getLightsByRoom(room)
-      const tiles = this.getTilesByRoom(room)
+    this.getTilesOutOfRange(this.range).forEach(t => t.alpha = 1)
+    const minLight = 0 //Math.max(0.08, Math.min(1 / this.darkness, 0.7))
+    this.getTilesInRange(this.range).forEach((tile) => {
+      const lightValues = []
+      this.lights.forEach((light) => {
+        const vector = new Phaser.Math.Vector2(
+          light.sprite ? this.scene.worldToTileX(light.sprite.x) : light.x(),
+          light.sprite ? this.scene.worldToTileY(light.sprite.y) : light.y()
+        );
+        const distance = Math.max(1, vector.distance({x: tile.x, y: tile.y}))
+        const lightValue = Math.max(minLight, 1 / distance * light.intensity())
 
-      if (room === this.scene.currentRoom) {
-        tiles.forEach((tile) => {
-          if (room === this.scene.safeRoom && this.scene.safeRoomActivated) {
-            tile.alpha = Math.max(0, tile.alpha - 0.01)
-          } else {
-            const lightValues = []
-            lights.forEach((light) => {
-              const vector = new Phaser.Math.Vector2(
-                light.sprite ? this.scene.worldToTileX(light.sprite.x) : light.x(),
-                light.sprite ? this.scene.worldToTileY(light.sprite.y) : light.y()
-              );
-              const distance = Math.max(1, vector.distance({x: tile.x, y: tile.y}))
-              const lightValue = Math.max(minLight, 1 / distance * light.intensity())
-
-              lightValues.push(lightValue)
-            })
-            const targetAlpha = 1 - Math.max(...lightValues)
-            // smooth out the alpha difference to have a more fade-like effect
-            let alphaDiff = targetAlpha - tile.alpha
-            if (alphaDiff > 0.02) alphaDiff = 0.02
-            if (alphaDiff < -0.02) alphaDiff = -0.02
-            tile.alpha += alphaDiff
-          }
-        })
-      } else if (this.scene.visitedRooms.includes(room)) {
-        tiles.forEach((tile) => {
-          tile.alpha = 1 - minLight / 2
-        })
-      }
+        lightValues.push(lightValue)
+      })
+      const targetAlpha = 1 - Math.max(...lightValues)
+      // smooth out the alpha difference to have a more fade-like effect
+      let alphaDiff = targetAlpha - tile.alpha
+      if (alphaDiff > 0.02) alphaDiff = 0.02
+      if (alphaDiff < -0.02) alphaDiff = -0.02
+      tile.alpha += alphaDiff
     })
   }
 }

@@ -14,7 +14,6 @@ import themeMp3 from "../assets/audio/kai-engel-downfall.mp3"
 import menuMp3 from "../assets/audio/kai-engel-crying-earth.mp3"
 import clickMajorMp3 from "../assets/audio/sounds/click-major.mp3"
 import clickMinorMp3 from "../assets/audio/sounds/click-minor.mp3"
-
 import guiHero from "../assets/gui/hero.png"
 import guiOrb from "../assets/gui/orb.png"
 import guiOrbReflection from "../assets/gui/orb-reflection.png"
@@ -26,7 +25,6 @@ import guiBars from "../assets/gui/bars.png"
 import guiHealth from "../assets/gui/health.png"
 import guiMana from "../assets/gui/mana.png"
 import guiXp from "../assets/gui/xp.png"
-
 import guiContainerCorner from "../assets/gui/container-corner.png"
 import guiContainerEdgeV from "../assets/gui/container-edge-v.png"
 import guiContainerEdgeH from "../assets/gui/container-edge-h.png"
@@ -35,14 +33,13 @@ import guiButtonLeftRight from "../assets/gui/button-left-right.png"
 import guiButtonTopBottom from "../assets/gui/button-top-bottom.png"
 import guiButtonBg from "../assets/gui/button-bg.png"
 import guiCheckbox from "../assets/gui/checkbox.png"
-
 import guiCursor from "../assets/gui/cursor.png"
-
 import particle from '../assets/particle.png'
 import fog from '../assets/fog.png'
-
 import book from '../assets/book.png'
 import shrine from '../assets/shrine.png'
+import tileset from '../assets/dungeon-tileset-extruded.png'
+import tilemapTiledJSON from '../assets/map/intro.json'
 
 export default class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -56,7 +53,6 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.audio("menuMusic", menuMp3)
     this.load.audio("clickMajor", clickMajorMp3)
     this.load.audio("clickMinor", clickMinorMp3)
-
     this.load.spritesheet("guiHero", guiHero, { frameWidth: 63, frameHeight: 63 })
     this.load.image("guiOrb", guiOrb)
     this.load.image("guiOrbReflection", guiOrbReflection)
@@ -78,11 +74,12 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.spritesheet("guiCheckbox", guiCheckbox, { frameWidth: 27, frameHeight: 27 })
     this.load.spritesheet("guiCursor", guiCursor, { frameWidth: 42, frameHeight: 46 })
     this.load.html('loginForm', "login.html")
-
     this.load.image('particle', particle)
     this.load.image('fog', fog)
     this.load.spritesheet("book", book, { frameWidth: 14, frameHeight: 18 })
     this.load.image('shrine', shrine)
+    this.load.image('tileset', tileset)
+    this.load.tilemapTiledJSON('map', tilemapTiledJSON)
 
     Narrator.preload(this)
     Sounds.preload(this)
