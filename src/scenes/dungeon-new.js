@@ -28,14 +28,17 @@ export default class DungeonNewScene extends MapScene {
     this.map = this.make.tilemap({ key: 'map' })
     const tileset = this.map.addTilesetImage('dungeon', 'tileset')
     this.layers = {
-      wallsBelowFloor: this.map.createStaticLayer('wallsBelowFloor', tileset, 0, 0),
-      floor1: this.map.createStaticLayer('floor/1', tileset, 0, 0),
-      floor2: this.map.createStaticLayer('floor/2', tileset, 0, 0),
-      wallsAboveFloor1: this.map.createStaticLayer('wallsAboveFloor/1', tileset, 0, 0),
-      wallsAboveFloor2: this.map.createStaticLayer('wallsAboveFloor/2', tileset, 0, 0),
-      objects: this.map.createStaticLayer('objects', tileset, 0, 0),
-      shadow: this.map.createDynamicLayer('shadow', tileset, 0, 0)
+      wallsBelowFloor: this.map.createStaticLayer('wallsBelowFloor', tileset),
+      floor1: this.map.createStaticLayer('floor1', tileset),
+      floor2: this.map.createStaticLayer('floor2', tileset),
+      wallsAboveFloor1: this.map.createDynamicLayer('wallsAboveFloor1', tileset),
+      wallsAboveFloor2: this.map.createStaticLayer('wallsAboveFloor2', tileset),
+      objects: this.map.createStaticLayer('objects', tileset),
+      shadow: this.map.createDynamicLayer('shadow', tileset)
     }
+    this.map.setCollisionByProperty({ collides: true })
+    console.log(this.layers.wallsAboveFloor1.getTilesWithin().filter(t => t.index === 301))
+    this.matter.world.convertTilemapLayer(this.layers.wallsAboveFloor1)
 
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
   }
