@@ -44,7 +44,7 @@
   "license": "MIT",
   "dependencies": {
     "@mikewesthad/dungeon": "^1.2.2",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "pathfinding": "^0.4.18",
     "phaser": "^3.22.0",
