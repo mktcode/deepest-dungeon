@@ -1514,7 +1514,7 @@ export default class DungeonScene extends Phaser.Scene {
 
     this.addCandlestands()
 
-    if (narratorSaid.includes('whereAmI')) {
+    if (narratorSaid.includes('killingAllTheseEnemies')) {
       this.addTorch()
     }
 
@@ -1522,7 +1522,7 @@ export default class DungeonScene extends Phaser.Scene {
       this.addSword()
     }
 
-    if (narratorSaid.includes('torchPerfect')) {
+    if (narratorSaid.includes('aScoutsEye')) {
       this.addFireTraps()
     }
 
