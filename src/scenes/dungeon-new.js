@@ -36,9 +36,8 @@ export default class DungeonNewScene extends MapScene {
       objects: this.map.createStaticLayer('objects', tileset),
       shadow: this.map.createDynamicLayer('shadow', tileset)
     }
-
-    this.layers.wallsAboveFloor1.setCollisionByProperty({ collides: true })
-    console.log(this.layers.wallsAboveFloor1.getTilesWithin().filter(t => t.index === 301)) // 301 = test-tile
+    this.map.setCollisionByProperty({ collides: true })
+    console.log(this.layers.wallsAboveFloor1.getTilesWithin().filter(t => t.index === 301))
     this.matter.world.convertTilemapLayer(this.layers.wallsAboveFloor1)
 
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels)
