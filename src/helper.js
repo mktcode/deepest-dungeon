@@ -1,4 +1,4 @@
-const API_URL = 'https://edbad.uber.space'
+const API_URL = 'https://markus-kottlaender.de/edbad-api'
 
 const getLevelByXp = (xp) => {
   // required xp for level up: current level * 50

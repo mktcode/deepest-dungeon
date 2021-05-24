@@ -46,7 +46,7 @@ export default class LoginScene extends Phaser.Scene {
         const password = form.getChildByID('password').value
         if (name && password) {
           loginButton.text.setText('loading...')
-          axios.post(API_URL + '/api/login', { name, password }).then(res => {
+          axios.post(API_URL + '/login', { name, password }).then(res => {
             errorMessage.setAlpha(0)
             this.registry.set('credentials', { name, password })
             this.registry.set('deepestDungeon', res.data.deepestDungeon || 1)

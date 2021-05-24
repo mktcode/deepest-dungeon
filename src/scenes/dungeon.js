@@ -111,7 +111,7 @@ export default class DungeonScene extends MapScene {
     this.hero = new Hero(this, this.startInSafeRoom && this.safeRoom ? this.safeRoom : this.startRoom)
 
     // if we are in the deepest dungeon, then add guard
-    axios.get(API_URL + '/api/players/' + this.registry.get('credentials').name + '/guard').then(res => {
+    axios.get(API_URL + '/players/' + this.registry.get('credentials').name + '/guard').then(res => {
       if (this.dungeonNumber >= res.data.deepestDungeon && this.endRoom) {
         this.guard = new Guard(this, this.endRoom)
         this.guard.uuid = res.data.uuid
@@ -282,7 +282,7 @@ export default class DungeonScene extends MapScene {
     })
 
     const credentials = this.registry.get('credentials')
-    axios.post(API_URL + '/api/save', {
+    axios.post(API_URL + '/save', {
       name: credentials.name,
       password: credentials.password,
       currentDungeon: this.registry.get('currentDungeon'),

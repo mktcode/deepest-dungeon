@@ -5,7 +5,7 @@ import { API_URL, getLevelByXp } from "../helper.js"
 export default class LeaderboardScene extends SubmenuScene {
   constructor() {
     super("Leaderboard", 360, 300, container => {
-      axios.get(API_URL + '/api/leaderboard').then(res => {
+      axios.get(API_URL + '/leaderboard').then(res => {
         let textLeft = '\nPlayer (lvl):\n\n'
         let textCenter = '\nDungeon:\n\n'
         let textRight = 'Enemies\nkilled:\n\n'
