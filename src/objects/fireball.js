@@ -301,7 +301,7 @@ export default class Fireball {
     this.particle2.setDepth(depth)
 
     this.container.setRotation(this.container.rotation + 0.05)
-    if (this.isReleased()) {
+    if (this.isReleased() && this.container && this.target) {
       if (Phaser.Math.Distance.BetweenPoints(this.container, this.target) < 2) {
         this.explode()
       } else {
