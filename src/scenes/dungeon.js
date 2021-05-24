@@ -1747,7 +1747,7 @@ export default class DungeonScene extends Phaser.Scene {
         this.fireballScroll.destroy()
         this.lightManager.removeLight(this.fireballScroll)
         this.scene.get('Gui').showSubtitle(TEXTS.RIGHTCLICK_TO_USE_FIREBALL)
-        this.time.delayedCall(5000, () => {
+        this.time.delayedCall(10000, () => {
           this.scene.get('Gui').hideSubtitle(TEXTS.RIGHTCLICK_TO_USE_FIREBALL)
         })
       }
