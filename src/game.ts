@@ -11,6 +11,10 @@ import MatterDebugConfig from './matter-debug-config.js'
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin'
 
 const config: GameConfig = {
+  fps: {
+    target: 30,
+    forceSetTimeOut: true
+  },
   type: Phaser.AUTO,
   scale: {
     mode: Phaser.Scale.RESIZE,
