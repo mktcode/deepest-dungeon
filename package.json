@@ -13,7 +13,8 @@
     "app": "cross-env ELECTRON_DEBUG=true electron build/main.js",
     "debug": "cross-env ELECTRON_DEBUG=vscode electron --remote-debugging-port=9223 build/main.js",
     "dist": "yarn build && electron-builder",
-    "dist-web": "rimraf build && parcel build src/index.html --public-url ./ -d dist-web --out-file=index --no-source-maps"
+    "dist-web": "rimraf build && parcel build src/index.html --public-url ./ -d dist-web --out-file=index --no-source-maps",
+    "deploy-web": "git checkout gh-pages && git rm -r * && cp -r dist-web/* ./ && git add . && git commit -m 'build'"
   },
   "homepage": "https://github.com/distantcam/phaser-electron-typescript-parcel",
   "bugs": {
