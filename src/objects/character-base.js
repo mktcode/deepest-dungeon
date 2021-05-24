@@ -10,14 +10,11 @@ import { getXpForLevelUp } from "../helper.js"
 import uuidv4 from 'uuid/v4'
 
 export default class CharacterBase {
-  constructor(scene, x, y) {
+  constructor(scene, room) {
     this.uuid = uuidv4()
 
-    this.x = x
-    this.y = y
     this.scene = scene
-    this.scene.addUpdater(this.update, this)
-    // this.room = room
+    this.room = room
 
     this.runOrWalk = 'run'
 
@@ -151,8 +148,7 @@ export default class CharacterBase {
   }
 
   prepareSpeedBoostAnimation() {
-    const particle = this.scene.add.particles('particle').setDepth(5)
-    this.speedBoostAnimation = particle.createEmitter({
+    this.speedBoostAnimation = this.scene.interactionParticle.createEmitter({
       on: false,
       blendMode: 'SCREEN',
       scale: { start: 0.7, end: 0.2 },
@@ -230,8 +226,8 @@ export default class CharacterBase {
   }
 
   addToScene() {
-    const x = this.x + 16
-    const y = this.y + 19
+    const x = this.scene.tileToWorldX(this.room.centerX) + 16
+    const y = this.scene.tileToWorldY(this.room.centerY) + 19
 
     this.container = this.scene.add.container(x, y)
     this.scene.matter.add.gameObject(this.container)
@@ -641,7 +637,7 @@ export default class CharacterBase {
   }
 
   update(callback) {
-    // this.updateRoom()
+    this.updateRoom()
     // set depth based on y
     this.container.setDepth(this.scene.convertYToDepth(this.container.y, 6))
     // Stop any previous movement from the last frame

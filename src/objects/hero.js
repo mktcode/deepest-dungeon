@@ -9,9 +9,6 @@ export default class Hero extends CharacterBase {
 
     this.addControls()
     this.scene.cameraFollow(this.container)
-    this.scene.lightManager.center = () => {
-      return { x: this.scene.worldToTileX(this.container.x), y: this.scene.worldToTileY(this.container.y) }
-    }
 
     this.shield = new Shield(this)
 
@@ -177,7 +174,6 @@ export default class Hero extends CharacterBase {
   }
 
   updateAttackSubtitles() {
-    return
     const gui = this.scene.scene.get('Gui')
     if (gui.subtitle.text === TEXTS.SPACE_TO_ATTACK) {
       gui.showSubtitle(TEXTS.KILL_X_UNDEAD.replace('{num}', 3))
@@ -185,7 +181,6 @@ export default class Hero extends CharacterBase {
   }
 
   updateMoveSubtitles() {
-    return
     const gui = this.scene.scene.get('Gui')
     if (gui.subtitle.text === TEXTS.WASD_TO_MOVE) {
       gui.hideSubtitle(TEXTS.WASD_TO_MOVE)
