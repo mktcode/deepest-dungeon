@@ -106,7 +106,7 @@ export default class Narrator {
     const narratorSaid = this.scene.registry.get('narratorSaid')
     return new Promise((resolve) => {
       if (!narratorSaid.includes(key)) {
-        this.scene.registry.get('ambientMusic').setVolume(0.5)
+        this.scene.registry.get('ambientMusic').setVolume(0.2)
         narratorSaid.push(key)
         this.scene.registry.set('narratorSaid', narratorSaid)
         this.say(key, delay, volume).then(() => {
