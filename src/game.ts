@@ -12,7 +12,7 @@ import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin'
 
 const config: GameConfig = {
   fps: {
-    target: 30,
+    target: 60,
     forceSetTimeOut: true
   },
   type: Phaser.AUTO,
