@@ -1,0 +1,9 @@
+{
+  "labelRewards": [
+    {
+      "name": "cool-idea",
+      "value": "5 USD",
+      "comment": "Awesome idea @{user}! Thanks for the inspiration. I just sent you 5 USD in ETH ({amount})."
+    }
+  ]
+}
