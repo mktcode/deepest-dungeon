@@ -9,6 +9,7 @@ I pay $5 in ETH for cool ideas for the game. Just [open an issue](https://github
 # Top up!
 
 On the other side, tips are very welcome: 0x27711f9c07230632F2EE1A21a967a9AC4729E520
+
 That is the same address that sends the rewards, so... you can kind of help me to keep it funded.
 
 # TODO
