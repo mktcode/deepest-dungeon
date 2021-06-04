@@ -6,6 +6,11 @@ I tried to learn game development and this is the result. I'd like to further im
 
 I pay $5 in ETH for cool ideas for the game. Just [open an issue](https://github.com/mktcode/deepest-dungeon/issues/new?assignees=&labels=&template=idea.md&title=%5BIDEA%5D+...) and If I like it (👍🏻 + 'cool-idea' label), you'll receive $5 in ETH (at the price in the moment I hit 👍🏻) at your [Octobay ETH address](https://github.com/Octobay/oracle/blob/main/README.md#octobay-config).
 
+# Top up!
+
+On the other side, tips are very welcome: 0x27711f9c07230632F2EE1A21a967a9AC4729E520
+That is the same address that sends the rewards, so... you can kind of help me to keep it funded.
+
 # TODO
 
 - BUGS/ISSUES:
