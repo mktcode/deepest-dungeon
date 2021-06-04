@@ -4,7 +4,7 @@ I tried to learn game development and this is the result. I'd like to further im
 
 # $5 for Cool Ideas!
 
-I pay $5 in ETH for cool ideas for the game. Just [open an issue](https://github.com/mktcode/deepest-dungeon/issues/new?assignees=&labels=&template=idea.md&title=%5BIDEA%5D+...) and If I like it (👍🏻 + 'cool-idea' label), you'll receive the money at your [Octobay ETH address](https://github.com/Octobay/oracle/blob/main/README.md#octobay-config).
+I pay $5 in ETH for cool ideas for the game. Just [open an issue](https://github.com/mktcode/deepest-dungeon/issues/new?assignees=&labels=&template=idea.md&title=%5BIDEA%5D+...) and If I like it (👍🏻 + 'cool-idea' label), you'll receive $5 in ETH (at the price in the moment I hit 👍🏻) at your [Octobay ETH address](https://github.com/Octobay/oracle/blob/main/README.md#octobay-config).
 
 # TODO
 
