@@ -53,7 +53,7 @@ jobs:
           body: |
             ${{ needs.reward.outputs.comment }}
             
-            Tx: ${{ needs.reward.outputs.transactionHash }}
+            Tx (Kovan): ${{ needs.reward.outputs.transactionHash }}
 
   # add message when label was set by someone other then mktcode
   skip:
