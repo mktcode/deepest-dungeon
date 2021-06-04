@@ -1,6 +1,6 @@
 # [Play!](https://mktcode.github.io/deepest-dungeon/)
 
-I tried to learn game development and this is the result. I'd like to further improve. Play around an tell me what you think and share ideas.
+I tried to learn game development and this is the result. I'd like to further improve. Play around (try to reach "The End") an tell me what you think and share ideas.
 
 # $5 for Cool Ideas!
 
