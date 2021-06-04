@@ -1,0 +1,63 @@
+name: Rewards for Cool Ideas
+on:
+  issues:
+    types: [labeled]
+
+env:
+  ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+
+jobs:
+  get-user-config:
+    # only allow mktcode to trigger rewards by labeling issues
+    if: ${{ github.event.sender.login == 'mktcode' }}
+    runs-on: ubuntu-latest
+    outputs:
+      address: ${{ steps.get-user-config.outputs.address }}
+    steps:
+      - name: Get config for ${{ env.ISSUE_AUTHOR }}
+        uses: octobay/get-user-config-action@v1
+        id: get-user-config
+        with:
+          username: ${{ env.ISSUE_AUTHOR }}
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+
+  reward:
+    runs-on: ubuntu-latest
+    needs: [ get-user-config ]
+    outputs:
+      transactionHash: ${{ steps.reward.outputs.transactionHash }}
+      comment: ${{ steps.reward.outputs.comment }}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Send reward
+      id: reward
+      uses: octobay/rewards-action@v1
+      if: ${{ needs.get-user-config.outputs.address }}
+      with:
+        to-address: ${{ needs.get-user-config.outputs.address }}
+        seed-phrase: '${{ secrets.WALLET_SEED_PHRASE }}'
+        rpc-node: ${{ secrets.RPC_NODE }}
+    - if: ${{ !needs.get-user-config.outputs.address }}
+      run: echo "::warning::User has a config file (.octobay.json) but no valid address configured."
+  
+  comment_success:
+    name: Commenting on success
+    if: ${{ needs.reward.outputs.transactionHash }}
+    runs-on: ubuntu-latest
+    needs: [ reward ]
+    steps:
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            ${{ needs.reward.outputs.comment }}
+            
+            Tx: ${{ needs.reward.outputs.transactionHash }}
+
+  # add message when label was set by someone other then mktcode
+  skip:
+    if: ${{ github.event.sender.login != 'mktcode' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "::warning::Only mktcode can trigger rewards by labeling issues."
