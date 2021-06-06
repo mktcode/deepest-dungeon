@@ -21,9 +21,20 @@ jobs:
           username: ${{ env.ISSUE_AUTHOR }}
           access-token: ${{ secrets.GITHUB_TOKEN }}
 
+  ethusd:
+    runs-on: ubuntu-latest
+    outputs:
+      price: ${{ steps.ethusd.outputs.price }}
+    steps:
+      - name: Get ETH/USD Price Feed
+        uses: octobay/ethusd-pricefeed-action@v1
+        id: ethusd
+        with:
+          rpc-node: ${{ secrets.RPC_NODE_MAINNET }}
+
   reward:
     runs-on: ubuntu-latest
-    needs: [ get-user-config ]
+    needs: [ get-user-config, ethusd ]
     outputs:
       transactionHash: ${{ steps.reward.outputs.transactionHash }}
       comment: ${{ steps.reward.outputs.comment }}
@@ -34,6 +45,7 @@ jobs:
       uses: octobay/rewards-action@v1
       if: ${{ needs.get-user-config.outputs.address }}
       with:
+        eth-usd: ${{ needs.ethusd.outputs.price }}
         to-address: ${{ needs.get-user-config.outputs.address }}
         seed-phrase: '${{ secrets.WALLET_SEED_PHRASE }}'
         rpc-node: ${{ secrets.RPC_NODE }}
