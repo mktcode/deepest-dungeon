@@ -46,9 +46,9 @@
   "dependencies": {
     "@mikewesthad/dungeon": "^1.2.2",
     "axios": "^0.19.2",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "pathfinding": "^0.4.18",
-    "phaser": "^3.22.0",
+    "phaser": "^3.55.2",
     "phaser-matter-collision-plugin": "^0.10.2",
     "polyk": "^0.24.0",
     "uuid": "^3.4.0"
@@ -56,16 +56,16 @@
   "devDependencies": {
     "cross-env": "^5.2.1",
     "download-cli": "^1.1.1",
-    "electron": "^5.0.8",
+    "electron": "^5.0.13",
     "electron-builder": "^20.44.4",
     "electron-reload": "^1.5.0",
-    "node-sass": "^4.13.0",
+    "node-sass": "^4.14.1",
     "npm-run-all": "^4.1.5",
-    "parcel-bundler": "^1.12.4",
-    "parcel-plugin-static-files-copy": "^2.2.1",
+    "parcel-bundler": "^1.12.5",
+    "parcel-plugin-static-files-copy": "^2.6.0",
     "push-dir": "^0.4.1",
-    "rimraf": "^2.6.3",
+    "rimraf": "^2.7.1",
     "tslint": "^5.20.1",
-    "typescript": "^3.7.2"
+    "typescript": "^3.9.9"
   }
 }
